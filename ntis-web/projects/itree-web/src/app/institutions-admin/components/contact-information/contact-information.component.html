@@ -1,0 +1,74 @@
+<spr-form-field-group
+  [text]="translationsReference + '.legend'"
+  [showEdit]="!editMode && editAvailable"
+  (clickEdit)="handleClickEdit()"
+>
+  <ng-container *ngIf="!editMode">
+    <div class="spr-form-items-flex">
+      <spr-info-line [name]="'common.generalUse.emailAddress' | translate" [value]="contacts?.email"></spr-info-line>
+      <div class="spr-input-with-label">
+        <input
+          type="checkbox"
+          class="spr-checkbox"
+          id="email-notifications"
+          [disabled]="true"
+          [checked]="contacts?.emailNotifications"
+        />
+        <label for="email-notifications">{{ (translationsReference + '.emailNotifications') | translate }}</label>
+      </div>
+      <spr-info-line [name]="'common.generalUse.telNo' | translate" [value]="contacts?.phoneNumber"></spr-info-line>
+      <spr-info-line
+        [name]="'common.generalUse.websiteAddress' | translate"
+        [value]="contacts?.website"
+      ></spr-info-line>
+    </div>
+  </ng-container>
+  <form *ngIf="editMode" [formGroup]="form" (ngSubmit)="submitChanges()">
+    <spr-form-field
+      [labelText]="'common.generalUse.emailAddress' | translate"
+      labelFor="email-address"
+      [inputErrors]="form.controls.email.touched && form.controls.email.errors"
+      [mandatory]="true"
+    >
+      <input type="email" id="email-address" formControlName="email" />
+    </spr-form-field>
+
+    <spr-form-field>
+      <div class="spr-input-with-label">
+        <input type="checkbox" class="spr-checkbox" id="email-notifications" formControlName="emailNotifications" />
+        <label for="email-notifications">{{ (translationsReference + '.emailNotifications') | translate }}</label>
+      </div>
+    </spr-form-field>
+
+    <spr-form-field
+      [labelText]="'common.generalUse.telNo' | translate"
+      labelFor="phone-number"
+      [inputErrors]="form.controls.phoneNumber.touched && form.controls.phoneNumber.errors"
+      [mandatory]="true"
+      [errorDefs]="{pattern: 'common.error.phone'}"
+    >
+      <input type="tel" id="phone-number" formControlName="phoneNumber" />
+    </spr-form-field>
+
+    <spr-form-field
+      [labelText]="'common.generalUse.websiteAddress' | translate"
+      labelFor="website-address"
+      [inputErrors]="form.controls.website.touched && form.controls.website.errors"
+      [mandatory]="false"
+      [errorDefs]="{pattern: 'common.error.website'}"
+    >
+      <input type="text" id="website-address" formControlName="website" />
+    </spr-form-field>
+
+    <div class="spr-form-buttons">
+      <spr-button-back [disableLocationBack]="true" (click)="editMode = false"></spr-button-back>
+      <spr-button
+        type="submit"
+        className="spr-button-primary"
+        iconStyle="fas"
+        iconName="faSave"
+        >{{ 'common.action.save' | translate }}</spr-button
+      >
+    </div>
+  </form>
+</spr-form-field-group>

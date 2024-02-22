@@ -1,0 +1,7 @@
+<div class="login-page">
+  <span *ngIf="showRegMessage" class="login-page__email-confirmation">
+    <spr-icon name="drafts"></spr-icon>
+    {{ 'pages.login.confirmEmail' | translate }}
+  </span>
+  <app-login (login)="onLogin($event)"></app-login>
+</div>

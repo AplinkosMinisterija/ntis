@@ -1,0 +1,111 @@
+<spr-content-box [headerText]="translationsReference + '.headerText'" transformingText="uppercase">
+  <div class="spr-browse-actions-wrapper">
+    <spr-browse-search-form [formGroup]="searchForm" (search)="search(dataTableComponent)">
+      <spr-select
+        filters
+        formControlName="addressTypeCode"
+        classifierCode="NTIS_ADDRESS_MAP_TYPE"
+        [placeholder]="translationsReference + '.am_address_type' | translate"
+        [showFilter]="true"
+        [advancedFilterParams]="true"
+        optionType="multiple"
+      ></spr-select
+      ><spr-filter-input
+        filters
+        inputType="text"
+        formControlName="providedAddressName"
+        [placeholder]="translationsReference + '.am_provided_addres_name' | translate"
+      ></spr-filter-input>
+      <spr-select
+        filters
+        formControlName="municipalityCode"
+        classifierCode="NTIS_MUNICIPALITIES"
+        [placeholder]="translationsReference + '.am_municipality_name' | translate"
+        [showFilter]="true"
+        optionType="multiple"
+        [advancedFilterParams]="true"
+      ></spr-select>
+      <spr-select
+        *ngIf="senList.length > 0"
+        filters
+        formControlName="senName"
+        [optionData]="senList"
+        optionLabel="value"
+        optionValue="id"
+        optionType="multiple"
+        [placeholder]="translationsReference + '.sen_name' | translate"
+        [showFilter]="true"
+        [advancedFilterParams]="true"
+      ></spr-select>
+      <spr-select
+        *ngIf="orgsList.length > 0"
+        filters
+        formControlName="orgName"
+        [optionData]="orgsList"
+        optionLabel="value"
+        optionValue="id"
+        optionType="multiple"
+        [placeholder]="translationsReference + '.org_name' | translate"
+        [showFilter]="true"
+        [advancedFilterParams]="true"
+      ></spr-select>
+      <spr-button-add
+        buttons
+        (click)="navigateToAddNew()"
+        [disabled]="!userCanCreate && !userOrgCanCreate"
+        [pTooltip]="userCanCreate || userOrgCanCreate ?  null  : (translationsReference +'.tooltipText' | translate)"
+      ></spr-button-add>
+    </spr-browse-search-form>
+  </div>
+  <p-table
+    [value]="data"
+    [lazy]="true"
+    (onLazyLoad)="loadDataLazy($event)"
+    [rows]="showRows"
+    responsiveLayout="stack"
+    breakpoint="767px"
+    [totalRecords]="totalRecords"
+    [paginator]="data?.length > 0"
+    [rowsPerPageOptions]="rowsPerPageOptions"
+    [showFirstLastIcon]="false"
+  >
+    <ng-template pTemplate="header" let-row>
+      <tr>
+        <ng-container *ngFor="let col of visibleColumns">
+          <th pSortableColumn="{{col.field}}">
+            {{translationsReference + '.' + col.field | translate}}
+            <p-sortIcon field="{{col.field}}"></p-sortIcon>
+          </th>
+        </ng-container>
+        <th>{{'common.generalUse.actions' | translate}}</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row>
+      <tr>
+        <ng-container *ngFor="let col of visibleColumns">
+          <td>
+            <span class="p-column-title">
+              {{translationsReference + '.' + col.field |translate}}
+            </span>
+            <span>{{row[col.field]}}</span>
+          </td>
+        </ng-container>
+        <td>
+          <ntis-table-row-actions [actions]="row.actions"></ntis-table-row-actions>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage" translate>
+      <tr>
+        <td [attr.colspan]="cols.length + 1">
+          <spr-table-no-rec-found></spr-table-no-rec-found>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+  <span class="actions">
+    <spr-button className="ntis-button-link" (click)="onReturn()">
+      {{'common.action.back' | translate}}
+    </spr-button>
+  </span>
+</spr-content-box>

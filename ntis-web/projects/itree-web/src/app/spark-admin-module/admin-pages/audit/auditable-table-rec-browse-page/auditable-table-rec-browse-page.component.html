@@ -1,0 +1,76 @@
+<spr-content-box [headerText]="pageTranslations+'.headerText'">
+  <div class="spr-browse-actions-wrapper">
+    <spr-browse-search-form [formGroup]="searchForm" [formCode]="formCode" (search)="search(dataTableComponent)">
+      <spr-filter-input
+        inputType="text"
+        [maxLength]="20"
+        formControlName="rec_aud_user_id"
+        [placeholder]="pageTranslations+'.rec_aud_usr_id' | translate"
+      ></spr-filter-input>
+
+      <spr-filter-input
+        inputType="datetime"
+        formControlName="rec_aud_timestamp"
+        [placeholder]="pageTranslations + '.rec_aud_timestamp' | translate"
+      ></spr-filter-input>
+
+      <spr-table-data-export
+        *ngIf="cols.length > 0"
+        buttons
+        [translation]="pageTranslations"
+        [tableColumn]="cols"
+        [tableData]="exportData"
+        [fileName]="pageTranslations+'.headerText'"
+        [showPdf]="false"
+        (exportAllRecEvent)="loadAllRecords($event, dataTableComponent)"
+      ></spr-table-data-export>
+    </spr-browse-search-form>
+  </div>
+  <p-table
+    [value]="data"
+    [autoLayout]="true"
+    [lazy]="true"
+    (onLazyLoad)="loadDataLazy($event)"
+    [rows]="showRows"
+    [totalRecords]="totalRecords"
+    [paginator]="data?.length > 0"
+    [showFirstLastIcon]="false"
+    [rowsPerPageOptions]="rowsPerPageOptions"
+    [sortField]="'1'"
+    [sortOrder]="-1"
+    [rowHover]="true"
+  >
+    <ng-template pTemplate="header" let-row let-index="rowIndex">
+      <tr>
+        <th *ngFor="let col of visibleColumns" pSortableColumn="{{col.field}}">
+          <span class="table-header-col">
+            {{col.field}}
+            <p-sortIcon field="{{col.field}}" class="table-header-col__icon"></p-sortIcon>
+          </span>
+        </th>
+        <th></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row let-index="rowIndex">
+      <tr>
+        <td *ngFor="let col of visibleColumns" class="truncate">
+          <span class="p-column-title ">
+            {{col.field}}
+          </span>
+          <spr-text-truncate
+            [text]="row[col.field]"
+            [textLength]="col.textLength"
+            [headerText]="col.field"
+          ></spr-text-truncate>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage" translate>
+      <tr>
+        <td [attr.colspan]="cols.length">
+          <spr-table-no-rec-found></spr-table-no-rec-found>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</spr-content-box>

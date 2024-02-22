@@ -1,0 +1,39 @@
+:host {
+  @apply block;
+}
+
+.checkbox-tree-select-all {
+  @apply pb-0.5;
+}
+
+.checkbox-tree {
+  li {
+    @apply my-0.5;
+
+    li {
+      @apply ml-6;
+    }
+  }
+
+  &__button-placeholder {
+    @apply min-w-5;
+  }
+
+  &__chevron-icon {
+    @apply text-static-base;
+  }
+
+  &__label {
+    @apply text-sm pt-px;
+  }
+}
+
+.checkbox-semi-selected {
+  &::before {
+    @apply bg-neutral-200;
+  }
+
+  &:hover:not(:disabled)::before {
+    @apply bg-neutral-300;
+  }
+}

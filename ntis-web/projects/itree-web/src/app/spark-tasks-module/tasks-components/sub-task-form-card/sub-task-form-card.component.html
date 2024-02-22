@@ -1,0 +1,251 @@
+<ng-container *ngFor="let person of subTaskList">
+  <div @fadeInFields [className]="person.sprTask.tas_name !== null ? 'task__accordion valid__form' : 'task__accordion'">
+    <div class="task__accordion__header">
+      <fa-icon class="pl-2 mr-2" [icon]="faIconsService.fas.faUser"></fa-icon>
+      <span class="text-neutral-900 hover:text-grey-700"
+        ><b>{{person.sprTask.tas_usr_userName}} {{person.sprTask?.tas_usr_userSurname}}</b></span
+      >
+
+      <div class="sub__task__btn__remove" (click)="removeTask(person)">
+        <fa-icon class="sub__task__btn__icon" [icon]="faIconsService.fas.faTimes"></fa-icon>
+      </div>
+
+      <div class="sub__task__btn__fill" (click)="showDialog(person)">
+        <fa-icon class="sub__task__btn__icon" [icon]="faIconsService.fas.faPencil"></fa-icon>
+      </div>
+    </div>
+    <ng-container *ngIf="person.sprTask.tas_name !== null">
+      <hr />
+      <div class="task__accordion__body flex">
+        <fa-icon class="pl-2 mr-1 flex-none" [icon]="faIconsService.fas.faEdit"></fa-icon>
+        <small class="grow"> {{ person.sprTask.tas_name }}</small>
+      </div>
+      <div class="task__accordion__body flex">
+        <fa-icon class="pl-2 mr-1 flex-none" [icon]="faIconsService.fas.faCommentDots"></fa-icon>
+
+        <div class="ql-container ql-snow discription__content">
+          <div class="grow ql-editor" [innerHTML]="person.sprTask.tas_description | safeHtml"></div>
+        </div>
+        <!-- | safeHtml [innerHTML]="person.sprTask.tas_description "-->
+      </div>
+      <div class="task__accordion__body flex">
+        <fa-icon class="pl-2 mr-2 flex-none" [icon]="faIconsService.fas.faCalendar"></fa-icon>
+        <small class="grow"
+          >{{ person.sprTask.tas_date_from | date : 'yyyy-MM-dd HH:mm:ss'}} -
+          {{person.sprTask.tas_date_to | date : 'yyyy-MM-dd HH:mm:ss'}}</small
+        >
+      </div>
+    </ng-container>
+  </div>
+</ng-container>
+
+<!-- Modal window for sub task start -->
+
+<form [formGroup]="form" (submit)="onSubmit($event)" autocomplete="off">
+  <p-dialog
+    [(visible)]="SubTaskDialog"
+    [style]="{width: '600px'}"
+    [modal]="true"
+    styleClass="p-fluid"
+    [closable]="false"
+    [draggable]="false"
+  >
+    <ng-template pTemplate="header">
+      <span class="text-left"
+        ><fa-icon class="pl-2 mr-1" [icon]="faIconsService.fas.faUser"></fa-icon> <b>{{subPersonName}}</b></span
+      >
+    </ng-template>
+
+    <div class="task__accordion__body">
+      <spr-form-field
+        labelText="{{'pages.sprTasksDashboard.editForm.taskTitle' | translate}}"
+        [isLabelHorizontal]="false"
+        [mandatory]="true"
+        [inputErrors]="form.controls.sub_tas_name.touched && form.controls.sub_tas_name.errors"
+        [errorDefs]="{required: 'common.error'}"
+      >
+        <input formControlName="sub_tas_name" maxlength="100" type="text" />
+      </spr-form-field>
+
+      <spr-form-field
+        labelText="{{'pages.sprTasksDashboard.editForm.taskDescription' | translate}}"
+        [isLabelHorizontal]="false"
+        [mandatory]="true"
+        [inputErrors]="form.controls.sub_tas_description.touched && form.controls.sub_tas_description.errors"
+        [errorDefs]="{required: 'common.error'}"
+      >
+        <p-editor formControlName="sub_tas_description" [style]="{'height':'150px'}">
+          <ng-template pTemplate="header">
+            <span class="ql-formats">
+              <select class="ql-header">
+                <option value="1">Heading</option>
+                <option value="2">Subheading</option>
+                <option selected>Normal</option>
+              </select>
+              <select class="ql-font">
+                <option selected>Sans Serif</option>
+                <option value="serif">Serif</option>
+                <option value="monospace">Monospace</option>
+              </select>
+            </span>
+            <span class="ql-formats">
+              <button class="ql-bold" aria-label="Bold" type="button"></button>
+              <button class="ql-italic" aria-label="Italic" type="button"></button>
+              <button class="ql-underline" aria-label="Underline" type="button"></button>
+            </span>
+            <span class="ql-formats">
+              <select class="ql-color"></select>
+              <select class="ql-background"></select>
+            </span>
+            <span class="ql-formats">
+              <button class="ql-list" value="ordered" aria-label="Ordered List" type="button"></button>
+              <button class="ql-list" value="bullet" aria-label="Unordered List" type="button"></button>
+              <select class="ql-align">
+                <option selected></option>
+                <option value="center">center</option>
+                <option value="right">right</option>
+                <option value="justify">justify</option>
+              </select>
+            </span>
+            <span class="ql-formats">
+              <button class="ql-link" aria-label="Insert Link" type="button"></button>
+              <button class="ql-code-block" aria-label="Insert Code Block" type="button"></button>
+            </span>
+          </ng-template>
+        </p-editor>
+      </spr-form-field>
+
+      <div class="grid gap-4 grid-cols-2 mt-2">
+        <div>
+          <spr-form-field
+            labelText="{{'common.action.start' | translate}}"
+            [isLabelHorizontal]="false"
+            [mandatory]="true"
+            [inputErrors]="form.controls.sub_tas_date_from.touched && form.controls.sub_tas_date_from.errors"
+            [errorDefs]="{required: 'common.error'}"
+          >
+            <p-calendar
+              (onBlur)="checkDateInput()"
+              (onSelect)="checkDateInput()"
+              [firstDayOfWeek]="1"
+              formControlName="sub_tas_date_from"
+              [showTime]="true"
+              appendTo="body"
+              [showIcon]="true"
+              [minDate]="maximumDate"
+              hourFormat="24"
+              placeholder="YYYY-MM-DD"
+            >
+            </p-calendar>
+          </spr-form-field>
+        </div>
+
+        <div>
+          <spr-form-field
+            labelText="{{'common.action.end' | translate}}"
+            [isLabelHorizontal]="false"
+            [mandatory]="true"
+            [inputErrors]="form.controls.sub_tas_date_to.touched && form.controls.sub_tas_date_to.errors"
+            [errorDefs]="{required: 'common.error'}"
+          >
+            <p-calendar
+              [firstDayOfWeek]="1"
+              formControlName="sub_tas_date_to"
+              [showTime]="true"
+              hourFormat="24"
+              appendTo="body"
+              [showIcon]="true"
+              [minDate]="maximumDateFrom"
+              placeholder="YYYY-MM-DD"
+            >
+            </p-calendar>
+            <!-- [disabled]="dateInputDisable" -->
+          </spr-form-field>
+        </div>
+      </div>
+
+      <div class="grid gap-4 grid-cols-2 mt-2">
+        <div>
+          <spr-form-field
+            labelText="{{'pages.sprTasksDashboard.editForm.category' | translate}}"
+            [isLabelHorizontal]="false"
+            [mandatory]="true"
+            [inputErrors]="form.controls.sub_tas_type.touched && form.controls.sub_tas_type.errors"
+            [errorDefs]="{required: 'common.error'}"
+          >
+            <spr-select
+              formControlName="sub_tas_type"
+              classifierCode="SPR_TASK_CATEGORY"
+              [placeholder]="'common.action.select' | translate"
+            ></spr-select>
+          </spr-form-field>
+        </div>
+        <div>
+          <spr-form-field
+            labelText="{{'pages.sprTasksDashboard.editForm.status' | translate}}"
+            [isLabelHorizontal]="false"
+            [mandatory]="true"
+            [inputErrors]="form.controls.sub_tas_status.touched && form.controls.sub_tas_status.errors"
+            [errorDefs]="{required: 'common.error'}"
+          >
+            <spr-select
+              formControlName="sub_tas_status"
+              classifierCode="SPR_TASK_STATUS"
+              [placeholder]="'common.action.select' | translate"
+            ></spr-select>
+          </spr-form-field>
+        </div>
+      </div>
+
+      <div class="grid gap-4 grid-cols-2 mt-2">
+        <div>
+          <spr-form-field
+            labelText="{{'common.action.replay' | translate}}"
+            [isLabelHorizontal]="false"
+            [mandatory]="true"
+            [inputErrors]="form.controls.sub_tas_repetitive.touched && form.controls.sub_tas_repetitive.errors"
+            [errorDefs]="{required: 'common.error'}"
+          >
+            <spr-select
+              formControlName="sub_tas_repetitive"
+              classifierCode="SPR_TASK_REPETITIVE"
+              [placeholder]="'common.action.select' | translate"
+            ></spr-select>
+          </spr-form-field>
+        </div>
+        <div>
+          <spr-form-field
+            labelText="{{'pages.sprTasksDashboard.editForm.priority' | translate}}"
+            [isLabelHorizontal]="false"
+            [mandatory]="true"
+            [inputErrors]="form.controls.sub_tas_priority.touched && form.controls.sub_tas_priority.errors"
+            [errorDefs]="{required: 'common.error'}"
+          >
+            <spr-select
+              formControlName="sub_tas_priority"
+              classifierCode="SPR_TASK_PRIORITY"
+              [placeholder]="'common.action.select' | translate"
+            ></spr-select>
+          </spr-form-field>
+        </div>
+      </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+      <button (click)="SubTaskDialog = false" class="spr-button-risk-hollow mt-4 mr-3 float-left">
+        <fa-icon class="pl-2" [icon]="faIconsService.fas.faTimes" size="sm"></fa-icon>
+        {{'common.action.close' | translate}}
+      </button>
+
+      <button type="reset" class="spr-button-secondary-hollow mt-4 mr-3 float-left">
+        <fa-icon class="pl-2" [icon]="faIconsService.fas.faSync" size="sm"></fa-icon>
+        {{'common.action.clear' | translate}}
+      </button>
+
+      <button type="submit" class="spr-button-primary-hollow mt-4 mr-3 float-right">
+        <fa-icon class="pl-2" [icon]="faIconsService.fas.faSave" size="sm"></fa-icon>
+        {{'common.action.save' | translate}}
+      </button>
+    </ng-template>
+  </p-dialog>
+</form>

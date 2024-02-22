@@ -1,0 +1,13 @@
+.order-dialog-wrapper {
+  @apply flex flex-col justify-center items-center;
+  .order-dialog-text-wrapper {
+    @apply mb-3 text-center;
+  }
+}
+
+.order-dialog-inputs-wrapper {
+  @apply w-80;
+  textarea {
+    @apply min-h-32;
+  }
+}

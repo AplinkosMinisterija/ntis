@@ -1,0 +1,48 @@
+<section class="button-wrapper">
+  <spr-button
+    [pTooltip]="formTranslationsReference + '.openServedObjectList' | translate"
+    iconStyle="fas"
+    iconName="faHome"
+    [iconClassName]="iconSize"
+    className="text-primary-500"
+    (click)="showDialog = !showDialog"
+  ></spr-button>
+</section>
+<section *ngIf="showDialog" class="dialog">
+  <div class="dialog__content">
+    <header class="dialog__header">
+      <div class="dialog__header-title">{{formTranslationsReference + '.headerText' | translate}}</div>
+      <spr-button iconStyle="fas" iconName="faTimes" (click)="showDialog = false"></spr-button>
+    </header>
+    <div class="address-wrapper">
+      <span>{{formTranslationsReference + '.facilityObjectAddress' | translate}}</span
+      ><br />
+      {{rowTitle}}
+    </div>
+    <div class="dialog__list-label" *ngIf="parsedServedObjects.length > 0">
+      {{formTranslationsReference + '.servedObjectListLabel' | translate}}
+    </div>
+    <ul>
+      <li *ngFor="let row of parsedServedObjects">
+        <button
+          [ngClass]=" !this.restrictView || row.fo_so_id ? 'address-active' : 'address-inactive'"
+          class="address-card"
+          type="button"
+          (click)="openServedObject(row)"
+        >
+          <span class="address-card__item" *ngIf="row.so_address">
+            <spr-icon name="house"></spr-icon><span class="address-card__address-text">{{row.so_address}}</span>
+          </span>
+          <span class="address-card__item" *ngIf="row.so_latitude"
+            ><spr-icon name="location_on"></spr-icon
+            ><span class="address-card__coord-text">{{row.so_latitude}}, {{row.so_longitude}}</span>
+          </span>
+          <span class="address-card__item" *ngIf="row.so_purp_name || row.so_inv_code">
+            <spr-icon name="maps_home_work"></spr-icon
+            ><span class="address-card__coord-text">{{row.so_purp_name}} {{row.so_inv_code}}</span>
+          </span>
+        </button>
+      </li>
+    </ul>
+  </div>
+</section>

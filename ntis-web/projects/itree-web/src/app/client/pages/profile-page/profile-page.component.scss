@@ -1,0 +1,30 @@
+.user-profile {
+  @apply max-w-2xl mx-auto lg:max-w-none;
+
+  &__form-wrapper {
+    @apply grid gap-2 lg:grid-cols-2 lg:gap-6;
+  }
+
+  &__email-checkbox {
+    @apply flex items-center my-4;
+
+    input {
+      @apply shrink-0;
+    }
+    label {
+      @apply mx-2;
+    }
+  }
+
+  &__button_wrapper {
+    @apply flex justify-center;
+
+    button {
+      @apply xs:w-auto xs:min-w-32 mx-2 mt-4;
+    }
+  }
+
+  .api-info-note-wrapper {
+    @apply mb-2;
+  }
+}

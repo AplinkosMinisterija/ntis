@@ -1,0 +1,44 @@
+.preview {
+  @apply flex justify-center;
+
+  &__body {
+    @apply w-full flex flex-col gap-3 max-w-4xl;
+  }
+}
+
+.files {
+  @apply mt-2;
+
+  &__button {
+    @apply flex justify-start items-center gap-1 py-1;
+  }
+
+  &__text {
+    @apply text-sm leading-none h-fit text-primary-900 hover:underline cursor-pointer pt-0.5;
+  }
+
+  &__icon {
+    @apply text-primary-900;
+  }
+}
+.address-card {
+  @apply flex flex-col w-full text-left py-1 bg-neutral-50 
+  border border-neutral-200 p-2 rounded mb-1;
+  &__item {
+    @apply flex justify-start items-center text-neutral-900 gap-1;
+  }
+  &__address-text {
+    @apply text-sm font-medium;
+  }
+  &__coord-text {
+    @apply text-sm italic text-neutral-600;
+  }
+}
+
+.address-active {
+  @apply hover:bg-neutral-100 bg-neutral-50;
+}
+
+.address-inactive {
+  @apply bg-neutral-200;
+}

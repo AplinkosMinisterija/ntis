@@ -1,0 +1,15 @@
+.header {
+  @apply flex sm:flex-row justify-between my-7 items-center flex-col;
+
+  &__info {
+    @apply pb-6 sm:pb-0 mr-6;
+  }
+}
+
+.capacity{
+  @apply pl-6;
+}
+
+:host ::ng-deep .p-datatable > .p-datatable-wrapper {
+  @apply border-none;
+}

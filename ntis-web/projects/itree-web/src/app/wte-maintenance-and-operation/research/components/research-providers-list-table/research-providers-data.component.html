@@ -1,0 +1,39 @@
+<section class="table-wrapper">
+  <tr class="first-column">
+    <th class="first-column__title">
+      <span>{{researchProvider.org_name}}</span>
+    </th>
+    <td class="btn-toggle">
+      <button type="button" (click)="toggleDescription()" class="spr-button-secondary ">
+        {{translationsReference+'.labTests' | translate}}
+        <spr-icon [name]="showText ? 'expand_less' : 'expand_more'"></spr-icon>
+      </button>
+    </td>
+    <div *ngIf="showText" class="toggle-text-mobile">
+      <span>{{researchProvider.srv_description}}</span>
+    </div>
+  </tr>
+
+  <tr class="second-column">
+    <th class="second-column__title">
+      <span>{{researchProvider.org_email}}</span>
+      <span>{{researchProvider.org_phone}}</span>
+    </th>
+    <td class="btn-wrapper">
+      <span
+        >{{'common.generalUse.from' | translate}}
+        <span>{{researchProvider.srv_price_from}}</span>
+        {{'common.generalUse.currency' | translate}}</span
+      >
+      <button *ngIf="allowOrderService" type="button" class="spr-button-primary" (click)="navigateToOrderPage()">
+        {{'common.action.order' | translate}}
+      </button>
+    </td>
+  </tr>
+</section>
+
+<div *ngIf="showText" class="toggle-text">
+  <span>
+    {{researchProvider.srv_description}}
+  </span>
+</div>

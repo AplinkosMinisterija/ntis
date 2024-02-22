@@ -1,0 +1,15 @@
+.deregistered-note {
+  @apply text-xs italic;
+
+  &__email {
+    @apply text-xs no-underline;
+  }
+}
+
+.manage-services-wrapper {
+  @apply pt-1 w-fit;
+}
+
+.dialog-footer {
+  @apply flex flex-row justify-center mt-5 gap-3;
+}

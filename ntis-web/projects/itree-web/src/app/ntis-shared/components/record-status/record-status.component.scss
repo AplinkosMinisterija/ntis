@@ -1,0 +1,41 @@
+:host {
+  @apply flex justify-start items-center;
+}
+
+.truncate-text {
+  @apply truncate;
+}
+
+.icon-status {
+  @apply w-5 h-5 flex justify-center items-center;
+
+  &--success {
+    @apply text-green-500;
+  }
+  &--risk {
+    @apply text-red-500;
+  }
+  &--warn {
+    @apply text-yellow-500;
+  }
+  &--neutral {
+    @apply text-neutral-500;
+  }
+}
+
+.text-status {
+  @apply rounded-sm h-5 flex justify-center items-center text-center py-2 pt-[9px] px-4 font-semibold;
+
+  &--success {
+    @apply bg-green-200 text-green-700;
+  }
+  &--risk {
+    @apply bg-red-200 text-red-700;
+  }
+  &--warn {
+    @apply bg-yellow-600 text-neutral-0;
+  }
+  &--neutral {
+    @apply bg-neutral-200 text-neutral-700;
+  }
+}

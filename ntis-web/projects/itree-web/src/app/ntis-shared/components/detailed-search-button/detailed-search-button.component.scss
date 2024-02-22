@@ -1,0 +1,16 @@
+.button {
+  @apply flex justify-between items-center  duration-150 gap-1 px-2 rounded bg-neutral-50
+  font-medium border mb-5;
+
+  &__active {
+    @apply border-neutral-200 text-primary-900;
+  }
+
+  &__inactive {
+    @apply border-neutral-100 text-primary-500;
+  }
+
+  &__icon {
+    @apply duration-150;
+  }
+}

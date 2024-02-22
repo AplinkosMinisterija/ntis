@@ -1,0 +1,270 @@
+<spr-content-box [headerText]="transalation+'.headerText'">
+  <div *ngIf="!noLimitOnOrLevelAction">
+    <div *ngFor="let user of usersWithoutRoles">
+      <ntis-message-box
+        type="info"
+        class="mb-4"
+        [text]="transalation + '.userWithoutRoles' | translate : {userName: user.usr_username }"
+        [link]="getLinkToAddRole(user)"
+        [linkText]="transalation + '.userWithoutRolesLink' | translate"
+      ></ntis-message-box>
+    </div>
+  </div>
+
+  <div class="spr-browse-actions-wrapper">
+    <spr-browse-search-form [formGroup]="searchForm" [formCode]="formCode" (search)="search(dataTableComponent)">
+      <spr-filter-input
+        filters
+        inputType="number"
+        [maxLength]="5"
+        formControlName="usr_id"
+        [placeholder]="transalation+'.usr_id' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="20"
+        formControlName="usr_username"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="transalation+'.usr_username' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="20"
+        formControlName="usr_email"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="transalation+'.usr_email' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="20"
+        formControlName="usr_person_name"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="transalation+'.usr_person_name' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="20"
+        formControlName="usr_person_surname"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="transalation+'.usr_person_surname' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="20"
+        formControlName="org_name"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="transalation+'.org_name' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="date"
+        [maxDate]="dateLimit"
+        formControlName="usr_date_from"
+        [placeholder]="transalation+'.usr_date_from' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="date"
+        [maxDate]="dateLimit"
+        formControlName="usr_date_to"
+        [placeholder]="transalation+'.usr_date_to' | translate"
+      ></spr-filter-input>
+      <spr-select
+        filters
+        formControlName="usr_type"
+        [optionData]="userTypeSelection"
+        optionValue="key"
+        optionLabel="display"
+        [placeholder]="transalation + '.usr_type' | translate"
+        [advancedFilterParams]="true"
+        optionType="multiple"
+      ></spr-select>
+      <spr-select
+        filters
+        formControlName="usr_reg_type_status"
+        classifierCode="NTIS_USR_REG_TYPE_STATUS"
+        optionValue="key"
+        optionLabel="display"
+        [placeholder]="transalation + '.usr_reg_type_status' | translate"
+        [advancedFilterParams]="true"
+        optionType="single"
+      ></spr-select>
+
+      <spr-table-data-export
+        buttons
+        [translation]="transalation"
+        [tableColumn]="cols"
+        [tableData]="exportData"
+        [fileName]="transalation+'.headerText'"
+        (exportAllRecEvent)="loadAllRecords($event, dataTableComponent)"
+      ></spr-table-data-export>
+
+      <spr-button-add
+        buttons
+        [routerLink]="[usersEditLink, 'new']"
+        [pTooltip]="userCanCreate ?  null  : (transalation+'.tooltipText' | translate)"
+        [disabled]="!userCanCreate"
+      ></spr-button-add>
+    </spr-browse-search-form>
+  </div>
+  <form [formGroup]="disabledForm">
+    <p-table
+      [value]="data"
+      [autoLayout]="true"
+      [rowHover]="true"
+      [lazy]="true"
+      (onLazyLoad)="loadDataLazy($event)"
+      [rows]="showRows"
+      [totalRecords]="totalRecords"
+      [paginator]="data?.length > 0"
+      [rowsPerPageOptions]="rowsPerPageOptions"
+      [showFirstLastIcon]="false"
+      [sortField]="'1'"
+      [sortOrder]="1"
+      dataKey="usr_id"
+      rowExpandMode="single"
+    >
+      <ng-template pTemplate="header" let-row let-index="rowIndex">
+        <tr>
+          <th></th>
+          <th *ngFor="let col of visibleColumns" pSortableColumn="{{col.field}}">
+            <span
+              class="table-header-col"
+              *ngIf="col.field !== 'usr_lock_date' || (col.field=== 'usr_lock_date' && noLimitOnOrLevelAction)"
+            >
+              {{transalation+'.'+col.field | translate}}
+              <p-sortIcon field="{{col.field}}" class="table-header-col__icon"></p-sortIcon>
+            </span>
+          </th>
+          <th></th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-row let-index="rowIndex" let-expanded="expanded">
+        <tr>
+          <td>
+            <button
+              *ngIf="row.org_list"
+              type="button"
+              pButton
+              pRipple
+              [pRowToggler]="row"
+              class="p-button-text p-button-rounded p-button-plain"
+              [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
+            ></button>
+          </td>
+          <td
+            *ngFor="let col of visibleColumns"
+            [ngClass]="{'spr-text-right': col.type === dataTypeNumber, 'whitespace-nowrap': col.type === dataTypeDate}"
+          >
+            <span class="p-column-title">{{transalation+'.'+col.field | translate}}</span>
+            <ng-container *ngIf="!disableActionEnabled; else templateA">
+              <span>{{row[col.field]}}</span>
+            </ng-container>
+            <ng-template #templateA>
+              <ng-container *ngIf="col.field !== 'usr_lock_date';else other_content">
+                <ng-container *ngIf="col.field === 'usr_reg_type_status'">
+                  <div class="usr-reg-type-status">
+                    <fa-icon
+                      *ngIf="row.per_code && row.per_data_confirmed === 'Y'"
+                      [icon]="faIconsService.fas.faShieldHalved"
+                      size="sm"
+                      [fixedWidth]="true"
+                      [pTooltip]="transalation+'.tooltipViispActive' | translate"
+                      [ngStyle]="{ 'color': '#415E72' }"
+                    ></fa-icon>
+                    <fa-icon
+                      *ngIf="row.per_code && row.per_data_confirmed === ''"
+                      [icon]="faIconsService.fas.faShieldHalved"
+                      size="sm"
+                      [fixedWidth]="true"
+                      [pTooltip]="transalation+'.tooltipViispNotActive' | translate"
+                      [ngStyle]="{ 'color': '#D9DEE0' }"
+                    ></fa-icon>
+                    <fa-icon
+                      *ngIf="row.new_user === 0 && row.usr_username !==''"
+                      [icon]="faIconsService.solid.faUser"
+                      size="sm"
+                      [fixedWidth]="true"
+                      [pTooltip]="transalation+'.tooltipUserPassActive' | translate"
+                      [ngStyle]="{ 'color': '#415E72' }"
+                    ></fa-icon>
+                    <fa-icon
+                      *ngIf="row.new_user === 1 && row.usr_username !==''"
+                      [icon]="faIconsService.fas.faUser"
+                      size="sm"
+                      [fixedWidth]="true"
+                      [pTooltip]="transalation+'.tooltipUserPassNotActive' | translate"
+                      [ngStyle]="{ 'color': '#D9DEE0' }"
+                    ></fa-icon>
+                  </div>
+                </ng-container>
+                <span>{{row[col.field]}}</span>
+              </ng-container>
+              <ng-template #other_content>
+                <p-inputSwitch
+                  *ngIf="noLimitOnOrLevelAction"
+                  [formControlName]="row.usr_id"
+                  (onChange)="onInputSwitch(row.usr_id)"
+                ></p-inputSwitch>
+              </ng-template>
+            </ng-template>
+          </td>
+          <td>
+            <spr-table-rec-actions [actionsList]="menuActions[row.usr_id]"></spr-table-rec-actions>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="rowexpansion" let-row>
+        <tr>
+          <td colspan="8">
+            <p-table [value]="row.org_list" dataKey="ou_id" class="user-orgs__expanded-rows">
+              <ng-template pTemplate="header" let-org let-index="rowIndex">
+                <tr>
+                  <th *ngFor="let col of expansionColumns">
+                    {{transalation+'.'+col.field | translate}}
+                  </th>
+                  <th></th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-org>
+                <tr>
+                  <td *ngFor="let col of expansionColumns">
+                    <span class="p-column-title " style="width: auto;">
+                      {{transalation+'.'+col.field |translate}}
+                    </span>
+                    <span>{{org[col.field]}}</span>
+                  </td>
+                  <td>
+                    <span class="user-orgs____user-buttons-wrapper">
+                      <spr-button
+                        type="button"
+                        iconName="faUserGroup"
+                        class="spr-button-primary-hollow sm"
+                        (click)="navigateToUserOrgRoleBrowse(org, row)"
+                        [pTooltip]="transalation+'.tooltipUserRolesText' | translate"
+                      ></spr-button
+                    ></span>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage" translate>
+        <tr>
+          <td [attr.colspan]="cols.length + 1">
+            <spr-table-no-rec-found></spr-table-no-rec-found>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </form>
+</spr-content-box>

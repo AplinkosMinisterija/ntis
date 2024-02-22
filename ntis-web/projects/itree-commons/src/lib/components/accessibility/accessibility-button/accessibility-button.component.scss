@@ -1,0 +1,20 @@
+.accessibility-button {
+  @apply flex flex-col gap-2 px-3 py-2 border-2 w-full rounded-md transition-colors
+  text-neutral-700 bg-neutral-0 border-neutral-200 hover:text-neutral-800 hover:bg-neutral-50 hover:border-neutral-300;
+
+  &__label {
+    @apply flex w-full justify-center items-center gap-2;
+  }
+
+  &__progress {
+    @apply flex w-full gap-2;
+  }
+
+  &__progress-bar {
+    @apply bg-neutral-200 group-hover:bg-neutral-300 h-1 grow rounded-sm transition-colors;
+
+    &--filled {
+      @apply bg-primary-500 group-hover:bg-primary-500;
+    }
+  }
+}

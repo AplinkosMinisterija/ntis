@@ -1,0 +1,28 @@
+<ntis-accordion [label]="(translationsReference + '.legend' | translate)" [uppercase]="true" [asCard]="hideAccordion">
+  <div class="spr-form-items-flex">
+    <spr-info-line [name]="translationsReference + '.name' | translate" [value]="name"></spr-info-line>
+    <spr-info-line [name]="translationsReference + '.org_name' | translate" [value]="org_name"></spr-info-line>
+    <spr-info-line [name]="translationsReference + '.email' | translate" [value]="email"></spr-info-line>
+    <spr-info-line [name]="translationsReference + '.phone' | translate" [value]="phone"></spr-info-line>
+    <spr-info-line
+      *ngIf="csId === null || csId === undefined; else priceWithContractBlock"
+      [name]="translationsReference + '.price_from' | translate"
+      [value]="price_to ? ((translationsReference + '.priceText') | translate: {priceFrom: price_from, priceTo: price_to}) :'Nuo ' + price_from + ' EUR'"
+    ></spr-info-line>
+    <ng-template #priceWithContractBlock>
+      <spr-info-line
+        [name]="translationsReference + '.priceCot' | translate"
+        [value]="price_from + ' EUR'"
+      ></spr-info-line>
+    </ng-template>
+    <spr-info-line
+      [name]="translationsReference + '.completion_time_in_days' | translate"
+      [value]=" (translationsReference + '.completionTimeText') | translate: {completionTime: completion_time_in_days}"
+    ></spr-info-line>
+    <spr-info-line
+      [name]="translationsReference + '.description' | translate"
+      textDisplay="editor"
+      [value]="description"
+    ></spr-info-line>
+  </div>
+</ntis-accordion>

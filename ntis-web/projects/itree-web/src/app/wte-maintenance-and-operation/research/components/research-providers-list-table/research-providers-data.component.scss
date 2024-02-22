@@ -1,0 +1,47 @@
+.table-wrapper {
+  @apply grid grid-cols-1 lg:grid-cols-2 gap-1;
+}
+
+.first-column {
+  @apply flex flex-col;
+
+  &__title{
+      @apply px-1 font-semibold bg-neutral-100 flex h-8 items-center justify-start;
+  }
+}
+
+.btn-toggle {
+  @apply flex lg:ml-16 items-center justify-center h-20;
+}
+
+.btn-toggle button {
+  @apply font-medium bg-neutral-0 hover:bg-neutral-0 sm:text-xl text-base pl-0;
+}
+
+.second-column{
+  @apply flex flex-col;
+
+  &__title {
+    @apply flex flex-col sm:flex-row sm:justify-between sm:h-8 h-fit px-1 font-semibold bg-neutral-100 sm:items-center;
+  }
+}
+
+.btn-wrapper {
+  @apply flex justify-end items-center gap-5 py-2 px-1 h-20;
+}
+
+.btn-wrapper span {
+  @apply font-medium sm:text-xl text-base;
+}
+
+.btn-wrapper button {
+  @apply w-32 text-base;
+}
+
+.toggle-text {
+  @apply mb-3 text-sm hidden lg:block;
+}
+
+.toggle-text-mobile {
+  @apply mb-3 text-sm lg:hidden block;
+}

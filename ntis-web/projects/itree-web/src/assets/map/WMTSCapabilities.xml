@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Capabilities xmlns="http://www.opengis.net/wmts/1.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:gml="http://www.opengis.net/gml" xsi:schemaLocation="http://www.opengis.net/wmts/1.0 http://schemas.opengis.net/wmts/1.0/wmtsGetCapabilities_response.xsd" version="1.0.0">
+<!-- Service Identification --> <ows:ServiceIdentification>
+<ows:Title>geoportal_public_background_Lietuva_102100</ows:Title>
+<ows:ServiceType>OGC WMTS</ows:ServiceType>
+<ows:ServiceTypeVersion>1.0.0</ows:ServiceTypeVersion>
+</ows:ServiceIdentification> <!-- Operations Metadata --> <ows:OperationsMetadata>
+<ows:Operation name="GetCapabilities">
+<ows:DCP>
+<ows:HTTP>
+<ows:Get xlink:href="http://www.geoportal.lt/arcgis/rest/services/NZT/ORT10LT_Web_Mercator_102100/MapServer/WMTS/1.0.0/WMTSCapabilities.xml">
+<ows:Constraint name="GetEncoding">
+<ows:AllowedValues>
+<ows:Value>RESTful</ows:Value>
+</ows:AllowedValues>
+</ows:Constraint>
+</ows:Get>
+<!-- add KVP binding in 10.1 -->
+<ows:Get xlink:href="http://www.geoportal.lt/arcgis/rest/services/NZT/ORT10LT_Web_Mercator_102100/MapServer/WMTS?">
+<ows:Constraint name="GetEncoding">
+<ows:AllowedValues>
+<ows:Value>KVP</ows:Value>
+</ows:AllowedValues>
+</ows:Constraint>
+</ows:Get>
+</ows:HTTP>
+</ows:DCP>
+</ows:Operation>
+<ows:Operation name="GetTile">
+<ows:DCP>
+<ows:HTTP>
+<ows:Get xlink:href="http://www.geoportal.lt/arcgis/rest/services/NZT/ORT10LT_Web_Mercator_102100/MapServer/WMTS/tile/1.0.0/">
+<ows:Constraint name="GetEncoding">
+<ows:AllowedValues>
+<ows:Value>RESTful</ows:Value>
+</ows:AllowedValues>
+</ows:Constraint>
+</ows:Get>
+<ows:Get xlink:href="http://www.geoportal.lt/arcgis/rest/services/NZT/ORT10LT_Web_Mercator_102100/MapServer/WMTS?">
+<ows:Constraint name="GetEncoding">
+<ows:AllowedValues>
+<ows:Value>KVP</ows:Value>
+</ows:AllowedValues>
+</ows:Constraint>
+</ows:Get>
+</ows:HTTP>
+</ows:DCP>
+</ows:Operation>
+</ows:OperationsMetadata> <Contents>
+<!--Layer--> <Layer>
+<ows:Title>geoportal_public_background_Lietuva_102100</ows:Title> <ows:Identifier>geoportal_public_background_Lietuva_102100</ows:Identifier>
+<ows:BoundingBox crs="urn:ogc:def:crs:EPSG::3857">
+<ows:LowerCorner>2297058.737219941 7130563.038177999</ows:LowerCorner>
+<ows:UpperCorner>3010382.2228892464 7662460.251366146</ows:UpperCorner>
+</ows:BoundingBox> <ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+<ows:LowerCorner>20.634829721649602 53.790415715838755</ows:LowerCorner>
+<ows:UpperCorner>27.042723618631097 56.51912345211053</ows:UpperCorner>
+</ows:WGS84BoundingBox>
+<Style isDefault="true">
+<ows:Title>Default Style</ows:Title>
+<ows:Identifier>default</ows:Identifier>
+</Style>
+<Format>image/jpgpng</Format>
+<TileMatrixSetLink>
+<TileMatrixSet>default028mm</TileMatrixSet>
+</TileMatrixSetLink>
+<ResourceURL format="image/jpgpng" resourceType="tile" template="https://www.geoportal.lt/mapproxy/gisc_pagrindinis_wm/MapServer/tile/{TileMatrix}/{TileRow}/{TileCol}"/>
+</Layer> <!--TileMatrixSet-->
+<TileMatrixSet>
+<ows:Title>TileMatrix using 0.28mm</ows:Title>
+<ows:Abstract>The tile matrix set that has scale values calculated based on the dpi defined by OGC specification (dpi assumes 0.28mm as the physical distance of a pixel).</ows:Abstract> <ows:Identifier>default028mm</ows:Identifier>
+<ows:SupportedCRS>urn:ogc:def:crs:EPSG::3857</ows:SupportedCRS>
+<TileMatrix>
+<ows:Identifier>0</ows:Identifier>
+<ScaleDenominator>8367830.187722647</ScaleDenominator>
+<TopLeftCorner>-2.0037508342787E7 2.0037508342787E7</TopLeftCorner> <TileWidth>256</TileWidth> <TileHeight>256</TileHeight>
+<MatrixWidth>74</MatrixWidth> <MatrixHeight>84</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>1</ows:Identifier>
+<ScaleDenominator>4367830.187722647</ScaleDenominator>
+<TopLeftCorner>-2.0037508342787E7 2.0037508342787E7</TopLeftCorner> <TileWidth>256</TileWidth> <TileHeight>256</TileHeight>
+<MatrixWidth>74</MatrixWidth> <MatrixHeight>84</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>2</ows:Identifier>
+<ScaleDenominator>2183915.0938617955</ScaleDenominator>
+<TopLeftCorner>-2.0037508342787E7 2.0037508342787E7</TopLeftCorner> <TileWidth>256</TileWidth> <TileHeight>256</TileHeight>
+<MatrixWidth>148</MatrixWidth> <MatrixHeight>167</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>3</ows:Identifier>
+<ScaleDenominator>1091957.5469304253</ScaleDenominator>
+<TopLeftCorner>-2.0037508342787E7 2.0037508342787E7</TopLeftCorner> <TileWidth>256</TileWidth> <TileHeight>256</TileHeight>
+<MatrixWidth>295</MatrixWidth> <MatrixHeight>334</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>4</ows:Identifier>
+<ScaleDenominator>545978.7734656851</ScaleDenominator>
+<TopLeftCorner>-2.0037508342787E7 2.0037508342787E7</TopLeftCorner> <TileWidth>256</TileWidth> <TileHeight>256</TileHeight>
+<MatrixWidth>589</MatrixWidth> <MatrixHeight>668</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>5</ows:Identifier>
+<ScaleDenominator>272989.38673237007</ScaleDenominator>
+<TopLeftCorner>-2.0037508342787E7 2.0037508342787E7</TopLeftCorner> <TileWidth>256</TileWidth> <TileHeight>256</TileHeight>
+<MatrixWidth>1178</MatrixWidth> <MatrixHeight>1336</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>6</ows:Identifier>
+<ScaleDenominator>136494.69336618503</ScaleDenominator>
+<TopLeftCorner>-2.0037508342787E7 2.0037508342787E7</TopLeftCorner> <TileWidth>256</TileWidth> <TileHeight>256</TileHeight>
+<MatrixWidth>2356</MatrixWidth> <MatrixHeight>2672</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>7</ows:Identifier>
+<ScaleDenominator>68247.34668309252</ScaleDenominator>
+<TopLeftCorner>-2.0037508342787E7 2.0037508342787E7</TopLeftCorner> <TileWidth>256</TileWidth> <TileHeight>256</TileHeight>
+<MatrixWidth>4712</MatrixWidth> <MatrixHeight>5343</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>8</ows:Identifier>
+<ScaleDenominator>34123.67334154626</ScaleDenominator>
+<TopLeftCorner>-2.0037508342787E7 2.0037508342787E7</TopLeftCorner> <TileWidth>256</TileWidth> <TileHeight>256</TileHeight>
+<MatrixWidth>9423</MatrixWidth> <MatrixHeight>10685</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>9</ows:Identifier>
+<ScaleDenominator>17061.836671245605</ScaleDenominator>
+<TopLeftCorner>-2.0037508342787E7 2.0037508342787E7</TopLeftCorner> <TileWidth>256</TileWidth> <TileHeight>256</TileHeight>
+<MatrixWidth>18846</MatrixWidth> <MatrixHeight>21370</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>10</ows:Identifier>
+<ScaleDenominator>8530.918335622802</ScaleDenominator>
+<TopLeftCorner>-2.0037508342787E7 2.0037508342787E7</TopLeftCorner> <TileWidth>256</TileWidth> <TileHeight>256</TileHeight>
+<MatrixWidth>37692</MatrixWidth> <MatrixHeight>42739</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>11</ows:Identifier>
+<ScaleDenominator>4265.459167338929</ScaleDenominator>
+<TopLeftCorner>-2.0037508342787E7 2.0037508342787E7</TopLeftCorner> <TileWidth>256</TileWidth> <TileHeight>256</TileHeight>
+<MatrixWidth>75383</MatrixWidth> <MatrixHeight>85478</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>12</ows:Identifier>
+<ScaleDenominator>2132.729584141936</ScaleDenominator>
+<TopLeftCorner>-2.0037508342787E7 2.0037508342787E7</TopLeftCorner> <TileWidth>256</TileWidth> <TileHeight>256</TileHeight>
+<MatrixWidth>150766</MatrixWidth> <MatrixHeight>170955</MatrixHeight>
+</TileMatrix>
+</TileMatrixSet>
+</Contents>
+<ServiceMetadataURL xlink:href="http://www.geoportal.lt/arcgis/rest/services/NZT/ORT10LT_Web_Mercator_102100/MapServer/WMTS/1.0.0/WMTSCapabilities.xml"/> </Capabilities>

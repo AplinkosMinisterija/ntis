@@ -1,0 +1,33 @@
+<ul *ngIf="breadcrumbsService.breadcrumbs?.length > 1" class="breadcrumbs">
+  <li *ngFor="let breadcrumb of breadcrumbsService.breadcrumbs; let first = first; let last = last;" class="breadcrumb">
+    <fa-icon
+      *ngIf="!first"
+      class="breadcrumb__icon"
+      [icon]="faIconsService.fas.faChevronRight"
+      [fixedWidth]="true"
+    ></fa-icon>
+    <a
+      *ngIf="breadcrumb.url !== null"
+      class="breadcrumb__link"
+      [ngClass]="{'breadcrumb__link--last': last}"
+      [routerLink]="breadcrumb.url"
+      [state]="{keepFilters: !!breadcrumb.keepFilters}"
+      ><fa-icon
+        *ngIf="breadcrumb.icon"
+        class="breadcrumb__text-icon"
+        [icon]="faIconsService[breadcrumb.icon.iconStyle][breadcrumb.icon.iconName]"
+        [fixedWidth]="true"
+      ></fa-icon
+      >{{breadcrumb.translate ? (breadcrumb.name | translate) : breadcrumb.name}}</a
+    >
+    <span *ngIf="!breadcrumb.url" class="breadcrumb__text"
+      ><fa-icon
+        *ngIf="breadcrumb.icon"
+        class="breadcrumb__text-icon"
+        [icon]="faIconsService[breadcrumb.icon.iconStyle][breadcrumb.icon.iconName]"
+        [fixedWidth]="true"
+      ></fa-icon
+      >{{breadcrumb.translate ? (breadcrumb.name | translate) : breadcrumb.name}}</span
+    >
+  </li>
+</ul>

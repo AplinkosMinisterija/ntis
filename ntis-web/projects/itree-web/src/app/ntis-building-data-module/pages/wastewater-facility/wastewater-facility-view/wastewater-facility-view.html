@@ -1,0 +1,203 @@
+<spr-content-box [headerText]="treatmentFacilityReview + '.headerText'" transformingText="uppercase">
+  <section class="preview">
+    <div class="preview__body">
+      <ntis-accordion
+        [label]="(treatmentFacilityReview + '.treatmentFacility' | translate)"
+        [asCard]="true"
+        [uppercase]="true"
+      >
+        <spr-info-line
+          [name]="treatmentFacilityReview + '.identifier' | translate"
+          value="{{data.wtf_id}}"
+        ></spr-info-line>
+
+        <spr-info-line
+          [name]="treatmentFacilityReview + '.status' | translate"
+          [value]="data.wtf_state"
+        ></spr-info-line>
+
+        <spr-info-line
+          [name]="treatmentFacilityReview + '.address' | translate"
+          [value]="!data.full_address_text ? data.wtf_latitude+','+ data.wtf_longitude : data.full_address_text"
+        ></spr-info-line>
+
+        <spr-info-line [name]="treatmentFacilityReview + '.type' | translate" [value]="data.wtf_title"></spr-info-line>
+      </ntis-accordion>
+
+      <ntis-accordion
+        [label]="(treatmentFacilityReview + '.servedObject' | translate)"
+        [asCard]="true"
+        [uppercase]="true"
+        *ngIf="servedObjects.length > 0"
+      >
+        <ul>
+          <li *ngFor="let row of servedObjects">
+            <button
+              class="address-card"
+              (click)="openServedObject(row)"
+              [ngClass]="row.fo_so_id ? 'address-active' : 'address-inactive'"
+            >
+              <span class="address-card__item" *ngIf="row.so_address">
+                <spr-icon name="house"></spr-icon><span class="address-card__address-text">{{row.so_address}}</span>
+              </span>
+              <span class="address-card__item" *ngIf="row.so_latitude"
+                ><spr-icon name="location_on"></spr-icon
+                ><span class="address-card__coord-text">{{row.so_latitude}}, {{row.so_longitude}}</span>
+              </span>
+              <span class="address-card__item" *ngIf="row.so_purp_name || row.so_inv_code">
+                <spr-icon name="maps_home_work"></spr-icon
+                ><span class="address-card__coord-text">{{row.so_purp_name}} {{row.so_inv_code}}</span>
+              </span>
+            </button>
+          </li>
+        </ul>
+      </ntis-accordion>
+
+      <ntis-accordion
+        [label]="(treatmentFacilityReview + '.infoAboutFacility' | translate)"
+        [asCard]="true"
+        [uppercase]="true"
+      >
+        <spr-info-line
+          *ngIf="data.wtf_type === typeSewageFacilityEnum.portableReservoir"
+          [name]="treatmentFacilityReview + '.wtfIdentificationNumber' | translate"
+          [value]="data.wtf_identification_number"
+        ></spr-info-line>
+        <spr-info-line
+          *ngIf="data.wtf_type !== typeSewageFacilityEnum.reservoir && data.wtf_type !== typeSewageFacilityEnum.portableReservoir"
+          [name]="treatmentFacilityReview + '.technicalPassport' | translate"
+          [value]="data.wtf_technical_passport_id"
+        ></spr-info-line>
+
+        <spr-info-line
+          *ngIf="data.wtf_type !== typeSewageFacilityEnum.reservoir && data.wtf_type !== typeSewageFacilityEnum.portableReservoir"
+          [name]="treatmentFacilityReview + '.manufacturer' | translate"
+          [value]="data.wtf_manufacturer"
+        ></spr-info-line>
+        <spr-info-line
+          *ngIf="data.wtf_model && data.wtf_type !== typeSewageFacilityEnum.reservoir && data.wtf_type !== typeSewageFacilityEnum.portableReservoir"
+          [name]="treatmentFacilityReview + '.model' | translate"
+          [value]="data.wtf_model"
+        ></spr-info-line>
+        <spr-info-line
+          *ngIf="!data.wtf_model  && data.wtf_type !== typeSewageFacilityEnum.reservoir && data.wtf_type !== typeSewageFacilityEnum.portableReservoir"
+          [name]="treatmentFacilityReview + '.modelDescription' | translate"
+          [value]="data.wtf_manufacturer_description"
+        ></spr-info-line>
+        <spr-info-line
+          *ngIf="data?.fam_pop_equivalent"
+          [name]="treatmentFacilityReview + '.famPop' | translate"
+          [value]="data.fam_pop_equivalent + ''"
+        ></spr-info-line>
+
+        <spr-info-line
+          *ngIf="data?.fam_chds"
+          [name]="treatmentFacilityReview + '.chds' | translate"
+          [value]="data.fam_chds + ''"
+        ></spr-info-line>
+
+        <spr-info-line
+          *ngIf="data?.fam_bds"
+          [name]="treatmentFacilityReview + '.bds' | translate"
+          [value]="data.fam_bds + ''"
+        ></spr-info-line>
+
+        <spr-info-line
+          *ngIf="data?.fam_float_material"
+          [name]="treatmentFacilityReview + '.float' | translate"
+          [value]="data.fam_float_material + ''"
+        ></spr-info-line>
+
+        <spr-info-line
+          *ngIf="data?.fam_phosphor"
+          [name]="treatmentFacilityReview + '.phosphor' | translate"
+          [value]="data.fam_phosphor + ''"
+        ></spr-info-line>
+        <spr-info-line
+          *ngIf="data?.fam_nitrogen"
+          [name]="treatmentFacilityReview + '.nitrogen'| translate"
+          [value]="data.fam_nitrogen + ''"
+        ></spr-info-line>
+
+        <spr-info-line
+          [name]="treatmentFacilityReview + '.installiationDate' | translate"
+          [value]="data.wtf_installation_date | s2Date"
+        ></spr-info-line>
+        <spr-info-line
+          [name]="treatmentFacilityReview + '.removeDate' | translate"
+          [value]="data.wtf_checkout_date | s2Date"
+        ></spr-info-line>
+
+        <spr-info-line
+          *ngIf="data.wtf_type === typeSewageFacilityEnum.reservoir || data.wtf_type === typeSewageFacilityEnum.portableReservoir"
+          [name]="treatmentFacilityReview + '.wtfCapacity' | translate"
+          [value]="data.wtf_capacity"
+        ></spr-info-line>
+
+        <spr-info-line
+          [name]="treatmentFacilityReview + '.distance' | translate"
+          [value]="!data.wtf_distance ? '' : data.wtf_distance +' m' "
+        ></spr-info-line>
+
+        <ul class="files">
+          <li *ngFor="let item of files">
+            <div *ngIf="item?.fil_key">
+              <button type="button" (click)="downloadFile(item)" class="files__button">
+                <spr-icon name="description" class="files__icon"></spr-icon>
+                <span class="files__text">{{item.fil_name}}</span>
+              </button>
+            </div>
+          </li>
+        </ul>
+      </ntis-accordion>
+
+      <ntis-accordion
+        *ngIf="data.wtf_type !== typeSewageFacilityEnum.reservoir && data.wtf_type !== typeSewageFacilityEnum.portableReservoir"
+        [label]="(treatmentFacilityReview + '.graduationInformation' | translate)"
+        [asCard]="true"
+        [uppercase]="true"
+      >
+        <spr-info-line
+          [name]="treatmentFacilityReview + '.graduationLocation' | translate"
+          [value]="!data.full_address_text ? data.wtf_latitude+','+ data.wtf_longitude : data.full_address_text"
+        ></spr-info-line>
+        <spr-info-line
+          [name]="treatmentFacilityReview + '.publisherContent' | translate"
+          [value]="data.wtf_discharge_wastewater_type"
+        ></spr-info-line>
+      </ntis-accordion>
+      <ntis-accordion
+        [label]="(treatmentFacilityReview + '.systemInfo' | translate)"
+        [asCard]="true"
+        [uppercase]="true"
+      >
+        <spr-info-line
+          [name]="treatmentFacilityReview + '.dataSrc' | translate"
+          [value]="data.wtf_data_source"
+        ></spr-info-line>
+        <spr-info-line
+          [name]="treatmentFacilityReview + '.registerdAt' | translate"
+          [value]="data.wtf_created_at | s2Date"
+        ></spr-info-line>
+        <spr-info-line
+          [name]="treatmentFacilityReview + '.registeredBy' | translate"
+          [value]="data.wtf_created_by"
+        ></spr-info-line>
+        <spr-info-line
+          *ngIf="data.wtf_updated_at"
+          [name]="treatmentFacilityReview + '.lastUpdate' | translate"
+          [value]="data.wtf_updated_at | s2Date"
+        ></spr-info-line>
+        <spr-info-line
+          *ngIf="data.wtf_updated_by"
+          [name]="treatmentFacilityReview + '.updatdBy' | translate"
+          [value]="data.wtf_updated_by"
+        ></spr-info-line>
+      </ntis-accordion>
+    </div>
+  </section>
+  <div class="spr-form-buttons mt-8">
+    <spr-button class="ntis-button-link" (click)="goBack()"> {{'common.action.back' | translate}} </spr-button>
+    <spr-button class="spr-button-primary" (click)="goEdit()"> {{'common.action.edit' | translate}} </spr-button>
+  </div>
+</spr-content-box>

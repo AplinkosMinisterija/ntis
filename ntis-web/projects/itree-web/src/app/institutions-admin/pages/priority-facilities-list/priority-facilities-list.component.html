@@ -1,0 +1,155 @@
+<spr-content-box headerText="institutionsAdmin.pages.priorityFacilitiesList.headerText" transformingText="uppercase">
+  <div class="spr-browse-actions-wrapper">
+    <spr-browse-search-form [formGroup]="searchForm" [formCode]="formCode" (search)="search(dataTableComponent)">
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="20"
+        formControlName="org_name"
+        [placeholder]="translationsReference + '.org_name' | translate"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+      ></spr-filter-input>
+      <spr-select
+        formControlName="wto_selected"
+        classifierCode="SPR_IS_PUBLIC_TYPE"
+        [placeholder]="translationsReference + '.wto_selected' | translate"
+        [advancedFilterParams]="true"
+      ></spr-select>
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="20"
+        formControlName="wto_name"
+        [placeholder]="translationsReference + '.wto_name' | translate"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="20"
+        formControlName="wto_address"
+        [placeholder]="translationsReference + '.wto_address' | translate"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+      ></spr-filter-input>
+      <spr-table-data-export
+        buttons
+        [translation]="translationsReference"
+        [tableColumn]="cols"
+        [tableData]="exportData"
+        [fileName]="translationsReference + '.headerText'"
+        (exportAllRecEvent)="loadAllRecords($event, dataTableComponent)"
+      ></spr-table-data-export>
+    </spr-browse-search-form>
+  </div>
+  <p-table
+    [value]="data"
+    dataKey="org_id"
+    rowExpandMode="single"
+    [lazy]="true"
+    (onLazyLoad)="loadDataLazy($event)"
+    [autoLayout]="true"
+    [rowHover]="true"
+    [rows]="showRows"
+    [totalRecords]="totalRecords"
+    [paginator]="data?.length > 0"
+    [rowsPerPageOptions]="rowsPerPageOptions"
+    [showFirstLastIcon]="false"
+    responsiveLayout="stack"
+    breakpoint="767px"
+  >
+    <ng-template pTemplate="header" let-row>
+      <tr>
+        <th></th>
+        <th>
+          <span class="table-header-col">
+            {{translationsReference + '.waterManager' | translate}}
+          </span>
+        </th>
+        <th></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row let-expanded="expanded">
+      <tr>
+        <td class="button-wrapper">
+          <button
+            type="button"
+            pButton
+            pRipple
+            [pRowToggler]="row"
+            class="p-button-text p-button-rounded p-button-plain"
+            [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
+          ></button>
+        </td>
+        <td>
+          <span>{{row.org_name}}</span>
+          <span class="p-column-title">{{row.org_name}}</span>
+        </td>
+        <td class="info-icon-wrapper">
+          <app-priority-facilities-org [data]="row"></app-priority-facilities-org>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="rowexpansion" let-row>
+      <tr>
+        <td colspan="3">
+          <p-table [value]="row.facilities_info" dataKey="wto_id">
+            <ng-template pTemplate="header">
+              <tr>
+                <th>{{translationsReference + '.wto_selected' | translate}}</th>
+                <th>{{translationsReference + '.treatmentFacility' | translate}}</th>
+                <th>{{translationsReference + '.wtfAddress' | translate}}</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-org>
+              <tr>
+                <td class="checkbox-wrapper">
+                  <input
+                    type="checkbox"
+                    class="spr-checkbox"
+                    id="setPriority"
+                    (change)="onCheckboxChange($event, org, row.org_id)"
+                    [checked]="org.wto_selected === DB_BOOLEAN_TRUE ? true : false"
+                    [disabled]="!allowManageList"
+                    [value]="org.wto_id"
+                    [(ngModel)]="checkboxState[org.wto_id]"
+                  />
+                </td>
+                <td>
+                  <span class="p-column-title">{{org.wto_name}}</span>
+                  <span>{{org.wto_name}}</span>
+                </td>
+                <td>
+                  <span class="p-column-title">{{org.wto_address}}</span>
+                  <span>{{org.wto_address}}</span>
+                </td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage" translate>
+              <tr>
+                <td [attr.colspan]="cols.length ">
+                  <spr-table-no-rec-found></spr-table-no-rec-found>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage" translate>
+      <tr>
+        <td [attr.colspan]="cols.length ">
+          <spr-table-no-rec-found></spr-table-no-rec-found>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+  <div class="action-buttons">
+    <spr-button type="button" class="ntis-button-link" (click)="onCancel()">
+      {{'common.action.back' | translate}}
+    </spr-button>
+    <spr-button type="submit" class="spr-button-primary" iconName="faSave" (click)="doSave()">
+      {{'common.action.save' | translate}}
+    </spr-button>
+  </div>
+</spr-content-box>

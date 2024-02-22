@@ -1,0 +1,102 @@
+@layer components {
+  %spr-button {
+    @apply flex justify-center items-center gap-2 text-neutral-0 font-bold rounded py-2 px-3;
+  }
+
+  %spr-button-disabled {
+    @apply cursor-pointer;
+    filter: grayscale(0.8) brightness(0.8) contrast(0.8);
+  }
+
+  %spr-button-hollow {
+    @extend %spr-button;
+    @apply bg-transparent ring-2 ring-inset;
+  }
+
+  %spr-button-hollow-disabled {
+    @extend %spr-button-disabled;
+    @apply bg-neutral-900 bg-opacity-30;
+  }
+
+  .spr-button-primary {
+    @extend %spr-button;
+    @apply bg-primary-500 text-neutral-0 hover:bg-primary-600 active:bg-primary-700;
+    &:disabled {
+      @extend %spr-button-disabled;
+    }
+  }
+
+  .spr-button-primary-light {
+    @extend %spr-button;
+    @apply px-0 text-primary-500 hover:text-primary-600 active:text-primary-700;
+    &:disabled {
+      @extend %spr-button-disabled;
+    }
+  }
+
+  .spr-button-primary-hollow {
+    @extend %spr-button-hollow;
+    @apply text-primary-500 ring-neutral-300 
+            hover:ring-primary-500
+            active:text-neutral-0 active:ring-primary-500 active:bg-primary-500;
+    &:disabled {
+      @extend %spr-button-hollow-disabled;
+    }
+  }
+
+  .spr-button-secondary {
+    @extend %spr-button;
+    @apply text-neutral-900 bg-neutral-300 hover:bg-neutral-500 active:bg-neutral-600;
+    &:disabled {
+      @extend %spr-button-disabled;
+    }
+    &:enabled:hover {
+      // overriding primeng p-button hover style
+      @apply text-neutral-900;
+    }
+  }
+
+  .spr-button-neutral-light {
+    @extend %spr-button;
+    @apply px-0 text-neutral-500 hover:text-neutral-600 active:text-neutral-700;
+    &:disabled {
+      @extend %spr-button-disabled;
+    }
+  }
+
+  .spr-button-secondary-hollow {
+    @extend %spr-button-hollow;
+    @apply text-primary-500 ring-neutral-300 
+           hover:text-neutral-0 hover:ring-secondary-500 hover:bg-secondary-500
+           active:text-neutral-0 active:ring-secondary-500 active:bg-secondary-500;
+    &:disabled {
+      @extend %spr-button-hollow-disabled;
+    }
+  }
+
+  .spr-button-risk {
+    @extend %spr-button;
+    @apply bg-risk-500 text-neutral-0 hover:bg-risk-600 active:bg-risk-700;
+    &:disabled {
+      @extend %spr-button-disabled;
+    }
+  }
+
+  .spr-button-risk-light {
+    @extend %spr-button;
+    @apply px-0 text-risk-500 hover:text-risk-600 active:text-risk-700;
+    &:disabled {
+      @extend %spr-button-disabled;
+    }
+  }
+
+  .spr-button-risk-hollow {
+    @extend %spr-button-hollow;
+    @apply text-risk-500 ring-neutral-300 
+           hover:text-risk-600 hover:ring-risk-600
+           active:text-risk-700 active:ring-risk-700;
+    &:disabled {
+      @extend %spr-button-hollow-disabled;
+    }
+  }
+}

@@ -1,0 +1,11 @@
+:host {
+  @apply block w-full py-2;
+}
+
+.invalid-feedback {
+  @apply text-risk-500 text-xs py-1 leading-none;
+}
+
+.info-text {
+  @apply min-h-5 mt-1 text-xs leading-none;
+}

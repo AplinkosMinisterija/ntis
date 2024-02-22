@@ -1,0 +1,514 @@
+@import url(https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap);
+.container {
+  width: 100%;
+}
+@media (min-width: 640px) {
+  .container {
+    max-width: 640px;
+  }
+}
+@media (min-width: 768px) {
+  .container {
+    max-width: 768px;
+  }
+}
+@media (min-width: 1024px) {
+  .container {
+    max-width: 1024px;
+  }
+}
+@media (min-width: 1280px) {
+  .container {
+    max-width: 1280px;
+  }
+}
+@media (min-width: 1536px) {
+  .container {
+    max-width: 1536px;
+  }
+}
+.veriffy-css-scope :is(.absolute) {
+  position: absolute;
+}
+.veriffy-css-scope :is(.relative) {
+  position: relative;
+}
+.veriffy-css-scope :is(.-top-px-4) {
+  top: -4px;
+}
+.veriffy-css-scope :is(.z-10) {
+  z-index: 10;
+}
+.veriffy-css-scope :is(.z-50) {
+  z-index: 50;
+}
+.veriffy-css-scope :is(.box-border) {
+  box-sizing: border-box;
+}
+.veriffy-css-scope :is(.flex) {
+  display: -ms-flexbox;
+  display: flex;
+}
+.veriffy-css-scope :is(.h-em-1) {
+  height: 1em;
+}
+.veriffy-css-scope :is(.h-em-1-1\/2) {
+  height: 1.5em;
+}
+.veriffy-css-scope :is(.h-em-1-1\/4) {
+  height: 1.25em;
+}
+.veriffy-css-scope :is(.h-em-1-12\/16) {
+  height: 1.75em;
+}
+.veriffy-css-scope :is(.h-em-2-1\/2) {
+  height: 2.5em;
+}
+.veriffy-css-scope :is(.h-em-5) {
+  height: 5em;
+}
+.veriffy-css-scope :is(.h-full) {
+  height: 100%;
+}
+.veriffy-css-scope :is(.h-px-8) {
+  height: 8px;
+}
+.veriffy-css-scope :is(.min-h-px-320) {
+  min-height: 320px;
+}
+.veriffy-css-scope :is(.min-h-px-384) {
+  min-height: 384px;
+}
+.veriffy-css-scope :is(.min-h-px-400) {
+  min-height: 400px;
+}
+.veriffy-css-scope :is(.w-0) {
+  width: 0;
+}
+.veriffy-css-scope :is(.w-em-1) {
+  width: 1em;
+}
+.veriffy-css-scope :is(.w-em-1-1\/2) {
+  width: 1.5em;
+}
+.veriffy-css-scope :is(.w-em-1-1\/4) {
+  width: 1.25em;
+}
+.veriffy-css-scope :is(.w-em-1-12\/16) {
+  width: 1.75em;
+}
+.veriffy-css-scope :is(.w-em-2-1\/2) {
+  width: 2.5em;
+}
+.veriffy-css-scope :is(.w-em-5) {
+  width: 5em;
+}
+.veriffy-css-scope :is(.w-full) {
+  width: 100%;
+}
+.veriffy-css-scope :is(.w-pc-33) {
+  width: 33%;
+}
+.veriffy-css-scope :is(.w-px-1) {
+  width: 1px;
+}
+.veriffy-css-scope :is(.w-px-120) {
+  width: 120px;
+}
+.veriffy-css-scope :is(.w-px-256) {
+  width: 256px;
+}
+.veriffy-css-scope :is(.w-px-320) {
+  width: 320px;
+}
+.veriffy-css-scope :is(.w-px-432) {
+  width: 432px;
+}
+.veriffy-css-scope :is(.w-px-800) {
+  width: 800px;
+}
+.veriffy-css-scope :is(.min-w-px-192) {
+  min-width: 192px;
+}
+.veriffy-css-scope :is(.max-w-em-16) {
+  max-width: 16em;
+}
+.veriffy-css-scope :is(.max-w-full) {
+  max-width: 100%;
+}
+.veriffy-css-scope :is(.flex-1) {
+  -ms-flex: 1 1 0%;
+  flex: 1 1 0%;
+}
+.veriffy-css-scope :is(.flex-shrink-0) {
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+}
+@keyframes spin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+.veriffy-css-scope :is(.animate-spin) {
+  animation: spin 1s linear infinite;
+}
+.veriffy-css-scope :is(.cursor-default) {
+  cursor: default;
+}
+.veriffy-css-scope :is(.cursor-pointer) {
+  cursor: pointer;
+}
+.veriffy-css-scope :is(.flex-row) {
+  -ms-flex-direction: row;
+  flex-direction: row;
+}
+.veriffy-css-scope :is(.flex-col) {
+  -ms-flex-direction: column;
+  flex-direction: column;
+}
+.veriffy-css-scope :is(.flex-wrap) {
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+}
+.veriffy-css-scope :is(.items-center) {
+  -ms-flex-align: center;
+  align-items: center;
+}
+.veriffy-css-scope :is(.justify-center) {
+  -ms-flex-pack: center;
+  justify-content: center;
+}
+.veriffy-css-scope :is(.justify-between) {
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+}
+.veriffy-css-scope :is(.space-x-2 > :not([hidden]) ~ :not([hidden])) {
+  --tw-space-x-reverse: 0;
+  margin-left: calc(0.5rem * (1 - var(--tw-space-x-reverse)));
+  margin-right: calc(0.5rem * var(--tw-space-x-reverse));
+}
+.veriffy-css-scope :is(.space-x-em-0-1\/2 > :not([hidden]) ~ :not([hidden])) {
+  --tw-space-x-reverse: 0;
+  margin-left: calc(0.5em * (1 - var(--tw-space-x-reverse)));
+  margin-right: calc(0.5em * var(--tw-space-x-reverse));
+}
+.veriffy-css-scope :is(.space-x-em-0-1\/4 > :not([hidden]) ~ :not([hidden])) {
+  --tw-space-x-reverse: 0;
+  margin-left: calc(0.25em * (1 - var(--tw-space-x-reverse)));
+  margin-right: calc(0.25em * var(--tw-space-x-reverse));
+}
+.veriffy-css-scope :is(.space-x-em-0-12\/16 > :not([hidden]) ~ :not([hidden])) {
+  --tw-space-x-reverse: 0;
+  margin-left: calc(0.75em * (1 - var(--tw-space-x-reverse)));
+  margin-right: calc(0.75em * var(--tw-space-x-reverse));
+}
+.veriffy-css-scope :is(.space-x-em-0-2\/16 > :not([hidden]) ~ :not([hidden])) {
+  --tw-space-x-reverse: 0;
+  margin-left: calc(0.125em * (1 - var(--tw-space-x-reverse)));
+  margin-right: calc(0.125em * var(--tw-space-x-reverse));
+}
+.veriffy-css-scope :is(.space-x-em-1 > :not([hidden]) ~ :not([hidden])) {
+  --tw-space-x-reverse: 0;
+  margin-left: calc(1em * (1 - var(--tw-space-x-reverse)));
+  margin-right: calc(1em * var(--tw-space-x-reverse));
+}
+.veriffy-css-scope :is(.space-y-em-0-1\/2 > :not([hidden]) ~ :not([hidden])) {
+  --tw-space-y-reverse: 0;
+  margin-bottom: calc(0.5em * var(--tw-space-y-reverse));
+  margin-top: calc(0.5em * (1 - var(--tw-space-y-reverse)));
+}
+.veriffy-css-scope :is(.space-y-em-0-1\/4 > :not([hidden]) ~ :not([hidden])) {
+  --tw-space-y-reverse: 0;
+  margin-bottom: calc(0.25em * var(--tw-space-y-reverse));
+  margin-top: calc(0.25em * (1 - var(--tw-space-y-reverse)));
+}
+.veriffy-css-scope :is(.space-y-em-1 > :not([hidden]) ~ :not([hidden])) {
+  --tw-space-y-reverse: 0;
+  margin-bottom: calc(1em * var(--tw-space-y-reverse));
+  margin-top: calc(1em * (1 - var(--tw-space-y-reverse)));
+}
+.veriffy-css-scope :is(.space-y-em-1-1\/2 > :not([hidden]) ~ :not([hidden])) {
+  --tw-space-y-reverse: 0;
+  margin-bottom: calc(1.5em * var(--tw-space-y-reverse));
+  margin-top: calc(1.5em * (1 - var(--tw-space-y-reverse)));
+}
+.veriffy-css-scope :is(.space-y-em-2 > :not([hidden]) ~ :not([hidden])) {
+  --tw-space-y-reverse: 0;
+  margin-bottom: calc(2em * var(--tw-space-y-reverse));
+  margin-top: calc(2em * (1 - var(--tw-space-y-reverse)));
+}
+.veriffy-css-scope :is(.overflow-hidden) {
+  overflow: hidden;
+}
+.veriffy-css-scope :is(.break-words) {
+  overflow-wrap: break-word;
+}
+.veriffy-css-scope :is(.rounded) {
+  border-radius: 0.25rem;
+}
+.veriffy-css-scope :is(.rounded-full) {
+  border-radius: 9999px;
+}
+.veriffy-css-scope :is(.rounded-md) {
+  border-radius: 0.375rem;
+}
+.veriffy-css-scope :is(.border) {
+  border-width: 1px;
+}
+.veriffy-css-scope :is(.border-solid) {
+  border-style: solid;
+}
+.veriffy-css-scope :is(.border-none) {
+  border-style: none;
+}
+.veriffy-css-scope :is(.border-app-color-danger-10) {
+  --tw-border-opacity: 1;
+  border-color: rgb(243 49 0 / var(--tw-border-opacity));
+}
+.veriffy-css-scope :is(.border-app-color-neutral-30) {
+  --tw-border-opacity: 1;
+  border-color: rgb(211 222 229 / var(--tw-border-opacity));
+}
+.veriffy-css-scope :is(.border-app-color-neutral-40) {
+  --tw-border-opacity: 1;
+  border-color: rgb(167 188 204 / var(--tw-border-opacity));
+}
+.veriffy-css-scope :is(.bg-app-color-10) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(0 138 229 / var(--tw-bg-opacity));
+}
+.veriffy-css-scope :is(.bg-app-color-20) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(0 216 177 / var(--tw-bg-opacity));
+}
+.veriffy-css-scope :is(.bg-app-color-danger-20) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(247 235 237 / var(--tw-bg-opacity));
+}
+.veriffy-css-scope :is(.bg-app-color-neutral-20) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(235 242 245 / var(--tw-bg-opacity));
+}
+.veriffy-css-scope :is(.bg-app-color-neutral-30) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(211 222 229 / var(--tw-bg-opacity));
+}
+.veriffy-css-scope :is(.bg-green-200) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(187 247 208 / var(--tw-bg-opacity));
+}
+.veriffy-css-scope :is(.bg-transparent) {
+  background-color: transparent;
+}
+.veriffy-css-scope :is(.bg-white) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 255 255 / var(--tw-bg-opacity));
+}
+.veriffy-css-scope :is(.bg-yellow-200) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(254 240 138 / var(--tw-bg-opacity));
+}
+.veriffy-css-scope :is(.fill-current) {
+  fill: currentColor;
+}
+.veriffy-css-scope :is(.p-0) {
+  padding: 0;
+}
+.veriffy-css-scope :is(.p-em-0-10\/16) {
+  padding: 0.625em;
+}
+.veriffy-css-scope :is(.p-em-1) {
+  padding: 1em;
+}
+.veriffy-css-scope :is(.p-em-1-1\/2) {
+  padding: 1.5em;
+}
+.veriffy-css-scope :is(.px-em-0-10\/16) {
+  padding-left: 0.625em;
+  padding-right: 0.625em;
+}
+.veriffy-css-scope :is(.px-em-0-12\/16) {
+  padding-left: 0.75em;
+  padding-right: 0.75em;
+}
+.veriffy-css-scope :is(.px-em-0-6\/16) {
+  padding-left: 0.375em;
+  padding-right: 0.375em;
+}
+.veriffy-css-scope :is(.px-em-0-8\/16) {
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+}
+.veriffy-css-scope :is(.px-em-1) {
+  padding-left: 1em;
+  padding-right: 1em;
+}
+.veriffy-css-scope :is(.py-em-0-10\/16) {
+  padding-bottom: 0.625em;
+  padding-top: 0.625em;
+}
+.veriffy-css-scope :is(.py-em-0-12\/16) {
+  padding-bottom: 0.75em;
+  padding-top: 0.75em;
+}
+.veriffy-css-scope :is(.py-em-0-4\/16) {
+  padding-bottom: 0.25em;
+  padding-top: 0.25em;
+}
+.veriffy-css-scope :is(.py-em-0-8\/16) {
+  padding-bottom: 0.5em;
+  padding-top: 0.5em;
+}
+.veriffy-css-scope :is(.py-em-1) {
+  padding-bottom: 1em;
+  padding-top: 1em;
+}
+.veriffy-css-scope :is(.pb-em-0-4\/16) {
+  padding-bottom: 0.25em;
+}
+.veriffy-css-scope :is(.pl-em-0-12\/16) {
+  padding-left: 0.75em;
+}
+.veriffy-css-scope :is(.pl-em-0-8\/16) {
+  padding-left: 0.5em;
+}
+.veriffy-css-scope :is(.pt-em-0-8\/16) {
+  padding-top: 0.5em;
+}
+.veriffy-css-scope :is(.text-center) {
+  text-align: center;
+}
+.veriffy-css-scope :is(.font-primary) {
+  font-family: Plus Jakarta Sans, -apple-system, BlinkMacSystemFont, Segoe UI, Oxygen, Ubuntu, Cantarell, Fira Sans,
+    Droid Sans, Helvetica Neue, sans-serif;
+}
+.veriffy-css-scope :is(.text-em-0-12\/16) {
+  font-size: 0.75em;
+}
+.veriffy-css-scope :is(.text-em-0-13\/16) {
+  font-size: 0.8125em;
+}
+.veriffy-css-scope :is(.text-em-0-14\/16) {
+  font-size: 0.875em;
+}
+.veriffy-css-scope :is(.text-em-0-15\/16) {
+  font-size: 0.9375em;
+}
+.veriffy-css-scope :is(.text-em-1) {
+  font-size: 1em;
+}
+.veriffy-css-scope :is(.text-em-1-4\/16) {
+  font-size: 1.25em;
+}
+.veriffy-css-scope :is(.text-em-2-4\/16) {
+  font-size: 2.25em;
+}
+.veriffy-css-scope :is(.font-bold) {
+  font-weight: 700;
+}
+.veriffy-css-scope :is(.font-semibold) {
+  font-weight: 600;
+}
+.veriffy-css-scope :is(.normal-case) {
+  text-transform: none;
+}
+.veriffy-css-scope :is(.text-app-color-10) {
+  --tw-text-opacity: 1;
+  color: rgb(0 138 229 / var(--tw-text-opacity));
+}
+.veriffy-css-scope :is(.text-app-color-20) {
+  --tw-text-opacity: 1;
+  color: rgb(0 216 177 / var(--tw-text-opacity));
+}
+.veriffy-css-scope :is(.text-app-color-30) {
+  --tw-text-opacity: 1;
+  color: rgb(255 150 28 / var(--tw-text-opacity));
+}
+.veriffy-css-scope :is(.text-app-color-danger-10) {
+  --tw-text-opacity: 1;
+  color: rgb(243 49 0 / var(--tw-text-opacity));
+}
+.veriffy-css-scope :is(.text-app-color-neutral-10) {
+  --tw-text-opacity: 1;
+  color: rgb(0 24 46 / var(--tw-text-opacity));
+}
+.veriffy-css-scope :is(.text-app-color-neutral-40) {
+  --tw-text-opacity: 1;
+  color: rgb(167 188 204 / var(--tw-text-opacity));
+}
+.veriffy-css-scope :is(.text-app-color-typography-30) {
+  --tw-text-opacity: 1;
+  color: rgb(81 99 112 / var(--tw-text-opacity));
+}
+.veriffy-css-scope :is(.text-gray-500) {
+  --tw-text-opacity: 1;
+  color: rgb(107 114 128 / var(--tw-text-opacity));
+}
+.veriffy-css-scope :is(.text-green-500) {
+  --tw-text-opacity: 1;
+  color: rgb(34 197 94 / var(--tw-text-opacity));
+}
+.veriffy-css-scope :is(.text-white) {
+  --tw-text-opacity: 1;
+  color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+.veriffy-css-scope :is(.text-yellow-500) {
+  --tw-text-opacity: 1;
+  color: rgb(234 179 8 / var(--tw-text-opacity));
+}
+.veriffy-css-scope :is(.no-underline) {
+  text-decoration-line: none;
+}
+.veriffy-css-scope :is(.opacity-40) {
+  opacity: 0.4;
+}
+.veriffy-css-scope :is(.shadow-lg) {
+  --tw-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+.veriffy-css-scope :is(.outline-app-color-10) {
+  outline-color: #008ae5;
+}
+.veriffy-css-scope :is(.filter) {
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate)
+    var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+}
+.veriffy-css-scope :is(.transition) {
+  transition-duration: 0.15s;
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow,
+    transform, filter, -webkit-backdrop-filter;
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow,
+    transform, filter, backdrop-filter;
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow,
+    transform, filter, backdrop-filter, -webkit-backdrop-filter;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+.veriffy-css-scope :is(.duration-200) {
+  transition-duration: 0.2s;
+}
+.veriffy-css-scope :is(.hover\:opacity-50:hover) {
+  opacity: 0.5;
+}
+.veriffy-css-scope :is(.hover\:opacity-70:hover) {
+  opacity: 0.7;
+}
+@media (min-width: 640px) {
+  .veriffy-css-scope :is(.sm\:w-pc-20) {
+    width: 20%;
+  }
+  .veriffy-css-scope :is(.sm\:flex-row) {
+    -ms-flex-direction: row;
+    flex-direction: row;
+  }
+  .veriffy-css-scope :is(.sm\:space-x-em-1-1\/2 > :not([hidden]) ~ :not([hidden])) {
+    --tw-space-x-reverse: 0;
+    margin-left: calc(1.5em * (1 - var(--tw-space-x-reverse)));
+    margin-right: calc(1.5em * var(--tw-space-x-reverse));
+  }
+  .veriffy-css-scope :is(.sm\:space-y-0 > :not([hidden]) ~ :not([hidden])) {
+    --tw-space-y-reverse: 0;
+    margin-bottom: calc(0px * var(--tw-space-y-reverse));
+    margin-top: calc(0px * (1 - var(--tw-space-y-reverse)));
+  }
+}

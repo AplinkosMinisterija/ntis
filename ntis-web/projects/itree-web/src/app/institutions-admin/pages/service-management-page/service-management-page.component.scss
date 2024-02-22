@@ -1,0 +1,11 @@
+.messages-wrapper {
+  @apply flex flex-col gap-1 py-2;
+}
+
+.service-details-buttons {
+  @apply flex justify-center gap-4;
+}
+
+.actions {
+  @apply flex flex-col xs:flex-row justify-center gap-3 mt-5;
+}

@@ -1,0 +1,10 @@
+@mixin font-size-properties($font-sizes-map, $multiplier: 1, $static: false) {
+  @each $size, $list in $font-sizes-map {
+    @for $i from 1 through length($list) {
+      --font-size#{if($static,'-static', '')}-#{$size}#{if($i==2,'-line-height','')}: #{nth($list, $i) * $multiplier};
+      // returns css properties like:
+      // --font-size-xs: 0.75rem;
+      // --font-size-xs-line-height: 1rem;
+    }
+  }
+}

@@ -1,0 +1,61 @@
+.address-form {
+  @apply mt-1 mb-5 bg-neutral-50 shadow-inner rounded p-2;
+
+  &__group-label {
+    @apply flex justify-start items-center gap-2 font-medium;
+  }
+
+  &__split-columns {
+    @apply grid grid-cols-2 gap-2;
+  }
+}
+
+.radio-list li {
+  @apply flex justify-start py-1 gap-3 flex-col;
+}
+
+.address-dialog {
+  @apply bg-neutral-900/30 absolute top-0 left-0 w-full h-full z-50 flex justify-center items-center;
+  &__content {
+    @apply border rounded shadow w-full max-w-md bg-neutral-0;
+  }
+
+  &__content-header {
+    @apply flex justify-between py-3 px-2 pb-1 rounded-t border-b;
+  }
+
+  &__content-header-text {
+    @apply font-semibold;
+  }
+
+  &__content-body {
+    @apply max-h-96 overflow-y-auto;
+  }
+
+  &__content-footer {
+    @apply flex justify-between p-2  rounded-b;
+  }
+}
+
+.address-button {
+  @apply flex flex-col hover:bg-neutral-100 duration-150 w-full text-left px-2 py-1 border-b;
+  &__item {
+    @apply flex justify-start items-center text-neutral-900 gap-1;
+  }
+
+  &__address-text {
+    @apply text-sm font-medium;
+  }
+
+  &__coord-text {
+    @apply text-sm italic text-neutral-600;
+  }
+}
+
+.no-record-found {
+  @apply p-5 text-center font-medium w-full;
+}
+
+.search-btn-wrapper {
+  @apply flex justify-center items-center pt-3;
+}

@@ -1,0 +1,36 @@
+.dialog-footer {
+  @apply flex flex-row justify-center;
+}
+
+.form-field-wrapper {
+  @apply box-border border-solid border rounded-md border-neutral-500 my-1  p-2;
+}
+
+.radio-input-wrapper {
+  @apply flex gap-2 items-center;
+}
+
+.address-input-wrapper {
+  @apply pl-5 pt-2;
+}
+
+.button {
+  @apply flex justify-between items-center  duration-150 gap-1 px-2 rounded bg-neutral-50
+  font-medium border;
+
+  &__active {
+    @apply border-neutral-200 text-primary-900;
+  }
+
+  &__inactive {
+    @apply border-neutral-100 text-primary-500;
+  }
+
+  &__icon {
+    @apply duration-150;
+  }
+}
+
+.actions {
+  @apply flex flex-col xs:flex-row justify-center gap-3 mt-5;
+}

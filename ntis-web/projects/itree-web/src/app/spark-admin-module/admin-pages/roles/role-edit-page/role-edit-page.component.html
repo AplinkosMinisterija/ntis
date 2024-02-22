@@ -1,0 +1,15 @@
+<spr-content-box
+  *ngIf="data"
+  [headerText]="data.rol_id ? 'pages.sprRolesEdit.headerTextEdit' : 'pages.sprRolesEdit.headerTextCreate'"
+>
+  <div class="spr-edit-form-wrapper">
+    <spr-edit-form
+      [formGroup]="form"
+      [values]="editFormValues"
+      (submit)="onSubmit($event)"
+      (cancel)="onCancel()"
+      autocomplete="off"
+    >
+    </spr-edit-form>
+  </div>
+</spr-content-box>

@@ -1,0 +1,169 @@
+<spr-content-box [headerText]="translationsReference + '.headerText'" transformingText="uppercase">
+  <div class="spr-browse-actions-wrapper">
+    <spr-browse-search-form [formGroup]="searchForm" [formCode]="formCode" (search)="search(dataTableComponent)">
+      <spr-select
+        filters
+        classifierCode="NTIS_RESEARCH_TYPE"
+        formControlName="rn_research_type"
+        [placeholder]="translationsReference + '.rn_research_type' | translate"
+        [advancedFilterParams]="true"
+        optionType="multiple"
+      ></spr-select>
+      <spr-filter-input
+        filters
+        inputType="number"
+        formControlName="rn_research_norm"
+        [placeholder]="translationsReference + '.rn_research_norm' | translate"
+      ></spr-filter-input>
+      <spr-select
+        filters
+        classifierCode="NTIS_WTF_INSTALL_PERIOD"
+        formControlName="rn_facility_installation_date"
+        [placeholder]="translationsReference + '.rn_facility_installation_date' | translate"
+        [advancedFilterParams]="true"
+      ></spr-select>
+      <spr-filter-input
+        filters
+        inputType="date"
+        formControlName="rn_date_from"
+        [placeholder]="translationsReference + '.rn_date_from' | translate"
+      ></spr-filter-input>
+      <spr-table-data-export
+        buttons
+        [translation]="translationsReference"
+        [tableColumn]="cols"
+        [tableData]="exportData"
+        [fileName]="translationsReference+'.headerText' | translate"
+        (exportAllRecEvent)="loadAllRecords($event, dataTableComponent)"
+      ></spr-table-data-export>
+    </spr-browse-search-form>
+  </div>
+  <p-table
+    [value]="data"
+    [autoLayout]="true"
+    responsiveLayout="stack"
+    breakpoint="767px"
+    [lazy]="true"
+    (onLazyLoad)="loadDataLazy($event)"
+    [rows]="showRows"
+    [totalRecords]="totalRecords"
+    [paginator]="data?.length > 0"
+    [rowsPerPageOptions]="rowsPerPageOptions"
+    [showFirstLastIcon]="false"
+    [rowHover]="true"
+  >
+    <ng-template pTemplate="header" let-row>
+      <tr>
+        <ng-container *ngFor="let col of cols">
+          <th pSortableColumn="{{col.field}}">
+            {{translationsReference + '.' + col.field | translate}}
+            <p-sortIcon field="{{col.field}}"></p-sortIcon>
+          </th>
+        </ng-container>
+        <th>{{'common.generalUse.actions' | translate}}</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row>
+      <tr>
+        <ng-container *ngFor="let col of cols">
+          <td>
+            <span class="p-column-title">
+              {{translationsReference + '.' + col.field |translate}}
+            </span>
+            <ng-container *ngIf="col.field!== 'rn_research_norm'; else normBlock"
+              ><span>{{row[col.field]}}</span></ng-container
+            >
+            <ng-template #normBlock
+              ><span>{{(translationsReference + '.normBlock') | translate: {norm: row[col.field]} }}</span></ng-template
+            >
+          </td>
+        </ng-container>
+        <td>
+          <ntis-table-row-actions [actions]="row.actions"></ntis-table-row-actions>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage" translate>
+      <tr>
+        <td [attr.colspan]="cols.length + 1">
+          <spr-table-no-rec-found></spr-table-no-rec-found>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <p-dialog
+    [(visible)]="editDialog"
+    styleClass="ntis-dialog"
+    [header]="translationsReference + '.dialogHeader' | translate"
+    [resizable]="false"
+    [draggable]="false"
+  >
+    <form [formGroup]="form" autocomplete="off">
+      <div class="edit-norm-wrapper">
+        <p>{{form.controls.rn_research_type.value}}</p>
+        <spr-form-field
+          [labelText]="translationsReference + '.rn_research_norm_edit' | translate"
+          labelFor="rn_research_norm"
+          [inputErrors]="form.controls.rn_research_norm.touched && form.controls.rn_research_norm.errors"
+          [mandatory]="true"
+          ><input type="number" formControlName="rn_research_norm" min="1" step="1"
+        /></spr-form-field>
+        <div class="installation-date-wrapper" *ngIf="form.controls.rn_facility_installation_date.value">
+          <spr-form-field
+            labelFor="city"
+            [labelText]="translationsReference + '.rn_facility_installation_date' | translate"
+            [mandatory]="true"
+          >
+            <input type="text" formControlName="rn_facility_installation_date" /> </spr-form-field
+          ><fa-icon
+            [icon]="faIconsService.fas.faInfoCircle"
+            size="xl"
+            [fixedWidth]="true"
+            [pTooltip]="translationsReference + '.tooltipText' | translate"
+          ></fa-icon>
+        </div>
+        <spr-form-field
+          [labelText]="translationsReference + '.rn_date_from' | translate"
+          labelFor="rn_date_from"
+          [inputErrors]="form.controls.rn_date_from.touched && form.controls.rn_date_from.errors"
+          [mandatory]="true"
+          ><p-calendar
+            formControlName="rn_date_from"
+            id="rn_date_from"
+            appendTo="body"
+            [showIcon]="true"
+            dateFormat="yy-mm-dd"
+            [showTime]="false"
+            [minDate]="minDateFrom"
+          >
+          </p-calendar
+        ></spr-form-field>
+        <spr-form-field
+          [labelText]="translationsReference + '.rn_date_to' | translate"
+          labelFor="rn_date_to"
+          [inputErrors]="form.controls.rn_date_to.touched && form.controls.rn_date_to.errors"
+          [mandatory]="false"
+          ><p-calendar
+            formControlName="rn_date_to"
+            id="rn_date_to"
+            appendTo="body"
+            [showIcon]="true"
+            dateFormat="yy-mm-dd"
+            [showTime]="false"
+            [minDate]="minDateTo"
+          >
+          </p-calendar
+        ></spr-form-field>
+
+        <div class="dialog-footer">
+          <spr-button className="ntis-button-link" (click)="editDialog = false">
+            {{'common.action.back' | translate}} </spr-button
+          ><spr-button className="spr-button-primary" (click)="toSaveNorm()" [iconStyle]="'fas'" [iconName]="'faSave'">
+            {{'common.action.save' | translate}}
+          </spr-button>
+        </div>
+      </div>
+    </form>
+  </p-dialog>
+</spr-content-box>

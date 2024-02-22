@@ -1,0 +1,46 @@
+<p-table
+  [value]="data"
+  [autoLayout]="true"
+  responsiveLayout="stack"
+  breakpoint="767px"
+  [lazy]="true"
+  (onLazyLoad)="loadDataLazy($event)"
+  [rows]="showRows"
+  [totalRecords]="totalRecords"
+  [paginator]="data?.length > 0"
+  [rowHover]="true"
+  [rowsPerPageOptions]="rowsPerPageOptions"
+  [showFirstLastIcon]="false"
+  sortfield="cwfd_adresas"
+  [sortOrder]="-1"
+>
+  <ng-template pTemplate="header" let-row>
+    <tr>
+      <ng-container *ngFor="let col of cols">
+        <th pSortableColumn="{{col.field}}">
+          {{translationsReference + '.' + col.field | translate}}
+          <p-sortIcon field="{{col.field}}"></p-sortIcon>
+        </th>
+      </ng-container>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-row>
+    <tr>
+      <ng-container *ngFor="let col of cols">
+        <td>
+          <span class="p-column-title">
+            {{translationsReference + '.' + col.field |translate}}
+          </span>
+          <span>{{row[col.field]}}</span>
+        </td>
+      </ng-container>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="emptymessage" translate>
+    <tr>
+      <td [attr.colspan]="cols.length + 1">
+        <spr-table-no-rec-found></spr-table-no-rec-found>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>

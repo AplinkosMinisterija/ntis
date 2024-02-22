@@ -1,0 +1,18 @@
+<spr-form-field-group [text]="translationsReference + '.legend'">
+  <div class="spr-form-items-flex">
+    <spr-info-line
+      [name]="translationsReference + '.priorityWaterManagers' | translate"
+      [value]="favWaterManagers?.length ? favWaterManagers : ('common.generalUse.none' | translate)"
+    ></spr-info-line>
+    <div class="manage-button-wrapper">
+      <spr-button
+        className="spr-button-primary"
+        iconStyle="fas"
+        iconName="faStar"
+        size="large"
+        (click)="navigateToFavWaterManagers()"
+        >{{ (translationsReference + '.manageWaterManagers') | translate }}</spr-button
+      >
+    </div>
+  </div>
+</spr-form-field-group>

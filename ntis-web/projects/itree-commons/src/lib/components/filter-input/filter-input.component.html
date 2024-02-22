@@ -1,0 +1,375 @@
+<section class="input-wrapper">
+  <ng-container *ngIf="useInForm">
+    <button
+      type="button"
+      [disabled]="!showFilterConditions"
+      class="input-wrapper__icon-btn-v2"
+      [attr.aria-label]="showContent ? ('components.filterInput.closeListConditions'| translate) : ('components.filterInput.openListConditions' | translate)"
+      [id]="inputId"
+      (click)="showContent = !showContent"
+      [ngClass]="inputFocused === true ? 'border-primary-500' :'border-neutral-200'"
+    >
+      <fa-icon
+        [icon]="faIconsService.fas.faEllipsisV"
+        [ngClass]="showContent ? 'text-primary-600' : 'text-neutral-600'"
+        aria-hidden="true"
+      >
+      </fa-icon>
+      {{selectedConditionTitle !== null ? selectedConditionTitle : ''}}
+    </button>
+  </ng-container>
+
+  <input
+    *ngIf="inputType === inputTypeEnum.text"
+    [ngClass]="useInForm ? 'input-wrapper__input-v2':'input-wrapper__input'"
+    [type]="inputTypeEnum.text"
+    [maxLength]="maxLength"
+    [minLength]="minLength"
+    [placeholder]="placeholder"
+    [id]="inputId"
+    (input)="createFormObject()"
+    #inputElement
+    [title]="inputElement?.value"
+    (focus)="inputFocused = true"
+    (blur)="inputFocused = false"
+    [(ngModel)]="inputValue"
+    [ngModelOptions]="{standalone: true}"
+    [disabled]="disabled"
+  />
+
+  <input
+    *ngIf="inputType === inputTypeEnum.number"
+    [ngClass]="useInForm ? 'input-wrapper__input-v2':'input-wrapper__input'"
+    [type]="inputTypeEnum.text"
+    [maxLength]="maxLength"
+    [minLength]="minLength"
+    [placeholder]="placeholder"
+    [id]="inputId"
+    (keypress)="onKeypressFilterChar($event)"
+    (input)="createFormObject()"
+    #inputElement
+    [title]="inputElement?.value"
+    (focus)="inputFocused = true"
+    (blur)="inputFocused = false"
+    [(ngModel)]="inputValue"
+    [ngModelOptions]="{standalone: true}"
+    [disabled]="disabled"
+  />
+
+  <input
+    *ngIf="inputType === inputTypeEnum.date || inputType === inputTypeEnum.datetime"
+    [ngClass]="useInForm ? 'input-wrapper__input-v2 cursor-pointer':'input-wrapper__input cursor-pointer'"
+    [type]="inputTypeEnum.text"
+    [maxLength]="inputType === inputTypeEnum.date ? 10 : 19"
+    [placeholder]="inputFocused ? 'YYYY-MM-DD' : placeholder"
+    [id]="inputId"
+    (input)="createFormObject()"
+    (click)="showContent = true"
+    readonly
+    #inputElement
+    [title]="inputElement?.value"
+    (focus)="inputFocused = true"
+    (blur)="inputFocused = false"
+    [(ngModel)]="this.selectedConditionValue === ExtendedSearchCondition.Period ? inputValues : inputValue"
+    [ngModelOptions]="{standalone: true}"
+    [disabled]="disabled"
+  />
+
+  <ng-container *ngIf="useInForm">
+    <button
+      type="button"
+      class="input-wrapper__icon-btn-clear-v2"
+      [id]="inputId"
+      [attr.aria-label]="'components.filterInput.clearInputField' | translate"
+      (click)="clearInputField()"
+      [ngClass]="inputFocused === true ? 'border-primary-500' :'border-neutral-200'"
+      *ngIf="clearButton === true"
+    >
+      <fa-icon [icon]="faIconsService.fas.faTimes" aria-hidden="true"> </fa-icon>
+    </button>
+    <div
+      *ngIf="clearButton === false"
+      class="input-wrapper__icon-btn-clear-v2"
+      [ngClass]="inputFocused === true ? 'border-primary-500' :'border-neutral-200'"
+    ></div>
+  </ng-container>
+
+  <ng-container *ngIf="!useInForm">
+    <button
+      type="button"
+      class="input-wrapper__clear-field"
+      [attr.aria-label]="'components.filterInput.clearInputField' | translate"
+      *ngIf="clearButton === true"
+      (click)="clearInputField()"
+    >
+      <fa-icon [icon]="faIconsService.fas.faTimesCircle" aria-hidden="true"></fa-icon>
+    </button>
+
+    <button
+      type="button"
+      [disabled]="!showFilterConditions"
+      class="input-wrapper__icon-btn"
+      [attr.aria-label]="showContent ? ('components.filterInput.closeListConditions'| translate) : ('components.filterInput.openListConditions' | translate)"
+      [id]="inputId"
+      (click)="showContent = !showContent"
+    >
+      <fa-icon
+        [icon]="showContent ? faIconsService.fas.faTimes : faIconsService.fas.faFilter"
+        aria-hidden="true"
+        size="sm"
+        class="pointer-events-none"
+      >
+      </fa-icon>
+    </button>
+    <span *ngIf="selectedConditionTitle !== null" class="input-wrapper__selected-label-outside" #labelElement
+      >{{selectedConditionTitle}}
+    </span>
+  </ng-container>
+
+  <ng-container *ngIf="inputType === inputTypeEnum.date || inputType === inputTypeEnum.datetime">
+    <div class="arrow-wrapper" *ngIf="showContent">
+      <div class="arrow-wrapper__arrow-up"></div>
+      <div class="input-wrapper__dropdown-panel">
+        <div class="input-wrapper__dropdown-panel-conditions" *ngIf="showFilterConditions === true">
+          <button
+            type="button"
+            class="input-wrapper__dropdown-item"
+            [ngClass]="{'input-wrapper__dropdown-item--period': item === ExtendedSearchCondition.Period}"
+            *ngFor="let item of inputConditionList"
+            (click)="onClickSetConditionValue(item)"
+          >
+            {{ (item === '=' ? 'common.conditions.equals' : item === '!=' ? 'common.conditions.notEquals' : 'common.conditions.' + item) | translate}}
+            <fa-icon
+              *ngIf="item === ExtendedSearchCondition.Period"
+              size="sm"
+              [icon]="faIconsService.fas.faChevronDown"
+              [rotate]="this.isDateRangeOpen ? 180 : undefined"
+            ></fa-icon>
+          </button>
+        </div>
+        <div
+          *ngIf="selectedConditionValue === ExtendedSearchCondition.Period && (isDateRangeOpen || !showFilterConditions)"
+          [ngClass]="inputType === inputTypeEnum.date ? 'input-wrapper__date-range': 'input-wrapper__datetime-range'"
+        >
+          <div>
+            <label for="date-from">{{'common.date.dateFrom' | translate}}</label>
+            <input
+              [type]="inputTypeEnum.text"
+              [maxLength]="inputType === inputTypeEnum.date ? 10 : 19"
+              class="input-wrapper__input-period"
+              [placeholder]="inputType === inputTypeEnum.date ? 'YYYY-MM-DD' : 'YYYY-MM-DD HH:MM:SS'"
+              (input)="validateDateInput($event); createFormObject();"
+              [(ngModel)]="dateRange.dateFrom"
+              (keypress)="onKeypressFilterDate($event)"
+              (blur)="clearInvalid(dateRange.dateFrom)"
+              (click)="showContent = true; setLastClickedInput('dateFrom')"
+              #inputDateFromElement
+              [title]="inputDateFromElement?.value"
+              (focus)="inputFocused = true"
+              (blur)="inputFocused = false"
+              autocomplete="off"
+              id="date-from"
+              [ngModelOptions]="{standalone: true}"
+            />
+          </div>
+          <div>
+            <label for="date-to">{{'common.date.dateTo' | translate}}</label>
+            <input
+              class="input-wrapper__input-period"
+              [type]="inputTypeEnum.text"
+              [placeholder]="inputType === inputTypeEnum.date ? 'YYYY-MM-DD' : 'YYYY-MM-DD HH:MM:SS'"
+              [maxLength]="inputType === inputTypeEnum.date ? 10 : 19"
+              (keypress)="onKeypressFilterDate($event)"
+              (blur)="clearInvalid(dateRange.dateTo)"
+              (click)="showContent = true; setLastClickedInput('dateTo')"
+              (input)="validateDateInput($event); createFormObject()"
+              [readonly]="!manualDate"
+              #inputDateToElement
+              [title]="inputDateToElement?.value"
+              (focus)="inputFocused = true"
+              (blur)="inputFocused = false"
+              autocomplete="off"
+              id="date-to"
+              [(ngModel)]="dateRange.dateTo"
+              [ngModelOptions]="{standalone: true}"
+            />
+          </div>
+        </div>
+        <div class="input-wrapper__dropdown-panel-calendar ">
+          <section class="tasks-calendar" *ngIf="pickYears === true">
+            <div class="tasks-calendar__month ">
+              <button
+                type="button"
+                [attr.aria-label]="'components.filterInput.lastYears'|translate"
+                class="tasks-calendar__month-button"
+                (click)="onClickOlderDate()"
+              >
+                <fa-icon [icon]="faIconsService.fas.faAngleLeft" aria-hidden="true" [fixedWidth]="true"></fa-icon>
+              </button>
+              <button
+                type="button"
+                *ngIf="calendarMonth || calendarMonth === 0"
+                [attr.aria-label]="'components.filterInput.returnToDaysGrid'|translate"
+                class="tasks-calendar__month-text prevent-to-close"
+                (click)="onClickShowYearsList()"
+              >
+                {{currentYearLabel}}
+              </button>
+              <button
+                type="button"
+                [attr.aria-label]="'components.filterInput.nextYear'|translate"
+                class="tasks-calendar__month-button"
+                (click)="onClickNewerDate()"
+              >
+                <fa-icon [icon]="faIconsService.fas.faAngleRight" aria-hidden="true" [fixedWidth]="true"></fa-icon>
+              </button>
+            </div>
+
+            <div class="tasks-calendar__year-grid" *ngIf="yearsToMonth === false">
+              <button
+                type="button"
+                *ngFor="let item of yearsList; let i = index;"
+                class="tasks-calendar__year prevent-to-close"
+                [attr.aria-label]="('components.filterInput.theYear'|translate) +' '+ item"
+                (click)="onClickSelectYear(item)"
+              >
+                {{item}}
+              </button>
+            </div>
+
+            <div class="tasks-calendar__month-grid" *ngIf="yearsToMonth === true">
+              <button
+                type="button"
+                *ngFor="let item of monthList; let i = index;"
+                class="tasks-calendar__year-month prevent-to-close"
+                (click)="onClickSelectMonth(item.value)"
+              >
+                {{('common.date.monthNames.' + item.value | translate)}}
+              </button>
+            </div>
+          </section>
+
+          <section class="tasks-calendar" *ngIf="pickYears === false">
+            <div class="tasks-calendar__month ">
+              <spr-button
+                type="button"
+                class="tasks-calendar__month-button"
+                [ariaLabel]="'components.filterInput.lastMonth'|translate"
+                (click)="onClickOlderMonth()"
+                iconName="faAngleLeft"
+              >
+              </spr-button>
+
+              <button
+                type="button"
+                *ngIf="calendarMonth || calendarMonth === 0"
+                [attr.aria-label]="'The current date ' + ('common.date.monthNames.' + (calendarMonth + 1) | translate) + calendarYear"
+                class="tasks-calendar__month-text prevent-to-close"
+                (click)="onClickShowYearsList()"
+              >
+                {{('common.date.monthNames.' + (calendarMonth + 1) | translate)}}, {{calendarYear}}
+              </button>
+              <spr-button
+                type="button"
+                class="tasks-calendar__month-button"
+                [ariaLabel]="'components.filterInput.nextMonth'|translate"
+                (click)="onClickNewerMonth()"
+                iconName="faAngleRight"
+              >
+              </spr-button>
+            </div>
+            <div class="tasks-calendar__week-days-grid">
+              <div *ngFor="let item of weekDays; let i = index" class="tasks-calendar__week-day">
+                {{'common.date.weekDayNames.min.' + (i + 1) | translate}}
+              </div>
+            </div>
+            <div class="tasks-calendar__days-grid">
+              <button
+                *ngFor="let item of calendarItems; let i = index;"
+                type="button"
+                class="tasks-calendar__day"
+                [attr.aria-label]="('components.filterInput.day'|translate) +' '+ item.day"
+                [disabled]="maxDate < item.date || minDate > item.date"
+                [ngClass]="{
+                  'tasks-calendar__day--other-month': !item.isTargetMonth,
+                  'tasks-calendar__day--current-day': item.isCurrentDay,
+                  'tasks-calendar__day--selected': i === selectedItem,
+                  'tasks-calendar__day--disabled': maxDate < item.date || minDate > item.date,
+                  'tasks-calendar__day--range': item.inRange && this.selectedConditionValue === ExtendedSearchCondition.Period,
+                }"
+                (click)="onClickSelectDay(i)"
+              >
+                {{item.day}}
+              </button>
+            </div>
+          </section>
+        </div>
+
+        <div
+          class="input-wrapper__dropdown-panel-time"
+          *ngIf="inputType === inputTypeEnum.datetime && pickYears === false"
+        >
+          <span class="input-wrapper__dropdown-panel-time-wrapper">
+            <input
+              type="text"
+              class="input-wrapper__time-eneter-input"
+              maxlength="2"
+              [attr.aria-label]="'components.filterInput.hours'|translate"
+              #inputHoursElement
+              [value]="hours"
+              (keypress)="onKeypressFilterChar($event)"
+              (change)="onChangeHours($event)"
+            />
+            :
+            <input
+              type="text"
+              class="input-wrapper__time-eneter-input"
+              maxlength="2"
+              [attr.aria-label]="'components.filterInput.minutes'|translate"
+              [value]="minutes"
+              #inputMinutesElement
+              (keypress)="onKeypressFilterChar($event)"
+              (change)="onChangeMinutes($event)"
+            />
+          </span>
+        </div>
+        <div class="tasks-calendar__year-footer">
+          <button
+            type="button"
+            [attr.aria-label]="'components.filterInput.clearSelections'|translate"
+            class="tasks-calendar__clear-today-button"
+            (click)="onClickClearCalendar()"
+          >
+            {{('common.action.clear'| translate)}}
+          </button>
+          <button
+            type="button"
+            [attr.aria-label]="'components.filterInput.returnToCurrentDay'|translate"
+            class="tasks-calendar__clear-today-button"
+            (click)="onClickBackToday()"
+          >
+            {{('common.date.today'| translate)}}
+          </button>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="inputType === inputTypeEnum.number || inputType === inputTypeEnum.text">
+    <div class="arrow-wrapper" *ngIf="showContent === true">
+      <div class="arrow-wrapper__arrow-up"></div>
+      <div class="input-wrapper__dropdown-panel">
+        <div class="input-wrapper__dropdown-panel-conditions">
+          <button
+            type="button"
+            class="input-wrapper__dropdown-item"
+            *ngFor="let item of inputConditionList"
+            (click)="onClickSetConditionValue(item)"
+          >
+            {{ (item === '=' ? 'common.conditions.equals' : item === '!=' ? 'common.conditions.notEquals' : 'common.conditions.' + item) | translate}}
+          </button>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</section>

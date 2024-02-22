@@ -1,0 +1,127 @@
+<spr-content-box [headerText]="translationsReference + '.headerText'" transformingText="uppercase">
+  <div *ngIf="isOwner && selectedWtf !==null" class="top-info-wrapper">
+    <spr-info-line [name]="translationsReference + '.selectedWtf' | translate" [value]="selectedWtf"></spr-info-line>
+  </div>
+  <div class="spr-browse-actions-wrapper">
+    <spr-browse-search-form [formGroup]="searchForm" (search)="search(dataTableComponent)">
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="20"
+        formControlName="manager"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="translationsReference + '.manager' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="date"
+        formControlName="fo_date_from"
+        [placeholder]="translationsReference + '.fo_date_from' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="date"
+        formControlName="fo_date_to"
+        [placeholder]="translationsReference + '.fo_date_to' | translate"
+      ></spr-filter-input>
+      <spr-button-add buttons [routerLink]="[RoutingConst.EDIT, wtfId]" [disabled]="!isOwner"></spr-button-add>
+    </spr-browse-search-form>
+  </div>
+
+  <p-table
+    [value]="data"
+    [lazy]="true"
+    (onLazyLoad)="loadDataLazy($event)"
+    [rows]="showRows"
+    responsiveLayout="stack"
+    breakpoint="767px"
+    [totalRecords]="totalRecords"
+    [paginator]="data?.length > 0"
+    [rowsPerPageOptions]="rowsPerPageOptions"
+    [rowHover]="true"
+  >
+    <ng-template pTemplate="header" let-row let-index="rowIndex">
+      <tr>
+        <ng-container *ngFor="let col of cols">
+          <th>
+            {{translationsReference + '.' + col.field | translate}}
+          </th>
+        </ng-container>
+        <th>{{'common.generalUse.actions' |translate}}</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row let-index="rowIndex">
+      <tr>
+        <ng-container *ngFor="let col of cols">
+          <td>
+            <span class="p-column-title">
+              {{translationsReference + '.' + col.field | translate}}
+            </span>
+            <div *ngIf="col.field === 'manager'; else otherData" class="status-wrapper">
+              <ntis-record-status
+                [statusData]="recordStatus"
+                [colField]="col.field"
+                field="manager"
+                [statusValue]="row['status']"
+                statusType="icon"
+              ></ntis-record-status>
+              <span>{{row[col.field]}}</span>
+            </div>
+            <ng-template #otherData
+              ><span>{{row[col.field]}}</span></ng-template
+            >
+          </td>
+        </ng-container>
+        <td>
+          <span class="p-column-title">
+            {{'common.generalUse.actions' |translate}}
+          </span>
+          <ntis-table-row-actions [actions]="row.actions"></ntis-table-row-actions>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage" translate>
+      <tr>
+        <td [attr.colspan]="cols.length + 1">
+          <spr-table-no-rec-found></spr-table-no-rec-found>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+  <form [formGroup]="form">
+    <p-dialog [(visible)]="renewalRightsDialog" [closable]="false" styleClass="ntis-dialog">
+      <spr-info-line
+        [name]="translationsReference + '.person' | translate"
+        [value]="form.controls.manager.value"
+      ></spr-info-line>
+      <spr-info-line
+        [name]="translationsReference + '.fo_date_from' | translate"
+        [value]="form.controls.fo_date_from.value | s2Date"
+      ></spr-info-line>
+      <label class="date-label" for="fo_date_to">{{(translationsReference + '.fo_date_to' | translate) +':'}}</label>
+      <p-calendar
+        formControlName="fo_date_to"
+        id="fo_date_to"
+        [showButtonBar]="true"
+        appendTo="body"
+        [showIcon]="true"
+        dateFormat="yy-mm-dd"
+        [minDate]="minDate"
+      >
+      </p-calendar>
+
+      <span class="dialog-footer">
+        <spr-button className="ntis-button-link" (click)="renewalRightsDialog = false">
+          {{'common.action.back' | translate}} </spr-button
+        ><spr-button
+          className="spr-button-primary"
+          type="submit"
+          iconName="faCircleCheck"
+          (click)="updateManagementRights()"
+        >
+          {{'common.action.save' | translate}}
+        </spr-button>
+      </span>
+    </p-dialog>
+  </form>
+</spr-content-box>

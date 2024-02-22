@@ -1,0 +1,42 @@
+<spr-content-box [headerText]="formTranslationsReference + '.headerText'" transformingText="uppercase">
+  <div class="spr-edit-form-wrapper">
+    <div *ngIf="data">
+      <spr-info-line
+        [name]="formTranslationsReference + '.orgName' | translate"
+        [value]="data?.orgName"
+      ></spr-info-line>
+      <spr-info-line [name]="formTranslationsReference + '.ordId' | translate" [value]="data?.ordId"></spr-info-line>
+      <spr-info-line
+        [name]="formTranslationsReference + '.srvType' | translate"
+        [value]="data?.srvType"
+      ></spr-info-line>
+      <spr-info-line
+        [name]="formTranslationsReference + '.ordCompleted' | translate"
+        [value]="data?.ordDate | s2Date"
+      ></spr-info-line>
+    </div>
+
+    <spr-edit-form
+      [formGroup]="form"
+      [values]="editFormValues"
+      (submit)="onSubmit($event)"
+      (cancel)="onCancel()"
+      [cancelButtonText]="formTranslationsReference + '.cancel'"
+      [showSaveButton]="showSaveButton"
+    >
+      <ng-template sprTemplate="score">
+        <div class="stars-wrapper">
+          <div *ngFor="let i of [1,2,3,4,5]">
+            <fa-icon
+              class="flex flex-row"
+              [icon]="i <= form.controls.score.value && form.controls.score.value ? faIconsService.fas.faStar : faIconsService.far.faStar"
+              [ngClass]="i <= form.controls.score.value && form.controls.score.value ? 'icon-color' : null"
+              (click)="setScore(i)"
+              size="xl"
+            ></fa-icon>
+          </div>
+        </div>
+      </ng-template>
+    </spr-edit-form>
+  </div>
+</spr-content-box>

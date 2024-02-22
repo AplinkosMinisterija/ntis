@@ -1,0 +1,44 @@
+.p-dialog {
+  @apply block;
+}
+
+.top-area {
+  @apply grid grid-rows-1 grid-cols-3 mt-10;
+
+  &__cant-read {
+    @apply text-lg font-medium text-center;
+  }
+
+  &__granted-list {
+    @apply flex flex-col items-center;
+
+    &__selected-role {
+      @apply text-xl font-medium;
+    }
+  }
+}
+
+.dialog-checkbox-area {
+  &__wrapper {
+    @apply flex flex-row items-center;
+  }
+}
+
+.dialog-buttons-area {
+  @apply flex flex-row justify-center;
+  &__cancel {
+    @apply mt-4 mr-3;
+  }
+}
+
+.right-side-actions {
+  @apply flex items-center gap-2 flex-wrap justify-center;
+
+  .default-form-field {
+    @apply xs:min-w-96;
+  }
+
+  .buttons-wrapper {
+    @apply flex gap-2;
+  }
+}

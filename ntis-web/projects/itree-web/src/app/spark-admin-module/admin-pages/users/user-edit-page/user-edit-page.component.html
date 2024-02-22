@@ -1,0 +1,58 @@
+<spr-content-box
+  *ngIf="data"
+  [headerText]="data.usr_id ? 'pages.sprUserEdit.headerTextNewUser' : 'pages.sprUserEdit.hearderTextUser'"
+>
+  <div class="spr-edit-form-wrapper">
+    <spr-edit-form
+      [formGroup]="form"
+      [values]="editFormValues"
+      (submit)="onSubmit($event)"
+      (cancel)="onCancel()"
+      [showSaveButton]="!isReadOnly"
+    >
+      <ng-container *ngIf="isEmailConfirmed; else elseBlock">
+        <ng-template sprTemplate="confirmEmail">
+          <div class="text-primary-500">
+            <span>
+              <fa-icon [icon]="faIconsService.fas.faCheckCircle" size="lg"></fa-icon>
+              {{ 'pages.sprUserEdit.emailVerified' | translate }}
+            </span>
+          </div>
+        </ng-template>
+      </ng-container>
+      <ng-template #elseBlock>
+        <ng-template sprTemplate="confirmEmail">
+          <div class="text-risk-500 pb-2" *ngIf="data.usr_id && !emailChanged">
+            <span>
+              <fa-icon [icon]="faIconsService.fas.faTimesCircle" size="lg"></fa-icon>
+              {{ 'pages.sprUserEdit.emailNotVerified' | translate }}
+            </span>
+          </div>
+          <div *ngIf="data.usr_id && emailChanged" class="text-info-800">
+            <span>
+              <fa-icon [icon]="faIconsService.fas.faEnvelope" size="lg"></fa-icon>
+              {{'pages.sprUserEdit.emailConfirmationAfterChanges' | translate}}
+            </span>
+          </div>
+          <spr-button
+            *ngIf="data.usr_id && !emailChanged && originalEmail"
+            className="spr-button-primary"
+            (click)="onConfirmEmail()"
+            >{{'pages.sprUserEdit.confirmEmail' | translate}}</spr-button
+          >
+          <div *ngIf="!data.usr_id && !originalEmail">
+            <div class="text-info-800">
+              <span>
+                <fa-icon [icon]="faIconsService.fas.faEnvelope" size="lg"></fa-icon>
+                {{'pages.sprUserEdit.emailConfirmationWillBeSent' | translate}}
+              </span>
+            </div>
+          </div>
+        </ng-template>
+      </ng-template>
+      <ng-template sprTemplate="usr_disable">
+        <p-inputSwitch formControlName="usr_disable"></p-inputSwitch>
+      </ng-template>
+    </spr-edit-form>
+  </div>
+</spr-content-box>

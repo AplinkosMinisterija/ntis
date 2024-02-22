@@ -1,0 +1,34 @@
+textarea {
+  @apply resize-none h-52;
+}
+
+.order-actions-buttons {
+  @apply flex justify-start items-center gap-6 pt-2;
+}
+
+.dialog-wrapper {
+  @apply flex flex-col justify-center max-w-md gap-3;
+}
+
+.info-wrapper {
+  @apply flex flex-row justify-between gap-3 bg-neutral-100 w-full rounded-md my-2 px-4 py-1 min-h-8;
+  &__comment-line {
+    @apply px-1.5;
+  }
+}
+
+.results-form-wrapper {
+  @apply grid grid-cols-2 gap-x-3;
+}
+
+.research-info-wrapper {
+  @apply bg-neutral-100 w-full rounded-md my-2 px-4 py-1;
+}
+
+.stars-wrapper {
+  @apply flex flex-row gap-3 pb-2;
+}
+
+.icon-color {
+  @apply text-warning-600;
+}

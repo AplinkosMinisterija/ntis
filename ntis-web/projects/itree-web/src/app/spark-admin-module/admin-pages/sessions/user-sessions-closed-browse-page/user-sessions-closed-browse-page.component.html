@@ -1,0 +1,121 @@
+<spr-content-box headerText="pages.sprClosedSessionsBrowse.headerText">
+  <div class="spr-browse-actions-wrapper">
+    <spr-browse-search-form [formGroup]="searchForm" [formCode]="formCode" (search)="search(dataTableComponent)">
+      <spr-filter-input
+        filters
+        inputType="number"
+        [maxLength]="5"
+        formControlName="ses_id"
+        [placeholder]="'pages.sprClosedSessionsBrowse.searchPlaceholderBySessionId' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="20"
+        formControlName="user_name"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="'pages.sprClosedSessionsBrowse.sec_username' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="20"
+        formControlName="person_name"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="'pages.sprClosedSessionsBrowse.searchPlaceholderByName' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="20"
+        formControlName="person_surname"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="'pages.sprClosedSessionsBrowse.searchPlaceholderBySurname' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="datetime"
+        [maxDate]="maximumDate"
+        formControlName="login_time"
+        [placeholder]="'pages.sprClosedSessionsBrowse.searchPlaceholderByLoginTime' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="datetime"
+        [maxDate]="maximumDate"
+        formControlName="logout_time"
+        [placeholder]="'pages.sprClosedSessionsBrowse.searchPlaceholderByLogoutTime' | translate"
+      ></spr-filter-input>
+      <spr-select
+        formControlName="logout_cause"
+        classifierCode="SPR_LOGOUT_CAUSE"
+        [placeholder]="'pages.sprClosedSessionsBrowse.searchPlaceholderByCause' | translate"
+      ></spr-select>
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="20"
+        formControlName="org_name"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="'pages.sprClosedSessionsBrowse.searchPlaceholderByOrganization' | translate"
+      ></spr-filter-input>
+
+      <spr-table-data-export
+        buttons
+        [tableColumn]="cols"
+        [tableData]="exportData"
+        translation="pages.sprClosedSessionsBrowse"
+        fileName="pages.sprClosedSessionsBrowse.headerText"
+        (exportAllRecEvent)="loadAllRecords($event, dataTableComponent)"
+      ></spr-table-data-export>
+    </spr-browse-search-form>
+  </div>
+
+  <p-table
+    [autoLayout]="true"
+    [value]="data"
+    dataKey="id"
+    [lazy]="true"
+    (onLazyLoad)="loadDataLazy($event)"
+    [rows]="showRows"
+    [totalRecords]="totalRecords"
+    [paginator]="data?.length > 0"
+    [rowsPerPageOptions]="rowsPerPageOptions"
+    [showFirstLastIcon]="false"
+    [sortField]="'sec_id'"
+    [sortOrder]="1"
+    class="table-responsive"
+    [rowHover]="true"
+  >
+    <ng-template pTemplate="header" let-row let-index="rowIndex">
+      <tr>
+        <th *ngFor="let col of visibleColumns" pSortableColumn="{{col.field}}">
+          <span class="table-header-col">
+            {{'pages.sprClosedSessionsBrowse.'+col.field | translate}}
+            <p-sortIcon field="{{col.field}}" class="table-header-col__icon"></p-sortIcon>
+          </span>
+        </th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-row let-index="rowIndex">
+      <tr>
+        <td
+          *ngFor="let col of visibleColumns"
+          [ngClass]="{'spr-text-right': col.type === dataTypeNumber, 'whitespace-nowrap': col.type === dataTypeDate}"
+        >
+          <span class="p-column-title">{{'pages.sprClosedSessionsBrowse.'+col.field | translate}}</span>
+          <span>{{row[col.field]}}</span>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage" translate>
+      <tr>
+        <td [attr.colspan]="cols.length">
+          <spr-table-no-rec-found></spr-table-no-rec-found>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</spr-content-box>

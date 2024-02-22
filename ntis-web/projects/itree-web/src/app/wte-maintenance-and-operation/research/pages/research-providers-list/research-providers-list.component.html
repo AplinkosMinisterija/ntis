@@ -1,0 +1,38 @@
+<spr-content-box [headerText]="translationsReference + '.headerText'" transformingText="uppercase">
+  <header class="header">
+    <p class="header__info">
+      <span *ngIf="address">{{address}}</span>
+      <span class="capacity" *ngIf="capacity">{{capacity}}</span>
+    </p>
+    <spr-select
+      [optionData]="orderingDropdownItems"
+      optionLabel="text"
+      optionValue="value"
+      optionType="single"
+      [placeholder]="'pages.sprTasksDashboard.orderingDropdownPlaceholder' | translate"
+      [(ngModel)]="order"
+      (ngModelChange)="reload()"
+    ></spr-select>
+  </header>
+  <p-table
+    [value]="data"
+    [autoLayout]="true"
+    [lazy]="true"
+    [rowHover]="true"
+    (onLazyLoad)="loadDataLazy($event)"
+    [rows]="showRows"
+    [totalRecords]="totalRecords"
+    [paginator]="data?.length > 0"
+    [rowsPerPageOptions]="rowsPerPageOptions"
+    [showFirstLastIcon]="false"
+    [sortOrder]="order"
+    [sortField]="'srv_price_from'"
+    class="table-responsive"
+  >
+    <ng-template pTemplate="body" let-row>
+      <app-research-providers-data [researchProvider]="row" [allowOrderService]="allowOrderService">
+      </app-research-providers-data>
+    </ng-template>
+    <ng-template pTemplate="emptymessage" translate> </ng-template>
+  </p-table>
+</spr-content-box>

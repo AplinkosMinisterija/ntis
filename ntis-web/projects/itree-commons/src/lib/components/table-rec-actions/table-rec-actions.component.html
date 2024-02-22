@@ -1,0 +1,21 @@
+<ng-container *ngIf="actionsList">
+  <button
+    class="table-actions__desktop-toggle"
+    type="button"
+    (click)="toggleMenu(actionsMenu, $event)"
+    [pTooltip]=" 'common.action.menu' | translate"
+    tooltipPosition="left"
+  >
+    <fa-icon [icon]="faIconsService.fas.faBars" [fixedWidth]="true"></fa-icon>
+  </button>
+  <button
+    class="table-actions__mobile-toggle"
+    type="button"
+    (click)="toggleMenu(actionsMenu, $event)"
+    [pTooltip]=" 'common.action.menu' | translate"
+    tooltipPosition="left"
+  >
+    <fa-icon [icon]="faIconsService.fas.faBars" [fixedWidth]="true" size="xl"></fa-icon>
+  </button>
+  <p-tieredMenu #actionsMenu appendTo="body" [model]="actionsList" [popup]="true"></p-tieredMenu>
+</ng-container>

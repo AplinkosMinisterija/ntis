@@ -1,0 +1,40 @@
+<p-dialog [(visible)]="showDialog" [modal]="true" [closable]="false" [draggable]="false" appendTo="body">
+  <div class="address-dialog" *ngIf="showDialog">
+    <div class="address-dialog__content">
+      <div class="address-dialog__message">
+        <b>{{translationsReference + '.important' | translate}}</b>
+        {{translationsReference + '.multiNtrs' | translate}}
+      </div>
+
+      <div class="address-dialog__content-body">
+        <ul>
+          <li *ngFor="let row of wtfSelectionData.wtfs">
+            <button class="address-button" type="button" (click)="selectFacility.emit(row.wtfId)">
+              <span class="address-button__item" *ngIf="row.address">
+                <spr-icon name="house"></spr-icon><span class="address-button__address-text">{{row.address}}</span>
+              </span>
+              <span class="address-button__item" *ngIf="row.lksX">
+                <spr-icon name="location_on"></spr-icon
+                ><span class="address-button__coord-text">{{row.lksX}}, {{row.lksY}}</span>
+              </span>
+              <span class="address-button__item" *ngIf="row.wtfType">
+                <spr-icon name="maps_home_work"></spr-icon
+                ><span class="address-button__coord-text">{{row.wtfType}}</span>
+              </span>
+            </button>
+          </li>
+        </ul>
+      </div>
+      <div class="add-facility-button-wrapper">
+        <spr-button
+          type="button"
+          className="spr-button-primary"
+          iconName="faCirclePlus"
+          (click)="addNewFacility.emit()"
+        >
+          {{'common.action.createNew' | translate}}
+        </spr-button>
+      </div>
+    </div>
+  </div>
+</p-dialog>

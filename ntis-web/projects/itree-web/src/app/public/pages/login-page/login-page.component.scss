@@ -1,0 +1,12 @@
+:host {
+  @apply flex mx-auto items-center h-full max-w-fit;
+}
+
+.login-page {
+  @apply flex flex-col gap-4 items-center justify-center w-full;
+
+  &__email-confirmation {
+    @apply w-full text-sm font-medium flex gap-6 py-4 px-6 rounded-xl items-center
+    text-warning-900 bg-warning-50 border-2 border-warning-400;
+  }
+}

@@ -1,0 +1,53 @@
+.submit-new-data {
+  @apply py-1;
+}
+
+.check-report-actions {
+  @apply flex gap-2 py-1;
+}
+
+.versions {
+  @apply w-full border-collapse;
+}
+
+.version {
+  td {
+    @apply p-1;
+  }
+
+  &__date {
+    @apply font-semibold;
+  }
+
+  &__person {
+    @apply font-semibold;
+  }
+
+  &__desc {
+  }
+
+  &__action {
+    @apply flex justify-end;
+
+    a,
+    button {
+      @apply ml-auto p-0;
+    }
+  }
+}
+
+.reject-dialog-header {
+  @apply text-lg font-semibold;
+}
+
+.reject-dialog-actions-wrapper {
+  @apply flex justify-center gap-x-2;
+}
+
+.geoms-map {
+  @apply h-[min(24rem,95vh)];
+}
+
+.actions {
+  @apply flex flex-col xs:flex-row justify-center gap-3 mt-5;
+}

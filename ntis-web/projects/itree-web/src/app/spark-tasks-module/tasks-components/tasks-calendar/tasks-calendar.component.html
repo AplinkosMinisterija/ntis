@@ -1,0 +1,38 @@
+<section class="tasks-calendar">
+  <div class="tasks-calendar__month">
+    <button type="button" class="tasks-calendar__month-button" (click)="loadPrevMonth()">
+      <fa-icon [icon]="faIconsService.fas.faAngleLeft" size="lg" [fixedWidth]="true"></fa-icon>
+    </button>
+    <div *ngIf="calendarMonth || calendarMonth === 0" class="tasks-calendar__month-text">
+      {{('common.date.monthNames' | translate)[calendarMonth]}}, {{calendarYear}}
+    </div>
+    <button type="button" class="tasks-calendar__month-button" (click)="loadNextMonth()">
+      <fa-icon [icon]="faIconsService.fas.faAngleRight" size="lg" [fixedWidth]="true"></fa-icon>
+    </button>
+  </div>
+  <div class="tasks-calendar__week-days-grid">
+    <div *ngFor="let item of weekDays; let i = index" class="tasks-calendar__week-day">
+      {{('common.date.weekDayNames.short'|translate)[i]}}
+    </div>
+  </div>
+  <div class="tasks-calendar__days-grid">
+    <div
+      *ngFor="let item of calendarItems; let i = index;"
+      class="tasks-calendar__day"
+      [ngClass]="{
+        'tasks-calendar__day--other-month': !item.isTargetMonth,
+        'tasks-calendar__day--current-day': item.isCurrentDay,
+        'tasks-calendar__day--selected': i === selectedItem 
+      }"
+      (click)="onSelectDay(i)"
+    >
+      {{item.day}}
+    </div>
+  </div>
+  <div *ngIf="selectedItem >= 0 && taskCards.length > 0" class="tasks-day-view">
+    <div *ngFor="let item of taskCards" class="tasks-day-view__item">
+      <div class="tasks-day-view__item-circle"></div>
+      <app-task-card [taskData]="item" [timeline]="true"></app-task-card>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,19 @@
+<spr-content-box [headerText]="translationsReference + '.headerText'" transformingText="uppercase">
+  <div class="spr-edit-form-wrapper">
+    <div class="top-info-wrapper">
+      <spr-info-line
+        [name]="translationsReference + '.selectedFacility' | translate"
+        [value]="selectedFacility"
+      ></spr-info-line>
+      <span>{{translationsReference + '.infoText' | translate}}</span>
+    </div>
+    <spr-edit-form
+      [formGroup]="form"
+      [values]="editFormValues"
+      (submit)="onSubmit($event)"
+      (cancel)="onCancel()"
+      [showSaveButton]="selectedFacility !==  undefined"
+    >
+    </spr-edit-form>
+  </div>
+</spr-content-box>

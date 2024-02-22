@@ -1,0 +1,42 @@
+.spinner-loader {
+  @apply fixed w-full z-[9999] h-screen grid justify-items-center;
+
+  &__content-wrapper {
+    @apply h-32 w-auto relative  grid justify-items-center top-1/2 -translate-y-1/2;
+  }
+
+  &__content {
+    @apply inline-block w-20 h-20 -translate-y-0;
+  }
+
+  &__content div {
+    transform-origin: 40px 40px;
+    animation: spinner-loop 1.2s linear infinite;
+  }
+
+  &__content div:after {
+    content: ' ';
+    @apply bg-primary-500 block absolute top-1 h-5 w-1 rounded-sm;
+    top: 3px;
+    left: 37px;
+    width: 6px;
+    height: 20px;
+    border-radius: 20%;
+  }
+
+  @for $i from 0 through 11 {
+    &__content div:nth-child(#{$i}) {
+      transform: rotate(($i * 30deg));
+      animation-delay: -1.1 + $i * 0.1s;
+    }
+  }
+}
+
+@keyframes spinner-loop {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}

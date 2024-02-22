@@ -1,0 +1,12 @@
+.dialog-footer {
+  @apply flex flex-row justify-center items-center pt-10;
+}
+.org-info {
+  @apply ml-5 mr-5 mt-5 flex flex-col;
+}
+.org-info-name {
+  @apply font-bold self-center mb-5;
+}
+.table-org-info-line {
+  @apply flex flex-row items-center gap-2;
+}

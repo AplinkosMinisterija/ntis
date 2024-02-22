@@ -1,0 +1,42 @@
+.truncated-text {
+  @apply flex justify-start items-start gap-1;
+
+  &__read-more {
+    @apply underline whitespace-nowrap text-primary-600 hover:text-primary-900 cursor-pointer;
+  }
+  &__link-text {
+    @apply text-primary-600 hover:text-primary-900 cursor-pointer hover:underline;
+  }
+}
+
+.dialog {
+  @apply fixed top-0 left-0 z-50 bg-neutral-900 bg-opacity-20 w-screen h-screen flex items-center justify-center;
+
+  &__container {
+    @apply bg-neutral-50 border shadow-lg rounded max-w-6xl overflow-auto h-fit w-fit text-sm text-justify md:min-w-96 lg:min-w-96 mx-3 p-6;
+    max-height: Max(Min(40rem, 80vw), 42%);
+  }
+
+  &__header {
+    @apply text-lg font-semibold text-center flex justify-between items-center;
+  }
+
+  &__header span {
+    @apply text-lg;
+  }
+
+  &__body {
+    @apply text-sm py-4 break-words;
+  }
+
+  &__footer {
+    @apply text-sm flex justify-start gap-4 pt-1;
+  }
+
+  &__footer-actions-button {
+    @apply border px-2 py-1 flex justify-center items-center rounded text-neutral-600 hover:bg-neutral-100 duration-150 gap-2;
+    &--copied {
+      @apply bg-neutral-100;
+    }
+  }
+}

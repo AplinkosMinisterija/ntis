@@ -1,0 +1,37 @@
+<form (submit)="handleLocationSearch()" class="spr-form-items-flex">
+  <div class="input-wrapper">
+    <div>
+      <label for="location-search">{{ (translationsRef + '.locationSearchLabel') | translate }}:</label>
+      <fa-icon
+        class="location-search-info"
+        [icon]="faIconsService.solid.faCircleQuestion"
+        [fixedWidth]="true"
+        [pTooltip]=" (translationsRef + '.locationSearchInfo') | translate"
+        tooltipPosition="bottom"
+      ></fa-icon>
+    </div>
+
+    <input type="text" id="location-search" [formControl]="locationSearchControl" />
+  </div>
+
+  <button type="submit" class="search-button spr-button-primary">
+    {{ 'common.action.search' | translate }}
+  </button>
+</form>
+
+<div *ngIf="locationSearchResults" class="location-results">
+  <h4 class="location-results__heading">{{ 'common.generalUse.results' | translate }}</h4>
+  <ul *ngIf="locationSearchResults.length" class="location-results-list">
+    <li *ngFor="let result of locationSearchResults">
+      <button type="button" class="location-result" (click)="handleClickLocationResult(result)">
+        <h5 class="location-result__name">{{ result.name }}</h5>
+        <div *ngIf="result.description || result.type">{{ result.description || result.type }}</div>
+      </button>
+    </li>
+  </ul>
+  <span
+    class="location-results__no-results"
+    *ngIf="!locationSearchResults.length"
+    >{{ 'common.generalUse.noResultsFound' | translate }}</span
+  >
+</div>

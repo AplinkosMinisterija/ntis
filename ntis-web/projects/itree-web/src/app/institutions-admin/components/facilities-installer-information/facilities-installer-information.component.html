@@ -1,0 +1,78 @@
+<spr-form-field-group [text]="translationsReference + '.legend'">
+  <div class="spr-form-items-flex">
+    <spr-info-line
+      [name]="translationsReference + '.status' | translate"
+      [value]="
+            (translationsReference + 
+              '.' + 
+              (deregisteredFrom 
+                ? 'deregistered' 
+                : (registeredFrom  ? 'registered' : 'notRegistered')) ) 
+            | translate
+          "
+    ></spr-info-line>
+    <spr-info-line
+      *ngIf="registeredFrom && !deregisteredFrom"
+      [name]="translationsReference + '.registeredFrom' | translate"
+      [value]="registeredFrom"
+    ></spr-info-line>
+    <ng-container *ngIf="deregisteredFrom">
+      <spr-info-line
+        [name]="translationsReference + '.deregisteredFrom' | translate"
+        [value]="deregisteredFrom"
+      ></spr-info-line>
+      <spr-info-line
+        [name]="translationsReference + '.deregistrationReason' | translate"
+        [value]="deregisteredReason || '-'"
+      ></spr-info-line>
+      <em class="deregistered-note">{{ (translationsReference + '.deregisteredNote') | translate }}</em>
+    </ng-container>
+
+    <ng-container *ngIf=" registeredFrom && !deregisteredFrom">
+      <div>
+        <span id="registered-services">{{ (translationsReference + '.registeredServices') | translate }}:</span>
+        <ul aria-labelledby="registered-services">
+          <ng-container>
+            <li class="spr-input-with-label" *ngFor="let service of services">
+              <input
+                *ngIf="service.code === MONTAVIMAS"
+                type="checkbox"
+                [id]="service.code"
+                class="spr-checkbox"
+                [disabled]="true"
+                [checked]="registeredFrom"
+              />
+              <label *ngIf="service.code === MONTAVIMAS" [for]="service.code">{{ service.name }}</label>
+            </li>
+          </ng-container>
+        </ul>
+      </div>
+
+      <div *ngIf="!deregisteredFrom" class="manage-services-wrapper">
+        <spr-button
+          className="spr-button-primary"
+          iconStyle="fas"
+          iconName="faFileCircleXmark"
+          size="large"
+          (click)="dialogVisible = true"
+          >{{ (translationsReference + '.deregisterService') | translate }}</spr-button
+        >
+      </div>
+    </ng-container>
+    <p-dialog [(visible)]="dialogVisible" [closable]="false" class [modal]="true"
+      ><span>{{translationsReference + '.deregisterMessage' | translate}}</span>
+      <span class="dialog-footer">
+        <spr-button className="ntis-button-link" (click)="dialogVisible = false">
+          {{'common.action.back' | translate}} </spr-button
+        ><spr-button
+          className="spr-button-primary"
+          iconStyle="fas"
+          iconName="faXmark"
+          (click)="deregisterInstallation()"
+        >
+          {{translationsReference + '.dialogDeregisterBtn' | translate}}
+        </spr-button>
+      </span>
+    </p-dialog>
+  </div></spr-form-field-group
+>

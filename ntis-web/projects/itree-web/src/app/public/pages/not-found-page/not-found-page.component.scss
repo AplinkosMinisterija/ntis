@@ -1,0 +1,25 @@
+.not-found {
+  @apply flex flex-col items-center;
+
+  &__top {
+    @apply text-center;
+  }
+
+  &__btn {
+    @apply mt-2.5 mb-2.5 uppercase;
+  }
+
+  &__img {
+    max-width: 90vw;
+
+    @screen md {
+      max-width: 80vw;
+    }
+    @screen lg {
+      max-width: 50vw;
+    }
+    @screen xl {
+      max-width: 35vw;
+    }
+  }
+}

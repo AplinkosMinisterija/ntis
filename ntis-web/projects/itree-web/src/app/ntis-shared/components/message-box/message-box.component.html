@@ -1,0 +1,13 @@
+<p [ngClass]="['message-box', 'message-box--' + type]">
+  <fa-icon
+    *ngIf="icon"
+    class="message-box__icon"
+    [icon]="faIconsService.fas.faCircleInfo"
+    [fixedWidth]="true"
+  ></fa-icon>
+  <span
+    ><span class="message-box__text">{{ text }}</span>
+    <span>&nbsp;</span>
+    <a class="text-lg" [href]="link">{{linkText}}</a>
+  </span>
+</p>

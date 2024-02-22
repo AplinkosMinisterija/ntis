@@ -1,0 +1,304 @@
+<ng-container *ngIf="data?.sprTask.tas_tas_id">
+  <div class="bg-neutral-0 text-neutral-900 shadow p-2 xs:p-4 2xl:container mb-2">
+    <h5 class="w-full text-center">
+      {{'pages.sprTasksDashboard.editForm.subTaskView' | translate }}
+      <a
+        (click)="naviigateToEdit(data.sprTask.tas_tas_id)"
+        >{{'pages.sprTasksDashboard.editForm.viewHere' | translate}}</a
+      >
+    </h5>
+  </div>
+</ng-container>
+
+<spr-content-box
+  *ngIf="data"
+  [headerText]="data.sprTask.tas_id ? 'pages.sprTasksDashboard.editForm.editHeaderText' : 'pages.sprTasksDashboard.editForm.newHeaderText'"
+>
+  <!-- @fadeInFields -->
+  <div class="spr-edit-form-wrapper">
+    <!-- General information - start -->
+    <form [formGroup]="form" (submit)="onSubmit($event)" autocomplete="off">
+      <spr-form-field-group text="pages.sprTasksDashboard.editForm.generalTaskGroup">
+        <spr-form-field
+          [labelText]="'pages.sprTasksDashboard.editForm.taskTitle' | translate"
+          [isLabelHorizontal]="true"
+          [mandatory]="true"
+          [inputErrors]="form.controls.tas_name.touched && form.controls.tas_name.errors"
+          [errorDefs]="{required: 'common.error'}"
+        >
+          <input formControlName="tas_name" maxlength="100" type="text" />
+        </spr-form-field>
+        <spr-form-field
+          [labelText]="'pages.sprTasksDashboard.editForm.people' | translate"
+          labelFor="tas_persons"
+          [mandatory]="true"
+          [inputErrors]="form.controls.tas_persons.touched && form.controls.tas_persons.errors"
+          [errorDefs]="{required: 'common.error'}"
+        >
+          <spr-select
+            *ngIf="PersonList.length > 0"
+            optionLabel="code"
+            optionValue="id"
+            formControlName="tas_persons"
+            [optionData]="PersonList"
+            [showFilter]="true"
+            optionType="multiple"
+          ></spr-select>
+        </spr-form-field>
+        <spr-form-field
+          [labelText]="'pages.sprTasksDashboard.editForm.groups' | translate"
+          [isLabelHorizontal]="true"
+          [mandatory]="false"
+          [errorDefs]="{required: 'common.error'}"
+        >
+          <spr-select
+            *ngIf="PersonList.length > 0"
+            optionLabel="code"
+            optionValue="id"
+            [optionData]="PersonList"
+            [showFilter]="true"
+            optionType="multiple"
+            formControlName="tas_groups"
+          ></spr-select>
+        </spr-form-field>
+
+        <spr-form-field
+          [labelText]="'pages.sprTasksDashboard.editForm.category' | translate"
+          [isLabelHorizontal]="true"
+          [mandatory]="true"
+          [inputErrors]="form.controls.tas_type.touched && form.controls.tas_type.errors"
+          [errorDefs]="{required: 'common.error'}"
+        >
+          <spr-select
+            formControlName="tas_type"
+            classifierCode="SPR_TASK_CATEGORY"
+            [placeholder]="'common.action.select' | translate"
+          ></spr-select>
+        </spr-form-field>
+
+        <spr-form-field
+          [labelText]="'pages.sprTasksDashboard.editForm.status' | translate"
+          [isLabelHorizontal]="true"
+          [mandatory]="true"
+          [inputErrors]="form.controls.tas_status.touched && form.controls.tas_status.errors"
+          [errorDefs]="{required: 'common.error'}"
+        >
+          <spr-select
+            formControlName="tas_status"
+            classifierCode="SPR_TASK_STATUS"
+            [placeholder]="'common.action.select' | translate"
+          ></spr-select>
+        </spr-form-field>
+        <spr-form-field
+          [labelText]="'pages.sprTasksDashboard.editForm.partialTask' | translate"
+          [isLabelHorizontal]="true"
+          [mandatory]="false"
+          [inputErrors]="form.controls.tas_partial.touched && form.controls.tas_partial.errors"
+          [errorDefs]="{required: 'common.error'}"
+        >
+          <p-radioButton
+            (onClick)="handleChange()"
+            name="tas_partial"
+            value="Y"
+            label="{{'common.action.yes' | translate}}"
+            formControlName="tas_partial"
+          >
+          </p-radioButton>
+          <p-radioButton
+            (onClick)="handleChange()"
+            styleClass="ml-5"
+            name="tas_partial"
+            value="N"
+            label="{{'common.action.no' | translate}}"
+            formControlName="tas_partial"
+          >
+          </p-radioButton>
+        </spr-form-field>
+      </spr-form-field-group>
+
+      <ng-container *ngIf="isPartial">
+        <spr-form-field-group text="pages.sprTasksDashboard.editForm.partialTaskHeader">
+          <spr-form-field
+            [labelText]="'pages.sprTasksDashboard.editForm.people' | translate"
+            [isLabelHorizontal]="true"
+            [mandatory]="false"
+            [inputErrors]="form.controls.tas_partial.touched && form.controls.tas_partial.errors"
+            [errorDefs]="{required: 'common.error'}"
+          >
+            <spr-select
+              *ngIf="PersonList.length > 0"
+              [optionData]="PersonList"
+              formControlName="tas_sub_task_person"
+              optionLabel="code"
+              [showFilter]="true"
+              [startFilteringLength]="3"
+              [placeholder]="'pages.sprTasksDashboard.editForm.selectPerson' | translate"
+              (ngModelChange)="appChild.addPersonToList($event)"
+            ></spr-select>
+          </spr-form-field>
+          <spr-form-field
+            [labelText]="'pages.sprTasksDashboard.editForm.partialTaskList' | translate"
+            [isLabelHorizontal]="true"
+            [mandatory]="false"
+            [errorDefs]="{required: 'common.error'}"
+          >
+            <app-sub-task-form-card #appChild [subTaskInput]="subTaskList"></app-sub-task-form-card>
+          </spr-form-field>
+        </spr-form-field-group>
+      </ng-container>
+      <!-- General information - end -->
+
+      <!-- Time task - start -->
+      <spr-form-field-group text="pages.sprTasksDashboard.editForm.timeTaskGroup">
+        <spr-form-field
+          [labelText]="'common.action.start' | translate"
+          [isLabelHorizontal]="true"
+          [mandatory]="true"
+          [inputErrors]="form.controls.tas_date_from.touched && form.controls.tas_date_from.errors"
+          [errorDefs]="{required: 'common.error'}"
+        >
+          <p-calendar
+            (onBlur)="checkDateInput()"
+            (onSelect)="checkDateInput()"
+            [firstDayOfWeek]="1"
+            formControlName="tas_date_from"
+            [showTime]="true"
+            [minDate]="maximumDate"
+            [showIcon]="true"
+            hourFormat="24"
+            placeholder="YYYY-MM-DD"
+            appendTo="body"
+          >
+          </p-calendar>
+        </spr-form-field>
+
+        <spr-form-field
+          [labelText]="'common.action.end' | translate"
+          [isLabelHorizontal]="true"
+          [inputErrors]="form.controls.tas_date_to.touched && form.controls.tas_date_to.errors"
+          [errorDefs]="{required: 'common.error'}"
+        >
+          <p-calendar
+            [firstDayOfWeek]="1"
+            (onFocus)="checkDateInput()"
+            formControlName="tas_date_to"
+            [showTime]="true"
+            [showIcon]="true"
+            hourFormat="24"
+            [minDate]="maximumDateFrom"
+            placeholder="YYYY-MM-DD"
+            appendTo="body"
+          >
+            <!-- [disabled]="dateInputDisable" -->
+          </p-calendar>
+        </spr-form-field>
+
+        <spr-form-field
+          [labelText]="'common.action.replay' | translate"
+          [isLabelHorizontal]="true"
+          [mandatory]="true"
+          [inputErrors]="form.controls.tas_repetitive.touched && form.controls.tas_repetitive.errors"
+          [errorDefs]="{required: 'common.error'}"
+        >
+          <spr-select
+            formControlName="tas_repetitive"
+            classifierCode="SPR_TASK_REPETITIVE"
+            [placeholder]="'common.action.select' | translate"
+          ></spr-select>
+        </spr-form-field>
+      </spr-form-field-group>
+      <!-- Time task - end -->
+
+      <!-- Additional info - start -->
+      <spr-form-field-group text="pages.sprTasksDashboard.editForm.additionalInfoGroup">
+        <spr-form-field
+          [labelText]="'pages.sprTasksDashboard.editForm.priority' | translate"
+          [isLabelHorizontal]="true"
+          [mandatory]="true"
+          [inputErrors]="form.controls.tas_priority.touched && form.controls.tas_priority.errors"
+          [errorDefs]="{required: 'common.error'}"
+        >
+          <spr-select
+            formControlName="tas_priority"
+            classifierCode="SPR_TASK_PRIORITY"
+            [placeholder]="'common.action.select' | translate"
+          ></spr-select>
+        </spr-form-field>
+
+        <spr-form-field
+          [labelText]="'pages.sprTasksDashboard.editForm.taskDescription' | translate"
+          [isLabelHorizontal]="true"
+          [mandatory]="true"
+          [inputErrors]="form.controls.tas_description.touched && form.controls.tas_description.errors"
+          [errorDefs]="{required: 'common.error'}"
+        >
+          <p-editor formControlName="tas_description" maxlength="1000" [style]="{'height':'200px'}">
+            <ng-template pTemplate="header">
+              <span class="ql-formats">
+                <select class="ql-header">
+                  <option value="1">Heading</option>
+                  <option value="2">Subheading</option>
+                  <option selected>Normal</option>
+                </select>
+                <select class="ql-font">
+                  <option selected>Sans Serif</option>
+                  <option value="serif">Serif</option>
+                  <option value="monospace">Monospace</option>
+                </select>
+              </span>
+              <span class="ql-formats">
+                <button class="ql-bold" aria-label="Bold" type="button"></button>
+                <button class="ql-italic" aria-label="Italic" type="button"></button>
+                <button class="ql-underline" aria-label="Underline" type="button"></button>
+              </span>
+              <span class="ql-formats">
+                <select class="ql-color"></select>
+                <select class="ql-background"></select>
+              </span>
+              <span class="ql-formats">
+                <button class="ql-list" value="ordered" aria-label="Ordered List" type="button"></button>
+                <button class="ql-list" value="bullet" aria-label="Unordered List" type="button"></button>
+                <select class="ql-align">
+                  <option selected></option>
+                  <option value="center">center</option>
+                  <option value="right">right</option>
+                  <option value="justify">justify</option>
+                </select>
+              </span>
+              <span class="ql-formats">
+                <button class="ql-link" aria-label="Insert Link" type="button"></button>
+                <button class="ql-code-block" aria-label="Insert Code Block" type="button"></button>
+              </span>
+            </ng-template>
+          </p-editor>
+        </spr-form-field>
+
+        <spr-form-field
+          [labelText]="'pages.sprTasksDashboard.editForm.additionalMaterial' | translate"
+          [isLabelHorizontal]="true"
+          [mandatory]="false"
+          [errorDefs]="{required: 'common.error'}"
+        >
+          <spr-file-upload-with-progress [uploadedFiles]="uploadedFiles" (fileToDelete)="onDeleteFile($event)">
+          </spr-file-upload-with-progress>
+        </spr-form-field>
+      </spr-form-field-group>
+
+      <div class="task-edit-button__wrapper">
+        <button (click)="onCancel()" type="button" class="spr-button-risk">
+          <fa-icon [icon]="faIconsService.fas.faTimes" size="sm"></fa-icon>
+          {{'common.action.cancel' | translate}}
+        </button>
+
+        <button type="reset" class="spr-button-secondary">
+          <fa-icon [icon]="faIconsService.fas.faRedo" size="sm"></fa-icon>
+          {{'common.action.clear' | translate}}
+        </button>
+        <button type="submit" class="spr-button-primary">
+          <fa-icon [icon]="faIconsService.fas.faCheckCircle" size="sm"></fa-icon>
+          {{'common.action.save' | translate}}
+        </button>
+      </div>
+    </form>
+  </div>
+</spr-content-box>

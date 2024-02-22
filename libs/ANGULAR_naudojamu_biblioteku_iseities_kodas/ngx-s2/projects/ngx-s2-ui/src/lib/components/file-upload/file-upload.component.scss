@@ -1,0 +1,130 @@
+.s2-file-upload {
+  $this: &;
+
+  @apply block p-2 border-2 border-neutral-200 rounded-md @container;
+
+  &__input {
+    @apply hidden;
+  }
+
+  .s2-file-upload-header {
+    @apply flex flex-col items-center justify-center gap-y-1
+           py-2 border border-dashed border-neutral-300 rounded-md;
+
+    &__icon {
+      @apply text-4xl text-neutral-400;
+
+      &--responsive {
+        @apply hidden @sm:inline-block;
+      }
+    }
+
+    &__content-wrapper {
+      @apply flex flex-col @sm:flex-row items-center justify-center 
+             gap-x-1.5 gap-y-0.5 py-0.5;
+    }
+
+    &__text {
+      @apply inline;
+
+      &--responsive {
+        @apply hidden @sm:inline;
+      }
+    }
+
+    &__choose {
+      @apply text-primary-500 font-medium hover:underline;
+
+      &:disabled {
+        @apply text-neutral-400 hover:no-underline;
+      }
+    }
+
+    &__error {
+      @apply text-risk-700 text-center;
+    }
+
+    &--disabled {
+      @apply text-neutral-400 bg-neutral-50;
+
+      #{$this}__icon {
+        @apply text-neutral-300;
+      }
+    }
+  }
+
+  .s2-uploaded-files {
+    @apply flex flex-col gap-1;
+  }
+
+  .s2-uploaded-file {
+    @apply flex items-center gap-2 p-1 first:mt-2 overflow-hidden
+           border-b border-neutral-200 last:border-b-0;
+
+    &__icon-wrapper {
+      @apply shrink-0 flex justify-center items-center 
+             w-8 h-8 @sm:w-10 @sm:h-10
+             bg-neutral-100 rounded-md;
+    }
+
+    &__icon {
+      @apply shrink-0 text-neutral-500 text-2xl/none @sm:text-3xl/none;
+
+      &--uploaded {
+        @apply text-neutral-600;
+      }
+    }
+
+    &__info {
+      @apply flex flex-col grow overflow-hidden;
+    }
+
+    &__info-name {
+      @apply inline-block text-ellipsis overflow-hidden whitespace-nowrap
+             text-neutral-700 text-left;
+
+      &--downloadable {
+        @apply text-neutral-900 hover:underline;
+      }
+    }
+
+    &__info-progress {
+      @apply flex py-1.5 w-full max-w-sm;
+    }
+
+    &__info-progress-background {
+      @apply grow flex h-2 overflow-hidden bg-neutral-100 rounded-full;
+    }
+
+    &__info-progress-line {
+      @apply h-full bg-primary-500 shadow-md transition-all;
+    }
+
+    &__info-details {
+      @apply flex gap-x-2 flex-wrap;
+    }
+
+    &__info-details-date {
+      @apply text-sm text-neutral-400;
+    }
+
+    &__info-details-size {
+      @apply text-sm text-neutral-500;
+
+      &--uploaded {
+        @apply text-success-500;
+      }
+    }
+
+    &__remove {
+      @apply ml-auto shrink-0 p-1 
+             text-neutral-700 
+             hover:text-risk-700 
+             disabled:text-neutral-300;
+    }
+
+    &__remove-icon {
+      @apply text-xl;
+    }
+  }
+}

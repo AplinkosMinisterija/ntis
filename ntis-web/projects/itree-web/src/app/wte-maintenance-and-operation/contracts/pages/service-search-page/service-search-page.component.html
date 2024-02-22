@@ -1,0 +1,183 @@
+<spr-content-box [headerText]="translationsReference + '.headerText'">
+  <div class="spr-edit-form-wrapper">
+    <form *ngIf="!searchResult" [formGroup]="form" class="spr-form-items-flex" (ngSubmit)="handleSubmit()">
+      <section class="ntis-section-block my-3">
+        <h2 class="block-title">
+          <span class="block-title__number">1</span>
+          <span
+            class="block-title__text"
+            >{{ (translationsReference + '.equipmentCharacteristicsHeader') | translate }}</span
+          >
+        </h2>
+
+        <spr-form-field
+          [labelText]="(translationsReference + '.address') | translate"
+          labelFor="address"
+          [mandatory]="true"
+          [inputErrors]="form.controls.address.touched && form.controls.address.errors"
+        >
+          <div class="address-input">
+            <p-autoComplete
+              [suggestions]="addressSuggestions"
+              field="address"
+              dataKey="id"
+              appendTo="body"
+              [showClear]="true"
+              [forceSelection]="true"
+              [placeholder]="(translationsReference + '.addressPlaceholder') | translate"
+              [ariaLabel]="(translationsReference + '.addressPlaceholder') | translate"
+              formControlName="address"
+              (completeMethod)="autocompleteAddress($event)"
+              class="address-input__input"
+            ></p-autoComplete>
+            <spr-button
+              iconStyle="solid"
+              iconName="faLocationDot"
+              iconClassName="address-input__button-icon"
+              (click)="toggleMap(true)"
+              ><span
+                class="address-input__button-text"
+                >{{ (translationsReference + '.selectOnMap') | translate }}</span
+              ></spr-button
+            >
+          </div>
+        </spr-form-field>
+
+        <spr-form-field
+          [labelText]="(translationsReference + '.distanceToObject') | translate"
+          labelFor="distance-to-object"
+          [inputErrors]="form.controls.distanceToObject.touched && form.controls.distanceToObject.errors"
+        >
+          <div class="input-with-units">
+            <input
+              ntisDigitsOnly
+              class="input-with-units__input"
+              type="text"
+              id="distance-to-object"
+              [placeholder]="(translationsReference + '.distanceToObjectPlaceholder') | translate"
+              formControlName="distanceToObject"
+            />
+            <span class="input-with-units__units">{{ (translationsReference + '.meters') | translate }}</span>
+          </div>
+        </spr-form-field>
+
+        <spr-form-field
+          [labelText]="(translationsReference + '.equipmentType') | translate"
+          labelFor="equipment-type"
+          [mandatory]="true"
+          [inputErrors]="form.controls.equipmentType.touched && form.controls.equipmentType.errors"
+        >
+          <ul *ngFor="let wtfType of facilityTypes">
+            <li class="spr-input-with-label">
+              <input
+                type="radio"
+                name="equipmentType"
+                [value]="wtfType.key"
+                [id]="wtfType.key"
+                formControlName="equipmentType"
+                class="spr-radio"
+              />
+
+              <label [for]="wtfType.key">{{wtfType.display}}</label>
+            </li>
+          </ul>
+        </spr-form-field>
+
+        <spr-form-field
+          [labelText]="(translationsReference + '.carCapacity') | translate"
+          labelFor="car-capacity"
+          [inputErrors]="form.controls.carCapacity.touched && form.controls.carCapacity.errors"
+        >
+          <div class="input-with-units">
+            <input
+              ntisDigitsOnly
+              class="input-with-units__input"
+              type="text"
+              id="car-capacity"
+              [placeholder]="(translationsReference + '.carCapacityPlaceholder') | translate"
+              formControlName="carCapacity"
+            />
+            <span class="input-with-units__units"
+              >{{ (translationsReference + '.cubicMeters') | translate }} <span>(m<sup>3</sup>)</span></span
+            >
+          </div>
+        </spr-form-field>
+      </section>
+
+      <section class="ntis-section-block">
+        <h2 class="block-title">
+          <span class="block-title__number">2</span>
+          <span class="block-title__text">{{ (translationsReference + '.servicesHeader') | translate }}</span>
+        </h2>
+        <spr-form-field
+          [inputErrors]="form.controls.services.touched && form.controls.services.errors"
+          [errorDefs]="{'atLeastOneTruthy': translationsReference + '.error'}"
+          [errorDiv]="form.controls.services.touched && !!form.controls.services.errors"
+        >
+          <div class="spr-form-items-flex">
+            <div *ngFor="let control of form.controls.services.controls; index as i" class="spr-input-with-label">
+              <input type="checkbox" [id]="availableServices[i].key" class="spr-checkbox" [formControl]="control" />
+              <label [for]="availableServices[i].key">{{ availableServices[i].display }}</label>
+            </div>
+          </div>
+        </spr-form-field>
+      </section>
+
+      <div class="submit-wrapper">
+        <spr-button type="submit" className="spr-button-primary" iconStyle="solid" iconName="faSearch">
+          {{ (translationsReference + '.submitButtonText') | translate }}
+        </spr-button>
+      </div>
+    </form>
+
+    <ng-container *ngIf="searchResult">
+      <div class="results-header-wrapper">
+        <spr-button-back
+          class="button-back"
+          [disableLocationBack]="true"
+          (navigateBack)="this.searchResult = undefined"
+        ></spr-button-back>
+        <div>
+          <form [formGroup]="orderClause">
+            <spr-select
+              formControlName="order"
+              [optionData]="orderingOptions"
+              optionLabel="display"
+              optionValue="key"
+              optionType="multiple"
+              [placeholder]="translationsReference + '.ordering' | translate"
+              (valuesCleared)="clearOrderingValues()"
+            ></spr-select>
+          </form>
+        </div>
+      </div>
+
+      <app-service-search-result-list
+        [results]="searchResult"
+        (clickOrderService)="handleClickOrderService($event)"
+        (clickRequestContract)="handleClickRequestContract($event)"
+      ></app-service-search-result-list>
+    </ng-container>
+  </div>
+
+  <p-dialog
+    [(visible)]="showMap"
+    styleClass="ntis-p-dialog-map"
+    [header]="(translationsReference + '.selectOnMap') | translate"
+    [draggable]="false"
+    [resizable]="false"
+    [modal]="true"
+    [blockScroll]="true"
+    appendTo="body"
+    [closeAriaLabel]="'common.action.close' | translate"
+  >
+    <map-component
+      [menuItems]="mapMenuItems"
+      [infoMessage]="translationsReference + '.mapInfoText'"
+      (mapSingleClick)="handleMapClick($event)"
+      (searchByCoordinates)="handleSearchByCoordinates($event)"
+      (clickSearchResult)="handleClickSearchResult($event)"
+    ></map-component>
+  </p-dialog>
+</spr-content-box>
+<ntis-check-wtf-selection></ntis-check-wtf-selection>

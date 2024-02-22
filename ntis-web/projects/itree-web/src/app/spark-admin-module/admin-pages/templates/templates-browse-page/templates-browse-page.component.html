@@ -1,0 +1,109 @@
+<spr-content-box headerText="pages.sprTemplatesBrowse.headerText">
+  <div class="spr-browse-actions-wrapper">
+    <spr-browse-search-form [formGroup]="searchForm" [formCode]="formCode" (search)="search(dataTableComponent)">
+      <spr-filter-input
+        filters
+        inputType="number"
+        [maxLength]="5"
+        formControlName="tml_id"
+        [placeholder]="'pages.sprTemplatesBrowse.tml_id' | translate"
+      ></spr-filter-input>
+      <spr-select
+        formControlName="tml_type"
+        classifierCode="SPR_TMPL_TYPE"
+        [placeholder]="'pages.sprTemplatesBrowse.tml_type' | translate"
+        [advancedFilterParams]="true"
+      ></spr-select>
+      <spr-filter-input
+        filters
+        inputType="text"
+        formControlName="tml_code"
+        [placeholder]="'pages.sprTemplatesBrowse.tml_code' | translate"
+      ></spr-filter-input>
+      <spr-select
+        formControlName="tml_status"
+        classifierCode="SPR_TMPL_STATUS"
+        [placeholder]="'pages.sprTemplatesBrowse.tml_status' | translate"
+        [advancedFilterParams]="true"
+      ></spr-select>
+      <spr-filter-input
+        filters
+        inputType="text"
+        formControlName="tml_name"
+        [placeholder]="'pages.sprTemplatesBrowse.tml_name' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="text"
+        formControlName="tml_description"
+        [placeholder]="'pages.sprTemplatesBrowse.tml_description' | translate"
+      ></spr-filter-input>
+
+      <spr-table-data-export
+        buttons
+        [tableColumn]="cols"
+        [tableData]="exportData"
+        translation="pages.sprTemplatesBrowse"
+        fileName="pages.sprTemplatesBrowse.headerText"
+        (exportAllRecEvent)="loadAllRecords($event, dataTableComponent)"
+      ></spr-table-data-export>
+
+      <spr-button-add buttons [routerLink]="[RoutingConst.EDIT, RoutingConst.NEW]"></spr-button-add>
+    </spr-browse-search-form>
+  </div>
+  <p-table
+    breakpoint="1079px"
+    [value]="data"
+    [autoLayout]="true"
+    [lazy]="true"
+    (onLazyLoad)="loadDataLazy($event)"
+    [rows]="showRows"
+    [totalRecords]="totalRecords"
+    [paginator]="data?.length > 0"
+    [rowsPerPageOptions]="rowsPerPageOptions"
+    [showFirstLastIcon]="false"
+    sortField="1"
+    [sortOrder]="1"
+    class="table-responsive"
+    [rowHover]="true"
+  >
+    <ng-template pTemplate="header" let-row let-index="rowIndex">
+      <tr>
+        <th *ngFor="let col of visibleColumns" pSortableColumn="{{col.field}}">
+          <span class="table-header-col">
+            {{'pages.sprTemplatesBrowse.'+col.field | translate}}
+            <p-sortIcon field="{{col.field}}" class="table-header-col__icon"></p-sortIcon>
+          </span>
+        </th>
+        <th></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row let-index="rowIndex">
+      <tr>
+        <td
+          *ngFor="let col of visibleColumns"
+          [ngClass]="{'spr-text-right': col.type === dataTypeNumber, 'whitespace-nowrap': col.type === dataTypeDate}"
+        >
+          <span class="p-column-title " style="width: auto;">
+            {{'pages.sprTemplatesBrowse.'+col.field | translate}}
+          </span>
+          <spr-text-truncate
+            [text]="row[col.field]"
+            [textLength]="col.textLength"
+            [headerText]="'pages.sprTemplatesBrowse.'+col.field"
+          ></spr-text-truncate>
+        </td>
+        <td>
+          <spr-table-rec-actions [actionsList]="rowMenuItems[row.tml_id]"> </spr-table-rec-actions>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage" translate>
+      <tr>
+        <td [attr.colspan]="cols.length + 1">
+          <spr-table-no-rec-found></spr-table-no-rec-found>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</spr-content-box>

@@ -1,0 +1,72 @@
+<div [class]="'dropdown' + (className ? ' ' + className : '')">
+  <div class="dropdown__dropdown-element">
+    <span
+      class="dropdown__dropdown-element-text"
+      [ngClass]="{'dropdown__dropdown-element-text--placeholder': selectedIndex === -1, 'dropdown__dropdown-element-text--compact': compact}"
+      (click)="showDropdown(!isOpen)"
+    >
+      {{
+        selectedIndex > -1 
+          ? (
+            translateItemsText 
+              ? (items[selectedIndex].text | translate) 
+              : items[selectedIndex].text
+          )
+          : (
+            translatePlaceholderText 
+              ? (placeholderText | translate) 
+              : placeholderText
+          )
+      }}
+    </span>
+    <button
+      *ngIf="showClearButton"
+      type="button"
+      class="dropdown__dropdown-element-clear"
+      [ngClass]="{'dropdown__dropdown-element-clear--hidden': selectedIndex === -1}"
+      (click)="(selectedIndex > -1) ? clearSelectedItem() : showDropdown(!isOpen)"
+      [attr.tabindex]="(showClearButton && selectedIndex > -1) ? 0 : -1"
+      [attr.aria-label]="'components.dropdown.clearSelection' | translate"
+    >
+      <fa-icon
+        [icon]="faIconsService.fas.faTimes"
+        class="dropdown__icon"
+        [ngClass]="{'dropdown__icon--compact': compact}"
+        [fixedWidth]="true"
+      ></fa-icon>
+    </button>
+    <button
+      type="button"
+      class="dropdown__dropdown-element-toggle"
+      (click)="showDropdown(!isOpen)"
+      [attr.aria-label]="
+        (('components.dropdown.' + (isOpen ? 'hide' : 'show') + 'DropdownMenu') | translate)
+        + ' '
+        + (
+          translatePlaceholderText 
+            ? (placeholderText | translate) 
+            : placeholderText
+        )
+      "
+    >
+      <fa-icon
+        [icon]="faIconsService.fas.faAngleDown"
+        class="dropdown__icon"
+        [ngClass]="{'dropdown__icon--rotated': isOpen, 'dropdown__icon--compact': compact}"
+        [fixedWidth]="true"
+      ></fa-icon>
+    </button>
+  </div>
+  <ul class="dropdown__items" [ngClass]="{'dropdown__items--hidden': !isOpen}">
+    <li *ngFor="let item of items; let i = index">
+      <button
+        class="dropdown__item"
+        [ngClass]="{'dropdown__item--compact': compact}"
+        (click)="onSelectOption(i);"
+        [attr.tabindex]="isOpen ? 0 : -1"
+      >
+        {{translateItemsText ? (item.text | translate) : item.text}}
+      </button>
+    </li>
+  </ul>
+</div>

@@ -1,0 +1,13 @@
+<button class="accessibility-button group" type="button">
+  <span class="accessibility-button__label">
+    <fa-icon [icon]="faIconsService.fas[iconName]" size="sm"></fa-icon>
+    {{text | translate}}
+  </span>
+  <div class="accessibility-button__progress">
+    <div
+      *ngFor="let item of levelsArr; let i = index"
+      class="accessibility-button__progress-bar"
+      [ngClass]="{'accessibility-button__progress-bar--filled' : (level > i)}"
+    ></div>
+  </div>
+</button>

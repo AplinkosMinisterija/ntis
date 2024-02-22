@@ -1,0 +1,54 @@
+<p-fileUpload
+  #fileUploader
+  [customUpload]="true"
+  (uploadHandler)="onUpload($event)"
+  [multiple]="multiple"
+  [accept]="acceptedFormat"
+  [auto]="true"
+  [maxFileSize]="allowedFileSize"
+  [showUploadButton]="false"
+  [showCancelButton]="false"
+  [chooseLabel]="label || ('common.fileUpload.addFile' | translate)"
+  [fileLimit]="fileLimit"
+  [invalidFileSizeMessageDetail]="('common.fileUpload.exceededFileSize' | translate) + (allowedFileSize/ 1000000).toString()"
+  [invalidFileTypeMessageDetail]="'common.fileUpload.incorrectFormat' | translate:{acceptedFormat}"
+  invalidFileSizeMessageSummary=""
+  invalidFileTypeMessageSummary=""
+  (onProgress)="progressReport($event)"
+  (onUpload)="onUploadFinished()"
+  (onError)="onUploadError()"
+  [chooseIcon]="chooseIcon"
+  [disabled]="disabled"
+>
+  <ng-template let-file let-index="rowIndex" pTemplate="file">
+    <!-- <div *ngIf="fileUploader.uploading === true">
+      <fa-icon class="text-neutral-900 pr-4" [spin]="true" [icon]="faSpinner" size="lg">
+      </fa-icon>
+      <span class="break-all">{{file.name}}</span>
+    </div> -->
+  </ng-template>
+  <ng-template pTemplate="content">
+    <div *ngIf="uploadedFiles.length > 0">
+      <div *ngFor="let file of uploadedFiles">
+        <div class="flex items-center justify-start">
+          <a
+            ><span (click)="download(file)" class="break-all">{{file.fil_name}}</span>
+          </a>
+          <fa-icon
+            class="text-neutral-900 cursor-pointer  ml-auto pl-4 fa"
+            (click)="onDelete(file, fileUploader)"
+            [icon]="faIconsService.fas.faTrashCan"
+            size="sm"
+          ></fa-icon>
+        </div>
+      </div>
+    </div>
+    <div *ngFor="let file of filesToUpload">
+      <div *ngIf="fileUploader.uploading === true">
+        <fa-icon class="text-neutral-900 pr-4 fa" [spin]="true" [icon]="faIconsService.fas.faSpinner" size="lg">
+        </fa-icon>
+        <span class="break-all">{{file.name}}</span>
+      </div>
+    </div>
+  </ng-template>
+</p-fileUpload>

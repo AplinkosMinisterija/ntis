@@ -1,0 +1,175 @@
+<div class="import">
+  <button type="button" class="spr-button-secondary w-full" (click)="showImportContent = !showImportContent">
+    <div *ngIf="!loading; else load">
+      <fa-icon [icon]="faIconsService.fas.faFile" [fixedWidth]="true" size="sm"></fa-icon>
+    </div>
+    <ng-template #load>
+      <fa-icon class="text-neutral-900 pr-4 fa" [spin]="true" [icon]="faIconsService.fas.faSpinner" size="lg"></fa-icon>
+    </ng-template>
+    {{'common.action.import' | translate}}
+  </button>
+
+  <input
+    (change)="onFileSelected($event)"
+    type="file"
+    [(ngModel)]="fileInput"
+    accept="text/csv, text/xml"
+    [hidden]="true"
+    #file
+  />
+
+  <div class="import__content" *ngIf="showImportContent">
+    <div class="import__content-arrow-wrapper">
+      <div class="import__content-arrow-up"></div>
+    </div>
+    <section class="import__import-body">
+      <section class="import__import-footer">
+        <button type="button" class="spr-button-primary import__button" (click)="file.click()">
+          <fa-icon [icon]="faIconsService.fas.faFileArrowUp" [fixedWidth]="true" size="sm"></fa-icon>
+          {{'pages.sprCodesTranslationsBrowse.importFromTemplate' | translate}}
+        </button>
+      </section>
+      <hr class="import__hr" />
+      <section class="import__import-footer">
+        <button type="button" class="spr-button-primary import__button" (click)="export(exportFormatTypes.csv)">
+          <fa-icon [icon]="faIconsService.fas.faFileArrowDown" size="sm"></fa-icon>
+          {{'pages.sprCodesTranslationsBrowse.csvTemplate' | translate}}
+        </button>
+      </section>
+      <section class="import__import-footer">
+        <button type="button" class="spr-button-primary import__button" (click)="export(exportFormatTypes.xml)">
+          <fa-icon [icon]="faIconsService.fas.faFileArrowDown" size="sm"></fa-icon>
+          {{'pages.sprCodesTranslationsBrowse.xmlTemplate' | translate}}
+        </button>
+      </section>
+    </section>
+  </div>
+</div>
+
+<p-dialog
+  header="{{'pages.sprCodesTranslationsBrowse.newValues' | translate}}"
+  [resizable]="false"
+  [modal]="true"
+  [maximizable]="false"
+  appendTo="body"
+  [(visible)]="importDialogVisible"
+  [style]="{width: '75vw'}"
+  (onHide)="resetImportValues()"
+>
+  <p-table
+    [value]="codesListImport"
+    dataKey="id"
+    [scrollable]="true"
+    [rowHover]="true"
+    scrollHeight="flex"
+    [tableStyle]="{'min-width': '20rem'}"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th *ngFor="let col of tableColumn">
+          <span class="table-header-col">
+            {{'pages.sprCodesTranslationsBrowse.'+col.field | translate}}
+          </span>
+        </th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row let-index="rowIndex">
+      <tr>
+        <td [pEditableColumn]="row.rfc_code" pEditableColumnField="rfc_code">
+          <p-cellEditor>
+            <ng-template pTemplate="input">
+              <input type="text" [(ngModel)]="row.rfc_code" />
+            </ng-template>
+            <ng-template pTemplate="output">
+              {{ row.rfc_code }}
+            </ng-template>
+          </p-cellEditor>
+        </td>
+        <td [pEditableColumn]="row.rfc_meaning" pEditableColumnField="rfc_meaning">
+          <p-cellEditor>
+            <ng-template pTemplate="input">
+              <input type="text" [(ngModel)]="row.rfc_meaning" />
+            </ng-template>
+            <ng-template pTemplate="output">
+              {{ row.rfc_meaning }}
+            </ng-template>
+          </p-cellEditor>
+        </td>
+        <td [pEditableColumn]="row.rfc_description" pEditableColumnField="rfc_description">
+          <p-cellEditor>
+            <ng-template pTemplate="input">
+              <input type="text" [(ngModel)]="row.rfc_description" />
+            </ng-template>
+            <ng-template pTemplate="output">
+              {{ row.rfc_description }}
+            </ng-template>
+          </p-cellEditor>
+        </td>
+        <td [pEditableColumn]="row.rfc_date_from" pEditableColumnField="rfc_date_from">
+          <p-cellEditor>
+            <ng-template pTemplate="input">
+              <p-calendar
+                [(ngModel)]="row.rfc_date_from"
+                [firstDayOfWeek]="1"
+                [showButtonBar]="true"
+                appendTo="body"
+                [showIcon]="true"
+                dateFormat="yy-mm-dd"
+              >
+              </p-calendar>
+            </ng-template>
+            <ng-template pTemplate="output">
+              {{ row.rfc_date_from | s2Date }}
+            </ng-template>
+          </p-cellEditor>
+        </td>
+        <td [pEditableColumn]="row.rfc_date_to" pEditableColumnField="rfc_date_to">
+          <p-cellEditor>
+            <ng-template pTemplate="input">
+              <p-calendar
+                [(ngModel)]="row.rfc_date_to"
+                [firstDayOfWeek]="1"
+                [showButtonBar]="true"
+                appendTo="body"
+                [showIcon]="true"
+                dateFormat="yy-mm-dd"
+              >
+              </p-calendar>
+            </ng-template>
+            <ng-template pTemplate="output">
+              {{ row.rfc_date_to | s2Date }}
+            </ng-template>
+          </p-cellEditor>
+        </td>
+        <td [pEditableColumn]="row.rfc_order" pEditableColumnField="rfc_order">
+          <p-cellEditor>
+            <ng-template pTemplate="input">
+              <input type="text" [(ngModel)]="row.rfc_order" />
+            </ng-template>
+            <ng-template pTemplate="output">
+              {{ row.rfc_order ? row.rfc_order : "" }}
+            </ng-template>
+          </p-cellEditor>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+  <ng-template pTemplate="footer">
+    <spr-button
+      className="ntis-button-hollow"
+      iconStyle="far"
+      iconName="faCircleXmark"
+      iconClassName="text-2xl"
+      (click)="resetImportValues()"
+      >{{ 'common.action.cancel' | translate }}</spr-button
+    >
+    <spr-button
+      className="spr-button-primary"
+      iconStyle="fas"
+      iconName="faCheckCircle"
+      iconClassName="text-2xl"
+      (click)="onCodesImport()"
+      >{{ 'common.action.import' | translate }}</spr-button
+    >
+  </ng-template>
+</p-dialog>

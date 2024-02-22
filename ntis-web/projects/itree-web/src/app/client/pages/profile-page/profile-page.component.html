@@ -1,0 +1,89 @@
+<spr-content-box headerText="pages.sprProfile.headerText" transformingText="uppercase">
+  <form class="user-profile" [formGroup]="form" (submit)="onSubmit($event)">
+    <div class="user-profile__form-wrapper">
+      <spr-form-field-group text="pages.sprProfile.personalInfo">
+        <spr-form-field [labelText]="'pages.sprProfile.per_code' | translate" labelFor="per_code">
+          <input type="text" name="per_code" id="per_code" formControlName="per_code" maxlength="11" />
+        </spr-form-field>
+        <spr-form-field [labelText]="'pages.sprProfile.per_name' | translate" labelFor="per_name">
+          <input type="text" name="per_name" id="per_name" formControlName="per_name" />
+        </spr-form-field>
+        <spr-form-field [labelText]="'pages.sprProfile.per_surname' | translate" labelFor="per_surname">
+          <input type="text" name="per_surname" id="per_surname" formControlName="per_surname" />
+        </spr-form-field>
+        <p>{{'pages.sprProfile.personalInfoNote' | translate}}</p>
+      </spr-form-field-group>
+
+      <div>
+        <spr-form-field-group text="pages.sprProfile.contacts">
+          <spr-form-field
+            [labelText]="'pages.sprProfile.per_phone_number' | translate"
+            labelFor="per_phone_number"
+            [errorDefs]="{pattern: 'common.error.phone'}"
+            [inputErrors]="form.controls.per_phone_number.touched && form.controls.per_phone_number.errors"
+          >
+            <input
+              type="text"
+              name="per_phone_number"
+              id="per_phone_number"
+              formControlName="per_phone_number"
+              maxlength="12"
+            />
+          </spr-form-field>
+
+          <spr-form-field
+            [labelText]="'pages.sprProfile.per_email' | translate"
+            labelFor="per_email"
+            [mandatory]="true"
+            [inputErrors]="form.controls.per_email.touched && form.controls.per_email.errors"
+          >
+            <input type="text" name="per_email" id="per_email" formControlName="per_email" />
+          </spr-form-field>
+
+          <ng-container *ngIf="isEmailConfirmed; else elseBlock">
+            <div class="text-primary-500 mb-2">
+              <span>
+                <fa-icon [icon]="faIconsService.fas.faCheckCircle" size="lg"></fa-icon>
+                {{ 'pages.sprUserEdit.emailVerified' | translate }}
+              </span>
+            </div>
+          </ng-container>
+          <ng-template #elseBlock>
+            <div class="text-risk-500 mb-2">
+              <span>
+                <fa-icon [icon]="faIconsService.fas.faTimesCircle" size="lg"></fa-icon>
+                {{ 'pages.sprUserEdit.emailNotVerified' | translate }}
+              </span>
+            </div>
+            <ng-container *ngIf="showConfirmButton">
+              <spr-button
+                className="spr-button-primary"
+                (click)="onConfirmEmail()"
+                >{{'pages.sprUserEdit.confirmEmail' | translate}}</spr-button
+              >
+            </ng-container>
+          </ng-template>
+
+          <div class="user-profile__email-checkbox">
+            <input
+              type="checkbox"
+              class="spr-checkbox"
+              name="emailNotifications"
+              id="emailNotifications"
+              formControlName="emailNotifications"
+            />
+            <label for="emailNotifications">
+              {{'pages.sprProfile.emailNotifications' | translate}}
+            </label>
+          </div>
+        </spr-form-field-group>
+      </div>
+    </div>
+
+    <div class="user-profile__button_wrapper">
+      <spr-button type="submit" class="spr-button-primary" iconName="faSave">
+        {{'common.action.save' | translate}}
+      </spr-button>
+    </div>
+  </form>
+</spr-content-box>

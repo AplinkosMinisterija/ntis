@@ -1,0 +1,57 @@
+<spr-form-field-group [text]="translationsReference+'.legend'">
+  <div>
+    <span
+      [innerHTML]="(translationsReference + '.applicationText') | translate: { applicant: applicant, organization: organization} | safeHtml"
+    ></span>
+    <span
+      >{{' ' + (translationsReference + (isServiceProvider ? '.editCheckReqSp' : '.editCheckReqWm') | translate)}}</span
+    >
+  </div>
+  <div>
+    <ul *ngIf="registeredServices" aria-labelledby="registered-services">
+      <li class="spr-input-with-label" *ngFor="let service of registeredServices">
+        <input
+          *ngIf="service"
+          type="checkbox"
+          [id]="service.code"
+          class="spr-checkbox"
+          [disabled]="!isEditable || service.exists === 'Y'"
+          [checked]="service.registered"
+          (change)="onCheckboxChange(service)"
+        />
+        <label [for]="service.code">{{ service.name }}</label>
+      </li>
+    </ul>
+  </div>
+  <div *ngIf="(requestFiles && requestFiles.length > 0 || isEditable) && isServiceProvider">
+    <spr-info-line
+      class="mb-2"
+      [name]="translationsReference + (isServiceProvider ? '.spFileUploadLabel' : '.fileUploadLabel') | translate"
+    ></spr-info-line>
+    <spr-form-field>
+      <ng-container *ngIf="isEditable; else uploadedFilesBlock">
+        <spr-file-upload-with-progress
+          [uploadedFiles]="uploadedFiles"
+          [multiple]="false"
+          [label]="translationsReference + '.addFile' | translate"
+          (fileUpload)="onFileUpload()"
+          (fileToDelete)="onDeleteFile($event)"
+          [disabled]="uploadedFiles.length >= 10"
+          [fileLimit]="50"
+          acceptedFormat=".doc, .docx, .odt, .pdf, .jpg, .jpeg, .tif, .tiff, .bmp, .png, .adoc, .bdoc, .edoc"
+        ></spr-file-upload-with-progress>
+      </ng-container>
+      <ng-template #uploadedFilesBlock>
+        <div *ngIf="requestFiles.length > 0">
+          <div *ngFor="let file of requestFiles">
+            <div class="flex items-center justify-start mt-2">
+              <a
+                ><span (click)="download(file)" class="break-all">{{file.fil_name}}</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+    </spr-form-field>
+  </div>
+</spr-form-field-group>

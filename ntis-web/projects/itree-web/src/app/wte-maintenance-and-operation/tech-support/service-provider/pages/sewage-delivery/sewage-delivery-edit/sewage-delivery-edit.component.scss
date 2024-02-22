@@ -1,0 +1,13 @@
+.dialog-footer {
+  @apply flex flex-row justify-center items-center pt-48;
+}
+.radio-input-wrapper {
+  @apply flex gap-2 items-center;
+}
+
+.radio-block-wrapper {
+  @apply box-border border-solid border-2 rounded-md border-neutral-200 mb-5  p-2;
+}
+textarea {
+  @apply resize-none h-32;
+}

@@ -1,0 +1,20 @@
+.dialog-footer {
+  @apply flex flex-row justify-center items-center pt-10 gap-5;
+}
+
+.edit-norm-wrapper {
+  @apply mr-8;
+  p {
+    @apply font-bold pb-3;
+  }
+}
+
+.installation-date-wrapper {
+  @apply flex flex-row items-center gap-2;
+  spr-form-field {
+    @apply min-w-full;
+  }
+  fa-icon {
+    @apply max-w-fit text-neutral-600;
+  }
+}

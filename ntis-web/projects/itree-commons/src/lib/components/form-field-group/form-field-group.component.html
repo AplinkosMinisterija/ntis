@@ -1,0 +1,18 @@
+<fieldset [class]="className">
+  <div class="header" *ngIf="text" [ngClass]="{'header--small': small}">
+    <legend *ngIf="text" class="header__legend">
+      {{translateText ? (text | translate) : text}}
+    </legend>
+    <spr-button
+      *ngIf="showEdit"
+      className="header__button"
+      iconStyle="fas"
+      iconName="faPencil"
+      (click)="clickEdit.emit()"
+      >{{'common.action.edit' | translate}}</spr-button
+    >
+  </div>
+  <div class="content-wrapper" [ngClass]="{'content-wrapper--bg': contentBg}">
+    <ng-content></ng-content>
+  </div>
+</fieldset>

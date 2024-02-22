@@ -1,0 +1,11 @@
+.stars-wrapper {
+  @apply flex flex-row gap-3;
+}
+
+.icon-color {
+  @apply text-warning-600;
+}
+
+.message-not-read {
+  @apply font-semibold;
+}

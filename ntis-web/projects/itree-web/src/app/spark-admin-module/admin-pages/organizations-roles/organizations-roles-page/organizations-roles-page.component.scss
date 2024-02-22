@@ -1,0 +1,15 @@
+.selected-org-wrapper {
+  @apply grid grid-rows-1 grid-cols-3;
+}
+
+.selected-org {
+  @apply text-lg font-medium content-center justify-center text-center;
+}
+
+.dialog-button-wrapper {
+  @apply flex flex-row justify-center;
+}
+
+.actions {
+  @apply flex flex-col xs:flex-row justify-center gap-3 mt-5;
+}

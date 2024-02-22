@@ -1,0 +1,38 @@
+.action-button-wrapper {
+  @apply flex flex-col xs:flex-row justify-center gap-2 py-6;
+}
+
+.field-wrapper {
+  @apply grid grid-cols-2 gap-2 md:flex-row;
+}
+
+.editor-width {
+  @apply max-w-2xl break-all;
+}
+
+.choice-field-wrapper {
+  @apply flex justify-start flex-col gap-5 md:flex-row py-5;
+}
+
+.checkbox-wrapper {
+  @apply flex items-center gap-2;
+
+  label {
+    @apply font-medium;
+  }
+}
+
+::ng-deep {
+  .ck.ck-toolbar.ck-toolbar_grouping > .ck-toolbar__items {
+    @apply flex-wrap;
+  }
+
+  .ck.ck-editor__editable_inline,
+  .ck.ck-toolbar.ck-toolbar_grouping {
+    @apply border-gray-300 border;
+  }
+
+  .ck.ck-editor__editable_inline {
+    @apply border-t-0;
+  }
+}

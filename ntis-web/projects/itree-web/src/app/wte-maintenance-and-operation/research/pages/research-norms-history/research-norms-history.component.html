@@ -1,0 +1,101 @@
+<spr-content-box [headerText]="translationsReference + '.headerText'" transformingText="uppercase">
+  <div class="spr-browse-actions-wrapper">
+    <spr-browse-search-form [formGroup]="searchForm" (search)="search(dataTableComponent)">
+      <spr-select
+        filters
+        classifierCode="NTIS_RESEARCH_TYPE"
+        formControlName="research_type"
+        [placeholder]="translationsReference + '.research_type'| translate"
+        [advancedFilterParams]="true"
+        optionType="multiple"
+      ></spr-select>
+      <spr-filter-input
+        filters
+        inputType="number"
+        formControlName="research_norm"
+        [placeholder]="translationsReference + '.research_norm'| translate"
+      ></spr-filter-input>
+      <spr-select
+        filters
+        classifierCode="NTIS_WTF_INSTALL_PERIOD"
+        formControlName="facility_installation"
+        [placeholder]="translationsReference + '.facility_installation' | translate"
+        [advancedFilterParams]="true"
+      ></spr-select>
+      <spr-filter-input
+        filters
+        inputType="date"
+        formControlName="date_from"
+        [placeholder]="translationsReference + '.date_from' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="date"
+        formControlName="date_to"
+        [placeholder]="translationsReference + '.date_to' | translate"
+      ></spr-filter-input>
+      <spr-table-data-export
+        buttons
+        [translation]="translationsReference"
+        [tableColumn]="cols"
+        [tableData]="exportData"
+        [fileName]="translationsReference + '.headerText'"
+        (exportAllRecEvent)="loadAllRecords($event, dataTableComponent)"
+      ></spr-table-data-export>
+    </spr-browse-search-form>
+  </div>
+  <p-table
+    [value]="data"
+    [autoLayout]="true"
+    responsiveLayout="stack"
+    breakpoint="767px"
+    [lazy]="true"
+    (onLazyLoad)="loadDataLazy($event)"
+    [rows]="showRows"
+    [totalRecords]="totalRecords"
+    [paginator]="data?.length > 0"
+    [rowsPerPageOptions]="rowsPerPageOptions"
+    [showFirstLastIcon]="false"
+    [rowHover]="true"
+  >
+    <ng-template pTemplate="header" let-row>
+      <tr>
+        <ng-container *ngFor="let col of cols">
+          <th pSortableColumn="{{col.field}}">
+            {{translationsReference + '.' + col.field | translate}}
+            <p-sortIcon field="{{col.field}}"></p-sortIcon>
+          </th>
+        </ng-container>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row>
+      <tr>
+        <ng-container *ngFor="let col of cols">
+          <td>
+            <span class="p-column-title">
+              {{translationsReference + '.' + col.field |translate}}
+            </span>
+            <ng-container *ngIf="col.field!== 'research_norm'; else normBlock"
+              ><span>{{row[col.field]}}</span></ng-container
+            >
+            <ng-template #normBlock
+              ><span>{{(translationsReference + '.normBlock') | translate: {norm: row[col.field]} }}</span></ng-template
+            >
+          </td>
+        </ng-container>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage" translate>
+      <tr>
+        <td [attr.colspan]="cols.length">
+          <spr-table-no-rec-found></spr-table-no-rec-found>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+  <span class="actions">
+    <spr-button className="ntis-button-link" (click)="onReturn()">
+      {{'common.action.back' | translate}}
+    </spr-button>
+  </span>
+</spr-content-box>

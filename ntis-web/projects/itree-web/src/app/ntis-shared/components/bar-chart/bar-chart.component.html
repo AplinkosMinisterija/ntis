@@ -1,0 +1,11 @@
+<div class="selected-period-wrapper" *ngIf="hasPeriodSelection">
+  <label for="selected_period">{{ periodLabelTranslationsReference | translate }}</label>
+  <spr-select
+    classifierCode="GRAPH_DATA_PERIOD"
+    [placeholder]="placeHolder | translate"
+    [(ngModel)]="selectedPeriod"
+    [ngModelOptions]="{standalone: true}"
+    (ngModelChange)="setNewPeriod.emit($event)"
+  ></spr-select>
+</div>
+<div class="chart-wrapper"><canvas #barChartRef></canvas></div>

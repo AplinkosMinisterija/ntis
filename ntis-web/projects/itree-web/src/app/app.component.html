@@ -1,0 +1,17 @@
+<div [ngClass]="accessibilityService.styles">
+  <p-toast styleClass="custom-toast" position="top-center" [baseZIndex]="100"></p-toast>
+
+  <spr-loader type="line"></spr-loader>
+
+  <p-confirmDialog
+    acceptLabel="{{'common.action.yes' | translate}}"
+    acceptButtonStyleClass="spr-button-primary"
+    rejectLabel="{{'common.action.no' | translate}}"
+    rejectButtonStyleClass="spr-button-secondary"
+    [closable]="true"
+    [rejectVisible]="true"
+  >
+    <ng-template pTemplate="header"> </ng-template>
+  </p-confirmDialog>
+  <router-outlet></router-outlet>
+</div>

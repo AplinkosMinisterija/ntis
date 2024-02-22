@@ -1,0 +1,10 @@
+export class S2Error extends Error {
+    messages;
+    constructor(messages) {
+        super();
+        this.messages = messages;
+        this.name = S2Error.name;
+        Object.setPrototypeOf(this, S2Error.prototype);
+    }
+}
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiczJlcnJvci5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIi4uLy4uLy4uLy4uLy4uL3Byb2plY3RzL25neC1zMi1jb21tb25zL3NyYy9saWIvZXJyb3IvczJlcnJvci50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFFQSxNQUFNLE9BQU8sT0FBUSxTQUFRLEtBQUs7SUFDYjtJQUFuQixZQUFtQixRQUFxQjtRQUN0QyxLQUFLLEVBQUUsQ0FBQztRQURTLGFBQVEsR0FBUixRQUFRLENBQWE7UUFFdEMsSUFBSSxDQUFDLElBQUksR0FBRyxPQUFPLENBQUMsSUFBSSxDQUFDO1FBQ3pCLE1BQU0sQ0FBQyxjQUFjLENBQUMsSUFBSSxFQUFFLE9BQU8sQ0FBQyxTQUFTLENBQUMsQ0FBQztJQUNqRCxDQUFDO0NBQ0YiLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgeyBTMk1lc3NhZ2UgfSBmcm9tICcuLi9tb2RlbC9jb21tb24uYXBpJztcclxuXHJcbmV4cG9ydCBjbGFzcyBTMkVycm9yIGV4dGVuZHMgRXJyb3Ige1xyXG4gIGNvbnN0cnVjdG9yKHB1YmxpYyBtZXNzYWdlczogUzJNZXNzYWdlW10pIHtcclxuICAgIHN1cGVyKCk7XHJcbiAgICB0aGlzLm5hbWUgPSBTMkVycm9yLm5hbWU7XHJcbiAgICBPYmplY3Quc2V0UHJvdG90eXBlT2YodGhpcywgUzJFcnJvci5wcm90b3R5cGUpO1xyXG4gIH1cclxufVxyXG4iXX0=

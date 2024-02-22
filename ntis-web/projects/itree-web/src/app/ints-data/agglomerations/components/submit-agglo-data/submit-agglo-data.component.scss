@@ -1,0 +1,22 @@
+.dialog-header {
+  @apply text-lg font-semibold;
+}
+
+.fields-wrapper {
+  @apply grid lg:grid-cols-2 gap-x-4;
+}
+
+.actions-wrapper {
+  @apply flex justify-center gap-x-2;
+}
+
+.example-files {
+  @apply inline-grid;
+  a {
+    @apply inline-block px-1 pt-1 pb-1.5 mb-1.5 mr-auto;
+
+    span {
+      @apply pl-1;
+    }
+  }
+}

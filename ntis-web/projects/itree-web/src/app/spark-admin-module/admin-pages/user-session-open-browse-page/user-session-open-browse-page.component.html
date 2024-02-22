@@ -1,0 +1,116 @@
+<spr-content-box [headerText]="'pages.sprOpenSessionsBrowse.headerText'">
+  <div class="spr-browse-actions-wrapper">
+    <spr-browse-search-form [formGroup]="searchForm" [formCode]="formCode" (search)="search(dataTableComponent)">
+      <spr-filter-input
+        filters
+        inputType="number"
+        [maxLength]="5"
+        id="sesId"
+        formControlName="ses_id"
+        [placeholder]="'pages.sprOpenSessionsBrowse.ses_id' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="20"
+        id="sesUsername"
+        formControlName="ses_username"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="'pages.sprOpenSessionsBrowse.ses_username' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="20"
+        id="usrPersonName"
+        formControlName="person_name"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="'pages.sprOpenSessionsBrowse.usr_person_name' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="20"
+        id="usrPersonSurname"
+        formControlName="person_surname"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="'pages.sprOpenSessionsBrowse.usr_person_surname' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="datetime"
+        [maxDate]="maximumDate"
+        id="perId"
+        formControlName="login_time"
+        [placeholder]="'pages.sprOpenSessionsBrowse.ses_login_time' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="20"
+        id="orgName"
+        formControlName="org_name"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="'pages.sprOpenSessionsBrowse.org_name' | translate"
+      ></spr-filter-input>
+      <spr-button buttons type="button" class="spr-button-primary-light" iconName="faTrash" (click)="killSessions()">
+        {{ 'pages.sprOpenSessionsBrowse.kill_text' | translate }}
+      </spr-button>
+      <spr-button buttons type="button" class="spr-button-primary-light" iconName="faTrash" (click)="killAllSessions()">
+        {{ 'pages.sprOpenSessionsBrowse.kill_all_text' | translate }}
+      </spr-button>
+    </spr-browse-search-form>
+  </div>
+
+  <p-table
+    [autoLayout]="true"
+    [value]="data"
+    [lazy]="true"
+    (onLazyLoad)="loadDataLazy($event)"
+    [rows]="showRows"
+    [totalRecords]="totalRecords"
+    [paginator]="data?.length > 0"
+    [rowsPerPageOptions]="rowsPerPageOptions"
+    [showFirstLastIcon]="false"
+    [(selection)]="selectedRows"
+    [sortField]="'ses_id'"
+    [sortOrder]="1"
+    class="table-responsive"
+    [rowHover]="true"
+  >
+    <ng-template pTemplate="header" let-row let-index="rowIndex">
+      <tr>
+        <th>
+          <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+        </th>
+        <th *ngFor="let col of visibleColumns" pSortableColumn="{{col.field}}">
+          <span class="table-header-col">
+            {{'pages.sprOpenSessionsBrowse.'+col.field | translate}}
+            <p-sortIcon field="{{col.field}}" class="table-header-col__icon"></p-sortIcon>
+          </span>
+        </th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row let-index="rowIndex">
+      <tr>
+        <td>
+          <p-tableCheckbox [value]="row" [pSelectableRow]="row.ses_id"> </p-tableCheckbox>
+        </td>
+        <td
+          *ngFor="let col of visibleColumns"
+          [ngClass]="{'spr-text-right': col.type === dataTypeNumber, 'whitespace-nowrap': col.type === dataTypeDate}"
+        >
+          <span class="p-column-title">{{'pages.sprOpenSessionsBrowse.'+col.field | translate}}</span>
+          <span>{{row[col.field]}}</span>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage" translate>
+      <tr>
+        <td [attr.colspan]="cols.length + 1">
+          <spr-table-no-rec-found></spr-table-no-rec-found>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</spr-content-box>

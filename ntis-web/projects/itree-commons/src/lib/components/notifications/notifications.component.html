@@ -1,0 +1,126 @@
+<div class="notification">
+  <spr-button
+    (click)="showMessages = !showMessages"
+    iconName="faBell"
+    iconStyle="far"
+    class="notification__button"
+  ></spr-button>
+  <section *ngIf="countUnreadMessages() > 0" class="notification__button-alert-circle">
+    {{countUnreadMessages() > 9 ? '9+' : countUnreadMessages()}}
+  </section>
+
+  <section *ngIf="showMessages" class="dialog">
+    <header class="dialog__header">
+      <span class="dialog__header-text font-semibold">{{translationsReference + 'notifications' | translate}}</span>
+      <div>
+        <div *ngIf="countUnreadMessages() > 0" class="dialog__header-new-notification">
+          {{ countUnreadMessages() }} {{translationsReference + 'newNotification' | translate}}
+        </div>
+      </div>
+    </header>
+
+    <div class="tabs">
+      <ng-container *ngFor="let row of tabList">
+        <button
+          type="button"
+          [ngClass]="row.tabValue === tabValue ? 'tabs__tabs-button--active' : 'tabs__tabs-button'"
+          (click)="filterMessages(row.tabValue)"
+        >
+          {{translationsReference + row.tabValue | translate }}
+          {{row.tabValue === notificationTypes.all ? '('+messagesList.length+')' : ''}}
+        </button>
+      </ng-container>
+    </div>
+
+    <section class="dialog__body">
+      <div class="message-view" *ngIf="showMessageView" @fadeInFields>
+        <div class="message-view__body">
+          <div class="message-view__title" [innerHTML]="messageViewData.ntf_title | safeHtml"></div>
+          <br />
+          <div class="message-view__text" [innerHTML]="messageViewData.ntf_message | safeHtml"></div>
+        </div>
+        <footer>
+          <div class="flex justify-between">
+            <spr-button-back
+              [disableLocationBack]="true"
+              (navigateBack)="showMessageView = false"
+              id="ignore-element"
+              class="button-back"
+            ></spr-button-back>
+            <button type="button" class="button-back" (click)="navigateToViewMessage()">
+              <fa-icon [icon]="faIconsService.far.faEnvelope"></fa-icon
+              >{{translationsReference + 'viewFull' | translate
+              }}
+            </button>
+          </div>
+        </footer>
+      </div>
+
+      <ng-container *ngIf="!showMessageView">
+        <ng-container *ngIf="tmpMessagesList.length > 0; else noMessages">
+          <button
+            type="button"
+            class="message-card"
+            *ngFor="let row of tmpMessagesList"
+            (click)="markAsRead(row.ntf_id)"
+          >
+            <div class="message-card__icon-wrapper">
+              <fa-icon
+                [class]="'message-card__icon-' + (row.ntf_type | lowercase)"
+                [icon]="getIcon(row.ntf_type | lowercase)"
+                [fixedWidth]="true"
+              ></fa-icon>
+            </div>
+            <div class="message-card__content">
+              <span
+                class="message-card__content-header"
+                [ngClass]="!row.ntf_mark_as_read_date ? 'message-card__content-header--unread' : 'message-card__content-header' "
+                [innerHTML]="row.ntf_title | safeHtml"
+              >
+              </span>
+              <span class="message-card__message-time">
+                <fa-icon
+                  [icon]="faIconsService.far.faClock"
+                  class="message-card__message-time-icon"
+                  size="sm"
+                  [fixedWidth]="true"
+                ></fa-icon>
+                <div class="message-card__message-time-text ">{{row.ntf_creation_date | dateAgo}}</div>
+              </span>
+            </div>
+          </button>
+        </ng-container>
+      </ng-container>
+    </section>
+    <div class="read-all-wrapper">
+      <button type="button" class="read-all-wrapper__button" (click)="navigateToBrowse()">
+        {{translationsReference + 'viewAllNotifications' | translate}}
+        <fa-icon [icon]="faIconsService.fas.faArrowCircleRight"></fa-icon>
+      </button>
+    </div>
+  </section>
+</div>
+
+<section *ngIf="notification !== null && showMessages !== true" @slideToLeft class="toaster">
+  <div class="font-semibold mb-4" [innerHTML]="notification.ntf_title | safeHtml"></div>
+  <div class="text-sm" [innerHTML]="notification.ntf_message | safeHtml"></div>
+
+  <spr-button
+    iconName="faTimes"
+    iconStyle="fas"
+    class="toaster__close-button"
+    (click)="notification = null"
+  ></spr-button>
+</section>
+
+<ng-template #noMessages>
+  <section class="no-messages">
+    <header>
+      <fa-icon [icon]="faIconsService.far.faBell" [fixedWidth]="true" size="2xl"></fa-icon>
+    </header>
+    <span>{{translationsReference + 'noNotifications' | translate}}</span>
+  </section>
+</ng-template>
+<audio controls class="hidden" #audioElement>
+  <source [src]="audioUrl" type="audio/mp3" />
+</audio>

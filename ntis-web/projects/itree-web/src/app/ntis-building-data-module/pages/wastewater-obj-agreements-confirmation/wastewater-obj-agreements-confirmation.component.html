@@ -1,0 +1,345 @@
+<spr-content-box [headerText]="wfAgrrementsList + '.agreementBuilding'" transformingText="uppercase">
+  <section class="preview">
+    <div class="preview__body">
+      <span class="preview__address">
+        {{agreementDataResponse.full_address_text}}
+      </span>
+      <ntis-accordion [label]="(wfAgrrementsList + '.agreementInfo' | translate)" [asCard]="true" [uppercase]="true">
+        <spr-info-line
+          [name]="wfAgrrementsList + '.fua_id' | translate"
+          value="{{agreementDataResponse.fua_id}}"
+        ></spr-info-line>
+
+        <spr-info-line
+          [name]="wfAgrrementsList + '.fua_state_text' | translate"
+          [value]="agreementDataResponse.fua_state_text"
+        ></spr-info-line>
+
+        <spr-info-line
+          *ngIf="agreementDataResponse.fua_cancellation_reason "
+          [name]="agreementDataResponse.fua_state==='REJECTED'?  (wfAgrrementsList + '.cancelReason' | translate) : (wfAgrrementsList + '.rejectReason' | translate) "
+          [value]="agreementDataResponse.fua_cancellation_reason"
+        ></spr-info-line>
+
+        <spr-info-line
+          [name]="wfAgrrementsList + '.fua_created' | translate"
+          [value]="agreementDataResponse.fua_created"
+        ></spr-info-line>
+
+        <div class="preview__changes">
+          <div class="preview__header">
+            <span class="preview__header-name">{{  wfAgrrementsList + '.renewInfo' | translate }} </span>
+            <button (click)="showFullInfo=!showFullInfo" class="ntis-link" type="button">
+              <!-- {{ wfAgrrementsList + '.viewAllInfo' | translate }} -->
+            </button>
+          </div>
+
+          <spr-info-line
+            [name]="wfAgrrementsList + '.connectionType' | translate"
+            [value]="wfAgrrementsList + '.connection' | translate"
+          ></spr-info-line>
+
+          <spr-info-line
+            [name]="wfAgrrementsList + '.fua_network_connection_date' | translate"
+            [value]="agreementDataResponse.fua_network_connection_date"
+          ></spr-info-line>
+
+          <spr-info-line
+            [name]="wfAgrrementsList + '.org_name' | translate"
+            [value]="agreementDataResponse.org_name"
+          ></spr-info-line>
+
+          <ul *ngIf="files.fil_key" class="files">
+            <li>
+              <button type="button" (click)="downloadFile(files)" class="files__button">
+                <spr-icon name="description" class="files__icon"></spr-icon>
+                <span class="files__text">{{files.fil_name}}</span>
+              </button>
+            </li>
+          </ul>
+        </div>
+
+        <div *ngIf="agreementDataResponse.fua_state==='SUBMITTED'" class="preview__actions">
+          <spr-button
+            *ngIf="showCancelButton"
+            iconStyle="far"
+            iconName="faCircleXmark"
+            iconClassName="text-2xl"
+            class="ntis-button-hollow"
+            type="button"
+            (click)="onCancel()"
+          >
+            {{(wfAgrrementsList+'.cancel') | translate}}
+          </spr-button>
+          <spr-button
+            *ngIf="showUpdateButton"
+            iconName="faPencil"
+            iconClassName="text-xl"
+            class="spr-button-primary"
+            type="button"
+            (click)="navigateToEdit()"
+          >
+            {{(wfAgrrementsList+'.edit') | translate}}
+          </spr-button>
+          <spr-button
+            *ngIf="showRejectButton"
+            iconStyle="far"
+            iconName="faCircleXmark"
+            iconClassName="text-2xl"
+            class="ntis-button-hollow"
+            type="button"
+            (click)="onCancel()"
+          >
+            {{(wfAgrrementsList+'.reject') | translate}}
+          </spr-button>
+          <spr-button
+            *ngIf="showConfirmButton"
+            class="spr-button-primary"
+            iconStyle="fas"
+            iconName="faCircleCheck"
+            iconClassName="text-2xl"
+            type="button"
+            (click)="confirm()"
+          >
+            {{( wfAgrrementsList+'.confirm') | translate}}
+          </spr-button>
+        </div>
+      </ntis-accordion>
+      <!-- 
+      <div class="preview__body">
+        <ntis-accordion
+          [label]="(formTranslationsReference + '.infoFromNtrBlock' | translate) +' '+ (data.bn_created | s2Date)"
+        >
+          <spr-info-line
+            *ngIf="data?.bn_obj_inv_code"
+            [name]="formTranslationsReference + '.ntrNumber' | translate"
+            [value]="data.bn_obj_inv_code"
+          ></spr-info-line>
+          <spr-info-line
+            *ngIf="data?.bn_full_address"
+            [name]="formTranslationsReference + '.objAddress' | translate"
+            [value]="data.bn_full_address +' ('+data.bn_coordinate_latitude_adr+', '+data.bn_coordinate_longitude_adr+')'"
+          ></spr-info-line>
+          <spr-info-line
+            *ngIf="data?.bn_aob_code"
+            [name]="formTranslationsReference + '.objAddressIdentNumber' | translate"
+            value="{{data.bn_aob_code}}"
+          ></spr-info-line>
+          <spr-info-line
+            *ngIf="data?.bn_object_name"
+            [name]="formTranslationsReference + '.objtype' | translate"
+            [value]="data.bn_object_name"
+          ></spr-info-line>
+          <spr-info-line
+            *ngIf="data?.bn_pask_name"
+            [name]="formTranslationsReference + '.mainUseReason' | translate"
+            [value]="data.bn_pask_name"
+          ></spr-info-line>
+          <spr-info-line
+            *ngIf="data?.bn_obj_inv_parent_code"
+            [name]="formTranslationsReference + '.objRecordNumber' | translate"
+            [value]="data.bn_obj_inv_parent_code"
+          ></spr-info-line>
+          <spr-info-line
+            *ngIf="data?.bn_object_inv_date"
+            [name]="formTranslationsReference + '.objRegisttDate' | translate"
+            [value]="data.bn_object_inv_date | s2Date"
+          ></spr-info-line>
+
+          <spr-info-line
+            *ngIf="data?.bn_construction_start_year"
+            [name]="formTranslationsReference + '.buildStart' | translate"
+            value="{{data.bn_construction_start_year}}"
+          ></spr-info-line>
+          <spr-info-line
+            *ngIf="data?.bn_construction_end_year"
+            [name]="formTranslationsReference + '.buildEnd' | translate"
+            value="{{data.bn_construction_end_year}}"
+          ></spr-info-line>
+
+          <spr-info-line
+            *ngIf="data?.bn_construction_completion"
+            [name]="formTranslationsReference + '.percentageCompletion' | translate"
+            value="{{data.bn_construction_completion}}"
+          ></spr-info-line>
+          <spr-info-line
+            *ngIf="data?.bn_total_area"
+            [name]="formTranslationsReference + '.mutualSpace' | translate"
+            value="{{data.bn_total_area}} m²"
+          ></spr-info-line>
+          <spr-info-line
+            *ngIf="data?.bn_useable_area"
+            [name]="formTranslationsReference + '.useSpace' | translate"
+            value="{{data.bn_useable_area}} m²"
+          ></spr-info-line>
+          <spr-info-line
+            *ngIf="data?.bn_living_area"
+            [name]="formTranslationsReference + '.liveSpace' | translate"
+            value="{{data.bn_living_area}} m²"
+          ></spr-info-line>
+          <spr-info-line
+            *ngIf="data?.bn_wastewater_treatment"
+            [name]="formTranslationsReference + '.wastewaterTreatment' | translate"
+            [value]="data.bn_wastewater_treatment"
+          ></spr-info-line>
+          <spr-info-line
+            *ngIf="data?.bn_water_supply"
+            [name]="formTranslationsReference + '.waterSupply' | translate"
+            [value]="data.bn_water_supply"
+          ></spr-info-line>
+          <spr-info-line
+            *ngIf="data?.bn_declr_type"
+            [name]="formTranslationsReference + '.declaredResidents' | translate"
+            [value]="data.bn_declr_type"
+          ></spr-info-line>
+          <spr-info-line
+            *ngIf="data?.bn_live_count"
+            [name]="formTranslationsReference + '.declaredResidentsLive' | translate"
+            value="{{data.bn_live_count}}"
+          ></spr-info-line>
+        </ntis-accordion>
+
+        <ntis-accordion
+          [label]="(formTranslationsReference + '.infoFromWater' | translate) + (data.cwf_updated_at ? (formTranslationsReference + '.infoUpdated' | translate) + data.cwf_import_date : '')"
+          [asCard]="!data.cwf_import_date"
+        >
+          <span class="font-semibold" *ngIf="!data.cwf_import_date">
+            {{formTranslationsReference + '.noData' | translate}}
+          </span>
+          <ng-container *ngIf="data.cwf_import_date">
+            <spr-info-line
+              [name]="formTranslationsReference + '.infoWastewaterTreat' | translate"
+              [value]="data.ba_wastewater_treatment"
+            ></spr-info-line>
+            <spr-info-line
+              [name]="formTranslationsReference + '.connectionCentralized' | translate"
+              [value]="data.ba_network_connection_date | s2Date"
+            ></spr-info-line>
+
+            <spr-info-line
+              *ngIf="data.cwfd_atjungimo_data"
+              [name]="formTranslationsReference + '.disconnectedDate' | translate"
+              [value]="data.cwfd_atjungimo_data | s2Date"
+            ></spr-info-line>
+
+            <spr-info-line
+              [name]="formTranslationsReference + '.waterManagementCompany' | translate"
+              [value]="data.org_name +', '+data.org_code"
+            ></spr-info-line>
+
+            <spr-info-line
+              *ngIf="data.cwf_import_date"
+              [name]="formTranslationsReference + '.dataSubmissionSate' | translate"
+              [value]="data.cwf_import_date | s2Date"
+            ></spr-info-line>
+          </ng-container>
+        </ntis-accordion>
+
+        <ntis-accordion [label]="(formTranslationsReference + '.systemInfoBuilding' | translate) ">
+          <spr-info-line
+            *ngIf="data.so_id"
+            [name]="formTranslationsReference + '.wastewaterManagementInformation' | translate"
+            value="{{data.so_id}}"
+          ></spr-info-line>
+          <spr-info-line
+            *ngIf="data.so_created"
+            [name]="formTranslationsReference + '.registrationSystem' | translate"
+            [value]="data.so_created | s2Date"
+          ></spr-info-line>
+
+          <spr-info-line
+            *ngIf="data.so_updated"
+            [name]="formTranslationsReference + '.updateSystem' | translate"
+            [value]="data.so_updated | s2Date"
+          ></spr-info-line>
+
+          <spr-info-line
+            *ngIf="data.so_updated_by"
+            [name]="formTranslationsReference + '.lastUpdatedBy' | translate"
+            [value]="data.so_updated_by"
+          ></spr-info-line>
+          <ng-container *ngIf="data?.ba_state === ntisBuildingAgreementStatus.CONFIRMED">
+            <spr-info-line
+              *ngIf="data.ba_wastewater_treatment_m"
+              [name]="formTranslationsReference + '.informationWastewaterManagement' | translate"
+              [value]="data.ba_wastewater_treatment_m"
+            ></spr-info-line>
+
+            <spr-info-line
+              *ngIf="data.ba_network_connection_date_m"
+              [name]="formTranslationsReference + '.sewageNetworkDate' | translate"
+              [value]="data.ba_network_connection_date_m | s2Date"
+            ></spr-info-line>
+
+            <spr-info-line
+              *ngIf="data.org_name_m"
+              [name]="formTranslationsReference + '.wastewaterManagementInfo' | translate"
+              [value]="data.org_name_m"
+            ></spr-info-line>
+          </ng-container>
+          <button type="button" (click)="downloadFile(file)" class="files-link" *ngIf="file?.fil_name">
+            <spr-icon name="description" class="files-link__icon"></spr-icon>
+            <span class="files-link__text">{{file?.fil_name}}</span>
+          </button>
+        </ntis-accordion>
+      </div> -->
+
+      <ntis-accordion [label]="(wfAgrrementsList + '.personInfo' | translate)" [asCard]="true" [uppercase]="true">
+        {{(agreementDataResponse.person) + (agreementDataResponse.per_email ?', ' +agreementDataResponse.per_email : '') + (agreementDataResponse.per_phone_number ?', ' +agreementDataResponse.per_phone_number : '') }}
+      </ntis-accordion>
+      <ng-container *ngIf="showFullInfo"> </ng-container>
+    </div>
+  </section>
+
+  <div class="spr-form-buttons mt-2">
+    <spr-button class="ntis-button-link" (click)="goBack()"> {{'common.action.back' | translate}} </spr-button>
+  </div>
+
+  <form [formGroup]="form" autocomplete="off">
+    <p-dialog
+      (onHide)="this.actionDialog = false"
+      [(visible)]="actionDialog"
+      [style]="{width: '500px', 'z-index': 999, 'top': '2rem', overflow: 'visible'}"
+      [modal]="true"
+      [draggable]="false"
+      styleClass="p-fluid"
+      [autoZIndex]="true"
+      [closable]="false"
+      [blockScroll]="true"
+      [contentStyle]="{'overflow': 'visible !important' }"
+      appendTo="body"
+    >
+      <div class="order-dialog-wrapper">
+        <div class="order-dialog-text-wrapper">
+          <span
+            >{{  showCancelButton ? (wfAgrrementsList+'.cancelDialog' | translate) : (wfAgrrementsList+'.rejectDialog' | translate)}}</span
+          >
+        </div>
+        <div class="order-dialog-inputs-wrapper">
+          <spr-form-field
+            labelText="{{ showCancelButton ? (wfAgrrementsList+'.cancelReason' | translate) : (wfAgrrementsList+'.rejectReason' | translate)  }}"
+            [isLabelHorizontal]="false"
+            [errorDiv]="false"
+          >
+            <textarea formControlName="cancelReason"></textarea>
+          </spr-form-field>
+        </div>
+      </div>
+      <div class="spr-form-buttons mb-3 mt-5">
+        <spr-button className="ntis-button-link" (click)="this.actionDialog = false">
+          {{'common.action.back' | translate}}
+        </spr-button>
+        <spr-button
+          iconStyle="fas"
+          iconName="faCircleXmark"
+          iconClassName="text-2xl"
+          class="spr-button-primary"
+          (click)="cancel()"
+          type="submit"
+        >
+          {{showCancelButton ? ((wfAgrrementsList+'.cancel') | translate): (wfAgrrementsList+'.reject') | translate }}
+        </spr-button>
+      </div>
+    </p-dialog>
+  </form>
+</spr-content-box>

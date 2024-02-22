@@ -1,0 +1,74 @@
+<fieldset [formGroup]="form" class="filter-box">
+  <h5 class="filter-box__heading">{{ (translationsRef + '.headerText') | translate }}</h5>
+
+  <spr-form-field
+    [labelText]="(translationsRef + '.fieldLabel') | translate"
+    [labelFor]="index + 'field'"
+    [mandatory]="true"
+    [errorDiv]="form.controls.field.touched && !!form.controls.field.errors"
+    [inputErrors]="form.controls.field.touched && form.controls.field.errors"
+  >
+    <spr-select
+      formControlName="field"
+      [inputId]="index + 'field'"
+      [optionData]="fields"
+      optionLabel="name"
+      [placeholder]="'common.action.select' | translate"
+    />
+  </spr-form-field>
+
+  <spr-form-field
+    *ngIf="!form.controls.field.value?.options && !form.controls.field.value?.classifierCode"
+    [labelText]="(translationsRef + '.valueLabel') | translate"
+    [labelFor]="index + 'value'"
+    [mandatory]="true"
+    [errorDiv]="form.controls.filter.touched && !!form.controls.filter.errors"
+    [inputErrors]="form.controls.filter.touched && form.controls.filter.errors"
+  >
+    <spr-filter-input
+      [useInForm]="true"
+      [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+      formControlName="filter"
+      [id]="index + 'value'"
+      placeholder=""
+      [inputConditionList]="fields[index].filterInputType === 'date' ? dateFilterConditions : textFilterConditions"
+      [showFilterConditions]="fields[index].filterInputType !== 'date'"
+      [defaultFilterCondition]="fields[index].filterInputType === 'date' ? dateFilterConditions[0] : undefined"
+      [maxLength]="32"
+      [inputType]="fields[index].filterInputType || 'text'"
+    />
+  </spr-form-field>
+
+  <spr-form-field
+    *ngIf="form.controls.field.value?.options || form.controls.field.value?.classifierCode"
+    [labelText]="(translationsRef + '.valueLabel') | translate"
+    [labelFor]="index + 'value'"
+    [mandatory]="true"
+    [errorDiv]="form.controls.selectFilter.touched && !!form.controls.selectFilter.errors"
+    [inputErrors]="form.controls.selectFilter.touched && form.controls.selectFilter.errors"
+  >
+    <spr-select
+      *ngIf="form.controls.field.value?.options"
+      [optionData]="form.controls.field.value.options"
+      [optionLabel]="form.controls.field.value.optionLabel"
+      [optionLabel]="form.controls.field.value.optionValue"
+      [optionType]="form.controls.field.value.optionType || 'single'"
+      formControlName="selectFilter"
+    />
+    <spr-select
+      *ngIf="form.controls.field.value?.classifierCode"
+      [classifierCode]="form.controls.field.value.classifierCode"
+      [optionType]="form.controls.field.value.optionType || 'single'"
+      formControlName="selectFilter"
+    />
+  </spr-form-field>
+
+  <div class="remove-wrapper">
+    <spr-button
+      className="spr-button-secondary"
+      iconName="faTimes"
+      (click)="remove.emit()"
+      >{{ 'common.action.remove' | translate }}</spr-button
+    >
+  </div>
+</fieldset>

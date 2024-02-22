@@ -1,0 +1,11 @@
+textarea {
+  @apply resize-none h-52;
+}
+
+.dialog-edit-block-wrapper {
+  @apply flex flex-col gap-4 items-center;
+}
+
+.dialog-rejection-text {
+  @apply text-center;
+}

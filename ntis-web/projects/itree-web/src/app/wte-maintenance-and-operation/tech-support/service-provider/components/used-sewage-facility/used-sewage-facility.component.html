@@ -1,0 +1,56 @@
+<spr-form-field-group [text]="translationsReference + '.legend'">
+  <ntis-existing-facility-search
+    [showSearchBlock]="editMode"
+    [showWithHeader]="false"
+    [showAddedFacilities]="false"
+    (selectedWtf)="updateWtfSelection($event)"
+  ></ntis-existing-facility-search>
+  <div class="used-facilities-wrapper" *ngFor="let facility of usedFacilities">
+    <div class="used-facilities-content">
+      <spr-info-line [name]="'common.generalUse.address' | translate" [value]="facility?.wtf_address"></spr-info-line>
+      <spr-info-line [name]="translationsReference + '.type' | translate" [value]="facility?.wtf_type"></spr-info-line>
+      <spr-info-line
+        *ngIf="facility.wtf_technical_passport_id && (facility.typeClsf === ntisWtfType.septic || facility.typeClsf === ntisWtfType.bio)"
+        [name]="translationsReference + '.technical_passport_id' | translate"
+        [value]="facility.wtf_technical_passport_id"
+      ></spr-info-line>
+      <spr-info-line
+        *ngIf="facility.wtf_manufacturer && (facility.typeClsf === ntisWtfType.septic || facility.typeClsf === ntisWtfType.bio)"
+        [name]="translationsReference + '.manufacturer' | translate"
+        [value]="facility.wtf_manufacturer"
+      ></spr-info-line>
+      <spr-info-line
+        *ngIf="facility.wtf_model && (facility.typeClsf === ntisWtfType.septic || facility.typeClsf === ntisWtfType.bio)"
+        [name]="translationsReference + '.model' | translate"
+        [value]="facility.wtf_model"
+      ></spr-info-line>
+      <spr-info-line
+        *ngIf="facility.wtf_installation_date"
+        [name]="translationsReference + '.installation_date' | translate"
+        [value]="facility.wtf_installation_date"
+      ></spr-info-line>
+      <spr-info-line
+        *ngIf="facility.wtf_distance"
+        [name]="translationsReference + '.distance' | translate"
+        [value]="facility.wtf_distance"
+      ></spr-info-line>
+      <spr-info-line
+        *ngIf="facility.typeClsf === ntisWtfType.reservoir && facility.capacity"
+        [name]="translationsReference + '.capacity' | translate"
+        [value]="facility.capacity"
+      >
+      </spr-info-line>
+    </div>
+    <div *ngIf="editMode" class="remove-facility-button">
+      <spr-button
+        type="button"
+        class="spr-button-hollow"
+        iconStyle="fas"
+        iconName="faTrashCan"
+        iconClassName="text-2xl text-primary-500"
+        (click)="deleteDeliveryFacility(facility.wtf_id, facility.us_id)"
+      >
+      </spr-button>
+    </div>
+  </div>
+</spr-form-field-group>

@@ -1,0 +1,12 @@
+:host {
+  @apply flex justify-center;
+}
+
+.table-actions {
+  &__desktop-toggle {
+    @apply hidden table:flex items-center justify-center text-primary-500 hover:text-primary-600 active:text-primary-700 text-2xl w-8 h-8 hover:bg-neutral-300;
+  }
+  &__mobile-toggle {
+    @apply flex table:hidden text-sm font-medium gap-1 items-center text-primary-500 hover:text-primary-600 active:text-primary-700;
+  }
+}

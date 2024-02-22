@@ -1,0 +1,31 @@
+.address-list {
+  @apply w-full text-primary-600 border-t border-b flex flex-col gap-2;
+
+  &__item {
+    @apply flex justify-between items-center bg-neutral-50 border border-neutral-200 p-2 rounded;
+  }
+
+  &__item-text {
+    @apply font-medium text-sm;
+  }
+  &__item-buildig-type {
+    @apply text-neutral-500 italic text-sm;
+  }
+
+  &__item-button {
+    @apply duration-150 hover:text-red-900;
+  }
+}
+
+.address-card {
+  @apply flex flex-col w-full text-left py-1;
+  &__item {
+    @apply flex justify-start items-center text-neutral-900 gap-1;
+  }
+  &__address-text {
+    @apply text-sm font-medium;
+  }
+  &__coord-text {
+    @apply text-sm italic text-neutral-600;
+  }
+}

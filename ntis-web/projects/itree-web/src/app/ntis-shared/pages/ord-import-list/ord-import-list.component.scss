@@ -1,0 +1,19 @@
+.file-upload-wrapper {
+  @apply mb-5 mt-3 gap-5 flex flex-row items-center justify-center;
+}
+
+.actions {
+  @apply flex flex-col xs:flex-row justify-center gap-3 mt-5;
+}
+
+.usr-info {
+  @apply ml-5 mr-5 mt-5 flex flex-col;
+}
+
+.usr-info-header {
+  @apply font-bold self-center mb-5;
+}
+
+.dialog-footer {
+  @apply flex flex-row justify-center items-center pt-10;
+}

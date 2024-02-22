@@ -1,0 +1,7 @@
+build
+node_modules
+package.json
+package-lock.json
+.eslintrc.json
+karma.conf.js
+projects/itree-commons/src/lib/model/api/api.d.ts

@@ -1,0 +1,400 @@
+<spr-content-box [headerText]="wfAgrrementsList + '.agreementWTF'" transformingText="uppercase">
+  <section class="preview">
+    <div class="preview__body">
+      <span class="preview__address">
+        {{agreementDataResponse.full_address_text}}
+      </span>
+      <ntis-accordion [label]="(wfAgrrementsList + '.agreementInfo' | translate)" [asCard]="true" [uppercase]="true">
+        <spr-info-line
+          [name]="wfAgrrementsList + '.fua_id' | translate"
+          value="{{agreementDataResponse.fua_id}}"
+        ></spr-info-line>
+
+        <spr-info-line
+          [name]="wfAgrrementsList + '.fua_state_text' | translate"
+          [value]="agreementDataResponse.fua_state_text"
+        ></spr-info-line>
+
+        <spr-info-line
+          *ngIf="agreementDataResponse.fua_state==='REJECTED' || agreementDataResponse.fua_state==='CANCELED'"
+          [name]="agreementDataResponse.fua_state==='REJECTED'?  (wfAgrrementsList + '.rejectReason' | translate) :  (wfAgrrementsList + '.cancelReason' | translate)"
+          [value]="agreementDataResponse.fua_cancellation_reason"
+        ></spr-info-line>
+
+        <spr-info-line
+          [name]="wfAgrrementsList + '.fua_created' | translate"
+          [value]="agreementDataResponse.fua_created"
+        ></spr-info-line>
+
+        <div class="preview__changes">
+          <div class="preview__header">
+            <span class="preview__header-name">{{  wfAgrrementsList + '.renewInfo' | translate }} </span>
+            <button (click)="showFullInfo=!showFullInfo" class="ntis-link" type="button">
+              {{ wfAgrrementsList + '.viewAllInfo' | translate }}
+            </button>
+          </div>
+
+          <spr-info-line
+            *ngIf="data.wtf_title!== agreementData.wtf_title"
+            [name]="treatmentFacilityReview + '.type' | translate"
+            [value]="agreementData.wtf_title"
+          ></spr-info-line>
+
+          <spr-info-line
+            *ngIf="data?.wtf_identification_number!== agreementData?.wtf_identification_number"
+            [name]="treatmentFacilityReview + '.wtfIdentificationNumber' | translate"
+            [value]="agreementData.wtf_identification_number"
+          ></spr-info-line>
+
+          <spr-info-line
+            *ngIf="data.full_address_text!== agreementData.full_address_text"
+            [name]="treatmentFacilityReview + '.address' | translate"
+            [value]="!agreementData.full_address_text ? agreementData.wtf_latitude+','+ agreementData.wtf_longitude : agreementData.full_address_text"
+          ></spr-info-line>
+
+          <spr-info-line
+            *ngIf="data.wtf_technical_passport_id!== agreementData.wtf_technical_passport_id"
+            [name]="treatmentFacilityReview + '.technicalPassport' | translate"
+            [value]="agreementData.wtf_technical_passport_id"
+          ></spr-info-line>
+
+          <spr-info-line
+            *ngIf="data.wtf_manufacturer!== agreementData.wtf_manufacturer"
+            [name]="treatmentFacilityReview + '.manufacturer' | translate"
+            [value]="agreementData.wtf_manufacturer"
+          ></spr-info-line>
+          <ng-container *ngIf="data.wtf_model!== agreementData.wtf_model">
+            <spr-info-line
+              *ngIf="data.wtf_model &&  data.wtf_model!== agreementData.wtf_model"
+              [name]="treatmentFacilityReview + '.model' | translate"
+              [value]="agreementData.wtf_model"
+            ></spr-info-line>
+          </ng-container>
+          <spr-info-line
+            *ngIf="!data.wtf_model && data.wtf_manufacturer_description!== agreementData.wtf_manufacturer_description"
+            [name]="treatmentFacilityReview + '.modelDescription' | translate"
+            [value]="agreementData.wtf_manufacturer_description"
+          ></spr-info-line>
+          <spr-info-line
+            *ngIf="!instalationDateEq"
+            [name]="treatmentFacilityReview + '.installiationDate' | translate"
+            [value]="agreementData.wtf_installation_date | s2Date"
+          ></spr-info-line>
+          <spr-info-line
+            *ngIf="data.wtf_checkout_date!== agreementData.wtf_checkout_date"
+            [name]="treatmentFacilityReview + '.removeDate' | translate"
+            [value]="agreementData.wtf_checkout_date | s2Date"
+          ></spr-info-line>
+          <spr-info-line
+            *ngIf="data.wtf_capacity!== agreementData.wtf_capacity"
+            [name]="treatmentFacilityReview + '.wtfCapacity' | translate"
+            [value]="agreementData.wtf_capacity"
+          ></spr-info-line>
+          <spr-info-line
+            *ngIf="data.wtf_distance!== agreementData.wtf_distance"
+            [name]="treatmentFacilityReview + '.distance' | translate"
+            [value]="!agreementData.wtf_distance ? '' : agreementData.wtf_distance +' m' "
+          ></spr-info-line>
+
+          <ul *ngIf="agreementData.wtf_files_json === data.wtf_files_json" ngclass="files">
+            <li *ngFor="let item of newFiles">
+              <button type="button" (click)="downloadFile(item)" class="files__button">
+                <spr-icon name="description" class="files__icon"></spr-icon>
+                <span class="files__text">{{item.fil_name}}</span>
+              </button>
+            </li>
+          </ul>
+          <spr-info-line
+            *ngIf="data.full_address_text!== agreementData.full_address_text"
+            [name]="treatmentFacilityReview + '.graduationLocation' | translate"
+            [value]="!agreementData.full_address_text ? agreementData.wtf_latitude+','+ agreementData.wtf_longitude : agreementData.full_address_text"
+          ></spr-info-line>
+          <spr-info-line
+            *ngIf="data.wtf_discharge_wastewater_type!== agreementData.wtf_discharge_wastewater_type"
+            [name]="treatmentFacilityReview + '.publisherContent' | translate"
+            [value]="agreementData.wtf_discharge_wastewater_type"
+          ></spr-info-line>
+
+          <spr-info-line
+            *ngIf="data.wtf_data_source!== agreementData.wtf_data_source"
+            [name]="treatmentFacilityReview + '.dataSrc' | translate"
+            [value]="agreementData.wtf_data_source"
+          ></spr-info-line>
+          <spr-info-line
+            *ngIf="data.wtf_created_at!== agreementData.wtf_created_at"
+            [name]="treatmentFacilityReview + '.registerdAt' | translate"
+            [value]="agreementData.wtf_created_at | s2Date"
+          ></spr-info-line>
+          <ul *ngIf="showObjects">
+            <li *ngFor="let row of diffServedObjects">
+              <div class="adress-card-not-confirmed">
+                <span class="address-card__item" *ngIf="row.so_address">
+                  <spr-icon name="house"></spr-icon><span class="address-card__address-text">{{row.so_address}}</span>
+                </span>
+                <span class="address-card__item" *ngIf="row.so_latitude"
+                  ><spr-icon name="location_on"></spr-icon
+                  ><span class="address-card__coord-text">{{row.so_latitude}}, {{row.so_longitude}}</span>
+                </span>
+                <span class="address-card__item" *ngIf="row.so_purp_name || row.so_inv_code">
+                  <spr-icon name="maps_home_work"></spr-icon
+                  ><span class="address-card__coord-text">{{row.so_purp_name}} {{row.so_inv_code}}</span>
+                </span>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div *ngIf="agreementDataResponse.fua_state==='SUBMITTED'" class="preview__actions">
+          <spr-button
+            *ngIf="showCancelButton"
+            iconStyle="far"
+            iconName="faCircleXmark"
+            iconClassName="text-2xl"
+            class="ntis-button-hollow"
+            type="button"
+            (click)="onCancel()"
+          >
+            {{(wfAgrrementsList+'.cancel') | translate}}
+          </spr-button>
+          <spr-button
+            *ngIf="showUpdateButton"
+            iconName="faPencil"
+            iconClassName="text-xl"
+            class="spr-button-primary"
+            type="button"
+            (click)="navigateToEdit()"
+          >
+            {{(wfAgrrementsList+'.edit') | translate}}
+          </spr-button>
+          <spr-button
+            *ngIf="showRejectButton"
+            iconStyle="far"
+            iconName="faCircleXmark"
+            iconClassName="text-2xl"
+            class="ntis-button-hollow"
+            type="button"
+            (click)="onCancel()"
+          >
+            {{(wfAgrrementsList+'.reject') | translate}}
+          </spr-button>
+          <spr-button
+            *ngIf="showConfirmButton"
+            class="spr-button-primary"
+            iconStyle="fas"
+            iconName="faCircleCheck"
+            iconClassName="text-2xl"
+            type="button"
+            (click)="confirm()"
+          >
+            {{( wfAgrrementsList+'.confirm') | translate}}
+          </spr-button>
+        </div>
+      </ntis-accordion>
+
+      <ntis-accordion [label]="(wfAgrrementsList + '.personInfo' | translate)" [asCard]="true" [uppercase]="true">
+        {{(agreementDataResponse.person) + (agreementDataResponse.per_email ?', ' +agreementDataResponse.per_email : '') + (agreementDataResponse.per_phone_number ?', ' +agreementDataResponse.per_phone_number : '') }}
+      </ntis-accordion>
+      <ng-container *ngIf="showFullInfo">
+        <ntis-accordion
+          [label]="(treatmentFacilityReview + '.treatmentFacility' | translate)"
+          [asCard]="true"
+          [uppercase]="true"
+        >
+          <spr-info-line
+            [name]="treatmentFacilityReview + '.identifier' | translate"
+            value="{{data.wtf_id}}"
+          ></spr-info-line>
+
+          <spr-info-line
+            [name]="treatmentFacilityReview + '.status' | translate"
+            [value]="data.wtf_state"
+          ></spr-info-line>
+
+          <spr-info-line
+            [name]="treatmentFacilityReview + '.address' | translate"
+            [value]="!data.full_address_text ? data.wtf_latitude+','+ data.wtf_longitude : data.full_address_text"
+          ></spr-info-line>
+
+          <spr-info-line
+            [name]="treatmentFacilityReview + '.type' | translate"
+            [value]="data.wtf_title"
+          ></spr-info-line>
+        </ntis-accordion>
+
+        <ntis-accordion
+          [label]="(treatmentFacilityReview + '.servedObject' | translate)"
+          [asCard]="true"
+          [uppercase]="true"
+        >
+          <ul>
+            <li *ngFor="let row of servedObjects">
+              <div class="address-card">
+                <span class="address-card__item" *ngIf="row.so_address">
+                  <spr-icon name="house"></spr-icon><span class="address-card__address-text">{{row.so_address}}</span>
+                </span>
+                <span class="address-card__item" *ngIf="row.so_latitude"
+                  ><spr-icon name="location_on"></spr-icon
+                  ><span class="address-card__coord-text">{{row.so_latitude}}, {{row.so_longitude}}</span>
+                </span>
+                <span class="address-card__item" *ngIf="row.so_purp_name || row.so_inv_code">
+                  <spr-icon name="maps_home_work"></spr-icon
+                  ><span class="address-card__coord-text">{{row.so_purp_name}} {{row.so_inv_code}}</span>
+                </span>
+              </div>
+            </li>
+          </ul>
+        </ntis-accordion>
+
+        <ntis-accordion
+          [label]="(treatmentFacilityReview + '.infoAboutFacility' | translate)"
+          [asCard]="true"
+          [uppercase]="true"
+        >
+          <spr-info-line
+            *ngIf="data.wtf_type !== typeSewageFacilityEnum.reservoir"
+            [name]="treatmentFacilityReview + '.technicalPassport' | translate"
+            [value]="data.wtf_technical_passport_id"
+          ></spr-info-line>
+          <spr-info-line
+            *ngIf="data.wtf_type !== typeSewageFacilityEnum.reservoir"
+            [name]="treatmentFacilityReview + '.manufacturer' | translate"
+            [value]="data.wtf_manufacturer"
+          ></spr-info-line>
+          <spr-info-line
+            *ngIf="data.wtf_model && data.wtf_type !== typeSewageFacilityEnum.reservoir"
+            [name]="treatmentFacilityReview + '.model' | translate"
+            [value]="data.wtf_model"
+          ></spr-info-line>
+          <spr-info-line
+            *ngIf="!data.wtf_model  && data.wtf_type !== typeSewageFacilityEnum.reservoir"
+            [name]="treatmentFacilityReview + '.modelDescription' | translate"
+            [value]="data.wtf_manufacturer_description"
+          ></spr-info-line>
+          <spr-info-line
+            [name]="treatmentFacilityReview + '.installiationDate' | translate"
+            [value]="data.wtf_installation_date | s2Date"
+          ></spr-info-line>
+          <spr-info-line
+            [name]="treatmentFacilityReview + '.removeDate' | translate"
+            [value]="data.wtf_checkout_date | s2Date"
+          ></spr-info-line>
+
+          <spr-info-line
+            *ngIf="data.wtf_type === typeSewageFacilityEnum.reservoir"
+            [name]="treatmentFacilityReview + '.wtfCapacity' | translate"
+            [value]="data.wtf_capacity"
+          ></spr-info-line>
+
+          <spr-info-line
+            [name]="treatmentFacilityReview + '.distance' | translate"
+            [value]="!data.wtf_distance ? '' : data.wtf_distance +' m' "
+          ></spr-info-line>
+
+          <ul class="files">
+            <li *ngFor="let item of newFiles">
+              <button type="button" (click)="downloadFile(item)" class="files__button">
+                <spr-icon name="description" class="files__icon"></spr-icon>
+                <span class="files__text">{{item.fil_name}}</span>
+              </button>
+            </li>
+          </ul>
+        </ntis-accordion>
+
+        <ntis-accordion
+          *ngIf="data.wtf_type !== typeSewageFacilityEnum.reservoir"
+          [label]="(treatmentFacilityReview + '.graduationInformation' | translate)"
+          [asCard]="true"
+          [uppercase]="true"
+        >
+          <spr-info-line
+            [name]="treatmentFacilityReview + '.graduationLocation' | translate"
+            [value]="!data.full_address_text ? data.wtf_latitude+','+ data.wtf_longitude : data.full_address_text"
+          ></spr-info-line>
+          <spr-info-line
+            [name]="treatmentFacilityReview + '.publisherContent' | translate"
+            [value]="data.wtf_discharge_wastewater_type"
+          ></spr-info-line>
+        </ntis-accordion>
+        <ntis-accordion
+          [label]="(treatmentFacilityReview + '.systemInfo' | translate)"
+          [asCard]="true"
+          [uppercase]="true"
+        >
+          <spr-info-line
+            [name]="treatmentFacilityReview + '.dataSrc' | translate"
+            [value]="data.wtf_data_source"
+          ></spr-info-line>
+          <spr-info-line
+            [name]="treatmentFacilityReview + '.registerdAt' | translate"
+            [value]="data.wtf_created_at | s2Date"
+          ></spr-info-line>
+          <spr-info-line
+            [name]="treatmentFacilityReview + '.registeredBy' | translate"
+            [value]="data.wtf_created_by"
+          ></spr-info-line>
+          <spr-info-line
+            *ngIf="data.wtf_updated_at"
+            [name]="treatmentFacilityReview + '.lastUpdate' | translate"
+            [value]="data.wtf_updated_at | s2Date"
+          ></spr-info-line>
+          <spr-info-line
+            *ngIf="data.wtf_updated_by"
+            [name]="treatmentFacilityReview + '.updatdBy' | translate"
+            [value]="data.wtf_updated_by"
+          ></spr-info-line>
+        </ntis-accordion>
+      </ng-container>
+    </div>
+  </section>
+  <div class="spr-form-buttons mt-2">
+    <spr-button class="ntis-button-link" (click)="goBack()"> {{'common.action.back' | translate}} </spr-button>
+  </div>
+
+  <form [formGroup]="form" autocomplete="off">
+    <p-dialog
+      (onHide)="this.actionDialog = false"
+      [(visible)]="actionDialog"
+      [style]="{width: '500px', 'z-index': 999, 'top': '2rem', overflow: 'visible'}"
+      [modal]="true"
+      [draggable]="false"
+      styleClass="p-fluid"
+      [autoZIndex]="true"
+      [closable]="false"
+      [blockScroll]="true"
+      [contentStyle]="{'overflow': 'visible !important' }"
+      appendTo="body"
+    >
+      <div class="order-dialog-wrapper">
+        <div class="order-dialog-text-wrapper">
+          <span
+            >{{  showCancelButton ? (wfAgrrementsList+'.cancelDialog' | translate) : (wfAgrrementsList+'.rejectDialog' | translate)}}</span
+          >
+        </div>
+        <div class="order-dialog-inputs-wrapper">
+          <spr-form-field
+            labelText="{{ showCancelButton ? (wfAgrrementsList+'.cancelReason' | translate) : (wfAgrrementsList+'.rejectReason' | translate)  }}"
+            [isLabelHorizontal]="false"
+            [errorDiv]="false"
+          >
+            <textarea formControlName="cancelReason"></textarea>
+          </spr-form-field>
+        </div>
+      </div>
+      <div class="spr-form-buttons mb-3 mt-5">
+        <spr-button className="ntis-button-link" (click)="this.actionDialog = false">
+          {{'common.action.back' | translate}}
+        </spr-button>
+        <spr-button
+          iconStyle="fas"
+          iconName="faCircleXmark"
+          iconClassName="text-2xl"
+          class="spr-button-primary"
+          (click)="cancel()"
+          type="submit"
+        >
+          {{showCancelButton ? ((wfAgrrementsList+'.cancel') | translate): (wfAgrrementsList+'.reject') | translate }}
+        </spr-button>
+      </div>
+    </p-dialog>
+  </form>
+</spr-content-box>

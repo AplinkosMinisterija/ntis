@@ -1,0 +1,118 @@
+<spr-content-box headerText="pages.sprFormsBrowse.headerText">
+  <!-- SEARCH START -->
+  <div class="spr-browse-actions-wrapper">
+    <spr-browse-search-form [formGroup]="searchForm" [formCode]="formCode" (search)="search(dataTableComponent)">
+      <spr-filter-input
+        filters
+        inputType="number"
+        [maxLength]="5"
+        formControlName="frm_id"
+        [placeholder]="'pages.sprFormsBrowse.searchPlaceholderById' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="64"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        formControlName="frm_name"
+        [placeholder]="'pages.sprFormsBrowse.searchPlaceholderByName' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="20"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        formControlName="frm_code"
+        [placeholder]="'pages.sprFormsBrowse.searchPlaceholderByCode' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="20"
+        [showFilterConditions]="false"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        formControlName="frm_description"
+        [placeholder]="'pages.sprFormsBrowse.searchPlaceholderByDesc' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="date"
+        [maxLength]="20"
+        formControlName="rec_create_timestamp"
+        [placeholder]="'pages.sprFormsBrowse.searchPlaceholderByDate' | translate"
+      ></spr-filter-input>
+
+      <spr-table-data-export
+        buttons
+        [translation]="'pages.sprFormsBrowse'"
+        [tableColumn]="cols"
+        [tableData]="exportData"
+        [fileName]="'pages.sprFormsBrowse.headerText'"
+        (exportAllRecEvent)="loadAllRecords($event, dataTableComponent)"
+      ></spr-table-data-export>
+      <spr-button-add buttons [routerLink]="[editLink, 'new']" [disabled]="!userCanCreate"></spr-button-add>
+    </spr-browse-search-form>
+  </div>
+  <!-- SEARCH END -->
+  <!-- TABLE START-->
+  <p-table
+    [value]="data"
+    responsiveLayout="stack"
+    breakpoint="1100px"
+    [paginator]="data?.length > 0"
+    [lazy]="true"
+    (onLazyLoad)="loadDataLazy($event)"
+    [rows]="showRows"
+    [totalRecords]="totalRecords"
+    [rowsPerPageOptions]="rowsPerPageOptions"
+    [showFirstLastIcon]="false"
+    dataKey="frm_id"
+    sortField="frm_id"
+    [sortOrder]="-1"
+    [rowHover]="true"
+  >
+    <!-- TABLE HEADING START-->
+    <ng-template pTemplate="header" let-row let-index="rowIndex">
+      <tr>
+        <th *ngFor="let col of visibleColumns" pSortableColumn="{{col.field}}">
+          <span class="table-header-col">
+            {{'pages.sprFormsBrowse.'+col.field | translate}}
+            <p-sortIcon field="{{col.field}}" class="table-header-col__icon"></p-sortIcon>
+          </span>
+        </th>
+        <th></th>
+      </tr>
+    </ng-template>
+    <!-- TABLE HEADING END-->
+    <!-- TABLE ROWS START -->
+    <ng-template pTemplate="body" let-row let-index="rowIndex">
+      <tr>
+        <td
+          *ngFor="let col of visibleColumns"
+          [ngClass]="{'spr-text-right': col.type === dataTypeNumber, 'whitespace-nowrap': col.type === dataTypeDate}"
+        >
+          <span class="p-column-title">{{'pages.sprFormsBrowse.'+col.field | translate}}</span>
+          <spr-text-truncate
+            [text]="row[col.field]"
+            [textLength]="col.textLength"
+            [headerText]="'pages.sprFormsBrowse.'+col.field"
+          ></spr-text-truncate>
+        </td>
+        <td>
+          <spr-table-rec-actions [actionsList]="rowMenuItems[row.frm_id]"></spr-table-rec-actions>
+        </td>
+      </tr>
+    </ng-template>
+    <!-- TABLE ROWS END -->
+    <!-- IF NO RECORD FOUND START -->
+    <ng-template pTemplate="emptymessage" translate>
+      <tr>
+        <td [attr.colspan]="cols.length + 1">
+          <spr-table-no-rec-found></spr-table-no-rec-found>
+        </td>
+      </tr>
+    </ng-template>
+    <!-- IF NO RECORD FOUND START -->
+  </p-table>
+  <!-- TABLE END -->
+</spr-content-box>

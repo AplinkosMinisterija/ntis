@@ -1,0 +1,238 @@
+<spr-content-box headerText="pages.sprCodesTranslationsBrowse.headerText">
+  <span class="codes-translations__current-classifier-wrapper">
+    <h2 class="codes-translations__current-classifier">
+      {{'components.internalNavigation.current_classifier' | translate }}: {{rfd_name}}
+    </h2>
+    <h2 class="codes-translations__current-classifier">
+      {{'components.internalNavigation.current_classifier_description' | translate }}: {{rfd_description}}
+    </h2>
+  </span>
+  <div class="spr-browse-actions-wrapper">
+    <spr-browse-search-form [formGroup]="searchForm" [formCode]="formCode" (search)="search(dataTableComponent)">
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="20"
+        formControlName="rfc_code"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="'pages.sprCodesTranslationsBrowse.rfc_code' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="20"
+        formControlName="rfc_meaning"
+        [placeholder]="'pages.sprCodesTranslationsBrowse.rfc_meaning' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="20"
+        formControlName="rfc_description"
+        [placeholder]="'pages.sprCodesTranslationsBrowse.rfc_description' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="number"
+        [maxLength]="5"
+        formControlName="rfc_order"
+        [placeholder]="'pages.sprCodesTranslationsBrowse.rfc_order' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="date"
+        formControlName="rfc_date_from"
+        [placeholder]="'pages.sprCodesTranslationsBrowse.rfc_date_from' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="date"
+        formControlName="rfc_date_to"
+        [placeholder]="'pages.sprCodesTranslationsBrowse.rfc_date_to' | translate"
+      ></spr-filter-input>
+
+      <spr-table-data-import
+        buttons
+        (reloadData)="reload()"
+        [tableColumn]="visibleColumns"
+        translation="pages.sprCodesTranslationsBrowse"
+        [fileName]="'pages.sprCodesTranslationsBrowse.headerText' | translate"
+      />
+      <spr-table-data-export
+        buttons
+        [tableColumn]="visibleColumns"
+        [tableData]="exportData"
+        translation="pages.sprCodesTranslationsBrowse"
+        fileName="pages.sprCodesTranslationsBrowse.headerText"
+      ></spr-table-data-export>
+      <spr-button-add buttons [routerLink]="[codeEditLink, 'new']"></spr-button-add>
+    </spr-browse-search-form>
+  </div>
+  <p-table
+    [value]="codesTranslations"
+    [autoLayout]="true"
+    [rowHover]="true"
+    [lazy]="true"
+    (onLazyLoad)="loadDataLazy($event)"
+    [showFirstLastIcon]="false"
+    [sortField]="'1'"
+    [sortOrder]="1"
+    dataKey="rfc_id"
+    rowExpandMode="single"
+  >
+    <ng-template pTemplate="header" let-row let-index="rowIndex">
+      <tr>
+        <th></th>
+        <th *ngFor="let col of visibleColumns" pSortableColumn="{{col.field}}">
+          <span class="table-header-col">
+            {{'pages.sprCodesTranslationsBrowse.'+col.field | translate}}
+            <p-sortIcon field="{{col.field}}" class="table-header-col__icon"></p-sortIcon>
+          </span>
+        </th>
+        <th></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row let-index="rowIndex" let-expanded="expanded">
+      <tr>
+        <td>
+          <button
+            type="button"
+            pButton
+            pRipple
+            [pRowToggler]="row"
+            class="p-button-text p-button-rounded p-button-plain"
+            [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
+          ></button>
+        </td>
+        <td
+          *ngFor="let col of visibleColumns"
+          [ngClass]="{'spr-text-right': col.type === dataTypeNumber, 'whitespace-nowrap': col.type === dataTypeDate}"
+        >
+          <span class="p-column-title " style="width: auto;">
+            {{'pages.sprCodesTranslationsBrowse.'+col.field |translate}}
+          </span>
+          <span>{{row[col.field]}}</span>
+        </td>
+        <td>
+          <spr-table-rec-actions [actionsList]="rowMenuItems[row.rfc_id]"></spr-table-rec-actions>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="rowexpansion" let-row *ngIf="showTranslationsList">
+      <tr>
+        <td colspan="8">
+          <p-table [value]="row.rft" dataKey="rft_lang" class="codes-translations__expanded-rows">
+            <ng-template pTemplate="header" let-rft let-index="rowIndex">
+              <tr>
+                <th *ngFor="let col of expansionColumns">
+                  {{'pages.sprCodesTranslationsBrowse.'+col.field | translate}}
+                </th>
+                <th></th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rft>
+              <tr>
+                <td *ngFor="let col of expansionColumns">
+                  <span class="p-column-title " style="width: auto;">
+                    {{'pages.sprCodesTranslationsBrowse.'+col.field |translate}}
+                  </span>
+                  <span>{{rft[col.field]}}</span>
+                </td>
+                <td>
+                  <span class="codes-translations__translation-buttons-wrapper">
+                    <spr-button
+                      type="button"
+                      iconName="faPencil"
+                      (click)="editTranslations(rft)"
+                      class="spr-button-primary-hollow sm codes-translations__translation-edit-button"
+                    ></spr-button>
+                    <spr-button
+                      type="button"
+                      iconName="faTrash"
+                      class="spr-button-risk-hollow sm codes-translations__translation-delete-button "
+                      (click)="onTranslationDelete(rft)"
+                    ></spr-button
+                  ></span>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage" translate>
+      <tr>
+        <td [attr.colspan]="visibleColumns.length">
+          <spr-table-no-rec-found></spr-table-no-rec-found>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+  <form [formGroup]="form" autocomplete="off">
+    <p-dialog
+      [(visible)]="actionDialog"
+      header="{{'pages.sprCodesTranslationsBrowse.editTranslation' | translate}}"
+      [style]="{width: '450px', 'z-index': 999, 'top': '2rem', overflow: 'visible'}"
+      [modal]="true"
+      [draggable]="false"
+      styleClass="p-fluid"
+      [autoZIndex]="true"
+      [closable]="true"
+      [blockScroll]="true"
+      [contentStyle]="{'overflow': 'visible !important' }"
+      appendTo="body"
+    >
+      <spr-form-field
+        labelText="{{'pages.sprCodesTranslationsBrowse.rft_lang' | translate}}"
+        [isLabelHorizontal]="false"
+      >
+        <input
+          type="text"
+          [placeholder]="'pages.sprCodesTranslationsBrowse.rft_lang' | translate"
+          [formControlName]="'rft_lang'"
+          [readonly]="true"
+        />
+      </spr-form-field>
+      <spr-form-field
+        labelText="{{'pages.sprCodesTranslationsBrowse.rft_display_code' | translate}}"
+        [isLabelHorizontal]="false"
+      >
+        <input
+          type="text"
+          [placeholder]="'pages.sprCodesTranslationsBrowse.rft_display_code' | translate"
+          [formControlName]="'rft_display_code'"
+        />
+      </spr-form-field>
+      <spr-form-field
+        labelText="{{'pages.sprCodesTranslationsBrowse.rft_description' | translate}}"
+        [isLabelHorizontal]="false"
+      >
+        <input
+          type="text"
+          [placeholder]="'pages.sprCodesTranslationsBrowse.rft_description'| translate"
+          [formControlName]="'rft_description'"
+        />
+      </spr-form-field>
+
+      <ng-template pTemplate="footer">
+        <span class="codes-translations-view__button-wrapper"
+          ><spr-button
+            className="spr-button-primary codes-translations-view__button"
+            iconName="faSave"
+            type="submit"
+            (click)="onSaveRft()"
+          >
+            {{'common.action.save' | translate}}
+          </spr-button>
+          <spr-button
+            className="spr-button-risk-hollow codes-translations-view__button"
+            iconName="faTimes"
+            (click)="onCancel()"
+          >
+            {{'common.action.cancel' | translate}}
+          </spr-button>
+        </span>
+      </ng-template>
+    </p-dialog>
+  </form>
+</spr-content-box>

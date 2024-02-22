@@ -1,0 +1,61 @@
+<spr-content-box [headerText]="formTranslationsReference + (data?.api_id ? '.editForm' : '.createForm')">
+  <div class="spr-edit-form-wrapper">
+    <spr-button-back [disableLocationBack]="true" (navigateBack)="onCancel()"></spr-button-back>
+    <spr-edit-form [formGroup]="form" [values]="editFormValues" (submit)="onSubmit($event)" (cancel)="onCancel()">
+      <ng-template sprTemplate="isOrgType">
+        <div class="spr-boolean-choice-inputs">
+          <div class="spr-choice-input-with-label">
+            <input
+              type="radio"
+              class="spr-radio"
+              formControlName="isOrgType"
+              [value]="DB_BOOLEAN_TRUE"
+              id="boolean-true"
+            />
+            <label for="boolean-true">{{formTranslationsReference + '.forOrganization' | translate}}</label>
+          </div>
+          <div class="spr-choice-input-with-label">
+            <input
+              type="radio"
+              class="spr-radio"
+              formControlName="isOrgType"
+              [value]="DB_BOOLEAN_FALSE"
+              id="boolean-false"
+            />
+            <label for="boolean-false">{{formTranslationsReference + '.forUser' | translate}}</label>
+          </div>
+        </div>
+      </ng-template>
+      <ng-template sprTemplate="orgId">
+        <spr-select
+          optionLabel="display"
+          optionValue="id"
+          [optionType]=" limitationsOnOrgId || data?.api_id  ? 'single': 'autocomplete-single'"
+          (searchData)="orgSearch($event)"
+          [optionData]="orgSearchResults"
+          [autoComplete]="true"
+          [delaySearch]="500"
+          [placeholder]="formTranslationsReference + '.org_name' | translate"
+          formControlName="orgId"
+          [showSearchIcon]="true"
+        >
+        </spr-select>
+      </ng-template>
+      <ng-template sprTemplate="usrId">
+        <spr-select
+          optionLabel="display"
+          optionValue="id"
+          [optionType]="data?.api_id  ? 'single': 'autocomplete-single'"
+          (searchData)="userSearch($event)"
+          [optionData]="usersSearchResults"
+          [autoComplete]="true"
+          [delaySearch]="500"
+          [placeholder]="formTranslationsReference + '.usr_username' | translate"
+          formControlName="usrId"
+          [showSearchIcon]="true"
+        >
+        </spr-select>
+      </ng-template>
+    </spr-edit-form>
+  </div>
+</spr-content-box>

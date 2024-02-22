@@ -1,0 +1,122 @@
+<spr-content-box
+  headerText="wteMaintenanceAndOperation.techSupport.serviceProvider.pages.sewageDeliveriesList.headerText"
+  transformingText="uppercase"
+>
+  <div class="spr-browse-actions-wrapper">
+    <spr-browse-search-form [formGroup]="searchForm" [formCode]="formCode" (search)="search(dataTableComponent)">
+      <spr-filter-input
+        filters
+        inputType="number"
+        formControlName="wd_id"
+        [placeholder]="translationsReference + '.wd_id' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="date"
+        formControlName="wd_delivery_date"
+        [placeholder]="translationsReference + '.wd_delivery_date' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="number"
+        formControlName="wd_delivered_quantity"
+        [placeholder]="translationsReference + '.wd_delivered_quantity' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="10"
+        formControlName="cr_reg_no"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="translationsReference + '.cr_reg_no' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="50"
+        formControlName="wto_name"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="translationsReference + '.wto_name' | translate"
+      ></spr-filter-input>
+      <spr-select
+        filters
+        classifierCode="SEWAGE_DELIV_STATUS"
+        formControlName="wd_state"
+        [placeholder]="translationsReference + '.wd_state' | translate"
+        optionType="multiple"
+        [advancedFilterParams]="true"
+      ></spr-select>
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="50"
+        formControlName="address"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="translationsReference+'.address' | translate"
+      ></spr-filter-input>
+
+      <spr-table-data-export
+        buttons
+        [translation]="translationsReference"
+        [tableColumn]="cols"
+        [tableData]="exportData"
+        [fileName]="translationsReference + '.headerText' | translate"
+        (exportAllRecEvent)="loadAllRecords($event, dataTableComponent)"
+      ></spr-table-data-export>
+      <spr-button-add
+        buttons
+        [routerLink]="[RoutingConst.EDIT, RoutingConst.NEW]"
+        [pTooltip]="userCanCreate ?  null  : (translationsReference +'.tooltipText' | translate)"
+        [disabled]="!userCanCreate"
+      ></spr-button-add>
+    </spr-browse-search-form>
+  </div>
+
+  <p-table
+    [value]="data"
+    [lazy]="true"
+    (onLazyLoad)="loadDataLazy($event)"
+    [rows]="showRows"
+    responsiveLayout="stack"
+    breakpoint="767px"
+    [totalRecords]="totalRecords"
+    [paginator]="data?.length > 0"
+    [rowsPerPageOptions]="rowsPerPageOptions"
+    [showFirstLastIcon]="false"
+    [rowHover]="true"
+  >
+    <ng-template pTemplate="header" let-row let-index="rowIndex">
+      <tr>
+        <ng-container *ngFor="let col of visibleColumns">
+          <th pSortableColumn="{{col.field}}">
+            {{translationsReference + '.' + col.field | translate}}
+            <p-sortIcon field="{{col.field}}"></p-sortIcon>
+          </th>
+        </ng-container>
+        <th>{{'common.generalUse.actions' | translate}}</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row let-index="rowIndex">
+      <tr>
+        <ng-container *ngFor="let col of visibleColumns">
+          <td>
+            <span class="p-column-title">
+              {{translationsReference + '.' + col.field |translate}}
+            </span>
+            <span>{{row[col.field]}}</span>
+          </td>
+        </ng-container>
+        <td>
+          <ntis-table-row-actions [actions]="row.actions"></ntis-table-row-actions>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage" translate>
+      <tr>
+        <td [attr.colspan]="cols.length + 1">
+          <spr-table-no-rec-found></spr-table-no-rec-found>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</spr-content-box>

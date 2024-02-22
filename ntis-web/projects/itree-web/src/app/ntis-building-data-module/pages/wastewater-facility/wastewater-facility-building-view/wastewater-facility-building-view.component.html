@@ -1,0 +1,233 @@
+<spr-content-box [headerText]="formTranslationsReference + '.headerText'" transformingText="uppercase">
+  <section class="preview">
+    <div class="preview__wrappper">
+      <header class="preview__header">
+        <span class="preview__address">
+          {{data?.bn_full_address}}
+        </span>
+        <span class="preview__edit-line">
+          <span>{{formTranslationsReference + '.facilityInfo' | translate}}: </span>
+          <span class="font-semibold"> {{ data.ba_wastewater_treatment_m  }}</span>
+          <button
+            type="button"
+            class="edit-button"
+            [routerLink]="[ntrBuildingEdit, data.so_id]"
+            *ngIf="!data?.fua_id && (data?.ba_state !== ntisBuildingAgreementStatus.CONFIRMED || (data?.ba_state === ntisBuildingAgreementStatus.CONFIRMED && data?.ba_wastewater_treatment_clsf === ntisTypeWastewaterTreatment.LOCAL))"
+          >
+            {{formTranslationsReference + '.edit' | translate}}
+          </button>
+        </span>
+      </header>
+
+      <div class="pending-info" *ngIf="data?.fua_id">
+        <spr-icon name="pending"></spr-icon> {{formTranslationsReference + '.pending' | translate}}
+      </div>
+
+      <div class="preview__body">
+        <ntis-accordion
+          [label]="(formTranslationsReference + '.infoFromNtrBlock' | translate) +' '+ (data.bn_created | s2Date)"
+        >
+          <spr-info-line
+            *ngIf="data?.bn_obj_inv_code"
+            [name]="formTranslationsReference + '.ntrNumber' | translate"
+            [value]="data.bn_obj_inv_code"
+          ></spr-info-line>
+          <spr-info-line
+            *ngIf="data?.bn_full_address"
+            [name]="formTranslationsReference + '.objAddress' | translate"
+            [value]="data?.bn_full_address +' ('+data.bn_coordinate_latitude_adr+', '+data.bn_coordinate_longitude_adr+')'"
+          ></spr-info-line>
+          <spr-info-line
+            *ngIf="data?.bn_aob_code"
+            [name]="formTranslationsReference + '.objAddressIdentNumber' | translate"
+            value="{{data.bn_aob_code}}"
+          ></spr-info-line>
+          <spr-info-line
+            *ngIf="data?.bn_object_name"
+            [name]="formTranslationsReference + '.objtype' | translate"
+            [value]="data.bn_object_name"
+          ></spr-info-line>
+          <spr-info-line
+            *ngIf="data?.bn_pask_name"
+            [name]="formTranslationsReference + '.mainUseReason' | translate"
+            [value]="data.bn_pask_name"
+          ></spr-info-line>
+          <spr-info-line
+            *ngIf="data?.bn_obj_inv_parent_code"
+            [name]="formTranslationsReference + '.objRecordNumber' | translate"
+            [value]="data.bn_obj_inv_parent_code"
+          ></spr-info-line>
+          <spr-info-line
+            *ngIf="data?.bn_object_inv_date"
+            [name]="formTranslationsReference + '.objRegisttDate' | translate"
+            [value]="data.bn_object_inv_date | s2Date"
+          ></spr-info-line>
+
+          <spr-info-line
+            *ngIf="data?.bn_construction_start_year"
+            [name]="formTranslationsReference + '.buildStart' | translate"
+            value="{{data.bn_construction_start_year}}"
+          ></spr-info-line>
+          <spr-info-line
+            *ngIf="data?.bn_construction_end_year"
+            [name]="formTranslationsReference + '.buildEnd' | translate"
+            value="{{data.bn_construction_end_year}}"
+          ></spr-info-line>
+
+          <spr-info-line
+            *ngIf="data?.bn_construction_completion"
+            [name]="formTranslationsReference + '.percentageCompletion' | translate"
+            value="{{data.bn_construction_completion}}"
+          ></spr-info-line>
+          <spr-info-line
+            *ngIf="data?.bn_total_area"
+            [name]="formTranslationsReference + '.mutualSpace' | translate"
+            value="{{data.bn_total_area}} m²"
+          ></spr-info-line>
+          <spr-info-line
+            *ngIf="data?.bn_useable_area"
+            [name]="formTranslationsReference + '.useSpace' | translate"
+            value="{{data.bn_useable_area}} m²"
+          ></spr-info-line>
+          <spr-info-line
+            *ngIf="data?.bn_living_area"
+            [name]="formTranslationsReference + '.liveSpace' | translate"
+            value="{{data.bn_living_area}} m²"
+          ></spr-info-line>
+          <spr-info-line
+            *ngIf="data?.bn_wastewater_treatment"
+            [name]="formTranslationsReference + '.wastewaterTreatment' | translate"
+            [value]="data.bn_wastewater_treatment"
+          ></spr-info-line>
+          <spr-info-line
+            *ngIf="data?.bn_water_supply"
+            [name]="formTranslationsReference + '.waterSupply' | translate"
+            [value]="data.bn_water_supply"
+          ></spr-info-line>
+          <spr-info-line
+            *ngIf="data?.bn_declr_type"
+            [name]="formTranslationsReference + '.declaredResidents' | translate"
+            [value]="data.bn_declr_type"
+          ></spr-info-line>
+          <spr-info-line
+            *ngIf="data?.bn_live_count"
+            [name]="formTranslationsReference + '.declaredResidentsLive' | translate"
+            value="{{data.bn_live_count}}"
+          ></spr-info-line>
+          <ng-container *ngIf="isNTISAdmin">
+            <spr-button type="button" className="spr-button-primary mt-3" (click)="loadOwnersList()">
+              {{ formTranslationsReference + '.loadOwnersData' | translate}}
+            </spr-button>
+            <div class="owners-list">
+              <ng-container *ngIf="ownersList?.length > 0">
+                <ul>
+                  <li *ngFor="let row of ownersList">
+                    <spr-info-line
+                      *ngIf="row.owner_organization_name"
+                      [name]="formTranslationsReference + '.owner' | translate"
+                      value="{{ row.owner_code ? row.owner_organization_name + ' (' + row.owner_code + ')' : row.owner_organization_name}}"
+                    ></spr-info-line>
+                    <spr-info-line
+                      *ngIf="row.owner_name"
+                      [name]="formTranslationsReference + '.owner' | translate"
+                      value="{{row.owner_name + ' ' + row.owner_lastname}}"
+                    ></spr-info-line>
+                  </li>
+                </ul>
+              </ng-container>
+              <ntis-message-box
+                *ngIf="showNoOwnersFound"
+                type="info"
+                [text]="(formTranslationsReference + '.noOwnersFound') | translate"
+              ></ntis-message-box>
+            </div>
+          </ng-container>
+        </ntis-accordion>
+
+        <ntis-accordion
+          [label]="(formTranslationsReference + '.infoFromWater' | translate) + (data.cwf_updated_at ? (formTranslationsReference + '.infoUpdated' | translate) + data.cwf_import_date : '')"
+          [asCard]="!data.cwf_import_date"
+        >
+          <span class="font-semibold" *ngIf="!data.cwf_import_date">
+            {{formTranslationsReference + '.noData' | translate}}
+          </span>
+          <ng-container *ngIf="data.cwf_import_date">
+            <spr-info-line
+              [name]="formTranslationsReference + '.infoWastewaterTreat' | translate"
+              [value]="data.ba_wastewater_treatment"
+            ></spr-info-line>
+            <spr-info-line
+              [name]="formTranslationsReference + '.connectionCentralized' | translate"
+              [value]="data.ba_network_connection_date | s2Date"
+            ></spr-info-line>
+
+            <spr-info-line
+              *ngIf="data.ba_network_disconnection_date"
+              [name]="formTranslationsReference + '.disconnectedDate' | translate"
+              [value]="data.ba_network_disconnection_date | s2Date"
+            ></spr-info-line>
+
+            <spr-info-line
+              [name]="formTranslationsReference + '.waterManagementCompany' | translate"
+              [value]="data.org_name +', '+data.org_code"
+            ></spr-info-line>
+
+            <spr-info-line
+              *ngIf="data.cwf_import_date"
+              [name]="formTranslationsReference + '.dataSubmissionSate' | translate"
+              [value]="data.cwf_import_date | s2Date"
+            ></spr-info-line>
+          </ng-container>
+        </ntis-accordion>
+
+        <ntis-accordion [label]="(formTranslationsReference + '.systemInfoBuilding' | translate) ">
+          <spr-info-line
+            *ngIf="data.so_id"
+            [name]="formTranslationsReference + '.wastewaterManagementInformation' | translate"
+            value="{{data.so_id}}"
+          ></spr-info-line>
+          <spr-info-line
+            *ngIf="data.so_created"
+            [name]="formTranslationsReference + '.registrationSystem' | translate"
+            [value]="data.so_created | s2Date"
+          ></spr-info-line>
+
+          <spr-info-line
+            *ngIf="data.so_updated"
+            [name]="formTranslationsReference + '.updateSystem' | translate"
+            [value]="data.so_updated | s2Date"
+          ></spr-info-line>
+
+          <spr-info-line
+            *ngIf="data.so_updated_by"
+            [name]="formTranslationsReference + '.lastUpdatedBy' | translate"
+            [value]="data.so_updated_by"
+          ></spr-info-line>
+          <ng-container *ngIf="data?.ba_state === ntisBuildingAgreementStatus.CONFIRMED">
+            <spr-info-line
+              *ngIf="data.ba_wastewater_treatment_m"
+              [name]="formTranslationsReference + '.informationWastewaterManagement' | translate"
+              [value]="data.ba_wastewater_treatment_m"
+            ></spr-info-line>
+            <spr-info-line
+              *ngIf="data.ba_network_connection_date_m"
+              [name]="formTranslationsReference + '.sewageNetworkDate' | translate"
+              [value]="data.ba_network_connection_date_m | s2Date"
+            ></spr-info-line>
+            <spr-info-line
+              *ngIf="data.org_name_m"
+              [name]="formTranslationsReference + '.wastewaterManagementInfo' | translate"
+              [value]="data.org_name_m"
+            ></spr-info-line>
+          </ng-container>
+        </ntis-accordion>
+      </div>
+
+      <div class="spr-form-buttons mt-2">
+        <spr-button class="ntis-button-link" (click)="goBack()">
+          {{'common.action.back' | translate}}
+        </spr-button>
+      </div>
+    </div>
+  </section>
+</spr-content-box>

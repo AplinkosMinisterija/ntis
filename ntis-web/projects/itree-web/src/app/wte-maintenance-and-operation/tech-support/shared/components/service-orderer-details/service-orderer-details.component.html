@@ -1,0 +1,132 @@
+<ntis-accordion [label]="(translationsReference + '.legend' | translate)" [uppercase]="true" [asCard]="hideAccordion">
+  <ng-container *ngIf="!editMode"
+    ><div>
+      <spr-info-line
+        [name]="translationsReference + '.name' | translate"
+        [value]="form.controls.ord_name.value"
+      ></spr-info-line>
+      <spr-info-line
+        [name]="translationsReference + '.email' | translate"
+        [value]="form.controls.ord_email.value"
+      ></spr-info-line>
+      <spr-info-line
+        [name]="translationsReference + '.phone_number' | translate"
+        [value]="form.controls.ord_phone_number.value"
+      ></spr-info-line>
+      <spr-info-line
+        [name]="translationsReference + '.ord_completion_request_date' | translate"
+        [value]="dateStr"
+      ></spr-info-line>
+      <spr-info-line
+        [name]="translationsReference + '.additional_description' | translate"
+        [value]="form.controls.ord_additional_description.value"
+      ></spr-info-line></div
+  ></ng-container>
+  <form *ngIf="editMode" [formGroup]="form" (ngSubmit)="submitChanges()">
+    <spr-info-line
+      class="edit-info-line"
+      [name]="translationsReference + '.name' | translate"
+      [value]="form.controls.ord_name.value"
+    ></spr-info-line>
+
+    <spr-form-field
+      [labelText]="editTranslationsReference + '.email' | translate"
+      labelFor="ord_email"
+      [inputErrors]="form.controls.ord_email.touched && form.controls.ord_email.errors"
+    >
+      <input type="email" id="ord_email" formControlName="ord_email" />
+    </spr-form-field>
+
+    <spr-form-field
+      [labelText]="editTranslationsReference + '.phone_number' | translate"
+      labelFor="ord_phone_number"
+      [mandatory]="true"
+      [errorDefs]="{pattern: 'common.error.phone'}"
+      [inputErrors]="form.controls.ord_phone_number.touched && form.controls.ord_phone_number.errors"
+    >
+      <input type="tel" id="phone-ord_phone_number" formControlName="ord_phone_number" />
+    </spr-form-field>
+
+    <spr-form-field
+      *ngIf="orderDetails.serviceDescription.srv_type !== TYRIMAI; else researchBlock"
+      [labelText]="editTranslationsReference + '.ord_completion_request_date' | translate"
+      [isLabelHorizontal]="false"
+    >
+      <p-calendar
+        formControlName="ord_completion_request_date"
+        [firstDayOfWeek]="1"
+        [showButtonBar]="true"
+        appendTo="body"
+        [showIcon]="true"
+        dateFormat="yy-mm-dd"
+        [minDate]="minDate"
+        [showIcon]="true"
+      >
+      </p-calendar>
+    </spr-form-field>
+    <ng-template #researchBlock
+      ><spr-form-field
+        [labelText]="editTranslationsReference + '.researchRequestDateFrom' | translate "
+        [isLabelHorizontal]="false"
+        [inputErrors]="form.controls.ord_prefered_date_from.touched && form.controls.ord_prefered_date_from.errors"
+      >
+        <p-calendar
+          formControlName="ord_prefered_date_from"
+          [firstDayOfWeek]="1"
+          [showButtonBar]="true"
+          appendTo="body"
+          [showIcon]="true"
+          dateFormat="yy-mm-dd"
+          [minDate]="minDate"
+        >
+        </p-calendar>
+      </spr-form-field>
+      <spr-form-field
+        [labelText]="editTranslationsReference + '.researchRequestDateTo' | translate "
+        [isLabelHorizontal]="false"
+        [inputErrors]="form.controls.ord_prefered_date_to.touched && form.controls.ord_prefered_date_to.errors"
+      >
+        <p-calendar
+          formControlName="ord_prefered_date_to"
+          [firstDayOfWeek]="1"
+          [showButtonBar]="true"
+          appendTo="body"
+          [showIcon]="true"
+          dateFormat="yy-mm-dd"
+          [minDate]="defaultDateTo"
+          [defaultDate]="defaultDateTo"
+        >
+        </p-calendar> </spr-form-field
+    ></ng-template>
+
+    <spr-form-field
+      [labelText]="orderDetails.serviceDescription.srv_type === TYRIMAI ? (editTranslationsReference + '.comment' | translate) : (editTranslationsReference + '.additional_description' | translate)"
+      labelFor="ord_additional_description"
+    >
+      <textarea id="ord_additional_description" formControlName="ord_additional_description"></textarea>
+    </spr-form-field>
+
+    <div
+      *ngIf="orderDetails.serviceDescription.srv_type === TYRIMAI && orderDetails.researchFile?.fil_name"
+      class="research-file-wrapper"
+    >
+      <fa-icon [icon]="faIconsService.fas.faFilePdf" class="text-neutral-700" size="2xl"></fa-icon>
+      <a>
+        <spr-button class="file-download-link" (click)="download()">{{orderDetails.researchFile?.fil_name}}</spr-button>
+      </a>
+    </div>
+
+    <div class="spr-form-buttons">
+      <spr-button type="button" class="ntis-button-link" (click)="handleNavigation()">
+        {{'common.action.back' | translate}}
+      </spr-button>
+      <spr-button
+        type="submit"
+        className="spr-button-primary"
+        iconStyle="fas"
+        iconName="faSave"
+        >{{ 'common.action.submitForm' | translate }}</spr-button
+      >
+    </div>
+  </form>
+</ntis-accordion>

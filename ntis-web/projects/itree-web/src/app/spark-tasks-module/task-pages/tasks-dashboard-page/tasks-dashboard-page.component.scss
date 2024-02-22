@@ -1,0 +1,91 @@
+.tasks-dashboard-header {
+  @apply grid gap-6 lg:grid-cols-2 my-4;
+
+  @screen xl {
+    grid-template-columns: 2fr 1fr;
+  }
+
+  &__new-task {
+    @apply w-full rounded-md;
+  }
+}
+
+.tasks-dashboard {
+  @apply grid gap-6 grid-cols-1 lg:grid-cols-2;
+
+  @screen xl {
+    grid-template-columns: 2fr 1fr;
+  }
+}
+
+.task-cards-section {
+  &__title {
+    @apply text-2xl text-neutral-900 font-bold;
+  }
+
+  &__tabs {
+    @apply flex flex-wrap gap-x-8 gap-y-2 my-4;
+  }
+
+  &__tab {
+    @apply text-neutral-800 text-sm;
+
+    &--selected {
+      @apply text-primary-500 font-semibold;
+    }
+  }
+
+  &__order-sort-actions {
+    @apply flex items-center ml-auto;
+  }
+
+  &__sort-button {
+    @apply px-0.5;
+  }
+
+  &__sort-icon {
+    @apply text-base text-neutral-900 opacity-50;
+    &--active {
+      @apply opacity-100;
+    }
+  }
+
+  &__grid {
+    @apply grid gap-2 grid-cols-1 overflow-y-auto pr-1 pb-1;
+    max-height: 518px;
+    // scrollbar:
+    scrollbar-width: thin;
+    &::-webkit-scrollbar {
+      @apply w-1.5;
+    }
+    &::-webkit-scrollbar-track {
+      @apply bg-neutral-300 rounded;
+    }
+    &::-webkit-scrollbar-thumb {
+      @apply bg-primary-500 bg-opacity-50 rounded;
+    }
+    &:hover::-webkit-scrollbar-thumb {
+      @apply bg-opacity-100;
+    }
+  }
+
+  &__no-tasks-found {
+    @apply text-base text-neutral-800 text-center py-1;
+  }
+
+  &__load-more {
+    @apply text-primary-500 text-center mx-auto;
+  }
+}
+
+.tasks-calendar-section {
+  @apply min-w-0;
+
+  &__date {
+    @apply text-2xl text-neutral-900;
+  }
+
+  &__text {
+    @apply text-2xl text-neutral-900 font-bold mb-5;
+  }
+}

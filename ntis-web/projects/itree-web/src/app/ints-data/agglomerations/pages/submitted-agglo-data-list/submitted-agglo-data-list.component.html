@@ -1,0 +1,94 @@
+<spr-content-box [headerText]="translationsRef + '.headerText'">
+  <div class="search-wrapper">
+    <spr-browse-search-form [formGroup]="searchForm" [formCode]="formCode" (search)="search(dataTableComponent)">
+      <spr-select
+        filters
+        *ngIf="canReadAll"
+        formControlName="municipality"
+        classifierCode="NTIS_MUNICIPALITIES"
+        [placeholder]="translationsRef + '.column.municipality' | translate"
+      ></spr-select>
+
+      <spr-filter-input
+        filters
+        inputType="date"
+        [maxLength]="20"
+        formControlName="status_date"
+        [placeholder]="translationsRef + '.column.status_date' | translate"
+      ></spr-filter-input>
+
+      <spr-select
+        filters
+        formControlName="status"
+        classifierCode="NTIS_AGLO_STATUS"
+        [placeholder]="translationsRef + '.column.status' | translate"
+        [advancedFilterParams]="true"
+      ></spr-select>
+
+      <spr-button
+        *ngIf="canCreate"
+        buttons
+        type="button"
+        className="spr-button-primary"
+        iconName="faPlus"
+        (click)="handleClickUploadNew()"
+        >{{ 'common.action.uploadNew' | translate }}</spr-button
+      >
+    </spr-browse-search-form>
+  </div>
+
+  <p-table
+    [value]="data"
+    dataKey="id"
+    responsiveLayout="stack"
+    breakpoint="767px"
+    [lazy]="true"
+    (onLazyLoad)="loadDataLazy($event)"
+    [paginator]="data?.length > 0"
+    [showFirstLastIcon]="false"
+    [rowsPerPageOptions]="rowsPerPageOptions"
+    [rows]="showRows"
+    [totalRecords]="totalRecords"
+    [rowHover]="true"
+  >
+    <ng-template pTemplate="header" let-row let-index="rowIndex">
+      <tr>
+        <ng-container *ngFor="let col of columns">
+          <th pSortableColumn="{{col}}">
+            {{translationsRef+'.column.'+col | translate}}
+            <p-sortIcon field="{{col}}"></p-sortIcon>
+          </th>
+        </ng-container>
+        <th>
+          {{translationsRef+'.actions' |translate}}
+        </th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row let-index="rowIndex">
+      <tr>
+        <td *ngFor="let col of columns">
+          <span class="p-column-title">
+            {{ translationsRef + '.column.' + col | translate }}
+          </span>
+          <span
+            [ngClass]="{'rejected-status': col === 'status' && row.status_code === AGLO_STATUS_REJECTED}"
+            >{{ row[col] }}</span
+          >
+        </td>
+        <td class="actions-column">
+          <ntis-table-row-actions *ngIf="row.actions" [actions]="row.actions"></ntis-table-row-actions>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage" translate>
+      <tr>
+        <td [attr.colspan]="columns.length + 1">
+          <spr-table-no-rec-found></spr-table-no-rec-found>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</spr-content-box>
+
+<app-submit-agglo-data [(show)]="showSubmitDialog" (submitted)="reload()"></app-submit-agglo-data>

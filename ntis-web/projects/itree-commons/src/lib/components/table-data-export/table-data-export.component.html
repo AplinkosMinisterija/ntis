@@ -1,0 +1,105 @@
+<div class="export" *ngIf="tableData?.length>0">
+  <button class="spr-button-secondary" type="button" (click)="showExportContent = !showExportContent">
+    <div>
+      <fa-icon [icon]="faIconsService.fas.faFileExport" [fixedWidth]="true" size="sm"></fa-icon>
+    </div>
+    {{'common.action.export' | translate}}
+  </button>
+
+  <div class="export__content" *ngIf="showExportContent" @fadeInFields>
+    <div class="export__content-arrow-wrapper">
+      <div class="export__content-arrow-up"></div>
+    </div>
+    <section class="export__export-body">
+      <ul>
+        <li>
+          <section class="checkbox-wrapper">
+            <input type="checkbox" class="spr-checkbox" (click)="selectAllCols()" />
+            <label class="checkbox-wrapper__label">{{'common.dataTable.allColumnsExport' | translate}}</label>
+          </section>
+        </li>
+        <li *ngFor="let row of columnsList; index as i">
+          <section class="checkbox-wrapper">
+            <input [id]="i" type="checkbox" class="spr-checkbox" (click)="addToExport(row)" [checked]="exportAllCols" />
+            <label class="checkbox-wrapper__label" [for]="i">{{row.title}}</label>
+          </section>
+        </li>
+      </ul>
+      <hr class="py-2" />
+      <section class="export-options">
+        <div class="checkbox-wrapper">
+          <p-inputSwitch [(ngModel)]="exportAllData"></p-inputSwitch>
+          <label class="checkbox-wrapper__label">{{'common.dataTable.allRowsExport' | translate}}</label>
+        </div>
+
+        <button type="button" class="export-options__button" (click)="showExportOption = !showExportOption">
+          <fa-icon [icon]="faIconsService.fas.faPalette"></fa-icon>
+        </button>
+      </section>
+
+      <section class="export-themes" *ngIf="showExportOption === true">
+        <header class="export-themes__header">{{'common.dataTable.tableTheme' | translate}}</header>
+        <div class="export-themes__buttons">
+          <button type="button" (click)="setExportTheme(exportThemes.grid)">
+            <fa-icon [icon]="faIconsService.fas.faBorderAll"></fa-icon> {{'common.dataTable.grid' | translate}}
+          </button>
+          <button type="button" (click)="setExportTheme(exportThemes.striped)">
+            <fa-icon [icon]="faIconsService.fas.faTableList"></fa-icon> {{'common.dataTable.striped' | translate}}
+          </button>
+          <button type="button" (click)="setExportTheme(exportThemes.plain)">
+            <fa-icon [icon]="faIconsService.fas.faBorderNone"></fa-icon> {{'common.dataTable.plain' | translate}}
+          </button>
+        </div>
+      </section>
+
+      <section class="export__export-footer">
+        <button
+          *ngIf="showPdfExport"
+          type="button"
+          class="spr-button-primary export__button"
+          (click)="export(exportFormatTypes.pdf)"
+        >
+          <fa-icon [icon]="faIconsService.fas.faFileExport" size="sm"></fa-icon>
+          {{exportFormatTypes.pdf}}
+        </button>
+        <button type="button" class="spr-button-primary export__button" (click)="export(exportFormatTypes.xls)">
+          <fa-icon [icon]="faIconsService.fas.faFileExport" size="sm"></fa-icon>
+          {{exportFormatTypes.excel}}
+        </button>
+        <button type="button" class="spr-button-primary export__button" (click)="export(exportFormatTypes.csv)">
+          <fa-icon [icon]="faIconsService.fas.faFileExport" size="sm"></fa-icon>
+          {{exportFormatTypes.csv}}
+        </button>
+      </section>
+    </section>
+  </div>
+  <p-dialog
+    [(visible)]="maxRowsDialog"
+    [style]="{width: '450px', 'z-index': 999, 'top': '2rem', overflow: 'visible'}"
+    [modal]="true"
+    [draggable]="false"
+    styleClass="p-fluid"
+    [autoZIndex]="true"
+    [closable]="false"
+    [blockScroll]="true"
+    [contentStyle]="{'overflow': 'visible !important' }"
+    appendTo="body"
+  >
+    <div class="message-box">
+      <fa-icon
+        class="message-box__icon"
+        [icon]="faIconsService.fas.faTriangleExclamation"
+        [fixedWidth]="true"
+      ></fa-icon>
+      <span>{{'common.error.maxRowsExported' | translate}}</span>
+    </div>
+    <div *ngIf="!isLoading; else load" class="mt-5 mb-3 spr-form-buttons">
+      <spr-button className="spr-button-primary" (click)="closeDialog()">
+        {{'common.action.understood' | translate}}
+      </spr-button>
+    </div>
+    <ng-template #load>
+      <fa-icon class="loading" [spin]="true" [icon]="faIconsService.fas.faSpinner" size="lg"></fa-icon>
+    </ng-template>
+  </p-dialog>
+</div>

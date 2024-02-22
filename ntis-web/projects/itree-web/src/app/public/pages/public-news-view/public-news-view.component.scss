@@ -1,0 +1,38 @@
+.news {
+  &__heading {
+    @apply text-4xl whitespace-normal text-primary-600;
+  }
+
+  &__body {
+    @apply flex justify-start gap-4 flex-col mt-2;
+  }
+
+  &__body-date {
+    @apply text-neutral-600 flex justify-start items-center gap-1;
+  }
+
+  &__body-summary {
+    @apply text-neutral-600 font-semibold;
+  }
+}
+
+.file-card {
+  @apply flex justify-start flex-col gap-2 p-2 rounded border mt-2 shadow-inner 
+    bg-neutral-50;
+
+  &__item {
+    @apply flex justify-start items-center gap-2 w-fit;
+  }
+
+  &__item-icon {
+    @apply text-neutral-600 group-hover:text-primary-600;
+  }
+
+  &__item-text {
+    @apply text-neutral-600 group-hover:text-primary-600 hover:underline;
+  }
+}
+
+.button-back-wrapper {
+  @apply py-8;
+}

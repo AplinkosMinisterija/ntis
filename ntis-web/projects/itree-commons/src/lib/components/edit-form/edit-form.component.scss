@@ -1,0 +1,7 @@
+::ng-deep input.combobox__input-control {
+  @apply placeholder:text-neutral-900;
+}
+
+.actions {
+  @apply flex flex-col xs:flex-row justify-center gap-6;
+}

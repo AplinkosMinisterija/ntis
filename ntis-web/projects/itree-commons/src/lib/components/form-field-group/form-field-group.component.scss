@@ -1,0 +1,42 @@
+:host {
+  @apply block overflow-hidden;
+}
+
+fieldset {
+  @apply overflow-x-hidden w-full;
+}
+
+.header {
+  $this: &;
+
+  @apply flex justify-between items-center px-1.5 bg-primary-500 w-full min-h-6
+         uppercase text-neutral-0;
+
+  &__legend {
+    @apply text-sm font-semibold;
+  }
+
+  ::ng-deep &__button {
+    @apply text-sm;
+  }
+
+  &--small {
+    @apply text-base font-normal min-h-5 bg-primary-400;
+
+    #{$this}__legend {
+      @apply text-xs;
+    }
+
+    ::ng-deep #{$this}__button {
+      @apply text-xs;
+    }
+  }
+}
+
+.content-wrapper {
+  @apply px-2 py-4;
+
+  &--bg {
+    @apply bg-neutral-100;
+  }
+}

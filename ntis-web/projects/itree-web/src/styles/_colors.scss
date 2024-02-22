@@ -1,0 +1,111 @@
+//https://tailwindcss.com/docs/customizing-colors#default-color-palette
+
+@layer base {
+  :root {
+    // test
+    --color-test-050: 180 7.69% 92.35%; //#eaeded
+    --color-test-100: 180 9.09% 84.9%; //#d5dcdc sub menu hover
+    --color-test-200: 204 26% 69%; //#9AB3C4
+    --color-test-300: 180 8.33% 62.35%; // #97a7a7
+    --color-test-400: 180 8.23% 54.71%; //#829595 standard menu
+    --color-test-500: 180 9.54% 47.25%; // #6d8484 main
+    --color-test-600: 180 12.32% 39.8%; // #597272 hover menu
+    --color-test-700: 180 17.58% 32.35%; //#446161
+    --color-test-800: 180 17.58% 32.35%; //#446161
+    --color-test-900: 207 47% 23%; //#000000
+    // primary
+    --color-primary-050: 206 24% 94%; //#EDF1F4 sub menu hover
+    --color-primary-100: 204 26% 69%; //#9AB3C4
+    --color-primary-200: 205 19% 55%; //#7790A2
+    --color-primary-300: 205 19% 45%; //#5D7688 standard menu
+    --color-primary-400: 205 23% 40%; //#4E697C
+    --color-primary-500: 204 27% 35%; //#415E72 main
+    --color-primary-600: 205 38% 29%; //#2D4E65 hover menu
+    --color-primary-700: 205 43% 25%; //#25465D active
+    --color-primary-800: 207 47% 23%; //#1F3E57
+    --color-primary-900: 207 53% 19%; //#17344B
+    //secondary
+    --color-secondary-050: 150 88% 97%; //#E5F7ED notification?
+    --color-secondary-100: 142 59% 79%; //#A9E9C0
+    --color-secondary-200: 140 58% 67%; //#7BDC9B
+    --color-secondary-300: 141 54% 57%; //#57CD80
+    --color-secondary-400: 144 52% 49%; //#3DBF71
+    --color-secondary-500: 146 63% 42%; //#27AE61 main
+    --color-secondary-600: 146 70% 37%; //#1C9F54 hover
+    --color-secondary-700: 146 66% 35%; //#1E9350 btn-shadow (active?
+    --color-secondary-800: 146 70% 30%; //#178245
+    --color-secondary-900: 147 75% 25%; //#106E3A
+    // neutral
+    --color-neutral-000: 210 0% 100%; //#FFFFFF
+    --color-neutral-050: 180 8% 98%; //#F8F9F9 given
+    --color-neutral-100: 200 9% 93%; //#ECEEEF given
+    --color-neutral-200: 192 9% 89%; //#E0E4E5
+    --color-neutral-300: 197 10% 86%; //#D9DEE0 given
+    --color-neutral-400: 202 12% 82%; //#CBD2D6
+    --color-neutral-500: 197 11% 76%; //#BBC5C9 given (hover ant neutral-0)
+    --color-neutral-600: 203 9% 66%; //#A0AAB0
+    --color-neutral-700: 203 5% 50%; //#788085 filter placeholder text
+    --color-neutral-800: 207 5% 35%; //#565B5F
+    --color-neutral-900: 204 4% 23%; //#373A3C main text color
+    // risk
+    --color-risk-050: 11 100% 96%; //#FFEEEA notification bg
+    --color-risk-100: 12 94% 86%; //#FDC7BA
+    --color-risk-200: 12 93% 76%; //#FB9F89
+    --color-risk-300: 12 92% 69%; //#F98467
+    --color-risk-400: 12 93% 63%; //#F86A48 text
+    --color-risk-500: 12 89% 59%; //#F35C38
+    --color-risk-600: 12 84% 55%; //#EC512A
+    --color-risk-700: 12 78% 51%; //#E4481F
+    --color-risk-800: 13 83% 48%; //#DE4015
+    --color-risk-900: 13 87% 45%; //#D53B0F
+    // warning
+    --color-warning-050: 48 99% 96%; //#FFFAE5 notification bg
+    --color-warning-100: 48 96% 89%; //#F2E9C8
+    --color-warning-200: 48 97% 77%; //#E6DAB0 icon
+    --color-warning-300: 46 97% 65%; //#D5C7A3
+    --color-warning-400: 43 96% 56%; //#C0B49A
+    --color-warning-500: 38 92% 50%; //#A79D8A text
+    --color-warning-600: 32 95% 44%; //#968A74
+    --color-warning-700: 26 90% 37%; //#827254
+    --color-warning-800: 23 82% 31%; //#6D5A37
+    --color-warning-900: 22 78% 26%; //#55411D
+    // success
+    --color-success-050: 138 76% 97%;
+    --color-success-100: 141 84% 93%;
+    --color-success-200: 141 79% 85%;
+    --color-success-300: 142 77% 73%;
+    --color-success-400: 142 69% 58%;
+    --color-success-500: 142 71% 45%;
+    --color-success-600: 142 76% 36%;
+    --color-success-700: 142 72% 29%;
+    --color-success-800: 143 64% 24%;
+    --color-success-900: 144 61% 20%;
+    // info
+    --color-info-050: 48 100% 97%;
+    --color-info-100: 48 100% 95%; // #FFFAE5
+    --color-info-200: 46 80% 80%;
+    --color-info-300: 45 60% 70%;
+    --color-info-400: 44 40% 60%;
+    --color-info-500: 42 20% 57%; // #A79A7C
+    --color-info-600: 42 19% 47%;
+    --color-info-700: 41 16% 37%;
+    --color-info-800: 40 13% 27%;
+    --color-info-900: 40 11% 20%;
+    // text
+    --color-text-000: 210 0% 100%; //#FFFFFF
+    --color-text-050: 188 25% 94%; //#EBF2F3
+    --color-text-100: 198 21% 88%; //#DAE3E7
+    --color-text-200: 198 14% 82%; //#CBD4D8
+    --color-text-300: 197 11% 76%; //#BBC5C9 given
+    --color-text-400: 198 8% 70%; //#ABB4B8
+    --color-text-500: 205 6% 63%; //#9AA1A6
+    --color-text-600: 202 5% 54%; //#848B8F
+    --color-text-700: 200 4% 45%; //#6D7376
+    --color-text-800: 203 5% 34%; //#53585B
+    --color-text-900: 204 4% 23%; //#373A3C main text color
+  }
+
+  .dark {
+    // dark mode colors
+  }
+}

@@ -1,0 +1,45 @@
+<spr-content-box headerText="pages.roleSelect.headerText">
+  <div class="content-wrapper">
+    <ng-container *ngIf="authService.availableRoles?.length > 0">
+      <spr-form-field-group text="pages.roleSelect.selectRole">
+        <div class="options">
+          <div *ngFor="let role of authService.availableRoles" class="spr-choice-input-with-label">
+            <input
+              type="radio"
+              class="spr-radio"
+              name="role-select"
+              [id]="'role-' + role.rol_id"
+              [value]="role.rol_id"
+              [(ngModel)]="selectedRoleId"
+            />
+            <label [for]="'role-' + role.rol_id">{{role.rol_name}}</label>
+          </div>
+        </div>
+      </spr-form-field-group>
+
+      <p class="instructions">
+        <span>{{'pages.roleSelect.instructionsTextPart1' | translate}}</span>
+        <span class="user-icon">
+          <span class="user-icon__circle">
+            <fa-icon [icon]="faIconsService.solid.faUserAlt" class="user-icon__icon"></fa-icon>
+          </span>
+        </span>
+        <span>{{'pages.roleSelect.instructionsTextPart2' | translate}}</span>
+        <fa-icon [icon]="faIconsService.solid.faUserTag"></fa-icon>
+        <span>{{'pages.roleSelect.instructionsTextPart3' | translate}}</span>
+      </p>
+
+      <button
+        type="button"
+        class="spr-button-primary continue"
+        [disabled]="!selectedRoleId"
+        (click)="handleClickContinue()"
+      >
+        {{'common.action.continue' | translate}}
+      </button>
+    </ng-container>
+    <p *ngIf="authService.availableRoles?.length === 0" class="no-available-roles">
+      {{'pages.roleSelect.noAvailableRoles' | translate}}
+    </p>
+  </div>
+</spr-content-box>

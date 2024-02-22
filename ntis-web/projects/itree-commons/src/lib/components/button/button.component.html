@@ -1,0 +1,24 @@
+<button
+  [class]="'app-button ' + className"
+  [ngClass]="{'app-button--large': size === 'large'}"
+  [disabled]="disabled"
+  [name]="name"
+  [type]="type"
+  [value]="value"
+  [attr.tabindex]="tabindex"
+>
+  <fa-icon
+    *ngIf="iconName"
+    [icon]="faIconsService[iconStyle][iconName]"
+    [fixedWidth]="true"
+    [class]="'app-button__icon ' + iconClassName"
+    [attr.aria-label]="ariaLabel"
+  ></fa-icon>
+  <span
+    class="app-button__text"
+    [ngClass]="{'app-button__text--hide-on-mobile': hideTextOnMobile}"
+    [attr.aria-hidden]="!!ariaLabel"
+  >
+    <ng-content></ng-content>
+  </span>
+</button>

@@ -1,0 +1,23 @@
+<spr-content-box>
+  <div class="button-back-wrapper">
+    <spr-button-back [disableLocationBack]="true" (navigateBack)="onReturn()"></spr-button-back>
+  </div>
+  <div class="spr-edit-form-wrapper">
+    <article class="news">
+      <h1 class="news__heading">{{data.nwTitle}}</h1>
+      <div class="news__body">
+        <span class="news__body-date"><spr-icon name="today" /> {{data.nwPublished | s2Date}}</span>
+        <span class="news__body-summary">{{data.nwSummary}}</span>
+        <div class="ck-content" [innerHTML]="data.nwText | safeHtml"></div>
+        <div class="file-card" *ngIf="data?.attachment.length > 0">
+          <div *ngFor="let item of data.attachment" class="file-card__item group">
+            <spr-icon name="file_download" class="file-card__item-icon" />
+            <button type="button" class="file-card__item-text" (click)="downloadFile(item)">
+              {{item.fil_name}}
+            </button>
+          </div>
+        </div>
+      </div>
+    </article>
+  </div>
+</spr-content-box>

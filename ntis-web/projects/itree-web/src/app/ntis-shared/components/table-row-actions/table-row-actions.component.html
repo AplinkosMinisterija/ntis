@@ -1,0 +1,12 @@
+<ng-container *ngIf="actions">
+  <spr-button
+    *ngFor="let action of actions"
+    [ngClass]="{'text-primary-500': action.iconTheme === 'default', 'text-risk-500': action.iconTheme === 'risk', 'text-secondary-500': action.iconTheme === 'success', 'text-neutral-500': action.iconTheme === 'info'}"
+    [iconStyle]="action.icon.iconStyle"
+    [iconName]="action.icon.iconName"
+    [routerLink]="action.url"
+    [pTooltip]="'common.action.' + action.actionName | translate"
+    tooltipPosition="left"
+    (click)="action.action ? action.action() : undefined"
+  ></spr-button>
+</ng-container>

@@ -1,0 +1,41 @@
+.radio-input-wrapper {
+  @apply flex gap-2 items-center mb-4;
+
+  label {
+    @apply font-semibold;
+  }
+}
+
+.spr-button-primary {
+  @apply inline-block mb-4;
+}
+
+.quick-search-form {
+  @apply flex flex-col sm:items-center sm:gap-4 sm:flex-row mb-4 sm:mb-0;
+}
+
+.detailed-search-wrapper {
+  @apply ml-4;
+}
+
+.detailed-search-result {
+  li {
+    @apply px-2 hover:font-semibold;
+
+    button.selected {
+      @apply font-semibold;
+    }
+  }
+}
+
+.d-search-btn-wrapper {
+  @apply mb-4 inline-block;
+}
+
+.detailed-search-icon {
+  @apply inline-block rotate-0 transition-transform ease-linear duration-200;
+
+  &--rotate-180 {
+    @apply rotate-180;
+  }
+}

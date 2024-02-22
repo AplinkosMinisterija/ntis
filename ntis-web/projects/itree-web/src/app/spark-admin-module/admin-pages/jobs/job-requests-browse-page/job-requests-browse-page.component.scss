@@ -1,0 +1,13 @@
+.tr-header {
+  th {
+    @apply bg-neutral-900 bg-opacity-5 p-3 text-primary-700 font-semibold;
+  }
+}
+
+td {
+  @apply whitespace-pre-wrap;
+}
+
+.checkbox-wrapper {
+  @apply flex items-center;
+}

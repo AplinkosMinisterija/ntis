@@ -1,0 +1,81 @@
+<form [formGroup]="formGroup" (ngSubmit)="onSearch()">
+  <div class="main-view">
+    <div class="main-view__filter-wrapper">
+      <div class="quick-search" *ngIf="quickSearchEnabled">
+        <input
+          class="quick-search__input-field"
+          type="text"
+          [placeholder]="placeholder || ('components.browseSearchForm.quickSearchPlaceholder' | translate)"
+          [(ngModel)]="quickSearchValue"
+          [ngModelOptions]="{standalone: true}"
+          (ngModelChange)="handleQuickSearchChange($event)"
+        />
+        <button type="submit" class="quick-search__action-button">
+          <fa-icon [icon]="faIconsService.fas.faSearch" size="sm"></fa-icon>
+        </button>
+      </div>
+
+      <button
+        *ngIf="detailedSearchEnabled"
+        type="button"
+        class="quick-search__detailed-button"
+        (click)="toggleDetailedSearch()"
+        [ngClass]="{
+          'quick-search__detailed-button--active': detailedSearchOpen,
+          'selected-filters-text': selectedFilters.length > 0
+        }"
+      >
+        <fa-icon class="pr-1" [icon]="faIconsService.fas.faFilter" class="quick-search__detailed-button-icon"></fa-icon>
+        {{ 'common.action.detailedSearch' | translate  }}
+        <span *ngIf="selectedFilters.length > 0">{{ "(" + selectedFilters.length + ")" }}</span>
+      </button>
+
+      <div
+        class="predefined-filter"
+        *ngIf="predefinedFilters?.length && formGroup.controls[predefinedFilterControlName]"
+      >
+        <spr-select
+          optionLabel="filterName"
+          optionValue="id"
+          [formControlName]="predefinedFilterControlName"
+          [optionData]="predefinedFilters"
+          [placeholder]="'components.browseSearchForm.predefinedFilterPlaceholder' | translate"
+          [advancedFilterParams]="true"
+        ></spr-select>
+      </div>
+    </div>
+    <div class="main-view__action-wrapper">
+      <ng-content select="[buttons]"></ng-content>
+    </div>
+  </div>
+
+  <div *ngIf="detailedSearchOpen" [ngClass]="{'detailed-view--open': detailedSearchOpen}" class="detailed-view">
+    <div class="detailed-view__close-button">
+      <spr-button
+        [ariaLabel]="'components.browseSearchForm.closeAdvancedSearch' | translate"
+        iconName="faTimes"
+        iconStyle="fas"
+        (click)="detailedSearchOpen = false"
+        className="text-xl"
+      ></spr-button>
+    </div>
+    <div class="detailed-view__content-wrapper">
+      <ng-content></ng-content>
+    </div>
+    <div class="detailed-view__actions-wrapper">
+      <button type="submit" class="spr-button-primary">
+        {{ 'common.action.search' | translate}}
+      </button>
+      <button type="button" (click)="onClickReset()" class="spr-button-primary-hollow">
+        {{ 'common.action.clear' | translate}}
+      </button>
+      <spr-filter-manager
+        *ngIf="showSaveFilter && selectedFilters.length > 0"
+        [formCode]="formCode"
+        [formGroup]="formGroup"
+        [predefinedFiltersName]="selectedPredefinedFiltersName"
+        (reloadFilterList)="loadFormPredefinedData()"
+      ></spr-filter-manager>
+    </div>
+  </div>
+</form>

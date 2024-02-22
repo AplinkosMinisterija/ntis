@@ -1,0 +1,53 @@
+.preview {
+  @apply w-full flex justify-center items-center flex-col;
+
+  &__wrappper {
+    @apply flex justify-center items-center flex-col max-w-4xl w-full;
+  }
+  &__header {
+    @apply w-full p-2 grid grid-rows-2 gap-2;
+  }
+  &__address {
+    @apply font-semibold text-lg text-primary-700 flex justify-start items-center gap-3;
+  }
+  &__body {
+    @apply w-full flex flex-col gap-3;
+  }
+  &__edit-line {
+    @apply text-primary-700 flex justify-start items-center font-medium gap-1;
+  }
+}
+
+.edit-button {
+  @apply flex justify-start items-center gap-1 font-normal underline text-primary-800 hover:text-primary-600 duration-150;
+}
+.map-button {
+  @apply flex justify-start items-center gap-1 font-normal text-primary-800 hover:text-primary-700 duration-150;
+}
+
+.person-line {
+  @apply flex justify-start items-center gap-1 text-sm italic;
+  &__text {
+    @apply text-sm pt-1;
+  }
+}
+
+.files-link {
+  @apply flex justify-start items-center gap-1 py-1;
+
+  &__text {
+    @apply text-sm leading-none h-fit text-primary-900 hover:underline cursor-pointer pt-0.5;
+  }
+
+  &__icon {
+    @apply text-primary-900;
+  }
+}
+
+.pending-info {
+  @apply w-full flex justify-center items-center rounded border border-primary-100 bg-neutral-100 p-2 gap-2 text-primary-600 font-medium;
+}
+
+.owners-list {
+  @apply py-2;
+}

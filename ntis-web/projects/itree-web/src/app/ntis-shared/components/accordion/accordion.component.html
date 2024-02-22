@@ -1,0 +1,21 @@
+<section class="accordion">
+  <ng-container *ngIf="showHeader">
+    <button
+      type="button"
+      class="accordion__header"
+      [ngClass]="asCard === true ? 'hover:bg-primary-500 cursor-default' : ''"
+      (click)="toggleAccordion()"
+    >
+      <span [ngClass]="uppercase === true ? 'uppercase' : ''">{{label}}</span>
+      <spr-button
+        *ngIf="asCard === false"
+        iconName="faAngleUp"
+        iconStyle="fas"
+        [ngClass]="accordionState === accordionStateEnum.collapsed ? 'rotate-180' : 'rotate-0'"
+      ></spr-button>
+    </button>
+  </ng-container>
+  <div class="accordion__body" [@slideContent]="accordionState">
+    <ng-content></ng-content>
+  </div>
+</section>

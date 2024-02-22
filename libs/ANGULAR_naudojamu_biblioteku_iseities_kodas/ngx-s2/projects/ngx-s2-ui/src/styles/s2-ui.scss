@@ -1,0 +1,9 @@
+@import 'inputs';
+
+.s2-ui-inline-input-label {
+  @apply flex gap-2;
+
+  input {
+    @apply shrink-0;
+  }
+}

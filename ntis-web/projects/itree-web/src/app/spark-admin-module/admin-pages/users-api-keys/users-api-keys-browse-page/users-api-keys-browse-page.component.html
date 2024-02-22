@@ -1,0 +1,174 @@
+<spr-content-box [headerText]="formTranslationsReference+'.headerText'">
+  <div class="spr-browse-actions-wrapper">
+    <spr-browse-search-form [formGroup]="searchForm" [formCode]="formCode" (search)="search(dataTableComponent)">
+      <spr-filter-input
+        filters
+        inputType="number"
+        formControlName="api_id"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="formTranslationsReference+'.api_id' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="20"
+        formControlName="usr_username"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="formTranslationsReference+'.usr_username' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="20"
+        formControlName="per_name"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="formTranslationsReference+'.per_name' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="20"
+        formControlName="org_name"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="formTranslationsReference+'.org_name' | translate"
+      ></spr-filter-input>
+      <spr-button-add buttons [routerLink]="[routingConst.EDIT,routingConst.NEW]"></spr-button-add>
+      <spr-table-data-export
+        buttons
+        [tableColumn]="cols"
+        [tableData]="exportData"
+        [translation]="formTranslationsReference"
+        [fileName]="formTranslationsReference + '.headerText'"
+        (exportAllRecEvent)="loadAllRecordsForExport($event)"
+      ></spr-table-data-export>
+    </spr-browse-search-form>
+  </div>
+  <p-table
+    [value]="data"
+    responsiveLayout="stack"
+    [rowHover]="true"
+    [lazy]="true"
+    (onLazyLoad)="loadDataLazy($event)"
+    [rows]="showRows"
+    [totalRecords]="totalRecords"
+    [paginator]="data?.length > 0"
+    [rowsPerPageOptions]="rowsPerPageOptions"
+    [showFirstLastIcon]="false"
+    sortField="api_id"
+    [sortOrder]="1"
+    [dataKey]="dataKey"
+    rowExpandMode="single"
+  >
+    <ng-template pTemplate="header" let-row>
+      <tr>
+        <th scope="col"></th>
+        <th scope="col" *ngFor="let col of visibleColumns" pSortableColumn="{{col.field}}">
+          <span *ngIf="col.field !== 'last_date'; else lastDateBlock" class="table-header-col">
+            {{formTranslationsReference+'.'+col.field | translate}}
+            <p-sortIcon field="{{col.field}}" class="table-header-col__icon"></p-sortIcon>
+          </span>
+          <ng-template #lastDateBlock
+            ><span
+              class="table-header-col"
+              [pTooltip]="formTranslationsReference + '.lastDateTooltip' | translate "
+              >{{ formTranslationsReference+'.'+col.field | translate}}</span
+            >
+            <p-sortIcon field="{{col.field}}" class="table-header-col__icon"></p-sortIcon
+          ></ng-template>
+        </th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row let-index="rowIndex" let-expanded="expanded">
+      <tr>
+        <td>
+          <button
+            *ngIf="row.api_list"
+            type="button"
+            pButton
+            pRipple
+            [pRowToggler]="row"
+            class="p-button-text p-button-rounded p-button-plain"
+            [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
+          ></button>
+        </td>
+        <td
+          *ngFor="let col of visibleColumns"
+          [ngClass]="{'spr-text-right': col.type === dataTypeNumber, 'whitespace-nowrap': col.type === dataTypeDate}"
+        >
+          <span class="p-column-title">{{ formTranslationsReference+'.'+col.field | translate}}</span>
+          <ng-container>
+            <span>{{row[col.field]}}</span>
+          </ng-container>
+          <ng-template>
+            <ng-container>
+              <span>{{row[col.field]}}</span>
+            </ng-container>
+          </ng-template>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="rowexpansion" let-row>
+      <tr>
+        <td colspan="8">
+          <p-table [value]="row.api_list" dataKey="api_id" class="user-orgs__expanded-rows">
+            <ng-template pTemplate="header" let-org let-index="rowIndex">
+              <tr>
+                <th scope="col" *ngFor="let col of expansionColumns">
+                  <span
+                    *ngIf="col.field !== 'last_api_date'; else dateBlock"
+                    >{{formTranslationsReference+'.'+col.field | translate}}</span
+                  >
+                  <ng-template #dateBlock>
+                    <span
+                      class="p-column-title"
+                      [pTooltip]="formTranslationsReference + '.lastApiDateTooltip' | translate "
+                      >{{ formTranslationsReference+'.'+col.field | translate}}</span
+                    >
+                  </ng-template>
+                </th>
+
+                <th scope="col"></th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-org>
+              <tr>
+                <td *ngFor="let col of expansionColumns">
+                  <span class="p-column-title" style="width: auto;">
+                    {{ formTranslationsReference + '.' + col.field | translate }}
+                  </span>
+                  <ng-container *ngIf="col.field !== 'api_on'; else inputSwitchTemplate">
+                    <span *ngIf="col.field !== 'api_key'">{{ org[col.field] }}</span>
+                    <spr-text-truncate
+                      *ngIf="col.field === 'api_key'"
+                      [text]="org.api_key"
+                      [textLength]="10"
+                      [headerText]=" formTranslationsReference + '.' + col.field"
+                    ></spr-text-truncate>
+                  </ng-container>
+                  <ng-template #inputSwitchTemplate>
+                    <p-inputSwitch
+                      [formControl]="getFormControl(org.api_id)"
+                      (onChange)="onInputSwitch(org.api_id, row)"
+                    ></p-inputSwitch>
+                  </ng-template>
+                </td>
+                <td>
+                  <spr-table-rec-actions [actionsList]="extendedMenuItems[org.api_id]"> </spr-table-rec-actions>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage" translate>
+      <tr>
+        <td [attr.colspan]="cols.length + 1">
+          <spr-table-no-rec-found></spr-table-no-rec-found>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</spr-content-box>

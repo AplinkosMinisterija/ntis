@@ -1,0 +1,64 @@
+<spr-content-box [headerText]="translationsReference + '.headerText'" transformingText="uppercase">
+  <div class="spr-edit-form-wrapper">
+    <ntis-sewage-delivery-info
+      *ngIf="delivery?.wd_id !== null"
+      [deliveryNumber]="wdId"
+      [state]="delivery?.wd_state"
+      [state_clsf]="delivery?.wd_state_clsf"
+      [deliveredWastewaterDesc]="delivery?.wd_delivered_wastewater_description"
+      [acceptedSewageQuantity]="delivery?.wd_accepted_sewage_quantity?.toString()"
+      [delivRecCreated]="delivery?.rec_create_timestamp"
+      [rejectionReason]="delivery?.wd_rejection_reason"
+    ></ntis-sewage-delivery-info>
+    <ntis-sewage-origin-facility
+      *ngIf="delivery?.originFacilities.length > 0"
+      [editMode]="false"
+      [originFacilities]="delivery?.originFacilities"
+      [isServiceProvider]="true"
+    ></ntis-sewage-origin-facility>
+    <ntis-delivered-sludge-info
+      *ngIf="delivery?.wd_id !== null"
+      [deliveryDate]="delivery?.wd_delivery_date"
+      [sewageType]="delivery?.wd_sewage_type"
+      [deliveredQuantity]="delivery?.wd_delivered_quantity"
+      [usedSludgeQuantity]="delivery?.wd_used_sludge_quantity"
+      [carRegNumber]="delivery?.cr_reg_no"
+      [treatmentFacility]="delivery?.wto_name"
+      [waterManager]="delivery?.org_name"
+      [orgCode]="delivery?.org_code"
+      [email]="delivery?.org_email"
+      [phone]="delivery?.org_phone"
+      [notes]="delivery?.wd_description"
+    ></ntis-delivered-sludge-info>
+    <app-used-sewage-facility
+      *ngIf="delivery?.usedFacilities.length > 0"
+      [editMode]="false"
+      [usedFacilities]="delivery?.usedFacilities"
+    ></app-used-sewage-facility>
+    <div class="spr-form-buttons">
+      <spr-button type="button" class="ntis-button-link" (click)="onCancel()">
+        {{'common.action.back' | translate}}
+      </spr-button>
+      <spr-button
+        *ngIf="userCanUpdate"
+        type="button"
+        className="spr-button-primary"
+        iconStyle="fas"
+        iconName="faSave"
+        (click)="navigateToEdit()"
+        [disabled]="delivery?.wd_state_clsf !== SWG_DLV_STS_SUBMITTED"
+        >{{ 'common.action.edit' | translate }}</spr-button
+      >
+
+      <spr-button
+        *ngIf="delivery?.wd_state_clsf === SWG_DLV_STS_REJECTED"
+        type="button"
+        className="spr-button-primary"
+        iconStyle="fas"
+        iconName="faSquarePlus"
+        (click)="navigateToCopy()"
+        >{{ translationsReference +'.copyButton' | translate }}</spr-button
+      >
+    </div>
+  </div>
+</spr-content-box>

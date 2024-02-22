@@ -1,0 +1,13 @@
+.user-orgs {
+  &__header {
+    @apply grid grid-rows-1 grid-cols-3 mt-10;
+  }
+}
+
+.dialog-footer {
+  @apply flex flex-row justify-center;
+}
+
+.actions {
+  @apply flex flex-col xs:flex-row justify-center gap-3 mt-5;
+}

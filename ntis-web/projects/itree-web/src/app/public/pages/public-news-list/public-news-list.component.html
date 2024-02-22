@@ -1,0 +1,33 @@
+<spr-content-box [headerText]="translationsRef + '.headerText'" class="box-wrapper" transformingText="uppercase">
+  <div class="news-list-wrapper">
+    <ul class="list-layout">
+      <li *ngFor="let row of data; index as i">
+        <section class="card fade-in">
+          <div class="card__header">
+            <button
+              class="card__link-button"
+              type="button"
+              [routerLink]="[routingConst.VIEW, row.nw_id]"
+              [title]="row.nw_title"
+            >
+              {{row.nw_title}}
+            </button>
+          </div>
+          <span class="card__date">{{row.nw_publication_date | s2Date}}</span>
+          <p>{{row.nw_summary}}</p>
+          <button class="card__read-more group" type="button" [routerLink]="[routingConst.VIEW, row.nw_id]">
+            <span class="card__read-more-text">{{translationsRef + '.readMore' | translate }}</span>
+            <spr-icon name="double_arrow" size="16" />
+          </button>
+        </section>
+        <spr-divider marginY="4" />
+      </li>
+    </ul>
+
+    <div class="load-more" *ngIf="!hideLoadMore && data?.length > 0">
+      <button type="button" class="spr-button-secondary" (click)="loadData(false)">
+        <spr-icon name="history" />{{ translationsRef + '.showOlderNews' | translate }}
+      </button>
+    </div>
+  </div>
+</spr-content-box>

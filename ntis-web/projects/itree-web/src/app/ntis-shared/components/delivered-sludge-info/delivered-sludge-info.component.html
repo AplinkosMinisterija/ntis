@@ -1,0 +1,30 @@
+<spr-form-field-group [text]="translationsReference + '.legend'">
+  <spr-info-line [name]="translationsReference + '.deliveryDate' | translate" [value]="deliveryDate"></spr-info-line>
+  <spr-info-line [name]="translationsReference + '.sewageType' | translate" [value]="sewageType"></spr-info-line>
+  <spr-info-line
+    [name]="translationsReference + '.deliveredQuantity' | translate"
+    [value]="deliveredQuantity === null ? '0' : (deliveredQuantity + '')"
+  ></spr-info-line>
+  <spr-info-line
+    [name]="translationsReference + '.usedSludgeQuantity' | translate"
+    [value]="usedSludgeQuantity === null ? '0' : (usedSludgeQuantity + '')"
+  ></spr-info-line>
+  <spr-info-line [name]="translationsReference + '.carRegNumber' | translate" [value]="carRegNumber"></spr-info-line>
+  <spr-info-line
+    [name]="translationsReference + '.treatmentFacility' | translate"
+    [value]="treatmentFacility"
+  ></spr-info-line>
+  <ng-container *ngIf="serviceProvider">
+    <spr-info-line
+      [name]="translationsReference + '.serviceProvider' | translate"
+      [value]="serviceProvider"
+    ></spr-info-line>
+  </ng-container>
+  <ng-container *ngIf="waterManager">
+    <spr-info-line [name]="translationsReference + '.waterManager' | translate" [value]="waterManager"></spr-info-line>
+  </ng-container>
+  <spr-info-line [name]="translationsReference + '.orgCode' | translate" [value]="orgCode"></spr-info-line>
+  <spr-info-line [name]="translationsReference + '.email' | translate" [value]="email"></spr-info-line>
+  <spr-info-line [name]="translationsReference + '.phone' | translate" [value]="phone"></spr-info-line>
+  <spr-info-line [name]="translationsReference + '.notes' | translate" [value]="notes"></spr-info-line>
+</spr-form-field-group>

@@ -1,0 +1,52 @@
+<spr-layout [menuItems]="menuItems" [logoRouterLink]="logoUrl">
+  <ng-container header>
+    <spr-alert
+      *ngIf="unconfirmedServices.length > 0 || showUsersRolesMessage || showWaterManagersWtfsMessage"
+      [texts]="unconfirmedServices"
+      [showDialog]="showAlert"
+      (navigateToViewForm)="navigateToViewForm()"
+      [showUsersRolesMessage]="showUsersRolesMessage"
+      [showWaterManagersWtfsMessage]="showWaterManagersWtfsMessage"
+    ></spr-alert>
+    <spr-notifications></spr-notifications>
+    <div *ngIf="multilanguageExists"><spr-language-switch></spr-language-switch></div>
+    <spr-accessibility class="pr-3"></spr-accessibility>
+    <spr-user-menu></spr-user-menu>
+  </ng-container>
+  <ng-container main><router-outlet></router-outlet></ng-container>
+  <ng-container footer>
+    <div class="grid grid-cols-1 grid-rows-3 gap-3 p-2 2xl:container place-items-center sm:grid-cols-2 sm:grid-rows-2">
+      <div class="flex flex-col col-span-2 text-center sm:col-span-1 sm:justify-self-start sm:text-left">
+        <!-- <span class="text-sm">
+          {{'components.public.phone' | translate}}
+          <a
+            class="text-sm text-neutral-0 hover:text-neutral-500"
+            [href]="'tel:' + ('components.public.phoneNumber' | translate)"
+          >
+            {{'components.public.phoneNumber' | translate}}
+          </a>
+        </span> -->
+        <span class="text-sm">
+          {{'components.public.email' | translate}}
+          <a
+            class="text-sm text-neutral-0 hover:text-neutral-500"
+            [href]="'mailto:' + ('components.public.emailAddress' | translate)"
+          >
+            {{'components.public.emailAddress' | translate}}
+          </a>
+        </span>
+      </div>
+      <img
+        loading="lazy"
+        class="w-48 col-span-2 sm:col-span-1 sm:justify-self-end"
+        src="../../../assets/img/es-fondai.png"
+        alt="Europos sajungos fondu investiciju veiksmu programa"
+      />
+      <p class="col-span-2 text-sm justify-self-center">
+        &copy;
+        {{currentYear}}
+        {{'components.public.rights' | translate}}
+      </p>
+    </div>
+  </ng-container>
+</spr-layout>

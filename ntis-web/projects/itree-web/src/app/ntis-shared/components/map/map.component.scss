@@ -1,0 +1,108 @@
+:host {
+  @apply block w-full h-full rounded shadow overflow-hidden;
+  min-height: Min(75vh, 28rem);
+}
+
+:host ::ng-deep .p-datatable-responsive-scroll > .p-datatable-wrapper {
+  overflow-x: hidden;
+}
+
+.agglo-table {
+  @apply min-w-full border border-neutral-300 text-sm h-full overflow-hidden;
+
+  &__cell {
+    @apply text-left border border-neutral-500 min-w-32 px-1 py-0.5;
+
+    &--narrow {
+      @apply min-w-0;
+    }
+  }
+
+  thead {
+    @apply font-semibold;
+  }
+
+  tbody {
+    tr:nth-child(even) {
+      @apply bg-neutral-100/50;
+    }
+  }
+}
+
+.custom-menu-heading {
+  @apply text-md font-semibold pb-2 px-0 text-neutral-900;
+}
+
+.object-info-id {
+  @apply text-xs text-neutral-700;
+}
+
+.object-info-back-wrapper {
+  @apply py-2;
+}
+
+.object-info-list {
+  &__item-name {
+    @apply font-semibold bg-neutral-100 p-0.5;
+  }
+
+  &__item-value {
+    @apply p-1 pb-2 text-neutral-700;
+  }
+}
+
+.object-info-item-list {
+  @apply flex flex-col gap-1;
+
+  &__item {
+    @apply flex gap-2 items-center leading-snug;
+  }
+}
+
+::ng-deep .layer-card-button {
+  @apply text-lg text-neutral-0 hover:text-neutral-300 active:text-neutral-400;
+}
+
+.filter-layer-info {
+  @apply flex flex-col;
+
+  &__label {
+    @apply text-md;
+  }
+}
+
+::ng-deep .table-travel-button {
+  @apply text-md text-neutral-600 hover:text-primary-500 active:text-primary-700;
+}
+
+.legend {
+  @apply px-0.5;
+
+  &__item {
+    @apply flex gap-2 items-center text-sm text-neutral-800;
+  }
+}
+
+.clicked-points {
+  @apply pt-3;
+
+  &__heading {
+    @apply text-lg font-semibold;
+  }
+
+  &__no-results {
+    @apply text-neutral-700;
+  }
+}
+
+.clicked-points-list {
+  @apply flex flex-col gap-1.5 pt-2;
+}
+
+.clicked-point {
+  @apply block text-left w-full border border-neutral-900 border-opacity-10 bg-neutral-0/25 shadow rounded-sm hover:bg-primary-100/25;
+
+  &__name {
+    @apply text-md font-semibold;
+  }
+}

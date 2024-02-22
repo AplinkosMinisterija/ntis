@@ -1,0 +1,419 @@
+<spr-content-box [headerText]="translationsReference + '.headerText'" transformingText="uppercase">
+  <div class="spr-edit-form-wrapper" *ngIf="data?.orderDetails.ord_id !== null">
+    <spr-form-field-group [text]="translationsReference + '.legendInfo'">
+      <div class="spr-form-items-flex">
+        <spr-info-line
+          [redText]="data?.orderDetails.ord_state_clsf === orderStatus.cancelled 
+          || data?.orderDetails.ord_state_clsf === orderStatus.rejected 
+          || data?.orderDetails.ord_state_clsf === orderStatus.cancelledSystem"
+          [name]="translationsReference + '.state' | translate"
+          [value]="data?.orderDetails.ord_state"
+        ></spr-info-line>
+        <spr-info-line
+          *ngIf="data?.orderDetails.ord_state_clsf === orderStatus.rejected"
+          [name]="translationsReference + '.rejectionReason' | translate"
+          [value]="data?.orderDetails.ord_rejection_reason"
+        ></spr-info-line>
+        <spr-info-line
+          *ngIf="data?.orderDetails.ord_state_clsf === orderStatus.cancelled"
+          [name]="translationsReference + '.cancellationReason' | translate"
+          [value]="data?.orderDetails.ord_rejection_reason"
+        ></spr-info-line>
+        <spr-info-line
+          *ngIf="data?.orderDetails.ord_state_clsf === orderStatus.cancelled"
+          [name]="translationsReference + '.cancellationDate' | translate"
+          [value]="rejectionDateStr"
+        ></spr-info-line>
+        <spr-info-line [name]="translationsReference + '.created' | translate" [value]="ordCreatedStr"></spr-info-line>
+        <div
+          class="order-actions-buttons"
+          *ngIf="data?.orderDetails.ord_state_clsf === orderStatus.submitted && userIsOwner"
+        >
+          <spr-button
+            className="ntis-button-hollow"
+            iconStyle="far"
+            iconName="faCircleXmark"
+            iconClassName="text-2xl"
+            (click)="cancelOrder()"
+            >{{ 'common.action.cancelOrder' | translate }}</spr-button
+          >
+        </div>
+        <div
+          class="order-actions-buttons"
+          *ngIf="data?.orderDetails.ord_state_clsf === orderStatus.submitted  && userIsServiceProvider && userCanUpdate"
+        >
+          <spr-button
+            className="ntis-button-hollow"
+            iconStyle="far"
+            iconName="faCircleXmark"
+            iconClassName="text-2xl"
+            (click)="rejectOrder()"
+            >{{ 'common.action.rejectOrder' | translate }}</spr-button
+          >
+
+          <spr-button
+            className="spr-button-primary"
+            iconStyle="fas"
+            iconName="faCheckCircle"
+            iconClassName="text-2xl"
+            (click)="confirmOrder()"
+            >{{ 'common.action.confirmOrder' | translate }}</spr-button
+          >
+        </div>
+      </div>
+    </spr-form-field-group>
+    <spr-form-field-group [text]="translationsReference + '.review'" *ngIf="userIsOwner">
+      <spr-button
+        *ngIf="data?.revId && data?.revScore === null && userIsOwner"
+        className="spr-button-primary"
+        iconStyle="far"
+        iconName="faStar"
+        iconClassName="text-2xl"
+        (click)="navigateToReviewForm()"
+        >{{ 'common.action.addReview' | translate }}</spr-button
+      >
+      <div *ngIf="data?.revId && data?.revScore !== null && userIsOwner">
+        <div class="stars-wrapper">
+          <div *ngFor="let i of [1,2,3,4,5]">
+            <fa-icon
+              class="flex flex-row"
+              [icon]="i <= data?.revScore && data?.revScore ? faIconsService.fas.faStar : faIconsService.far.faStar"
+              [ngClass]="i <= data?.revScore && data?.revScore ? 'icon-color' : null"
+              size="xl"
+            ></fa-icon>
+          </div>
+        </div>
+        <div class="flex flex-row">
+          <spr-text-truncate
+            [text]="data?.revComment"
+            [textLength]="85"
+            [headerText]="reviewsTranslationsReference + '.comment'"
+            [showComponentDialog]="false"
+            (clickedOnMore)="showReviewDialog = true"
+          ></spr-text-truncate>
+        </div>
+      </div>
+    </spr-form-field-group>
+    <app-service-description-details
+      [name]="data?.serviceDescription.srv_name"
+      [org_name]="data?.serviceDescription.srv_org_name"
+      [email]="data?.serviceDescription.srv_email"
+      [phone]="data?.serviceDescription.srv_phone_no"
+      [completion_time_in_days]="data?.serviceDescription.srv_completion_in_days_from?.toString()"
+      [price_from]="data?.serviceDescription.srv_price_from?.toString()"
+      [price_to]="data?.serviceDescription.srv_price_to?.toString()"
+      [description]="data?.serviceDescription.srv_description"
+      [csId]="data?.serviceDescription.cs_id"
+      [hideAccordion]="false"
+    ></app-service-description-details>
+
+    <spr-form-field-group
+      [text]="translationsReference + '.legendFinished'"
+      *ngIf="data?.orderDetails.ord_state_clsf === orderStatus.finished && !userIsOwner && userCanUpdate && data?.serviceDescription.srv_type === VEZIMAS"
+    >
+      <div [ngClass]="{'order-actions-buttons' : (data?.deliveryDetails.length === 0)}">
+        <spr-button
+          *ngIf="data?.deliveryDetails.length === 0; else deliveryDetailsBlock"
+          className="spr-button-primary"
+          iconStyle="fas"
+          iconName="faCheckCircle"
+          iconClassName="text-2xl"
+          (click)="createDelivery()"
+          >{{ 'common.action.createDelivery' | translate }}</spr-button
+        >
+      </div>
+      <ng-template #deliveryDetailsBlock>
+        <div class="flex-col w-full">
+          <div *ngFor="let delivery of data?.deliveryDetails" class="delivery-details-block-wrapper">
+            <spr-info-line
+              [name]="translationsReference + '.wd_id' | translate"
+              [value]="delivery.wd_id.toString()"
+            ></spr-info-line>
+            <spr-info-line
+              [redText]="delivery.wd_state === sewageDeliveryStatus.rejected"
+              [name]="translationsReference + '.state' | translate"
+              [value]="delivery.wd_state_meaning"
+            ></spr-info-line>
+            <spr-info-line
+              *ngIf="delivery.wd_rejection_reason !== null"
+              [name]="translationsReference + '.rejectionReason' | translate"
+              [value]="delivery.wd_rejection_reason"
+            ></spr-info-line>
+            <spr-info-line
+              [name]="translationsReference + '.org_name' | translate"
+              [value]="delivery.org_name"
+            ></spr-info-line>
+            <spr-info-line
+              [name]="translationsReference + '.wto_name' | translate"
+              [value]="delivery.wto_name"
+            ></spr-info-line>
+            <spr-info-line
+              [name]="translationsReference + '.wd_delivery_date' | translate"
+              [value]="delivery.wd_delivery_date | s2Date"
+            ></spr-info-line>
+          </div>
+        </div>
+      </ng-template>
+    </spr-form-field-group>
+    <spr-form-field-group
+      [showEdit]="data?.orderDetails.ord_state_clsf === orderStatus.confirmed && userIsServiceProvider && userCanUpdate"
+      (clickEdit)="handleClickEdit()"
+      [text]="translationsReference + '.legendStatus'"
+      *ngIf="data?.orderDetails.ord_state_clsf === orderStatus.confirmed || data?.orderDetails.ord_state_clsf === orderStatus.finished "
+    >
+      <div class="spr-form-items-flex">
+        <spr-info-line
+          *ngIf="data?.serviceDescription.srv_type !== VEZIMAS"
+          [name]="translationsReference + '.planned_works_description' | translate"
+          [value]="data?.orderDetails.ord_planned_works_description"
+        ></spr-info-line>
+        <spr-info-line
+          [name]="translationsReference + '.planned_date' | translate"
+          [value]="ordPlannedDateStr"
+        ></spr-info-line>
+        <spr-info-line
+          *ngIf="data?.orderDetails.ord_state_clsf === orderStatus.finished"
+          [name]="translationsReference + completedWorks | translate"
+          [value]="data?.orderDetails.ocw_completed_works_description"
+        ></spr-info-line>
+        <spr-info-line
+          *ngIf="data?.orderDetails.ord_state_clsf === orderStatus.finished && data?.serviceDescription.srv_type === VEZIMAS"
+          [name]="translationsReference + '.discharged_sludge_amount' | translate"
+          [value]="data?.orderDetails.ocw_discharged_sludge_amount + zeroToAdd"
+        ></spr-info-line>
+        <spr-info-line
+          *ngIf="data?.orderDetails.ord_state_clsf === orderStatus.finished && data?.serviceDescription.srv_type === VEZIMAS"
+          [name]="translationsReference + '.car_name' | translate"
+          [value]="data?.orderDetails.car_name"
+        ></spr-info-line>
+        <spr-info-line
+          [name]="translationsReference + completedDate | translate"
+          [value]="ordCompletedStr"
+          *ngIf="data?.orderDetails.ord_state_clsf === orderStatus.finished"
+        ></spr-info-line>
+        <div
+          class="order-actions-buttons"
+          *ngIf=" data?.orderDetails.ord_state_clsf === orderStatus.confirmed && userIsServiceProvider && userCanCreate"
+        >
+          <spr-button
+            className="spr-button-primary"
+            iconStyle="fas"
+            iconName="faCheckCircle"
+            iconClassName="text-2xl"
+            (click)="finishOrder()"
+            >{{ 'common.action.finishOrder' | translate }}</spr-button
+          >
+        </div>
+      </div>
+    </spr-form-field-group>
+
+    <ntis-wtf-info [data]="data?.wastewaterFacility" [displayAsCard]="false"></ntis-wtf-info>
+
+    <app-service-orderer-details
+      [editMode]="false"
+      [(orderDetails)]="data"
+      [isClient]="userIsOwner"
+      [srvType]="data.serviceDescription.srv_type"
+      [hideAccordion]="false"
+    ></app-service-orderer-details>
+    <div class="spr-form-buttons">
+      <spr-button type="button" class="ntis-button-link" (click)="onCancel()">
+        {{'common.action.back' | translate}}
+      </spr-button>
+    </div>
+
+    <form [formGroup]="form" autocomplete="off">
+      <p-dialog
+        [(visible)]="orderDialog"
+        [style]="{width: '450px', 'z-index': 999, 'top': '2rem', overflow: 'visible'}"
+        [modal]="true"
+        [draggable]="false"
+        styleClass="p-fluid"
+        [autoZIndex]="true"
+        [closable]="false"
+        [blockScroll]="true"
+        [contentStyle]="{'overflow': 'visible !important' }"
+        appendTo="body"
+      >
+        <div class="order-dialog-wrapper">
+          <div class="order-dialog-text-wrapper">
+            <span
+              *ngIf="status === orderStatus.cancelled"
+              >{{translationsReference + '.cancellationText'  | translate}}</span
+            >
+            <span
+              *ngIf="status === orderStatus.rejected"
+              >{{translationsReference + '.rejectionText' | translate}}</span
+            >
+            <span
+              *ngIf="status === orderStatus.confirmed"
+              >{{translationsReference + confirmationText  | translate}}</span
+            >
+            <span *ngIf="edit">{{translationsReference + '.editText' | translate}}</span>
+            <span *ngIf="status === orderStatus.finished">{{translationsReference + finishText | translate}}</span>
+          </div>
+          <div class="order-dialog-inputs-wrapper">
+            <spr-form-field
+              *ngIf="status === orderStatus.rejected"
+              [labelText]="translationsReference + '.provideRejectionReason' | translate"
+              [isLabelHorizontal]="false"
+              [errorDiv]="false"
+            >
+              <textarea
+                name="ord_rejection_reason"
+                id="ord_rejection_reason"
+                formControlName="ord_rejection_reason"
+              ></textarea>
+            </spr-form-field>
+
+            <spr-form-field
+              *ngIf="status === orderStatus.cancelled"
+              [labelText]="translationsReference + '.provideCancellationReason' | translate"
+              [isLabelHorizontal]="false"
+              [errorDiv]="false"
+            >
+              <textarea
+                name="ord_rejection_reason"
+                id="ord_rejection_reason"
+                formControlName="ord_rejection_reason"
+              ></textarea>
+            </spr-form-field>
+
+            <spr-form-field
+              *ngIf="status === orderStatus.confirmed || edit"
+              [labelText]="edit ? (translationsReference + '.planned_date' | translate):(translationsReference + '.selectPlannedDate' | translate)"
+              [isLabelHorizontal]="false"
+              [mandatory]="false"
+            >
+              <p-calendar
+                formControlName="ord_completion_estimate_date"
+                [firstDayOfWeek]="1"
+                [showButtonBar]="true"
+                appendTo="body"
+                [showIcon]="true"
+                dateFormat="yy-mm-dd"
+                [minDate]="minDate"
+                [(ngModel)]="defaultDate"
+              >
+              </p-calendar>
+            </spr-form-field>
+            <spr-form-field
+              *ngIf="status === orderStatus.confirmed && data?.serviceDescription.srv_type === PRIEZIURA || edit && data?.serviceDescription.srv_type === PRIEZIURA "
+              [labelText]="edit ? (translationsReference + '.planned_works_description' | translate):(translationsReference + '.insertPlannedWorksDesc' | translate)"
+              [isLabelHorizontal]="false"
+              [errorDiv]="false"
+            >
+              <textarea
+                name="ord_planned_works_description"
+                id="ord_planned_works_description"
+                formControlName="ord_planned_works_description"
+              ></textarea>
+            </spr-form-field>
+            <spr-form-field
+              *ngIf="status === orderStatus.finished"
+              [labelText]="translationsReference + completedDate | translate"
+              [isLabelHorizontal]="false"
+              [mandatory]="status === orderStatus.finished"
+              [inputErrors]="form.controls.ocw_completed_date.touched && form.controls.ocw_completed_date.errors"
+              [errorDefs]="{required: 'common.error'}"
+            >
+              <p-calendar
+                formControlName="ocw_completed_date"
+                [firstDayOfWeek]="1"
+                [showButtonBar]="true"
+                appendTo="body"
+                [showIcon]="true"
+                dateFormat="yy-mm-dd"
+                [minDate]="minDate"
+                [maxDate]="maxDateCompleted"
+                [(ngModel)]="defaultDate"
+              >
+              </p-calendar>
+            </spr-form-field>
+
+            <spr-form-field
+              *ngIf="status === orderStatus.finished && data?.serviceDescription.srv_type === VEZIMAS"
+              [labelText]="translationsReference + '.discharged_sludge_amount' | translate"
+              labelFor="ocw_discharged_sludge_amount"
+              [isLabelHorizontal]="false"
+              [mandatory]="status === orderStatus.finished"
+              [inputErrors]="form.controls.ocw_discharged_sludge_amount.touched && form.controls.ocw_discharged_sludge_amount.errors"
+              [errorDefs]="{required: 'common.error'}"
+            >
+              <input
+                inputId="ocw_discharged_sludge_amount"
+                type="number"
+                step="0.01"
+                min="0.01"
+                formControlName="ocw_discharged_sludge_amount"
+              />
+            </spr-form-field>
+
+            <spr-form-field
+              *ngIf="status === orderStatus.finished && data?.serviceDescription.srv_type === VEZIMAS"
+              [labelText]="translationsReference + '.ocw_cr_id' | translate"
+              labelFor="ocw_cr_id"
+              [mandatory]="status === orderStatus.finished"
+              [inputErrors]="form.controls.ocw_cr_id.touched && form.controls.ocw_cr_id.errors"
+              [errorDefs]="{required: 'common.error'}"
+              ><spr-select
+                formControlName="ocw_cr_id"
+                [optionData]="data?.carSelection"
+                optionLabel="cr_name"
+                optionValue="cr_id"
+                [placeholder]="'common.action.select' | translate"
+              ></spr-select>
+            </spr-form-field>
+            <spr-form-field
+              *ngIf="status === orderStatus.finished"
+              [labelText]="translationsReference + completedWorks | translate"
+              [isLabelHorizontal]="false"
+              [errorDiv]="false"
+            >
+              <textarea
+                name="ocw_completed_works_description"
+                id="ocw_completed_works_description"
+                formControlName="ocw_completed_works_description"
+              ></textarea>
+            </spr-form-field>
+          </div>
+        </div>
+
+        <div class="spr-form-buttons mb-3 mt-5">
+          <spr-button class="spr-button-link" (click)="cancelDialog()">
+            {{'common.action.back' | translate}}
+          </spr-button>
+          <spr-button className="spr-button-primary" type="submit" (click)="updateOrder()">
+            {{'common.action' + buttonString | translate}}
+          </spr-button>
+        </div>
+      </p-dialog>
+    </form>
+  </div>
+  <p-dialog
+    styleClass="ntis-dialog"
+    [(visible)]="showReviewDialog"
+    appendTo="body"
+    [draggable]="false"
+    [resizable]="false"
+    [modal]="true"
+    [blockScroll]="true"
+  >
+    <div class="stars-wrapper pb-2">
+      <span>{{(reviewsTranslationsReference + '.score' | translate) + ':'}}</span>
+      <div *ngFor="let i of [1,2,3,4,5]">
+        <fa-icon
+          class="flex flex-row"
+          [icon]="i <= data?.revScore && data?.revScore ? faIconsService.fas.faStar : faIconsService.far.faStar"
+          [ngClass]="i <= data?.revScore && data?.revScore ? 'icon-color' : null"
+          size="xl"
+        ></fa-icon>
+      </div>
+    </div>
+    <spr-info-line
+      class="pb-5"
+      [name]="reviewsTranslationsReference + '.comment' | translate"
+      [value]="data?.revComment"
+    ></spr-info-line>
+  </p-dialog>
+</spr-content-box>

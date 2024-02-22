@@ -1,0 +1,24 @@
+%global-input {
+  @apply border-2 border-neutral-200 text-neutral-900 focus:border-primary-500 focus:ring-transparent focus:outline-transparent 
+      disabled:bg-neutral-50 disabled:cursor-default rounded-md text-sm w-full transition-colors;
+}
+
+%choice-input {
+  @extend %global-input;
+  @apply text-primary-500 cursor-pointer w-5 h-5;
+}
+
+.s2-ui-input-checkbox {
+  @extend %choice-input;
+  @apply rounded;
+
+  &--semi-selected {
+    @apply bg-neutral-300 hover:bg-neutral-400 
+               focus:bg-neutral-500 focus:border-neutral-900;
+  }
+}
+
+.s2-ui-input-radio {
+  @extend %choice-input;
+  @apply rounded-full;
+}

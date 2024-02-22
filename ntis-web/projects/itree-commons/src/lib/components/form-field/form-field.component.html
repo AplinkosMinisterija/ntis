@@ -1,0 +1,63 @@
+<div [ngClass]="{'hidden': hidden}">
+  <div class="grid" [ngClass]="{'has-error': errorMessage, 'md:grid-cols-3': isLabelHorizontal}">
+    <label
+      [for]="labelFor"
+      [ngClass]="{'md:justify-end md:text-right ': isLabelHorizontal}"
+      [ngClass]="{'md:justify-center md:text-center ': isLabelCentered}"
+      class="text-sm flex items-center pr-4 font-bold"
+      *ngIf="labelText"
+    >
+      {{ labelText }}
+      <fa-icon
+        *ngIf="mandatory"
+        class="text-xs pl-0.5 mb-2 hover:text-primary-500 cursor-pointer leading-none"
+        [icon]="faIconsService.fas.faAsterisk"
+        size="xs"
+        (mouseenter)="fieldRequired.show($event)"
+        (mouseleave)="fieldRequired.hide()"
+      ></fa-icon>
+      <fa-icon
+        *ngIf="tooltipText"
+        class="pl-1.5 hover:text-primary-500 cursor-pointer"
+        [icon]="faIconsService.fas.faQuestionCircle"
+        (mouseenter)="tooltipTextId.show($event)"
+        (mouseleave)="tooltipTextId.hide()"
+      ></fa-icon>
+    </label>
+    <div [ngClass]="{'md:col-span-2 md:col-end-4': isLabelHorizontal}">
+      <div *ngIf="infoText && !errorMessage">
+        <div class="info-text">{{infoText}}</div>
+      </div>
+      <div *ngIf="errorDiv &&!(infoText && !errorMessage) " [ngClass]="{'is-invalid': errorMessage}">
+        <div *ngIf="errorDiv" class="invalid-feedback">{{errorMessage ? errorMessage : ''}}</div>
+      </div>
+    </div>
+    <div [ngClass]="{'md:col-span-2': isLabelHorizontal}">
+      <ng-content></ng-content>
+    </div>
+  </div>
+
+  <p-overlayPanel
+    [showTransitionOptions]="'0ms'"
+    [hideTransitionOptions]="'0ms'"
+    [dismissable]="true"
+    #tooltipTextId
+    [appendTo]="'body'"
+  >
+    <div class="max-w-md">
+      <span>{{tooltipText}}</span>
+    </div>
+  </p-overlayPanel>
+
+  <p-overlayPanel
+    [showTransitionOptions]="'0ms'"
+    [hideTransitionOptions]="'0ms'"
+    [dismissable]="true"
+    #fieldRequired
+    [appendTo]="'body'"
+  >
+    <div class="max-w-md">
+      <span>{{'common.message.fieldRequired' | translate}}</span>
+    </div>
+  </p-overlayPanel>
+</div>

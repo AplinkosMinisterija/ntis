@@ -1,0 +1,182 @@
+<section class="address-form">
+  <ng-content select="[form-header]"></ng-content>
+  <form [formGroup]="form" (submit)="onSubmit($event)" autocomplete="off">
+    <ul class="radio-list">
+      <li>
+        <div class="address-form__group-label">
+          <input
+            type="radio"
+            class="spr-radio"
+            id="byAddress"
+            name="searchMethod"
+            [(ngModel)]="searchMethodValue"
+            [ngModelOptions]="{standalone: true}"
+            [value]="searchMethod.address"
+            (click)="changeFormGroup(searchMethod.address)"
+          />
+          <label for="byAddress"> {{addressFormReference + '.byAddress' | translate}}</label>
+        </div>
+        <ng-container *ngIf="searchMethodValue === searchMethod.address">
+          <ntis-form-field
+            [mandatory]="true"
+            labelFor="municipality"
+            [inputErrors]="form.controls.municipality.touched && form.controls.municipality.errors"
+            [labelText]="addressFormReference + '.municipality'| translate"
+          >
+            <spr-select
+              id="municipality"
+              optionLabel="option"
+              optionValue="value"
+              formControlName="municipality"
+              [optionData]="municipalities"
+              [placeholder]="commonActionReference + '.choose' | translate"
+              [showFilter]="true"
+              [delaySearch]="500"
+            ></spr-select>
+          </ntis-form-field>
+          <ntis-form-field
+            [mandatory]="true"
+            labelFor="city"
+            [inputErrors]="form.controls.city.touched && form.controls.city.errors"
+            [labelText]="addressFormReference + '.city'| translate"
+          >
+            <spr-select
+              [placeholder]="commonActionReference + '.choose' | translate"
+              optionLabel="re_name"
+              optionValue="re_recidence_code"
+              [optionData]="citiesList"
+              formControlName="city"
+              [showFilter]="true"
+              [delaySearch]="500"
+            ></spr-select>
+          </ntis-form-field>
+          <ntis-form-field
+            [mandatory]="showStreetRequired"
+            labelFor="street"
+            [inputErrors]="form.controls.street.touched && form.controls.street.errors"
+            [labelText]="addressFormReference + '.street'| translate"
+          >
+            <spr-select
+              [placeholder]="commonActionReference + '.choose' | translate"
+              optionLabel="str_name"
+              optionValue="str_street_code"
+              [optionData]="streetsList.length > 0 ? streetsList : [{ str_name: this.addressFormReference + '.noStreets' | translate, str_street_code: '0' }]"
+              formControlName="street"
+              [showFilter]="true"
+              [delaySearch]="500"
+            ></spr-select>
+          </ntis-form-field>
+          <div class="address-form__split-columns">
+            <ntis-form-field [labelText]="addressFormReference + '.houseNo'| translate">
+              <input
+                type="text"
+                formControlName="houseNr"
+                [placeholder]="addressFormReference + '.enterHouseNr' | translate"
+              />
+            </ntis-form-field>
+            <ntis-form-field [labelText]="addressFormReference + '.flatNo'| translate">
+              <input
+                type="text"
+                formControlName="flatNr"
+                [placeholder]="addressFormReference + '.enterFlatNr' | translate"
+              />
+            </ntis-form-field>
+          </div>
+        </ng-container>
+      </li>
+      <li>
+        <div class="address-form__group-label">
+          <input
+            type="radio"
+            class="spr-radio"
+            id="byCoordinates"
+            name="searchMethod"
+            [(ngModel)]="searchMethodValue"
+            [ngModelOptions]="{standalone: true}"
+            [value]="searchMethod.coordinates"
+            (click)="changeFormGroup(searchMethod.coordinates)"
+          />
+          <label for="byCoordinates"> {{addressFormReference + '.byCoordinates' | translate}}</label>
+        </div>
+        <div class="address-form__group" *ngIf="searchMethodValue === searchMethod.coordinates">
+          <ntis-form-field
+            [mandatory]="true"
+            labelFor="coordinates"
+            [inputErrors]="form.controls.coordinates.touched && form.controls.coordinates.errors"
+            [labelText]="addressFormReference + '.coordinates'| translate"
+          >
+            <input
+              type="text"
+              [pattern]="LKS_94_COORDINATES_PATTERN"
+              formControlName="coordinates"
+              [placeholder]="addressFormReference + '.coordinatesPlaceholder' | translate"
+            />
+          </ntis-form-field>
+        </div>
+      </li>
+      <li>
+        <div class="address-form__group-label">
+          <input
+            type="radio"
+            class="spr-radio"
+            id="byImmovablePropertyNo"
+            name="searchMethod"
+            [(ngModel)]="searchMethodValue"
+            [ngModelOptions]="{standalone: true}"
+            [value]="searchMethod.immovablePropertyNo"
+            (click)="changeFormGroup(searchMethod.immovablePropertyNo)"
+          />
+          <label for="byImmovablePropertyNo"> {{addressFormReference + '.immovablePropertyNoRadio' | translate}}</label>
+        </div>
+        <div class="address-form__group" *ngIf="searchMethodValue === searchMethod.immovablePropertyNo">
+          <ntis-form-field
+            [mandatory]="true"
+            labelFor="immovablePropertyNo"
+            [inputErrors]="form.controls.immovablePropertyNo.touched && form.controls.immovablePropertyNo.errors"
+            [labelText]="addressFormReference + '.immovablePropertyNo'| translate"
+          >
+            <input type="text" formControlName="immovablePropertyNo" placeholder="4198202860140002" />
+          </ntis-form-field>
+        </div>
+      </li>
+      <li class="search-btn-wrapper">
+        <button type="submit" class="spr-button-primary">{{commonActionReference + '.search' | translate}}</button>
+      </li>
+    </ul>
+    <ng-content select="[form-footer]"></ng-content>
+  </form>
+</section>
+
+<section class="address-dialog" *ngIf="showResultDialog" (click)="showResultDialog = false">
+  <div class="address-dialog__content">
+    <header class="address-dialog__content-header">
+      <span class="address-dialog__content-header-text">{{addressFormReference + '.searchResult' | translate}}</span>
+      <spr-button iconName="faTimes" type="button" (click)="showResultDialog = false"></spr-button>
+    </header>
+    <div class="address-dialog__content-body">
+      <ng-container *ngIf="addressList.length > 0">
+        <ul>
+          <li *ngFor="let row of addressList">
+            <button class="address-button" type="button" (click)="setAddress(row)">
+              <span class="address-button__item" *ngIf="row.full_address_text">
+                <spr-icon name="house"></spr-icon
+                ><span class="address-button__address-text">{{row.full_address_text}}</span>
+              </span>
+              <span class="address-button__item" *ngIf="row.latitude"
+                ><spr-icon name="location_on"></spr-icon
+                ><span class="address-button__coord-text">{{row.latitude}}, {{row.longitude}}</span>
+              </span>
+              <span class="address-button__item" *ngIf="row.ntr_building_id">
+                <spr-icon name="maps_home_work"></spr-icon
+                ><span class="address-button__coord-text">{{row.purpose_of_building}} {{'(ID:'+row.inv_code+')'}}</span>
+              </span>
+            </button>
+          </li>
+        </ul>
+      </ng-container>
+      <div class="no-record-found" *ngIf="addressList.length === 0">
+        {{commonErrorReference + '.addressNotFound' | translate}}
+      </div>
+    </div>
+  </div>
+</section>

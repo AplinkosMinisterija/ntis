@@ -1,0 +1,128 @@
+<spr-content-box [headerText]="translationsReference + '.headerText'" transformingText="uppercase">
+  <div class="spr-browse-actions-wrapper">
+    <spr-browse-search-form [formGroup]="searchForm" [formCode]="formCode" (search)="search(dataTableComponent)">
+      <spr-select
+        *ngIf="waterManagers.length > 0"
+        filters
+        formControlName="org_id"
+        [optionData]="waterManagers"
+        optionLabel="value"
+        optionValue="id"
+        optionType="multiple"
+        [placeholder]="translationsReference + '.waterManager' | translate"
+        [showFilter]="true"
+        [advancedFilterParams]="true"
+      ></spr-select>
+      <spr-select
+        *ngIf="waterManagers.length > 0"
+        filters
+        formControlName="cwf_status"
+        [optionData]="cwfStateSelection"
+        optionLabel="value"
+        optionValue="id"
+        optionType="multiple"
+        [placeholder]="translationsReference + '.cwf_status' | translate"
+        [advancedFilterParams]="true"
+      ></spr-select>
+      <spr-filter-input
+        filters
+        inputType="date"
+        formControlName="cwf_period_from"
+        [placeholder]="translationsReference + '.cwf_period_from' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="date"
+        formControlName="cwf_period_to"
+        [placeholder]="translationsReference + '.cwf_period_to' | translate"
+      ></spr-filter-input>
+      <spr-button buttons class="spr-button-primary" type="button" (click)="navigateToAddressMappings()">
+        {{ translationsReference + '.toMappings' | translate }}
+      </spr-button>
+    </spr-browse-search-form>
+  </div>
+
+  <p-table
+    [value]="data"
+    responsiveLayout="stack"
+    breakpoint="767px"
+    [lazy]="true"
+    (onLazyLoad)="loadDataLazy($event)"
+    [rows]="showRows"
+    [totalRecords]="totalRecords"
+    [paginator]="data?.length > 0"
+    [rowsPerPageOptions]="rowsPerPageOptions"
+    [showFirstLastIcon]="false"
+    [rowHover]="true"
+  >
+    <ng-template pTemplate="header" let-row let-index="rowIndex">
+      <tr>
+        <ng-container *ngFor="let col of cols">
+          <th pSortableColumn="{{col.field}}">
+            {{translationsReference + '.' + col.field | translate}}
+            <p-sortIcon field="{{col.field}}"></p-sortIcon>
+          </th>
+        </ng-container>
+        <th>{{'common.generalUse.actions' | translate}}</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row>
+      <tr>
+        <ng-container *ngFor="let col of cols">
+          <td>
+            <span class="p-column-title">
+              {{translationsReference + '.' + col.field |translate}}
+            </span>
+            <span class="table-org-info-line">
+              <ng-container
+                *ngIf="(col.field === 'date_in_period' && row.state_in_period === CwFilStatus.cw_fil_final) || (col.field === 'latest_date' && row.state_latest_date === CwFilStatus.cw_fil_final)"
+                ><fa-icon [icon]="faIconsService.fas.faCircleCheck" size="xl" class="text-secondary-500"></fa-icon
+              ></ng-container>
+              <ng-container
+                *ngIf="(col.field === 'date_in_period' && row.state_in_period === CwFilStatus.cw_fil_pending) || (col.field === 'latest_date' && row.state_latest_date === CwFilStatus.cw_fil_pending)"
+                ><fa-icon [icon]="faIconsService.fas.faCircleCheck" size="xl" class="text-neutral-500"></fa-icon
+              ></ng-container>
+              {{row[col.field]}}</span
+            >
+          </td>
+        </ng-container>
+        <td>
+          <ntis-table-row-actions [actions]="row.actions"></ntis-table-row-actions>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage" translate>
+      <tr>
+        <td [attr.colspan]="cols.length + 1">
+          <spr-table-no-rec-found></spr-table-no-rec-found>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+  <p-dialog [(visible)]="orgInfoDialog" [closable]="false" styleClass="ntis-dialog" [showHeader]="false"
+    ><div class="org-info">
+      <div class="org-info-name">{{org_name}}</div>
+      <div>
+        <spr-info-line
+          [name]="translationsReference + '.org_address' | translate"
+          [value]="org_address"
+        ></spr-info-line>
+        <spr-info-line
+          [name]="translationsReference + '.org_delegation_person' | translate"
+          [value]="org_delegation_person"
+        ></spr-info-line>
+        <spr-info-line [name]="translationsReference + '.org_email' | translate" [value]="org_email"></spr-info-line>
+        <spr-info-line [name]="translationsReference + '.org_phone' | translate" [value]="org_phone"></spr-info-line>
+        <spr-info-line
+          [name]="translationsReference + '.org_website' | translate"
+          [value]="org_website"
+        ></spr-info-line>
+      </div>
+    </div>
+    <span class="dialog-footer">
+      <spr-button className="ntis-button-link" (click)="orgInfoDialog = false">
+        {{'common.action.back' | translate}}
+      </spr-button>
+    </span>
+  </p-dialog>
+</spr-content-box>

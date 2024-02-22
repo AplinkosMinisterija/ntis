@@ -1,0 +1,190 @@
+:host {
+  @apply block;
+}
+
+.input-wrapper {
+  @apply relative flex items-center;
+
+  &__input {
+    @apply border-r-0 rounded-tr-none rounded-br-none;
+  }
+
+  &__datetime-range {
+    @apply text-xs;
+  }
+
+  &__date-range {
+    @apply flex items-center gap-2 text-xs;
+  }
+
+  &__input-period::placeholder {
+    @apply text-xs;
+  }
+
+  &__icon-btn {
+    @apply text-center text-neutral-0 bg-primary-500 cursor-pointer active:bg-primary-700 
+    hover:bg-primary-600 rounded-r w-10 self-stretch;
+
+    &--disabled {
+      @apply cursor-default active:bg-primary-500 hover:bg-primary-500;
+    }
+  }
+
+  &__input-date-from {
+    @apply pl-2 rounded-none border-2;
+  }
+
+  &__input-v2 {
+    @apply border-l-0 border-r-0 pl-2 rounded-none;
+  }
+
+  &__icon-btn-v2 {
+    @apply text-center text-neutral-600 cursor-pointer active:text-neutral-700 flex justify-center items-center 
+    hover:text-neutral-500 rounded-l-md self-stretch border border-r-0 px-3 duration-150 bg-neutral-100 text-sm gap-2
+    font-semibold whitespace-nowrap;
+  }
+
+  &__icon-btn-clear-v2 {
+    @apply text-center text-neutral-600 cursor-pointer active:text-neutral-700 flex justify-center items-center 
+    hover:text-neutral-500 self-stretch border border-l-0 pr-3 duration-200 rounded-r-md bg-neutral-0;
+  }
+
+  &__dropdown-panel {
+    @apply border-2 rounded-md p-2 shadow-lg w-full bg-neutral-0 grid grid-cols-1 gap-2 z-10;
+  }
+
+  &__dropdown-panel-conditions {
+    @apply w-full bg-neutral-0 grid grid-cols-2 md:grid-cols-3 gap-1 z-10;
+  }
+
+  &__dropdown-panel-calendar {
+    @apply w-full grid grid-cols-1 gap-2 z-10 pt-1;
+  }
+
+  &__dropdown-panel-time {
+    @apply w-full grid grid-cols-1 gap-2 z-10 pt-1 mb-2;
+  }
+
+  &__dropdown-item {
+    @apply text-center bg-primary-500 text-neutral-0 text-xs rounded-sm cursor-pointer active:bg-primary-700 hover:bg-primary-600 py-2;
+
+    &--period {
+      @apply col-span-3;
+    }
+  }
+
+  &__selected-label-outside {
+    @apply absolute left-2 -top-1/4 font-thin w-auto text-xs border-primary-500 bg-primary-500 text-neutral-0 px-2 rounded-sm;
+  }
+
+  &__clear-field {
+    @apply absolute right-11 cursor-pointer text-neutral-400;
+  }
+
+  &__time-eneter-input {
+    @apply text-center text-2xl rounded-md p-0.5 w-12 border shadow-inner focus:bg-neutral-200;
+  }
+
+  &__dropdown-panel-time-wrapper {
+    @apply mb-2 text-center text-2xl flex justify-center;
+  }
+}
+
+.arrow-wrapper {
+  @apply absolute top-10 w-full z-10;
+
+  &__arrow-up {
+    @apply w-0 h-0 float-right mr-2 border-solid border-b-neutral-200 border-b-8 border-x-transparent border-x-8 border-t-0;
+  }
+}
+
+.tasks-calendar {
+  &__month {
+    @apply flex justify-between mb-2 rounded-full shadow-inner bg-neutral-200;
+  }
+
+  &__year-footer {
+    @apply flex justify-between text-sm mt-2;
+  }
+
+  &__month-button {
+    @apply flex justify-center items-center bg-primary-500 rounded-full text-neutral-0 shadow-sm h-6 w-6;
+
+    &:hover {
+      @apply bg-primary-600;
+    }
+  }
+
+  &__month-text {
+    @apply text-sm font-bold min-w-32 text-center leading-6 cursor-pointer;
+  }
+
+  &__week-days-grid {
+    @apply text-sm grid gap-1 grid-cols-7 border-b;
+  }
+
+  &__week-day {
+    @apply text-center text-sm font-semibold;
+  }
+
+  &__days-grid {
+    @apply text-neutral-900 text-sm grid gap-1 grid-cols-7;
+  }
+
+  &__day {
+    @apply text-sm text-center select-none cursor-pointer border border-transparent rounded-md;
+
+    &--current-day {
+      @apply text-primary-500 bg-primary-500 bg-opacity-10;
+    }
+
+    &--other-month {
+      @apply text-neutral-300;
+    }
+
+    &--selected {
+      @apply border-primary-500;
+    }
+
+    &--disabled {
+      @apply text-neutral-300 pointer-events-none;
+    }
+
+    &--range {
+      @apply border-primary-500 text-primary-500 bg-primary-500 bg-opacity-10;
+    }
+  }
+
+  &__year-grid {
+    @apply text-neutral-900 text-sm grid gap-2 grid-cols-3;
+  }
+
+  &__year {
+    @apply text-center cursor-pointer border hover:bg-opacity-10 rounded-full bg-neutral-0 hover:shadow-inner hover:bg-primary-500 active:bg-opacity-20;
+  }
+
+  &__month-grid {
+    @apply text-neutral-900 text-sm grid gap-2 grid-cols-2;
+  }
+
+  &__year-month {
+    @apply text-center cursor-pointer border hover:bg-opacity-10 rounded-full bg-neutral-0 hover:shadow-inner hover:bg-primary-500 active:bg-opacity-20 text-sm;
+  }
+
+  &__clear-today-button {
+    @apply text-primary-500 font-semibold underline hover:text-primary-600 active:text-primary-700;
+  }
+}
+
+.slider {
+  @apply appearance-none w-full outline-none bg-neutral-400 mt-4 p-0;
+  height: 3px;
+}
+
+.slider::-webkit-slider-thumb {
+  @apply bg-primary-500 rounded-full appearance-none h-6 w-6 cursor-grab active:cursor-grabbing;
+}
+
+.slider::-moz-range-thumb {
+  @apply bg-primary-500 rounded-full appearance-none h-6 w-6 cursor-grab active:cursor-grabbing;
+}

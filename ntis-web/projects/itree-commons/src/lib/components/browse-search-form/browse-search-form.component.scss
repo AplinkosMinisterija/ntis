@@ -1,0 +1,88 @@
+.main-view {
+  @apply flex flex-col justify-between sm:flex-row items-center gap-5;
+
+  &__filter-wrapper {
+    @apply flex flex-col gap-3 md:flex-row justify-center;
+  }
+
+  &__action-wrapper {
+    @apply flex flex-col md:flex-row md:flex-wrap gap-3 justify-center;
+  }
+}
+
+.quick-search {
+  @apply flex justify-between w-full rounded border border-neutral-200 
+  focus-within:border-neutral-600 py-[7px];
+
+  &__input-field {
+    @apply border-0 placeholder:text-neutral-600 px-2 py-0;
+  }
+
+  &__action-button {
+    @apply px-3 bg-transparent m-0 border-0 w-max text-neutral-600;
+  }
+
+  &__detailed-button {
+    @apply text-neutral-600 border rounded whitespace-nowrap px-2 py-[7px];
+
+    &--active {
+      @apply border-neutral-600 text-neutral-600;
+    }
+  }
+}
+
+.predefined-filter {
+  @apply w-full;
+}
+
+.toggle-detailed-search {
+  @apply flex-1 transform  min-w-max h-full font-semibold text-primary-500 bg-transparent border-0;
+}
+
+.selected-filters-text {
+  @apply font-semibold text-primary-500;
+}
+
+.detailed-view {
+  @apply flex flex-col items-center w-full max-h-0 opacity-0 gap-4 pointer-events-none transition-all 
+  border rounded p-3 mt-2 bg-neutral-50;
+
+  &__close-button {
+    @apply w-full flex justify-end items-center pb-3;
+  }
+
+  &__content-wrapper {
+    @apply w-full lg:max-w-5xl grid gap-4 justify-items-center;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+
+    ::ng-deep {
+      > * {
+        @apply w-full lg:max-w-xs;
+      }
+
+      spr-filter-input,
+      p-calendar {
+        @apply w-full lg:max-w-xs;
+      }
+
+      input {
+        @apply sm:w-full lg:max-w-xs bg-neutral-0 rounded border border-neutral-200
+        placeholder:text-neutral-500 text-ellipsis px-3;
+        &.input-wrapper__input {
+          @apply rounded-tr-none rounded-br-none;
+        }
+        &.combobox__input-control {
+          @apply pr-12;
+        }
+      }
+    }
+  }
+
+  &__actions-wrapper {
+    @apply my-7 grid gap-7 grid-cols-3;
+  }
+
+  &--open {
+    @apply max-h-screen opacity-100 pointer-events-auto transition-all;
+  }
+}

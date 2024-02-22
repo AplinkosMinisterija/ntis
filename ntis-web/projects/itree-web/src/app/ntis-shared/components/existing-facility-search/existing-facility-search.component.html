@@ -1,0 +1,64 @@
+<spr-form-field-group [text]="translationsReference + '.facilityLegend'" *ngIf="showWithHeader; else elseBlock">
+  <div *ngIf="showSearchBlock">
+    <ntis-wtf-search
+      [quickSearchAddrList]="quickSearchFaciList"
+      [detailedSearchAddrList]="detailedSearchFaciList"
+      (findLocationsEvent)="findFaciLocations($event)"
+      (selectedLocationEvent)="setSelectedFaci($event)"
+      [municipalities]="municipalities"
+      [cities]="cities"
+      [streets]="streets"
+      (detailedSearchEvent)="onDetailedFaciSearch($event)"
+      (municipalitySelectEvent)="filterCities($event)"
+      (citySelectEvent)="filterStreets($event)"
+    >
+      <button
+        button
+        type="button"
+        class="spr-button-primary button-register-new"
+        [routerLink]="toRegisterNewFaci"
+        [queryParams]="queryParams"
+      >
+        {{translationsReference + '.registerNew' | translate}}
+      </button>
+    </ntis-wtf-search>
+  </div>
+  <ntis-wtf-info
+    *ngIf="facilityData && showAddedFacilities"
+    [data]="facilityData"
+    [bgAndBorder]="true"
+    legend=""
+  ></ntis-wtf-info>
+</spr-form-field-group>
+<ng-template #elseBlock>
+  <div *ngIf="showSearchBlock">
+    <ntis-wtf-search
+      [quickSearchAddrList]="quickSearchFaciList"
+      [detailedSearchAddrList]="detailedSearchFaciList"
+      (findLocationsEvent)="findFaciLocations($event)"
+      (selectedLocationEvent)="setSelectedFaci($event)"
+      [municipalities]="municipalities"
+      [cities]="cities"
+      [streets]="streets"
+      (detailedSearchEvent)="onDetailedFaciSearch($event)"
+      (municipalitySelectEvent)="filterCities($event)"
+      (citySelectEvent)="filterStreets($event)"
+    >
+      <button
+        button
+        type="button"
+        class="spr-button-primary button-register-new"
+        [routerLink]="toRegisterNewFaci"
+        [queryParams]="queryParams"
+      >
+        {{translationsReference + '.registerNew' | translate}}
+      </button>
+    </ntis-wtf-search>
+  </div>
+  <ntis-wtf-info
+    *ngIf="facilityData && showAddedFacilities"
+    [data]="facilityData"
+    [bgAndBorder]="true"
+    legend=""
+  ></ntis-wtf-info
+></ng-template>

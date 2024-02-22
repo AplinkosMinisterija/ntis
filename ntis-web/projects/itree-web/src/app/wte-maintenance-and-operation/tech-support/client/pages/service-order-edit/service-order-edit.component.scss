@@ -1,0 +1,11 @@
+.lab-name {
+  @apply font-semibold pt-3;
+}
+
+.research-options-wrapper {
+  @apply grid grid-cols-2 pt-2;
+}
+
+.inline-wrapper {
+  @apply flex gap-2;
+}

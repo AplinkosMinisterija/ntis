@@ -1,0 +1,44 @@
+<ng-container *ngFor="let message of service.messages; index as i">
+  <div
+    [@showHide]="{ value: 'visible', params: {transformValue: fadeDirectionTransitions[fadeDirection] || defaultFadeDirectionTransition} }"
+    *ngIf="(!key && !message.containerKey) || key === message.containerKey"
+    class="s2-popup-message"
+    [ngClass]="{'s2-popup-message--closable': message.closable === undefined || message.closable}"
+    role="alertdialog"
+    [attr.aria-labelledby]="'s2-popup-message-heading-' + i"
+    [attr.aria-describedby]="'s2-popup-message-text-' + i"
+  >
+    <div
+      class="s2-popup-message__border"
+      [ngClass]="message.severity ? 's2-popup-message__border--' + message.severity : ''"
+    ></div>
+    <s2-icon
+      *ngIf="message.icon || message.severity"
+      class="s2-popup-message__icon"
+      [ngClass]="message.severity ? 's2-popup-message__icon--' + message.severity : ''"
+      >{{ message.icon || icons[message.severity] }}</s2-icon
+    >
+    <div class="s2-popup-message__texts">
+      <div
+        *ngIf="message.heading"
+        class="s2-popup-message__heading"
+        [ngClass]="message.severity ? 's2-popup-message__heading--' + message.severity : ''"
+        [id]="'s2-popup-message-heading-' + i"
+      >
+        {{ message.heading }}
+      </div>
+      <div *ngIf="message.text" class="s2-popup-message__text" [id]="'s2-popup-message-text-' + i">
+        {{ message.text }}
+      </div>
+    </div>
+    <button
+      *ngIf="message.closable === undefined || message.closable"
+      type="button"
+      class="s2-popup-message__close"
+      (click)="service.remove(message)"
+      [attr.aria-label]="translationsService.translations.action.close"
+    >
+      <s2-icon class="s2-popup-message__close-icon">close</s2-icon>
+    </button>
+  </div>
+</ng-container>

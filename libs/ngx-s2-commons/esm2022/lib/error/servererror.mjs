@@ -1,0 +1,10 @@
+export class ServerError extends Error {
+    uuid;
+    constructor(uuid) {
+        super();
+        this.uuid = uuid;
+        this.name = ServerError.name;
+        Object.setPrototypeOf(this, ServerError.prototype);
+    }
+}
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoic2VydmVyZXJyb3IuanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi8uLi8uLi9wcm9qZWN0cy9uZ3gtczItY29tbW9ucy9zcmMvbGliL2Vycm9yL3NlcnZlcmVycm9yLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBLE1BQU0sT0FBTyxXQUFZLFNBQVEsS0FBSztJQUVkO0lBQXBCLFlBQW9CLElBQVk7UUFDNUIsS0FBSyxFQUFFLENBQUM7UUFEUSxTQUFJLEdBQUosSUFBSSxDQUFRO1FBRTVCLElBQUksQ0FBQyxJQUFJLEdBQUcsV0FBVyxDQUFDLElBQUksQ0FBQztRQUM3QixNQUFNLENBQUMsY0FBYyxDQUFDLElBQUksRUFBRSxXQUFXLENBQUMsU0FBUyxDQUFDLENBQUM7SUFDdkQsQ0FBQztDQUNKIiwic291cmNlc0NvbnRlbnQiOlsiZXhwb3J0IGNsYXNzIFNlcnZlckVycm9yIGV4dGVuZHMgRXJyb3Ige1xyXG5cclxuICAgIGNvbnN0cnVjdG9yKCBwdWJsaWMgdXVpZDogc3RyaW5nICkge1xyXG4gICAgICAgIHN1cGVyKCk7XHJcbiAgICAgICAgdGhpcy5uYW1lID0gU2VydmVyRXJyb3IubmFtZTtcclxuICAgICAgICBPYmplY3Quc2V0UHJvdG90eXBlT2YodGhpcywgU2VydmVyRXJyb3IucHJvdG90eXBlKTtcclxuICAgIH1cclxufVxyXG4iXX0=

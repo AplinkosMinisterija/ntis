@@ -1,0 +1,193 @@
+<spr-content-box [headerText]="translationsRef + '.headerText'">
+  <div class="spr-edit-form-wrapper">
+    <ng-container *ngIf="data">
+      <spr-form-field-group [text]="translationsRef + '.aggloData'">
+        <spr-info-line name="ID" [value]="data.id + ''"></spr-info-line>
+        <spr-info-line
+          [name]="translationsRef + '.municipality'"
+          [translateName]="true"
+          [value]="data.municipality"
+        ></spr-info-line>
+        <spr-info-line
+          [name]="translationsRef + '.confirmDate'"
+          [translateName]="true"
+          [value]="data.confirmDate"
+        ></spr-info-line>
+        <spr-info-line
+          [name]="translationsRef + '.confirmDocNo' "
+          [translateName]="true"
+          [value]="data.confirmDocNo"
+        ></spr-info-line>
+        <spr-info-line
+          [name]="translationsRef + '.status'"
+          [translateName]="true"
+          [value]="data.status"
+          [redText]="data.statusCode === AGLO_STATUS_REJECTED"
+        ></spr-info-line>
+        <spr-button
+          *ngIf="canUpdate && data.statusCode === AGLO_STATUS_REJECTED"
+          type="button"
+          class="submit-new-data"
+          className="spr-button-primary"
+          iconName="faUpload"
+          (click)="handleClickSubmitNewData()"
+        >
+          {{ (translationsRef + '.submitNewData') | translate }}
+        </spr-button>
+      </spr-form-field-group>
+
+      <spr-form-field-group
+        *ngIf="canUpdateState && data.lastCheckReport"
+        [text]="translationsRef + '.autoInspectionReport'"
+      >
+        <ul *ngIf="data.lastCheckReport.length" class="check-report">
+          <li *ngFor="let item of data.lastCheckReport">{{ item }}</li>
+        </ul>
+        <p *ngIf="!data.lastCheckReport.length">{{ (translationsRef + '.noErrorsDetected') | translate }}</p>
+        <div *ngIf="data.statusCode === AGLO_STATUS_CHECKING" class="check-report-actions">
+          <spr-button
+            className="ntis-button-hollow"
+            iconStyle="far"
+            iconName="faCircleXmark"
+            iconClassName="text-2xl"
+            (click)="handleClickReject()"
+            >{{ (translationsRef + '.reject') | translate }}</spr-button
+          >
+          <spr-button
+            type="button"
+            className="spr-button-primary"
+            iconName="faCheckCircle"
+            iconClassName="text-2xl"
+            (click)="handleClickApprove()"
+            >{{ (translationsRef + '.approve') | translate }}</spr-button
+          >
+        </div>
+      </spr-form-field-group>
+
+      <spr-form-field-group [text]="translationsRef + '.actionsHistory'">
+        <div class="versions-wrapper">
+          <table *ngIf="data.versions?.length" class="versions">
+            <tbody>
+              <ng-container *ngFor="let version of data.versions">
+                <tr *ngIf="version.adminReviewDate" class="version">
+                  <td class="version__date">{{ version.adminReviewDate }}</td>
+                  <td class="version__person">{{ version.adminReviewPerson }}</td>
+                  <td class="version__desc">
+                    {{ (translationsRef + '.versionType.dataApproval') | translate }} - {{ version.status | lowercase }}
+                  </td>
+                  <td class="version__action">
+                    <a
+                      *ngIf="version.statusCode === AGLO_STATUS_REJECTED"
+                      class="ntis-button-link"
+                      [routerLink]="[version.id]"
+                    >
+                      {{ (translationsRef + '.details') | translate }}
+                    </a>
+                    <a
+                      *ngIf="version.statusCode !== AGLO_STATUS_REJECTED && version.extent"
+                      class="ntis-button-link"
+                      [routerLink]="['/', RoutingConst.INTERNAL, NtisRoutingConst.MAP]"
+                      [queryParams]="{extent: version.extent}"
+                    >
+                      {{ (translationsRef + '.viewOnMap') | translate }}
+                    </a>
+                  </td>
+                </tr>
+
+                <tr class="version">
+                  <td class="version__date">{{ version.createdDate }}</td>
+                  <td class="version__person">{{ version.person }}</td>
+                  <td class="version__desc">
+                    {{ (translationsRef + '.versionType.dataUpload') | translate }}
+                  </td>
+                  <td class="version__action">
+                    <button
+                      *ngIf="version.file"
+                      type="button"
+                      class="ntis-button-link"
+                      (click)="fileUploadService.downloadFile(version.file)"
+                    >
+                      {{ (translationsRef + '.downloadData') | translate }}
+                    </button>
+                  </td>
+                </tr>
+              </ng-container>
+            </tbody>
+          </table>
+        </div>
+      </spr-form-field-group>
+    </ng-container>
+
+    <spr-form-field-group [text]="translationsRef + '.map'">
+      <ntis-map class="geoms-map" [layers]="layers()" />
+    </spr-form-field-group>
+  </div>
+  <span class="actions">
+    <spr-button className="ntis-button-link" (click)="onReturn()">
+      {{'common.action.back' | translate}}
+    </spr-button>
+  </span>
+</spr-content-box>
+<p-dialog [(visible)]="showRejectDialog" [header]="'Aglomeracijos duomenų atmetimas'"> </p-dialog>
+
+<p-dialog
+  styleClass="ntis-dialog"
+  [(visible)]="showRejectDialog"
+  (onHide)="handleHideReject()"
+  appendTo="body"
+  [draggable]="false"
+  [resizable]="false"
+  [modal]="true"
+  [blockScroll]="true"
+>
+  <ng-template pTemplate="header">
+    <h2 class="reject-dialog-header">{{ (translationsRef + '.rejectHeaderText') | translate }}</h2>
+  </ng-template>
+  <form [formGroup]="rejectForm" (ngSubmit)="handleSubmitRejection()">
+    <spr-form-field
+      [labelText]="(translationsRef + '.errorDescription') | translate"
+      labelFor="error-desc"
+      [mandatory]="true"
+      [inputErrors]="rejectForm.controls.description.touched && rejectForm.controls.description.errors"
+    >
+      <textarea id="error-desc" rows="8" formControlName="description"></textarea>
+    </spr-form-field>
+
+    <spr-form-field
+      [labelText]="(translationsRef + '.fileUpload') | translate"
+      [mandatory]="false"
+      [inputErrors]="rejectForm.controls.file.touched && rejectForm.controls.file.errors"
+    >
+      <spr-file-upload-with-progress
+        *ngIf="showRejectDialog"
+        [fileLimit]="null"
+        [multiple]="false"
+        [acceptedFormat]="undefined"
+        [label]="(translationsRef + '.attachDocument') | translate"
+        [uploadedFiles]="rejectForm.controls.file.value"
+        (fileUpload)="onRejectionFileUpload($event)"
+        (fileToDelete)="onRejectionFileDelete($event)"
+        [disabled]="rejectForm.controls.file.value.length >= 1"
+      ></spr-file-upload-with-progress>
+    </spr-form-field>
+
+    <div class="reject-dialog-actions-wrapper">
+      <button type="button" class="ntis-button-link" (click)="handleHideReject()">
+        {{ 'common.action.back' | translate }}
+      </button>
+      <spr-button
+        type="submit"
+        className="spr-button-primary"
+        iconName="faCircleXmark"
+        >{{ (translationsRef + '.reject') | translate }}</spr-button
+      >
+    </div>
+  </form>
+</p-dialog>
+
+<app-submit-agglo-data
+  *ngIf="data"
+  [(show)]="showSubmitNewDataDialog"
+  [aggId]="data.id"
+  (submitted)="handleSubmittedNewData()"
+></app-submit-agglo-data>

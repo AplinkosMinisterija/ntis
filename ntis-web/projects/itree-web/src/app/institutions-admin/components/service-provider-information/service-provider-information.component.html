@@ -1,0 +1,78 @@
+<spr-form-field-group
+  [text]="translationsReference + (isWaterManager ? '.wmLegend' : '.spLegend')"
+  *ngIf="deregisteredFrom || registeredFrom"
+>
+  <div class="spr-form-items-flex">
+    <spr-info-line
+      [name]="translationsReference + (isWaterManager ? '.wmStatus' : '.spStatus') | translate"
+      [value]="
+        (translationsReference + 
+          '.' + 
+          (deregisteredFrom 
+            ? 'deregistered' 
+            : (registeredFrom  ? 'registered' : 'notRegistered')) ) 
+        | translate
+      "
+    ></spr-info-line>
+    <spr-info-line
+      *ngIf="registeredFrom && !deregisteredFrom"
+      [name]="translationsReference + '.registeredFrom' | translate"
+      [value]="registeredFrom"
+    ></spr-info-line>
+    <ng-container *ngIf="deregisteredFrom">
+      <spr-info-line
+        [name]="translationsReference + '.deregisteredFrom' | translate"
+        [value]="deregisteredFrom"
+      ></spr-info-line>
+      <spr-info-line
+        [name]="translationsReference + '.deregistrationReason' | translate"
+        [value]="deregisteredReason || '-'"
+      ></spr-info-line>
+      <em class="deregistered-note">{{ (translationsReference + '.deregisteredNote') | translate }}</em>
+    </ng-container>
+
+    <ng-container *ngIf="(registeredServices?.length || registeredFrom) && !deregisteredFrom">
+      <div>
+        <span id="registered-services">{{ (translationsReference + '.registeredServices') | translate }}:</span>
+        <ul aria-labelledby="registered-services">
+          <ng-container *ngIf="isWaterManager">
+            <li class="spr-input-with-label">
+              <input
+                type="checkbox"
+                id="water-manager-service"
+                class="spr-checkbox"
+                [disabled]="true"
+                [checked]="true"
+              />
+              <label for="water-manager-service">{{ (translationsReference + '.wmService' ) | translate }}</label>
+            </li>
+          </ng-container>
+          <ng-container *ngIf="!isWaterManager">
+            <li class="spr-input-with-label" *ngFor="let service of services">
+              <input
+                *ngIf="service.code !== MONTAVIMAS"
+                type="checkbox"
+                [id]="service.code"
+                class="spr-checkbox"
+                [disabled]="true"
+                [checked]="service.registered"
+              />
+              <label *ngIf="service.code !== MONTAVIMAS" [for]="service.code">{{ service.name }}</label>
+            </li>
+          </ng-container>
+        </ul>
+      </div>
+
+      <div *ngIf="!isWaterManager && !deregisteredFrom" class="manage-services-wrapper">
+        <spr-button
+          className="spr-button-primary"
+          iconStyle="fas"
+          iconName="faCogs"
+          size="large"
+          (click)="navigateToServiceManagement()"
+          >{{ (translationsReference + '.manageServices') | translate }}</spr-button
+        >
+      </div>
+    </ng-container>
+  </div>
+</spr-form-field-group>

@@ -1,0 +1,617 @@
+<spr-content-box
+  [headerText]="'pages.intsOwnerDashboard.headerText'"
+  textAlignment="text-center"
+  transformingText="uppercase"
+>
+  <section class="ntis-section-block dashboard-table">
+    <div class="table-header-wrapper">
+      <div class="table-header">
+        <h2 class="block-title">
+          {{ translationsReference + '.headerWastewaterFacilities' | translate }}
+        </h2>
+        <spr-button
+          type="button"
+          class="table-header__action"
+          className="spr-button-primary"
+          [iconStyle]="'fas'"
+          [iconName]="'faCirclePlus'"
+          [routerLink]="toAddNewFacility"
+          [disabled]="!userCanCreate"
+        >
+          {{'common.action.createNew' | translate}}
+        </spr-button>
+      </div>
+    </div>
+
+    <p-table
+      [value]="dashboardInfo?.facilities"
+      responsiveLayout="stack"
+      breakpoint="767px"
+      [paginator]="paginator"
+      [rowHover]="true"
+      [rows]="10"
+    >
+      <ng-template pTemplate="header" let-row let-index="rowIndex">
+        <tr>
+          <th></th>
+          <ng-container *ngFor="let col of visibleWastewater">
+            <th [ngClass]="{'status-table-header-wrapper' : col.field === 'wtf_state'}">
+              {{translationsReference+'.'+col.field | translate}}
+            </th>
+          </ng-container>
+          <th>
+            <div class="add-new-button-wrapper">
+              <spr-button
+                type="button"
+                className="spr-button-primary"
+                [iconStyle]="'fas'"
+                [iconName]="'faCirclePlus'"
+                [routerLink]="toAddNewFacility"
+                [disabled]="!userCanCreate"
+              >
+                {{'common.action.createNew' | translate}}
+              </spr-button>
+            </div>
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-row let-index="rowIndex">
+        <tr>
+          <td>
+            <input
+              type="radio"
+              class="spr-radio"
+              [id]="'wtf-' + row.wtf_id"
+              [value]="row.wtf_id"
+              [(ngModel)]="selectedWtf"
+              (ngModelChange)="updateSelectedWtf()"
+            />
+          </td>
+          <ng-container *ngFor="let col of visibleWastewater">
+            <td>
+              <span class="p-column-title">
+                {{translationsReference + '.' + col.field | translate}}
+              </span>
+              <div *ngIf="col.field === 'wtf_state'; else otherData" class="status-wrapper">
+                <ntis-record-status
+                  [statusData]="recordStatus"
+                  [statusValue]="row['wtf_state']"
+                  statusType="icon"
+                  [pTooltip]="(translationsReference+'.'+row['wtf_state']) | translate"
+                ></ntis-record-status>
+              </div>
+              <ng-template #otherData
+                ><span>{{row[col.field]}}</span></ng-template
+              >
+            </td>
+          </ng-container>
+
+          <td>
+            <span class="action-icons-wrapper">
+              <spr-button
+                [pTooltip]="(translationsReference+'.submitApplication') | translate"
+                tooltipPosition="left"
+                *ngIf="row.wtf_fua_state !== confirmed && row.wtf_fua_state !== null"
+                [routerLink]="toRenewalRequest+'/'+row.wtf_id+'/'+row.fua_id"
+              >
+                <spr-icon name="overview" class=""></spr-icon>
+              </spr-button>
+              <ntis-view-served-objects
+                *ngIf="(row.fo_owner_type !== SELF_ASSIGNED || row.ful_id) && row.wtf_served_objects?.length > 0"
+                [restrictView]="true"
+                [servedObjects]="row.wtf_served_objects"
+                [rowTitle]="row['wtf_address']"
+                iconSize="text-2xl"
+                [pTooltip]="(translationsReference+'.servedObjects') | translate"
+              ></ntis-view-served-objects>
+              <spr-button
+                class="map-button action-buttons"
+                iconStyle="fas"
+                iconName="faMapMarkerAlt"
+                (click)="showOnMap(row)"
+                [pTooltip]="(translationsReference+'.map') | translate"
+              >
+              </spr-button>
+
+              <spr-table-rec-actions class="ntis-table-rec-actions" [actionsList]="wastewaterRowMenuItems[row.wtf_id]">
+              </spr-table-rec-actions>
+            </span>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage" translate>
+        <tr>
+          <td [attr.colspan]="visibleWastewater.length + 2">
+            <spr-table-no-rec-found></spr-table-no-rec-found>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </section>
+  <section class="ntis-dashboard-section-block dashboard-table">
+    <div class="table-header-wrapper">
+      <div class="table-header">
+        <h2 class="block-title">
+          {{ translationsReference + '.headerDisposal' | translate }}
+        </h2>
+        <spr-button
+          type="button"
+          class="table-header__action"
+          className="spr-button-primary"
+          [iconStyle]="'fas'"
+          [iconName]="'faCirclePlus'"
+          (click)="navigateToServiceSearch(VEZIMAS)"
+          [disabled]="!userCanCreate"
+        >
+          {{'common.action.orderService' | translate}}
+        </spr-button>
+      </div>
+    </div>
+
+    <p>{{ selectedWtfAddress }}</p>
+    <p-table
+      [value]="dashboardInfo?.disposalOrders"
+      responsiveLayout="stack"
+      breakpoint="767px"
+      [lazy]="true"
+      [rows]="1"
+      [rowHover]="true"
+    >
+      <ng-template pTemplate="header" let-row let-index="rowIndex">
+        <tr>
+          <ng-container *ngFor="let col of visibleServiceOrder">
+            <th>
+              {{translationsReference+'.'+col.field | translate}}
+            </th>
+          </ng-container>
+          <th>
+            <div class="add-new-button-wrapper">
+              <spr-button
+                type="button"
+                className="spr-button-primary"
+                [iconStyle]="'fas'"
+                [iconName]="'faCirclePlus'"
+                (click)="navigateToServiceSearch(VEZIMAS)"
+                [disabled]="!userCanCreate"
+              >
+                {{'common.action.orderService' | translate}}
+              </spr-button>
+            </div>
+          </th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-row let-index="rowIndex">
+        <tr>
+          <ng-container *ngFor="let col of visibleServiceOrder">
+            <td>
+              <span class="p-column-title">
+                {{translationsReference+'.'+col.field |translate}}
+              </span>
+              <span *ngIf="col.type !== dataTypeDate; else dispDate">{{row[col.field]}}</span>
+              <ng-template #dispDate>{{parseDate(row[col.field])}}</ng-template>
+            </td>
+          </ng-container>
+          <td class="add-new-button-wrapper">
+            <span
+              ><div class="regular-view">
+                <spr-button
+                  *ngIf="row?.rev_id !== null && row?.rev_score === null"
+                  type="button"
+                  iconStyle="far"
+                  iconName="faStar"
+                  class="row-action-buttons"
+                  (click)="navigateToCreateReview(row.rev_id)"
+                  [pTooltip]="'common.action.addReview' | translate"
+                >
+                </spr-button>
+                <spr-button
+                  *ngIf="row?.rev_id !== null && row?.rev_score !== null"
+                  type="button"
+                  iconStyle="fas"
+                  iconName="faStar"
+                  class="row-action-buttons"
+                  (click)="viewReview(row.rev_score, row?.rev_comment)"
+                  [pTooltip]="'common.action.viewReview' | translate"
+                >
+                </spr-button>
+                <spr-button
+                  type="button"
+                  iconStyle="fas"
+                  iconName="faEye"
+                  class="row-action-buttons"
+                  [routerLink]="[toViewOrder + '/' + row.ord_id]"
+                  [pTooltip]="'common.action.view' |translate"
+                ></spr-button>
+
+                <spr-button
+                  type="button"
+                  iconStyle="fas"
+                  iconName="faSquarePlus"
+                  class="row-action-buttons"
+                  (click)="navigateToOrderFromPrevious(row.ord_id)"
+                  [pTooltip]="'common.action.repeatOrder' |translate"
+                >
+                </spr-button>
+              </div>
+            </span>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage" translate>
+        <tr>
+          <td [attr.colspan]="visibleServiceOrder.length + 1">
+            <spr-table-no-rec-found></spr-table-no-rec-found>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+    <button
+      type="button"
+      class="ntis-button-link dashboard-link-button"
+      [routerLink]="[toDisposalOrdersList + '/' + selectedWtf]"
+    >
+      {{translationsReference + '.fullListServices' | translate}}
+    </button>
+  </section>
+  <section class="ntis-dashboard-section-block dashboard-table">
+    <div class="table-header-wrapper">
+      <div class="table-header">
+        <h2 class="block-title">
+          {{ translationsReference + '.headerTechnical' | translate }}
+        </h2>
+        <spr-button
+          type="button"
+          class="table-header__action"
+          className="spr-button-primary"
+          [iconStyle]="'fas'"
+          [iconName]="'faCirclePlus'"
+          (click)="navigateToServiceSearch(PRIEZIURA)"
+          [disabled]="!userCanCreate"
+        >
+          {{'common.action.orderService' | translate}}
+        </spr-button>
+      </div>
+    </div>
+
+    <p>{{ selectedWtfAddress }}</p>
+    <p-table [value]="dashboardInfo?.techOrders" responsiveLayout="stack" breakpoint="767px" [lazy]="true" [rows]="1">
+      <ng-template pTemplate="header" let-row let-index="rowIndex">
+        <tr>
+          <ng-container *ngFor="let col of visibleServiceOrder">
+            <th>
+              {{translationsReference+'.'+col.field | translate}}
+            </th>
+          </ng-container>
+          <th>
+            <div class="add-new-button-wrapper">
+              <spr-button
+                type="button"
+                className="spr-button-primary"
+                [iconStyle]="'fas'"
+                [iconName]="'faCirclePlus'"
+                (click)="navigateToServiceSearch(PRIEZIURA)"
+                [disabled]="!userCanCreate"
+              >
+                {{'common.action.orderService' | translate}}
+              </spr-button>
+            </div>
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-row let-index="rowIndex">
+        <tr>
+          <ng-container *ngFor="let col of visibleServiceOrder">
+            <td>
+              <span class="p-column-title">
+                {{translationsReference+'.'+col.field |translate}}
+              </span>
+              <span *ngIf="col.type !== dataTypeDate; else techDate">{{row[col.field]}}</span>
+              <ng-template #techDate>{{parseDate(row[col.field])}}</ng-template>
+            </td>
+          </ng-container>
+          <td class="add-new-button-wrapper">
+            <span
+              ><div class="regular-view">
+                <spr-button
+                  *ngIf="row?.rev_id !== null && row?.rev_score === null"
+                  type="button"
+                  iconStyle="far"
+                  iconName="faStar"
+                  class="row-action-buttons"
+                  (click)="navigateToCreateReview(row.rev_id)"
+                  [pTooltip]="'common.action.addReview' | translate"
+                >
+                </spr-button>
+                <spr-button
+                  *ngIf="row?.rev_id !== null && row?.rev_score !== null"
+                  type="button"
+                  iconStyle="fas"
+                  iconName="faStar"
+                  class="row-action-buttons"
+                  (click)="viewReview(row.rev_score, row?.rev_comment)"
+                  [pTooltip]="'common.action.viewReview' | translate"
+                >
+                </spr-button>
+                <spr-button
+                  type="button"
+                  iconStyle="fas"
+                  iconName="faEye"
+                  class="row-action-buttons"
+                  [routerLink]="[toViewOrder + '/' + row.ord_id]"
+                  [pTooltip]="'common.action.view' |translate"
+                ></spr-button>
+
+                <spr-button
+                  type="button"
+                  iconStyle="fas"
+                  iconName="faSquarePlus"
+                  class="row-action-buttons"
+                  (click)="navigateToOrderFromPrevious(row.ord_id)"
+                  [pTooltip]="'common.action.repeatOrder' |translate"
+                >
+                </spr-button>
+              </div>
+            </span>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage" translate>
+        <tr>
+          <td [attr.colspan]="visibleServiceOrder.length + 1">
+            <spr-table-no-rec-found></spr-table-no-rec-found>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+    <button
+      type="button"
+      class="ntis-button-link dashboard-link-button"
+      [routerLink]="toTechOrdersList + '/' + selectedWtf"
+    >
+      {{translationsReference + '.fullListServices' | translate}}
+    </button>
+  </section>
+
+  <section class="ntis-dashboard-section-block dashboard-table">
+    <div class="table-header-wrapper">
+      <div class="table-header">
+        <h2 class="block-title">
+          {{ translationsReference + '.headerLabTests' | translate }}
+        </h2>
+        <spr-button
+          type="button"
+          class="table-header__action"
+          className="spr-button-primary"
+          [iconStyle]="'fas'"
+          [iconName]="'faCirclePlus'"
+          (click)="navigateToServiceSearch(TYRIMAI)"
+          [disabled]="!userCanCreate"
+        >
+          {{'common.action.orderLab' | translate}}
+        </spr-button>
+      </div>
+    </div>
+
+    <p>{{ selectedWtfAddress }}</p>
+    <p-table [value]="dashboardInfo?.labs" responsiveLayout="stack" breakpoint="767px">
+      <ng-template pTemplate="header" let-row let-index="rowIndex">
+        <tr>
+          <ng-container *ngFor="let col of visibleLabs">
+            <th>
+              {{translationsReference+'.'+col.field | translate}}
+            </th>
+          </ng-container>
+          <th>
+            <div class="add-new-button-wrapper">
+              <spr-button
+                type="button"
+                className="spr-button-primary"
+                [iconStyle]="'fas'"
+                [iconName]="'faCirclePlus'"
+                (click)="navigateToServiceSearch(TYRIMAI)"
+                [disabled]="!userCanCreate"
+              >
+                {{'common.action.orderLab' | translate}}
+              </spr-button>
+            </div>
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-row let-index="rowIndex">
+        <tr>
+          <ng-container *ngFor="let col of visibleLabs">
+            <td>
+              <span class="p-column-title">
+                {{translationsReference+'.'+col.field |translate}}
+              </span>
+              <span *ngIf="col.type !== dataTypeDate; else labDate">{{row[col.field]}}</span>
+              <ng-template #labDate>{{parseDate(row[col.field])}}</ng-template>
+            </td>
+          </ng-container>
+          <td class="add-new-button-wrapper">
+            <span
+              ><div class="regular-view">
+                <spr-button
+                  *ngIf="row?.rev_id !== null && row?.rev_score === null"
+                  type="button"
+                  iconStyle="far"
+                  iconName="faStar"
+                  class="row-action-buttons"
+                  (click)="navigateToCreateReview(row.rev_id)"
+                  [pTooltip]="'common.action.addReview' | translate"
+                >
+                </spr-button>
+                <spr-button
+                  *ngIf="row?.rev_id !== null && row?.rev_score !== null"
+                  type="button"
+                  iconStyle="fas"
+                  iconName="faStar"
+                  class="row-action-buttons"
+                  (click)="viewReview(row.rev_score, row?.rev_comment)"
+                  [pTooltip]="'common.action.viewReview' | translate"
+                >
+                </spr-button>
+                <spr-button
+                  type="button"
+                  iconStyle="fas"
+                  iconName="faEye"
+                  class="row-action-buttons"
+                  [routerLink]="[toViewLabOrder + '/' + row.ord_id]"
+                  [pTooltip]="'common.action.view' |translate"
+                ></spr-button>
+
+                <spr-button
+                  type="button"
+                  iconStyle="fas"
+                  iconName="faSquarePlus"
+                  class="row-action-buttons"
+                  (click)="navigateToOrderFromPrevious(row.ord_id)"
+                  [pTooltip]="'common.action.repeatOrder' |translate"
+                >
+                </spr-button>
+              </div>
+            </span>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage" translate>
+        <tr>
+          <td [attr.colspan]="visibleLabs.length + 1">
+            <spr-table-no-rec-found></spr-table-no-rec-found>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+    <button type="button" class="ntis-button-link dashboard-link-button" [routerLink]="toLabOrdersList">
+      {{translationsReference + '.fullListLabTests' | translate}}
+    </button>
+  </section>
+
+  <section class="ntis-dashboard-section-block dashboard-table">
+    <div class="table-header-wrapper">
+      <div class="table-header">
+        <h2 class="block-title">
+          {{ translationsReference + '.headerContracts' | translate }}
+        </h2>
+        <spr-button
+          type="button"
+          class="table-header__action"
+          className="spr-button-primary"
+          [iconStyle]="'fas'"
+          [iconName]="'faCirclePlus'"
+          (click)="navigateToServiceSearch()"
+          [disabled]="!userCanCreate"
+        >
+          {{'common.action.add' | translate}}
+        </spr-button>
+      </div>
+    </div>
+
+    <p>{{ selectedWtfAddress }}</p>
+    <p-table [value]="dashboardInfo?.contracts" responsiveLayout="stack" breakpoint="767px" [lazy]="true" [rows]="1">
+      <ng-template pTemplate="header" let-row let-index="rowIndex">
+        <tr>
+          <ng-container *ngFor="let col of visibleContract">
+            <th>
+              {{translationsReference+'.'+col.field | translate}}
+            </th>
+          </ng-container>
+          <th>
+            <div class="add-new-button-wrapper">
+              <spr-button
+                type="button"
+                className="spr-button-primary"
+                [iconStyle]="'fas'"
+                [iconName]="'faCirclePlus'"
+                (click)="navigateToServiceSearch()"
+                [disabled]="!userCanCreate"
+              >
+                {{'common.action.add' | translate}}
+              </spr-button>
+            </div>
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-row let-index="rowIndex">
+        <tr>
+          <ng-container *ngFor="let col of visibleContract">
+            <td>
+              <span class="p-column-title">
+                {{translationsReference+'.'+col.field |translate}}
+              </span>
+              <span *ngIf="col.type !== dataTypeDate; else conDate">{{row[col.field]}}</span>
+              <ng-template #conDate>{{parseDate(row[col.field])}}</ng-template>
+            </td>
+          </ng-container>
+          <td class="add-new-button-wrapper">
+            <span
+              ><div class="regular-view">
+                <spr-button
+                  type="button"
+                  iconStyle="fas"
+                  iconName="faEye"
+                  class="row-action-buttons"
+                  [routerLink]="[toViewContract + '/' + row.cot_id]"
+                  [pTooltip]="'common.action.view' |translate"
+                ></spr-button>
+              </div>
+            </span>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage" translate>
+        <tr>
+          <td [attr.colspan]="visibleContract.length + 1">
+            <spr-table-no-rec-found></spr-table-no-rec-found>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+    <button type="button" class="ntis-button-link dashboard-link-button" [routerLink]="[toContractsList]">
+      {{translationsReference + '.fullListContracts' | translate}}
+    </button>
+  </section>
+
+  <p-dialog
+    styleClass="ntis-map-dialog"
+    [(visible)]="showMap"
+    [closable]="true"
+    (onHide)="showMap = false"
+    appendTo="body"
+  >
+    <div class="map-wrapper" #mapReference>
+      <map-component [showFullScreenButton]="false" [menuItems]="mapMenuItems" />
+    </div>
+  </p-dialog>
+  <ntis-no-registered-faci-dialog
+    [showDialog]="errorDialog"
+    (closeDialog)="errorDialog = false"
+  ></ntis-no-registered-faci-dialog>
+  <p-dialog
+    styleClass="ntis-dialog"
+    [(visible)]="showReviewDialog"
+    appendTo="body"
+    [draggable]="false"
+    [resizable]="false"
+    [modal]="true"
+    [blockScroll]="true"
+  >
+    <div class="stars-wrapper">
+      <span>{{(reviewsTranslationsReference + '.score' | translate) + ':'}}</span>
+      <div *ngFor="let i of [1,2,3,4,5]">
+        <fa-icon
+          class="flex flex-row"
+          [icon]="revScore !== null && i <= revScore ? faIconsService.fas.faStar : faIconsService.far.faStar"
+          [ngClass]="i <= revScore && revScore ? 'icon-color' : null"
+          size="xl"
+        ></fa-icon>
+      </div>
+    </div>
+    <spr-info-line
+      class="pb-5"
+      [name]="reviewsTranslationsReference + '.comment' | translate"
+      [value]="revComment !== null ? revComment : null"
+    ></spr-info-line>
+  </p-dialog>
+</spr-content-box>

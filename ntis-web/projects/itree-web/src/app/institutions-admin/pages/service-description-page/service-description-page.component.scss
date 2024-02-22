@@ -1,0 +1,52 @@
+.action-buttons {
+  @apply flex gap-5 items-center justify-center;
+}
+
+.form-field-wrapper {
+  @apply box-border border-solid border-2 rounded-md border-neutral-600 my-1 w-72 p-2;
+  .radio-buttons-block {
+    @apply flex-col;
+
+    .radio-input-wrapper {
+      @apply flex gap-2 items-center;
+    }
+    input {
+      @apply flex-shrink-0;
+    }
+
+    label {
+      @apply text-primary-500;
+    }
+
+    &--vertical-aligned {
+      @apply items-center;
+    }
+  }
+}
+
+.changing-fields-wrapper {
+  @apply flex gap-4;
+}
+
+.input-wrapper {
+  @apply flex gap-4 items-center w-full;
+  span {
+    @apply font-semibold flex min-w-fit;
+  }
+}
+
+.municipalities-checkbox-wrapper {
+  @apply grid grid-cols-3;
+  div {
+    &:nth-child(3n),
+    &:nth-child(3n + 2) {
+      @apply border-r-2 border-neutral-900 mr-5 pl-5;
+    }
+    &:nth-child(3n + 1) {
+      @apply mr-5 pl-5;
+    }
+    &:first-child {
+      @apply col-start-2 col-end-4 pl-5 border-0 mb-1;
+    }
+  }
+}

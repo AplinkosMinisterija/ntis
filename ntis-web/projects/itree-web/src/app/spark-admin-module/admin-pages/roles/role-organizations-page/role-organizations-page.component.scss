@@ -1,0 +1,10 @@
+.selected-rol-wrapper {
+  @apply grid grid-rows-1 grid-cols-3 mt-10;
+}
+.selected-rol {
+  @apply text-lg font-medium content-center justify-center text-center;
+}
+
+.dialog-button-wrapper {
+  @apply flex flex-row justify-center;
+}

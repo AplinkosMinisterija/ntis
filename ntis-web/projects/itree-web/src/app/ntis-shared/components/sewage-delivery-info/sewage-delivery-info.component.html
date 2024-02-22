@@ -1,0 +1,54 @@
+<spr-form-field-group [text]="translationsReference + '.legend'">
+  <spr-info-line
+    [name]="translationsReference + '.deliveryNumber' | translate"
+    [value]="deliveryNumber"
+  ></spr-info-line>
+  <spr-info-line
+    [redText]="state_clsf === rejected"
+    [name]="translationsReference + '.state' | translate"
+    [value]="state"
+  ></spr-info-line>
+  <ng-container *ngIf="state_clsf === rejected">
+    <spr-info-line
+      [name]="translationsReference + '.rejectionReason' | translate"
+      [value]="rejectionReason"
+    ></spr-info-line>
+  </ng-container>
+  <ng-container *ngIf="state_clsf === confirmed">
+    <spr-info-line
+      [name]="translationsReference + '.notesOnDeliveredSewage' | translate"
+      [value]="deliveredWastewaterDesc"
+    ></spr-info-line>
+    <spr-info-line
+      [name]="translationsReference + '.acceptedSewageQuantity' | translate"
+      [value]="acceptedSewageQuantity"
+    ></spr-info-line>
+  </ng-container>
+  <spr-info-line
+    [name]="translationsReference + '.delivRecCreated' | translate"
+    [value]="delivRecCreated"
+  ></spr-info-line>
+
+  <div *ngIf="showConfirmRejectButtons" class="spr-form-buttons mt-4">
+    <spr-button
+      type="button"
+      class="ntis-button-hollow"
+      iconStyle="far"
+      iconName="faCircleXmark"
+      iconClassName="text-3xl"
+      (click)="rejectDelivery.emit()"
+    >
+      {{translationsReference + '.rejectDelivery' | translate}}
+    </spr-button>
+    <spr-button
+      type="button"
+      class="spr-button-primary"
+      iconStyle="fas"
+      iconName="faCircleCheck"
+      iconClassName="text-3xl"
+      (click)="confirmDelivery.emit()"
+    >
+      {{translationsReference + '.confirmDelivery' | translate}}
+    </spr-button>
+  </div>
+</spr-form-field-group>

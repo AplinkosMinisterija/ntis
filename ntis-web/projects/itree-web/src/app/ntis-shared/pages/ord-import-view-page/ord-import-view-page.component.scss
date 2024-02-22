@@ -1,0 +1,15 @@
+.actions {
+  @apply flex flex-col xs:flex-row justify-center gap-3 mt-5;
+}
+.info-lines-wrapper {
+  @apply flex flex-row items-center;
+}
+.file-download-link {
+  @apply flex justify-center items-center gap-2 rounded px-3 underline text-primary-500 font-bold hover:text-primary-300;
+}
+.info-line {
+  @apply py-2;
+}
+.dialog-footer {
+  @apply flex flex-row justify-center;
+}

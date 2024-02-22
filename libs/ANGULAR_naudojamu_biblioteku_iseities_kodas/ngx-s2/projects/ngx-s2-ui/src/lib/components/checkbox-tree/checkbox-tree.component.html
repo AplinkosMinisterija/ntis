@@ -1,0 +1,85 @@
+<div *ngIf="showSelectAll" class="s2-ui-inline-input-label s2-checkbox-tree-item s2-checkbox-tree-item--select-all">
+  <input
+    type="checkbox"
+    id="select-all"
+    [checked]="selectAllChecked"
+    class="s2-ui-input-checkbox"
+    [ngClass]="{'s2-ui-input-checkbox--semi-selected': selectAllChecked === 'semi'}"
+    (change)="handleSelectAll($event)"
+  />
+  <label class="s2-checkbox-tree-item__label" for="select-all">
+    {{ selectAllText || translationsService.translations.action.selectAll }}
+  </label>
+</div>
+
+<ul class="s2-checkbox-tree-items">
+  <ng-container *ngTemplateOutlet="loop; context: {items: items, idPrefix: inputsIdPrefix}"></ng-container>
+</ul>
+
+<ng-template #loop let-items="items" let-idPrefix="idPrefix">
+  <ng-container *ngFor="let item of items; index as i">
+    <li *ngIf="!item.hidden">
+      <ng-container
+        *ngTemplateOutlet="item.children?.length ? groupView : checkboxView; context: {item: item, idPrefix: ''+idPrefix+i}"
+      ></ng-container>
+    </li>
+  </ng-container>
+</ng-template>
+
+<ng-template #groupView let-group="item" let-idPrefix="idPrefix">
+  <div class="s2-ui-inline-input-label">
+    <div class="s2-checkbox-tree-item__button-placeholder">
+      <button type="button" class="s2-checkbox-tree-item__chevron-button" (click)="group.open = !group.open">
+        <s2-icon>{{ group.open ? 'expand_more' : 'chevron_right'}} </s2-icon>
+      </button>
+    </div>
+    <input
+      type="checkbox"
+      [id]="idPrefix + '-' + (group.key !== undefined ? group.key : group.label)"
+      class="s2-ui-input-checkbox"
+      [checked]="group.checked"
+      [disabled]="disabled || group.disabled"
+      [ngClass]="{'s2-ui-input-checkbox--semi-selected': group.checked === 'semi'}"
+      (change)="handleCheckboxChange(group, $event)"
+    />
+    <label
+      class="s2-checkbox-tree-item__label"
+      [for]="idPrefix + '-' + (group.key !== undefined ? group.key : group.label)"
+    >
+      <ng-container *ngIf="itemLabelTemplate">
+        <ng-container *ngTemplateOutlet="itemLabelTemplate; context: {$implicit: group}"></ng-container>
+      </ng-container>
+      <ng-container *ngIf="!itemLabelTemplate">
+        {{ group.label }}
+      </ng-container>
+    </label>
+  </div>
+  <ul *ngIf="group.open">
+    <ng-container *ngTemplateOutlet="loop; context: {items: group.children, idPrefix: idPrefix}"></ng-container>
+  </ul>
+</ng-template>
+
+<ng-template #checkboxView let-checkbox="item" let-idPrefix="idPrefix">
+  <div class="s2-ui-inline-input-label">
+    <div class="s2-checkbox-tree-item__button-placeholder"></div>
+    <input
+      type="checkbox"
+      [id]="idPrefix + '-' + (checkbox.key !== undefined ? checkbox.key : checkbox.label)"
+      class="s2-ui-input-checkbox"
+      [disabled]="disabled || checkbox.disabled"
+      [(ngModel)]="checkbox.checked"
+      (ngModelChange)="handleCheckboxChange(checkbox, null)"
+    />
+    <label
+      class="s2-checkbox-tree-item__label"
+      [for]="idPrefix + '-' + (checkbox.key !== undefined ? checkbox.key : checkbox.label)"
+    >
+      <ng-container *ngIf="itemLabelTemplate">
+        <ng-container *ngTemplateOutlet="itemLabelTemplate; context: {$implicit: checkbox}"></ng-container>
+      </ng-container>
+      <ng-container *ngIf="!itemLabelTemplate">
+        {{ checkbox.label }}
+      </ng-container>
+    </label>
+  </div>
+</ng-template>

@@ -1,0 +1,19 @@
+:host {
+  @apply block bg-neutral-0 text-neutral-900 p-4 pt-2 xs:px-6 xs:pb-6 mx-auto w-full rounded;
+}
+
+.breadcrumbs-wrapper {
+  @apply py-2 xs:py-3;
+}
+
+.content-wrapper {
+  @apply flex flex-col justify-center mb-3 border-b lg:grid md:grid lg:grid-cols-3 md:grid-cols-3;
+
+  &__header-button-content {
+    @apply w-full flex lg:justify-start md:justify-start lg:w-1/3 md:w-1/3 justify-center items-center px-2;
+  }
+
+  &__header-title {
+    @apply font-bold p-2 pt-0 grow;
+  }
+}

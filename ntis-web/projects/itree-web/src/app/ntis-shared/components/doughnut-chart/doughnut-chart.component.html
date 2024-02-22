@@ -1,0 +1,8 @@
+<div class="chart-w-legend-wrapper">
+  <div class="chart-wrapper">
+    <canvas #chartRef></canvas>
+  </div>
+  <div [ngClass]="{'legend-wrapper': showLegend}">
+    <canvas [hidden]="!showLegend" #legendRef></canvas>
+  </div>
+</div>

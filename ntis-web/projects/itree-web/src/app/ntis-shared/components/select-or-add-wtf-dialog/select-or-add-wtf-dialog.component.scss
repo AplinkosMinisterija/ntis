@@ -1,0 +1,44 @@
+.address-dialog {
+  &__content {
+    @apply w-full max-w-md;
+  }
+
+  &__content-header {
+    @apply flex justify-between py-3 px-2 pb-1 rounded-t border-b;
+  }
+
+  &__content-header-text {
+    @apply font-semibold;
+  }
+
+  &__content-body {
+    @apply max-h-96 overflow-y-auto;
+  }
+
+  &__content-footer {
+    @apply flex justify-between p-2  rounded-b;
+  }
+
+  &__message {
+    @apply text-sm p-2 bg-orange-100 text-orange-900 rounded text-justify mb-2;
+  }
+}
+
+.address-button {
+  @apply flex flex-col hover:bg-neutral-100 duration-150 w-full text-left px-2 py-1 border-b;
+  &__item {
+    @apply flex justify-start items-center text-neutral-900 gap-2;
+  }
+
+  &__address-text {
+    @apply text-sm font-medium;
+  }
+
+  &__coord-text {
+    @apply text-sm italic text-neutral-600;
+  }
+}
+
+.add-facility-button-wrapper {
+  @apply flex justify-center m-4 mb-0;
+}

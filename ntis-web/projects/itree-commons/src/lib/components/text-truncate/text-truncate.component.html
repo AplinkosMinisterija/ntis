@@ -1,0 +1,60 @@
+<span
+  [ngClass]="{'truncated-text__link-text': !!truncatedText && type === 'linkText'}"
+  (click)="showDialog('linkText')"
+  class="truncated-text"
+>
+  <div *ngIf="showHTML" [innerHTML]="textLength > 0 && !!truncatedText ? truncatedText : text | safeHtml"></div>
+  <ng-container *ngIf="!showHTML">
+    {{textLength > 0 && !!truncatedText ? truncatedText : text}}
+  </ng-container>
+  <button
+    class="truncated-text__read-more"
+    (click)="showDialog('readMore')"
+    *ngIf="!!truncatedText && type === 'readMore'"
+  >
+    {{'common.action.readMore' | translate}}
+  </button>
+</span>
+
+<section class="dialog" *ngIf="!!truncatedText && showTextConteiner">
+  <div class="dialog__container">
+    <header class="dialog__header">
+      <span>
+        {{ translateHeader ? (headerText | translate) : headerText }}
+      </span>
+      <spr-button
+        [ariaLabel]="'common.action.close' | translate"
+        type="button"
+        iconName="faTimes"
+        (click)="showTextConteiner = false"
+      >
+      </spr-button>
+    </header>
+    <div class="dialog__body" [ngClass]="textAlignment" #textRef>
+      <div *ngIf="showHTML" [innerHTML]="text | safeHtml"></div>
+      <ng-container *ngIf="!showHTML">
+        {{text}}
+      </ng-container>
+    </div>
+    <footer class="dialog__footer" *ngIf="showCopyButton || showPrintButton">
+      <spr-button
+        className="spr-button-secondary"
+        type="button"
+        iconName="faCopy"
+        (click)="clipboard(textRef)"
+        *ngIf="showCopyButton"
+      >
+        {{textCopied ? ('common.action.copied' | translate) : ('common.action.copy' | translate)}}
+      </spr-button>
+      <spr-button
+        className="spr-button-secondary"
+        type="button"
+        iconName="faPrint"
+        (click)="print(textRef)"
+        *ngIf="showPrintButton"
+      >
+        {{'common.action.print' | translate}}
+      </spr-button>
+    </footer>
+  </div>
+</section>

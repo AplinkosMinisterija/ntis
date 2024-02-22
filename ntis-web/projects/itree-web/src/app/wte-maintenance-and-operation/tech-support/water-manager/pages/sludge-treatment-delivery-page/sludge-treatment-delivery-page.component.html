@@ -1,0 +1,116 @@
+<spr-content-box
+  headerText="wteMaintenanceAndOperation.techSupport.waterManager.pages.sludgeTreatmentDelivery.headerText"
+  transformingText="uppercase"
+  *ngIf="data"
+>
+  <div class="spr-edit-form-wrapper">
+    <ntis-sewage-delivery-info
+      [showConfirmRejectButtons]="showConfirmRejectButtons"
+      [deliveryNumber]="data.wd_id.toString()"
+      [state]="data.wd_state"
+      [state_clsf]="data.wd_state_clsf"
+      [deliveredWastewaterDesc]="data.wd_delivered_wastewater_description"
+      [rejectionReason]="data.wd_rejection_reason"
+      [delivRecCreated]="data.rec_create_timestamp"
+      [acceptedSewageQuantity]="data.wd_accepted_sewage_quantity?.toString()"
+      (rejectDelivery)="onOpenDialog(reject)"
+      (confirmDelivery)="onOpenDialog(confirm)"
+    ></ntis-sewage-delivery-info>
+    <ntis-sewage-origin-facility [originFacilities]="data.originFacilities"></ntis-sewage-origin-facility>
+    <ntis-delivered-sludge-info
+      [deliveryDate]="data.wd_delivery_date"
+      [sewageType]="data.wd_sewage_type"
+      [deliveredQuantity]="data.wd_delivered_quantity"
+      [usedSludgeQuantity]="data.wd_used_sludge_quantity"
+      [carRegNumber]="data.cr_reg_no"
+      [treatmentFacility]="data.wto_name + ', ' + data.wto_address"
+      [serviceProvider]="data.org_name"
+      [orgCode]="data.org_code"
+      [email]="data.org_email"
+      [phone]="data.org_phone"
+      [notes]="data.wd_description"
+    ></ntis-delivered-sludge-info>
+    <div class="spr-form-buttons mt-4">
+      <spr-button type="button" class="ntis-button-link" (click)="onCancel()">
+        {{'common.action.back' | translate}}
+      </spr-button>
+    </div>
+    <form [formGroup]="rejectionDialogForm" autocomplete="off">
+      <p-dialog
+        (onHide)="hideDialog()"
+        [visible]="dialog === reject"
+        [style]="{width: '450px', 'z-index': 999, 'top': '2rem', overflow: 'visible'}"
+        [modal]="true"
+        [draggable]="false"
+        [closeOnEscape]="true"
+        styleClass="p-fluid"
+        [autoZIndex]="true"
+        [closable]="false"
+        [blockScroll]="true"
+        [contentStyle]="{'overflow': 'visible !important' }"
+        appendTo="body"
+      >
+        <div class="dialog-header">{{ formTranslationsReference + '.rejectionDialogHeader' | translate }}</div>
+        <spr-form-field
+          labelText="{{formTranslationsReference+'.wd_rejection_reason' | translate}}"
+          [isLabelHorizontal]="false"
+        >
+          <textarea formControlName="wd_rejection_reason" [maxLength]="200"></textarea>
+        </spr-form-field>
+
+        <ng-template pTemplate="footer">
+          <span class="dialog-footer">
+            <spr-button className="ntis-button-link" (click)="onCancelDialog(reject)">
+              {{'common.action.back' | translate}}
+            </spr-button>
+            <spr-button className="spr-button-primary" (click)="onSubmitDelivery(reject)" type="submit">
+              {{formTranslationsReference + '.rejectDelivery' | translate}}
+            </spr-button>
+          </span>
+        </ng-template>
+      </p-dialog>
+    </form>
+    <form [formGroup]="confirmationDialogForm" autocomplete="off">
+      <p-dialog
+        (onHide)="hideDialog()"
+        [visible]="dialog === confirm"
+        [style]="{width: '450px', 'z-index': 999, 'top': '2rem', overflow: 'visible'}"
+        [modal]="true"
+        [draggable]="false"
+        styleClass="p-fluid"
+        [autoZIndex]="true"
+        [closable]="false"
+        [blockScroll]="true"
+        [contentStyle]="{'overflow': 'visible !important' }"
+        appendTo="body"
+      >
+        <div class="dialog-header">{{ formTranslationsReference + '.confirmationDialogHeader' | translate }}</div>
+        <spr-form-field
+          labelText="{{formTranslationsReference+'.wd_accepted_sewage_quantity' | translate}}"
+          [inputErrors]="confirmationDialogForm.controls.wd_accepted_sewage_quantity.touched && confirmationDialogForm.controls.wd_accepted_sewage_quantity.errors"
+          [isLabelHorizontal]="false"
+          [mandatory]="true"
+        >
+          <input type="number" formControlName="wd_accepted_sewage_quantity" step="0.01" [min]="0" />
+        </spr-form-field>
+        <spr-form-field
+          labelText="{{formTranslationsReference+'.notesOnDeliveredSewage' | translate}}"
+          [isLabelHorizontal]="false"
+        >
+          <textarea formControlName="wd_delivered_wastewater_description" [maxlength]="200"></textarea>
+        </spr-form-field>
+
+        <ng-template pTemplate="footer">
+          <span class="dialog-footer">
+            <spr-button className="ntis-button-link" (click)="onCancelDialog(confirm)">
+              {{'common.action.back' | translate}}
+            </spr-button>
+            <spr-button className="spr-button-primary" (click)="onSubmitDelivery(confirm)" type="submit">
+              {{formTranslationsReference + '.confirmDelivery' | translate}}
+            </spr-button>
+          </span>
+        </ng-template>
+      </p-dialog>
+    </form>
+  </div>
+</spr-content-box>

@@ -1,0 +1,121 @@
+<spr-content-box [headerText]="translationsReference + '.headerText'" transformingText="uppercase">
+  <div>{{serviceProvider}}</div>
+  <div class="content">
+    <div class="dashboard-w-charts-table">
+      <p-table [value]="orders" responsiveLayout="stack" breakpoint="460px">
+        <ng-template pTemplate="header" let-row let-index="rowIndex">
+          <tr>
+            <ng-container *ngFor="let col of cols">
+              <th>
+                {{translationsReference + '.' + col.field | translate}}
+              </th>
+            </ng-container>
+            <th></th>
+            <th></th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-row let-index="rowIndex">
+          <tr>
+            <ng-container *ngFor="let col of cols">
+              <td [ngClass]="{'button' : (col.field !== 'service' )}">
+                <span class="p-column-title">
+                  {{translationsReference + '.' + col.field |translate}}
+                </span>
+                <span
+                  ><fa-icon
+                    *ngIf="col.field === 'service'&& row.srv_type === VEZIMAS"
+                    [icon]="faIconsService.fas.faTruck"
+                    size="lg"
+                  ></fa-icon>
+                  <fa-icon
+                    *ngIf="col.field === 'service'&& row.srv_type === PRIEZIURA"
+                    [icon]="faIconsService.fas.faPencilRuler"
+                    size="lg"
+                  ></fa-icon>
+                  <fa-icon
+                    *ngIf="col.field === 'service'&& row.srv_type === TYRIMAI"
+                    [icon]="faIconsService.fas.faVial"
+                    size="lg"
+                  ></fa-icon>
+                  <spr-button
+                    *ngIf="col.field === 'total_submitted' && userCanRead"
+                    class="order-w-status-btn"
+                    (click)="navigateToSubmittedOrders(row)"
+                    >{{row[col.field]}}</spr-button
+                  >
+                  <spr-button
+                    *ngIf="col.field === 'total_confirmed' && userCanRead"
+                    class="order-w-status-btn"
+                    (click)="navigateToConfirmedOrders(row)"
+                    >{{row[col.field]}}</spr-button
+                  >
+                  <ng-container *ngIf="col.field === 'service'">{{row[col.field]}}</ng-container></span
+                >
+              </td>
+            </ng-container>
+            <td class="button">
+              <spr-button
+                *ngIf="userCanCreate"
+                class="action-button-link"
+                (click)="navigateToNewOrder(row)"
+                >{{'common.action.enterNew' | translate}}</spr-button
+              >
+            </td>
+            <td class="button">
+              <spr-button
+                *ngIf="userCanRead"
+                class="action-button-link"
+                (click)="navigateToOrderList(row)"
+                >{{'common.action.showAll' | translate}}</spr-button
+              >
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage" translate>
+          <tr>
+            <td [attr.colspan]="cols.length + 1">
+              <spr-table-no-rec-found></spr-table-no-rec-found>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+    <div class="doughnut-charts-wrapper" *ngIf="orders.length > 1">
+      <ntis-doughnut-chart
+        *ngIf="showSubmittedChart"
+        [labels]="labels"
+        [data]="submittedOrdersCount"
+        [chartName]="currentSubmittedOrders"
+        [showLegend]="!showConfirmedChart"
+      ></ntis-doughnut-chart>
+      <ntis-doughnut-chart
+        *ngIf="showConfirmedChart"
+        [labels]="labels"
+        [data]="confirmedOrdersCount"
+        [chartName]="currentConfirmedOrders"
+        [showLegend]="showConfirmedChart"
+      ></ntis-doughnut-chart>
+    </div>
+    <div class="bar-chart-wrapper">
+      <ntis-bar-chart
+        *ngIf="labelsInPeriod.length > 0"
+        [labels]="labelsInPeriod"
+        [data]="finishedCountInPeriod"
+        [periodLabelTranslationsReference]="translationsReference + '.finished_orders_period'"
+        [placeHolder]="placeHolderFP"
+        (setNewPeriod)="loadFinishedPeriodData($event)"
+      ></ntis-bar-chart>
+    </div>
+    <div class="bar-chart-wrapper">
+      <ntis-bar-chart
+        *ngIf="labelsForSludge.length > 0 && isDisposalAvailable"
+        [labels]="labelsForSludge"
+        [data]="sludgeSum"
+        [periodLabelTranslationsReference]="translationsReference + '.disposed_wastewater'"
+        [placeHolder]="placeHolderSL"
+        [colors]="sludgeColors"
+        (setNewPeriod)="loadSludgePeriodData($event)"
+      ></ntis-bar-chart>
+    </div>
+  </div>
+</spr-content-box>

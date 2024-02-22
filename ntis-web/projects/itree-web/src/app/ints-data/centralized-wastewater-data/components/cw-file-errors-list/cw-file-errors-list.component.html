@@ -1,0 +1,56 @@
+<p-table
+  [value]="data"
+  [autoLayout]="true"
+  responsiveLayout="stack"
+  breakpoint="767px"
+  [lazy]="true"
+  (onLazyLoad)="loadDataLazy($event)"
+  [rows]="showRows"
+  [totalRecords]="totalRecords"
+  [paginator]="data?.length > 0"
+  [rowsPerPageOptions]="rowsPerPageOptions"
+  [showFirstLastIcon]="false"
+  [rowHover]="true"
+>
+  <ng-template pTemplate="header" let-row let-index="rowIndex">
+    <tr>
+      <ng-container *ngFor="let col of cols">
+        <th pSortableColumn="{{col.field}}">
+          {{translationsReference + '.' + col.field | translate}}
+          <p-sortIcon field="{{col.field}}"></p-sortIcon>
+        </th>
+      </ng-container>
+      <th></th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-row>
+    <tr>
+      <ng-container *ngFor="let col of cols">
+        <td>
+          <span class="p-column-title">
+            {{translationsReference + '.' + col.field |translate}}
+          </span>
+          <span>{{row[col.field]}}</span>
+        </td>
+      </ng-container>
+      <td>
+        <spr-button
+          *ngIf="row.cwfde_msg_code === municipalityName || row.cwfde_msg_code === reName || row.cwfde_msg_code === senName || row.cwfde_msg_code === strName"
+          class="spr-button-primary w-fit"
+          [pTooltip]="translationsReference + '.addAddrMappingTooltip' | translate"
+          tooltipPosition="left"
+          iconName="faMapLocationDot"
+          (click)="navigateToAdrMapping(row)"
+          >{{translationsReference + '.addAddrMapping' | translate}}</spr-button
+        >
+      </td>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="emptymessage" translate>
+    <tr>
+      <td [attr.colspan]="cols.length">
+        <spr-table-no-rec-found></spr-table-no-rec-found>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>

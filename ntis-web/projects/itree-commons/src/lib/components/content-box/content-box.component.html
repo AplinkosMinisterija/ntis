@@ -1,0 +1,16 @@
+<div class="breadcrumbs-wrapper">
+  <spr-breadcrumbs *ngIf="showBreadcrumbs"></spr-breadcrumbs>
+</div>
+<section class="content-wrapper">
+  <div class="content-wrapper__header-button-content">
+    <ng-content select="[buttonBack]"></ng-content>
+  </div>
+  <span
+    *ngIf="headerText"
+    class="content-wrapper__header-title"
+    [ngClass]="[textAlignment, textSize, transformingText]"
+  >
+    {{ translateHeader ? (headerText | translate) : headerText }}
+  </span>
+</section>
+<ng-content></ng-content>

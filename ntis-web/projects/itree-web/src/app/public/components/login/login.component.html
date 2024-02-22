@@ -1,0 +1,166 @@
+<section [ngClass]="showSmartIdLogin ? 'visible': 'invisible'" class="signature-dialog">
+  <button (click)="showSmartIdLogin = !showSmartIdLogin" type="button" class="signature-dialog__close">
+    <spr-icon name="close" size="48" />
+  </button>
+  <div class="smart-id" id="smart-id"></div>
+</section>
+
+<section class="signin-card">
+  <span class="signin-card__tabs">
+    <div class="signin-card__tabs-brand">
+      <a class="signin-card__link">
+        <img class="signin-card__image" src="../../../assets/img/ntis_logo_light.png" alt="NTIS logo" loading="lazy" />
+        <span class="signin-card__text">Nuotekų tvarkymo informacinė sistema</span>
+      </a>
+    </div>
+    <p class="signin-card__tabs-label">{{ 'pages.login.loginTypes' | translate }}</p>
+    <ul class="button-list">
+      <li class="button-list__item" *ngFor="let item of linksData">
+        <spr-button
+          type="button"
+          class="button-list__button"
+          [ngClass]="(loginType === item.linkType) ? 'button-list__button--active' : 'button-list__button--inactive'"
+          (click)="setLinkType(item)"
+          [iconName]="item.linkIcon"
+        >
+          {{item.linkTitle}}
+        </spr-button>
+      </li>
+    </ul>
+  </span>
+  <span class="signin-card__content">
+    <div class="button-tabs">
+      <spr-button
+        *ngFor="let item of linksData"
+        type="button"
+        class="button-tabs__button"
+        [ngClass]="(loginType === item.linkType) ? 'button-tabs__button--active' : 'button-tabs__button--inactive'"
+        (click)="setLinkType(item)"
+        [iconName]="item.linkIcon"
+      ></spr-button>
+    </div>
+
+    <form class="login" [formGroup]="form" (submit)="onSubmit($event)" autocomplete="off">
+      <div class="login__header">
+        <ng-container [ngSwitch]="loginType">
+          <h1 *ngSwitchCase="routingConst.SEWERAGE" class="login__header-title">
+            {{ 'pages.login.sewerageLogin' | translate }}
+          </h1>
+          <h1 *ngSwitchCase="routingConst.SERVICE" class="login__header-title">
+            {{ 'pages.login.serviceLogin' | translate }}
+          </h1>
+          <h1 *ngSwitchCase="routingConst.REGULATORY" class="login__header-title">
+            {{ 'pages.login.regulatoryLogin' | translate }}
+          </h1></ng-container
+        >
+      </div>
+
+      <ng-container *ngIf="loginType === routingConst.SEWERAGE || loginType === routingConst.SERVICE">
+        <button class="login__alt-other" type="button" (click)="initViispLogin()">
+          <fa-icon [icon]="faIconsService.fas.faBuildingColumns" size="sm" [fixedWidth]="true"></fa-icon>
+          {{ 'pages.login.withViisp' | translate }}
+        </button>
+        <button
+          *ngIf=" this.smartIdEnabled==='Y' && loginType === routingConst.SEWERAGE"
+          class="login__alt-other"
+          type="button"
+          (click)="createSmartIdRequest()"
+        >
+          <fa-icon [icon]="faIconsService.fas.faBuildingColumns" size="sm" [fixedWidth]="true"></fa-icon>
+          {{ 'pages.login.smartId' | translate }}
+        </button>
+        <button *ngIf="viispAuthMockEnabled" class="login__alt-other" type="button" (click)="initViispLoginTest()">
+          <fa-icon [icon]="faIconsService.fas.faBuildingColumns" size="sm" [fixedWidth]="true"></fa-icon>
+          {{ 'pages.login.withViisp' | translate }} [TEST]
+        </button>
+        <button *ngIf="viispAuthMockEnabled" class="login__alt-other" type="button" (click)="showViispLoginMock()">
+          <fa-icon [icon]="faIconsService.fas.faBuildingColumns" size="sm" [fixedWidth]="true"></fa-icon>
+          {{ 'pages.login.withViisp' | translate }} [MOCK]
+        </button>
+
+        <span
+          *ngIf="loginType !== routingConst.SEWERAGE"
+          class="login__separator"
+          >{{'common.generalUse.or' | translate}}</span
+        >
+      </ng-container>
+
+      <ng-container
+        *ngIf="(loginType === routingConst.SERVICE || loginType === routingConst.REGULATORY ) || viispAuthMockEnabled"
+      >
+        <ng-container *ngIf="isLoginWithPassword">
+          <spr-form-field
+            [mandatory]="true"
+            [errorDefs]="{required: 'common.login.usernameError'}"
+            [inputErrors]="form.controls.username.touched && form.controls.username.errors"
+            inputIconLeft="person"
+          >
+            <input
+              type="text"
+              formControlName="username"
+              placeholder="{{'pages.login.usernamePlaceholder' | translate}}"
+              maxlength="320"
+            />
+          </spr-form-field>
+          <spr-form-field
+            [mandatory]="true"
+            [errorDefs]="{required: 'common.login.passwordError'}"
+            [inputErrors]="form.controls.password.touched && form.controls.password.errors"
+            inputIconLeft="lock"
+          >
+            <spr-input-password
+              controlName="password"
+              placeholder="{{'pages.login.passwordPlaceholder' | translate}}"
+              maxlength="100"
+            ></spr-input-password>
+          </spr-form-field>
+        </ng-container>
+
+        <ng-container *ngIf="!isLoginWithPassword">
+          <spr-form-field
+            [mandatory]="true"
+            [errorDefs]="{required: 'pages.login.phoneNumberError'}"
+            [inputErrors]="form.controls.phoneNumber.touched && form.controls.phoneNumber.errors"
+            inputIconLeft="call"
+          >
+            <input
+              formControlName="phoneNumber"
+              placeholder="{{'pages.login.phoneNumberPlaceholder' | translate}}"
+              type="number"
+            />
+          </spr-form-field>
+          <spr-form-field
+            [mandatory]="true"
+            [errorDefs]="{required: 'pages.login.personalCodeError'}"
+            [inputErrors]="form.controls.personalCode.touched && form.controls.personalCode.errors"
+            inputIconLeft="person"
+          >
+            <input
+              formControlName="personalCode"
+              placeholder="{{'pages.login.personalCodePlaceholder' | translate}}"
+              type="number"
+            />
+          </spr-form-field>
+        </ng-container>
+      </ng-container>
+      <ng-container
+        *ngIf="(loginType === routingConst.REGULATORY || loginType === routingConst.SERVICE)|| viispAuthMockEnabled"
+      >
+        <div class="login__helpers">
+          <a
+            class="login__helpers-forgot-password"
+            [routerLink]="[forgotPasswordLink]"
+            >{{ 'pages.login.forgotPassword' |
+          translate }}</a
+          >
+        </div>
+
+        <button class="spr-button-primary" type="submit">
+          {{ 'pages.login.loginButton' | translate }}
+        </button>
+      </ng-container>
+    </form>
+  </span>
+</section>
+
+<spr-viisp-mock *ngIf="viispAuthMockEnabled" (initViispMock)="initViispLoginMock($event)"></spr-viisp-mock>

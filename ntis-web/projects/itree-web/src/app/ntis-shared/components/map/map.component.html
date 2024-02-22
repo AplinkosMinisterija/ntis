@@ -1,0 +1,418 @@
+<map-component
+  [layers]="layers"
+  (mapSingleClick)="handleMapSingleClick($event)"
+  (toggleShowLayer)="handleToggleShowLayer($event)"
+  [infoMessage]="showInfoMessage ? (translationsRef + '.infoMessage') : undefined"
+  [overlayBottomExpanded]="tableExpanded"
+>
+  <ng-template mapTemplate="layers-menu-header">
+    <spr-button
+      iconName="faFilterCircleXmark"
+      className="spr-button-secondary w-full"
+      [disabled]="!clearFiltersEnabled"
+      (click)="handleClearAllFilters()"
+      >{{ translationsRef + '.action.clearFilters' | translate }}</spr-button
+    >
+  </ng-template>
+
+  <!-- agglomerations layer templates: -->
+  <ng-template mapTemplate="layer" [mapLayerTemplateKey]="LAYER_KEY_AGGLO" mapLayerTemplateType="header-right">
+    <ng-container
+      *ngTemplateOutlet="filterAndTableButtons; context: {$implicit: LAYER_KEY_AGGLO, layer: aggloLayer, showTable: canReadAggloTable}"
+    ></ng-container>
+  </ng-template>
+
+  <ng-template mapTemplate="layer" [mapLayerTemplateKey]="LAYER_KEY_AGGLO" mapLayerTemplateType="bottom">
+    <ul class="legend pb-2">
+      <li class="legend__item">
+        <img src="./assets/map/legend/agglo.svg" class="w-5" />
+        <span>{{ (translationsRef + '.legend.agglo') | translate }}</span>
+      </li>
+    </ul>
+    <app-checkbox-tree
+      *ngIf="aggloLayer.extras?.optionsTree"
+      [items]="aggloLayer.extras.optionsTree"
+      valueAttribute="key"
+      [inputsIdPrefix]="LAYER_KEY_AGGLO"
+      [(ngModel)]="aggloLayer.extras.selectedOptions"
+      (ngModelChange)="aggloOlLayer.changed()"
+    ></app-checkbox-tree>
+  </ng-template>
+
+  <!-- preliminary agglomerations layer templates: -->
+  <ng-template mapTemplate="layer" [mapLayerTemplateKey]="LAYER_KEY_PREL_AGGLO" mapLayerTemplateType="bottom">
+    <ul class="legend pb-2">
+      <li class="legend__item">
+        <img src="./assets/map/legend/prelagglo.svg" class="w-5" />
+        <span>{{ (translationsRef + '.legend.prelAgglo') | translate }}</span>
+      </li>
+    </ul>
+    <app-checkbox-tree
+      *ngIf="prelAggloLayer.extras?.optionsTree"
+      [items]="prelAggloLayer.extras.optionsTree"
+      valueAttribute="key"
+      [inputsIdPrefix]="LAYER_KEY_PREL_AGGLO"
+      [(ngModel)]="prelAggloLayer.extras.selectedOptions"
+      (ngModelChange)="prelAggloOlLayer.changed()"
+    ></app-checkbox-tree>
+  </ng-template>
+
+  <!-- buildings layer templates: -->
+  <ng-template mapTemplate="layer" [mapLayerTemplateKey]="LAYER_KEY_BUILDINGS" mapLayerTemplateType="header-right">
+    <ng-container
+      *ngTemplateOutlet="filterAndTableButtons; context: {$implicit: LAYER_KEY_BUILDINGS, layer: buildingsLayer, showTable: canReadBuildTable}"
+    ></ng-container>
+  </ng-template>
+  <ng-template mapTemplate="layer" [mapLayerTemplateKey]="LAYER_KEY_BUILDINGS" mapLayerTemplateType="bottom">
+    <ul class="legend">
+      <li class="legend__item">
+        <img src="./assets/map/legend/building.svg" class="w-3" />
+        <span>{{ (translationsRef + '.legend.building') | translate }}</span>
+      </li>
+    </ul>
+  </ng-template>
+
+  <!-- facilities layer templates: -->
+  <ng-template mapTemplate="layer" [mapLayerTemplateKey]="LAYER_KEY_FACILITIES" mapLayerTemplateType="header-right">
+    <ng-container
+      *ngTemplateOutlet="filterAndTableButtons; context: {$implicit: LAYER_KEY_FACILITIES, layer: facilitiesLayer, showTable: canReadFaciTable}"
+    ></ng-container>
+  </ng-template>
+  <ng-template mapTemplate="layer" [mapLayerTemplateKey]="LAYER_KEY_FACILITIES" mapLayerTemplateType="bottom">
+    <ul class="legend">
+      <li class="legend__item">
+        <img src="./assets/map/legend/facility_bio.svg" class="w-3" />
+        <span>{{ (translationsRef + '.legend.facilityBio') | translate }}</span>
+      </li>
+      <li class="legend__item">
+        <img src="./assets/map/legend/facility_septic.svg" class="w-3" />
+        <span>{{ (translationsRef + '.legend.facilitySeptic') | translate }}</span>
+      </li>
+      <li class="legend__item">
+        <img src="./assets/map/legend/facility_reservoir.svg" class="w-3" />
+        <span>{{ (translationsRef + '.legend.facilityReservoir') | translate }}</span>
+      </li>
+      <li class="legend__item">
+        <img src="./assets/map/legend/facility_portable_reservoir.svg" class="w-3" />
+        <span>{{ (translationsRef + '.legend.facilityPortableReservoir') | translate }}</span>
+      </li>
+    </ul>
+  </ng-template>
+
+  <!-- discharges layer templates: -->
+  <ng-template mapTemplate="layer" [mapLayerTemplateKey]="LAYER_KEY_DISCHARGE" mapLayerTemplateType="header-right">
+    <ng-container
+      *ngTemplateOutlet="filterAndTableButtons; context: {$implicit: LAYER_KEY_DISCHARGE, layer: dischargesLayer, showTable: canReadDiscTable}"
+    ></ng-container>
+  </ng-template>
+  <ng-template mapTemplate="layer" [mapLayerTemplateKey]="LAYER_KEY_DISCHARGE" mapLayerTemplateType="bottom">
+    <ul class="legend">
+      <li class="legend__item">
+        <img src="./assets/map/legend/discharge.svg" class="w-3" />
+        <span>{{ (translationsRef + '.legend.discharge') | translate }}</span>
+      </li>
+    </ul>
+  </ng-template>
+
+  <!-- wells layer templates: -->
+  <ng-template mapTemplate="layer" [mapLayerTemplateKey]="LAYER_KEY_WELLS" mapLayerTemplateType="bottom">
+    <ul class="legend">
+      <li class="legend__item">
+        <img src="./assets/map/legend/well.svg" class="w-3" />
+        <span>{{ (translationsRef + '.legend.well') | translate }}</span>
+      </li>
+    </ul>
+  </ng-template>
+
+  <!-- cent layer templates: -->
+  <ng-template mapTemplate="layer" [mapLayerTemplateKey]="LAYER_KEY_CENT" mapLayerTemplateType="header-right">
+    <ng-container
+      *ngTemplateOutlet="filterAndTableButtons; context: {$implicit: LAYER_KEY_CENT, layer: centLayer, showTable: canReadCentTable}"
+    ></ng-container>
+  </ng-template>
+  <ng-template mapTemplate="layer" [mapLayerTemplateKey]="LAYER_KEY_CENT" mapLayerTemplateType="bottom">
+    <ul class="legend">
+      <li class="legend__item">
+        <img src="./assets/map/legend/cent.svg" class="w-3" />
+        <span>{{ (translationsRef + '.legend.cent') | translate }}</span>
+      </li>
+    </ul>
+  </ng-template>
+
+  <!-- research layer templates: -->
+  <ng-template mapTemplate="layer" [mapLayerTemplateKey]="LAYER_KEY_RESEARCH" mapLayerTemplateType="header-right">
+    <ng-container
+      *ngTemplateOutlet="filterAndTableButtons; context: {$implicit: LAYER_KEY_RESEARCH, layer: researchLayer, showTable: canReadResearchLayer}"
+    />
+  </ng-template>
+  <ng-template mapTemplate="layer" [mapLayerTemplateKey]="LAYER_KEY_RESEARCH" mapLayerTemplateType="bottom">
+    <ul class="legend pb-2">
+      <li class="legend__item">
+        <img src="./assets/map/legend/research_green.svg" class="w-3" />
+        <span>{{ (translationsRef + '.legend.researchGreen') | translate }}</span>
+      </li>
+      <li class="legend__item">
+        <img src="./assets/map/legend/research_red.svg" class="w-3" />
+        <span>{{ (translationsRef + '.legend.researchRed') | translate }}</span>
+      </li>
+      <li class="legend__item">
+        <img src="./assets/map/legend/research_gray.svg" class="w-3" />
+        <span>{{ (translationsRef + '.legend.researchGray') | translate }}</span>
+      </li>
+    </ul>
+    <app-checkbox-tree
+      *ngIf="researchLayer.extras?.optionsTree"
+      [items]="researchLayer.extras.optionsTree"
+      valueAttribute="key"
+      [inputsIdPrefix]="LAYER_KEY_RESEARCH"
+      [(ngModel)]="researchLayer.extras.selectedOptions"
+      (ngModelChange)="researchOlLayer.changed()"
+    ></app-checkbox-tree>
+  </ng-template>
+
+  <!-- disposal layer templates: -->
+  <ng-template mapTemplate="layer" [mapLayerTemplateKey]="LAYER_KEY_DISPOSAL" mapLayerTemplateType="header-right">
+    <ng-container
+      *ngTemplateOutlet="filterAndTableButtons; context: {$implicit: LAYER_KEY_DISPOSAL, layer: disposalLayer, showTable: canReadDisposalLayer}"
+    />
+  </ng-template>
+  <ng-template mapTemplate="layer" [mapLayerTemplateKey]="LAYER_KEY_DISPOSAL" mapLayerTemplateType="bottom">
+    <ul class="legend pb-2">
+      <li class="legend__item">
+        <img src="./assets/map/legend/disposal_green.svg" class="w-3" />
+        <span>{{ (translationsRef + '.legend.disposalGreen') | translate }}</span>
+      </li>
+      <li class="legend__item">
+        <img src="./assets/map/legend/disposal_gray.svg" class="w-3" />
+        <span>{{ (translationsRef + '.legend.disposalGray') | translate }}</span>
+      </li>
+    </ul>
+  </ng-template>
+
+  <!-- custom menu template: -->
+  <ng-template mapTemplate="custom-menu">
+    <ng-container *ngIf="customMenuMode === 'object-info' && layers[objInfoLayerIndex]?.extras?.infoData">
+      <h3 class="custom-menu-heading">{{ layers[objInfoLayerIndex]?.name | translate }}</h3>
+      <div>
+        <small *ngIf="layers[objInfoLayerIndex].extras.infoData.id" class="object-info-id"
+          >{{ (translationsRef + '.objectId') | translate }}: {{ layers[objInfoLayerIndex].extras.infoData.id }}</small
+        >
+        <div class="object-info-back-wrapper">
+          <spr-button-back
+            *ngIf="clickedPoints?.length >= 2"
+            [disableLocationBack]="true"
+            (navigateBack)="backToClickedPointsList()"
+          />
+        </div>
+        <ul
+          *ngIf="layers[objInfoLayerIndex].extras.infoColumns?.length || layers[objInfoLayerIndex].extras.tableColumns?.length"
+          class="object-info-list"
+        >
+          <ng-container
+            *ngFor="let column of (layers[objInfoLayerIndex].extras.infoColumns || layers[objInfoLayerIndex].extras.tableColumns) "
+          >
+            <li
+              *ngIf="column !== 'id' && layers[objInfoLayerIndex].extras.infoData[column]"
+              class="object-info-list__item"
+            >
+              <ntis-accordion
+                [label]="(translationsRef + '.layerCols.' + layers[objInfoLayerIndex].key + '.' + column) | translate"
+                [asCard]="true"
+                [uppercase]="true"
+              >
+                <div
+                  *ngIf="layers[objInfoLayerIndex].extras.infoData[column] | isArray"
+                  class="object-info-list__item-value"
+                >
+                  <ul class="object-info-item-list">
+                    <li
+                      *ngFor="let arrayItem of (layers[objInfoLayerIndex].extras.infoData[column] | asArray)"
+                      class="object-info-item-list__item"
+                    >
+                      <spr-icon name="radio_button_unchecked" size="8" />
+                      {{ arrayItem }}
+                    </li>
+                  </ul>
+                </div>
+                <div
+                  *ngIf="!(layers[objInfoLayerIndex].extras.infoData[column] | isArray)"
+                  [ngSwitch]="column"
+                  class="object-info-list__item-value"
+                >
+                  <a
+                    *ngSwitchCase="'link'"
+                    [routerLink]="layers[objInfoLayerIndex].extras.infoData[column] + ''"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    [pTooltip]="(translationsRef + '.layerCols.' + layers[objInfoLayerIndex].key + '.' + column + 'Text') | translate"
+                    appendTo="body"
+                    tooltipZIndex="100"
+                  >
+                    <fa-icon [icon]="faIconsService.fas.faArrowUpRightFromSquare" />
+                  </a>
+                  <ng-container *ngSwitchDefault>{{ layers[objInfoLayerIndex].extras.infoData[column] }}</ng-container>
+                </div>
+              </ntis-accordion>
+            </li>
+          </ng-container>
+        </ul>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="customMenuMode === 'filter'">
+      <spr-button-back [disableLocationBack]="true" (navigateBack)="handleClickFilter()"></spr-button-back>
+      <h3 class="custom-menu-heading">{{ (translationsRef + '.filtering') | translate }}</h3>
+      <div class="filter-layer-info">
+        <span class="filter-layer-info__label">{{ 'map.common.layer' | translate }}:</span>
+        <h4 class="filter-layer-info__name">
+          {{ layers[filterLayerIndex].translateName !== false ? (layers[filterLayerIndex].name | translate) : layers[filterLayerIndex].name }}
+        </h4>
+      </div>
+      <ntis-map-filters-form
+        (save)="handleSaveFilters($event)"
+        [savedFilters]="layers[filterLayerIndex].extras?.appliedFilters"
+        [fields]="layers[filterLayerIndex].extras?.filterFields"
+        [maxFilters]="layers[filterLayerIndex].extras?.maxFilters"
+      ></ntis-map-filters-form>
+    </ng-container>
+
+    <ng-container *ngIf="customMenuMode === 'clicked-points'">
+      <div class="clicked-points">
+        <h4 class="clicked-points__heading">{{ 'common.generalUse.results' | translate }}</h4>
+        <ul *ngIf="clickedPoints.length" class="clicked-points-list">
+          <li *ngFor="let point of clickedPoints">
+            <button type="button" class="clicked-point" (click)="selectClickedPoint(point)">
+              <h5 class="clicked-point__name">{{ point.name | translate }}</h5>
+              <div *ngIf="point.description">{{ point.description }}</div>
+            </button>
+          </li>
+        </ul>
+      </div>
+    </ng-container>
+  </ng-template>
+
+  <!-- table templates: -->
+  <ng-template mapTemplate="overlay-bottom">
+    <ng-container *ngIf="showingTable === LAYER_KEY_AGGLO">
+      <ng-container *ngTemplateOutlet="table; context: {$implicit: aggloLayer}" />
+    </ng-container>
+    <ng-container *ngIf="showingTable === LAYER_KEY_BUILDINGS">
+      <ng-container *ngTemplateOutlet="table; context: {$implicit: buildingsLayer}" />
+    </ng-container>
+    <ng-container *ngIf="showingTable === LAYER_KEY_FACILITIES">
+      <ng-container *ngTemplateOutlet="table; context: {$implicit: facilitiesLayer}" />
+    </ng-container>
+    <ng-container *ngIf="showingTable === LAYER_KEY_DISCHARGE">
+      <ng-container *ngTemplateOutlet="table; context: {$implicit: dischargesLayer}" />
+    </ng-container>
+    <ng-container *ngIf="showingTable === LAYER_KEY_CENT">
+      <ng-container *ngTemplateOutlet="table; context: {$implicit: centLayer}" />
+    </ng-container>
+    <ng-container *ngIf="showingTable === LAYER_KEY_RESEARCH">
+      <ng-container *ngTemplateOutlet="table; context: {$implicit: researchLayer}" />
+    </ng-container>
+    <ng-container *ngIf="showingTable === LAYER_KEY_DISPOSAL">
+      <ng-container *ngTemplateOutlet="table; context: {$implicit: disposalLayer}" />
+    </ng-container>
+  </ng-template>
+</map-component>
+
+<ng-template #table let-tableLayer>
+  <ntis-map-table
+    [title]="tableLayer.name"
+    [translateTitle]="tableLayer.translateName"
+    [showingItemsCount]="tableLayer.extras?.tableData?.filteredItems || 0"
+    [totalItemsCount]="tableLayer.extras?.tableData?.totalItems || 0"
+    [filtersApplied]="tableLayer.extras?.appliedFilters?.length"
+    [(tableExpanded)]="tableExpanded"
+    (clickClose)="handleClickTable()"
+    (clickExport)="handleClickExport(tableLayer, $event)"
+  >
+    <table *ngIf="tableLayer.extras?.tableData" class="agglo-table">
+      <thead>
+        <tr>
+          <th class="agglo-table__cell agglo-table__cell--narrow"></th>
+          <th
+            *ngFor="let column of tableLayer.extras.tableColumns"
+            class="agglo-table__cell"
+            [ngClass]="{'agglo-table__cell--narrow': column === 'link'}"
+          >
+            {{ (translationsRef + '.layerCols.' + showingTable + '.' + column) | translate }}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of tableLayer.extras.tableData.items">
+          <td class="agglo-table__cell agglo-table__cell--narrow">
+            <div *ngIf="(item.minX && item.minY && item.maxX && item.maxY) || (item.x && item.y)">
+              <spr-button
+                *ngIf="item.minX && item.minY && item.maxX && item.maxY"
+                iconName="faLocationDot"
+                className="table-travel-button"
+                [ariaLabel]="translationsRef + '.action.zoomInObject' | translate"
+                [pTooltip]="translationsRef + '.action.zoomInObject' | translate"
+                appendTo="body"
+                tooltipZIndex="100"
+                (click)="mapComponent.setBoundingExtent([item.minX, item.minY, item.maxX, item.maxY])"
+              />
+              <spr-button
+                *ngIf="item.x && item.y"
+                iconName="faLocationDot"
+                className="table-travel-button"
+                [ariaLabel]="translationsRef + '.action.zoomInObject' | translate"
+                [pTooltip]="translationsRef + '.action.zoomInObject' | translate"
+                appendTo="body"
+                tooltipZIndex="100"
+                (click)="mapComponent.setCenterCoordinates([item.x, item.y], 17.5)"
+              />
+            </div>
+          </td>
+          <td
+            *ngFor="let column of tableLayer.extras.tableColumns"
+            class="agglo-table__cell"
+            [ngClass]="{'agglo-table__cell--narrow': column === 'link'}"
+            [pTooltip]="(translationsRef + '.layerCols.' + showingTable + '.' + column) | translate"
+            appendTo="body"
+            tooltipZIndex="100"
+            [ngSwitch]="column"
+          >
+            <a
+              *ngSwitchCase="'link'"
+              [routerLink]="item[column]"
+              target="_blank"
+              rel="noopener noreferrer"
+              [pTooltip]="(translationsRef + '.layerCols.' + showingTable + '.' + column + 'Text') | translate"
+              appendTo="body"
+              tooltipZIndex="100"
+            >
+              <fa-icon [icon]="faIconsService.fas.faArrowUpRightFromSquare" />
+            </a>
+            <ng-container *ngSwitchDefault>{{ item[column] }}</ng-container>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </ntis-map-table>
+</ng-template>
+
+<ng-template #filterAndTableButtons let-layerKey let-layer="layer" let-showTable="showTable">
+  <spr-button
+    [iconName]="layer.extras?.appliedFilters?.length ? 'faFilterCircleXmark' : 'faFilter'"
+    className="layer-card-button"
+    [ariaLabel]="translationsRef + '.action.filter' | translate"
+    [pTooltip]="translationsRef + '.action.filter' | translate"
+    appendTo="body"
+    tooltipZIndex="100"
+    (click)="handleClickFilter(layerKey)"
+  ></spr-button>
+  <spr-button
+    *ngIf="showTable"
+    iconName="faTable"
+    className="layer-card-button"
+    [ariaLabel]="translationsRef + '.action.showTable' | translate"
+    [pTooltip]="translationsRef + '.action.showTable' | translate"
+    appendTo="body"
+    tooltipZIndex="100"
+    (click)="handleClickTable(layerKey)"
+  ></spr-button>
+</ng-template>

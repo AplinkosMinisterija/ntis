@@ -1,0 +1,28 @@
+<form class="map-filters-form" (ngSubmit)="handleSubmit();">
+  <ng-container *ngFor="let control of formArray.controls; index as i">
+    <ntis-map-filter
+      [index]="i"
+      [fields]="visibleFields"
+      [formControl]="control"
+      [touched]="control.touched"
+      (remove)="removeFilter(i)"
+    ></ntis-map-filter>
+  </ng-container>
+
+  <div class="buttons-wrapper">
+    <spr-button
+      type="button"
+      iconName="faPlus"
+      className="spr-button-secondary"
+      [disabled]="maxFilters && formArray.length >= maxFilters"
+      (click)="addFilter()"
+      >{{ (translationsRef + '.action.addFilter') | translate }}</spr-button
+    >
+    <spr-button
+      type="submit"
+      iconName="faSave"
+      className="spr-button-primary"
+      >{{ 'common.action.save' | translate }}</spr-button
+    >
+  </div>
+</form>

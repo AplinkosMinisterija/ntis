@@ -1,0 +1,114 @@
+<button type="button" class="spr-button-primary-hollow" (click)="openModal()">
+  {{ 'common.action.save' | translate }}
+</button>
+
+<section class="form-modal" *ngIf="showModal">
+  <div class="form-modal__content">
+    <header class="form-modal__content-header">
+      <span> {{ 'components.filterTemplates.filterAdmin' | translate }}</span
+      ><button
+        class="form-modal__content-close-button"
+        type="button"
+        [attr.aria-label]="'components.filterTemplates.closeFormWindow' | translate"
+        (click)="onCancel()"
+      >
+        <fa-icon [icon]="faIconsService.fas.faTimes"></fa-icon>
+      </button>
+    </header>
+
+    <p-tabView styleClass="mt-3">
+      <p-tabPanel [header]="'components.filterTemplates.addTemplateTab' | translate">
+        <form [formGroup]="form" (submit)="onSubmit($event)">
+          <spr-form-field-group>
+            <spr-form-field
+              [labelText]="'components.filterTemplates.templateTitle' | translate"
+              labelFor="filterName"
+              [mandatory]="true"
+              [inputErrors]="form.controls.filterName.touched && form.controls.filterName.errors"
+            >
+              <input type="text" id="filterName" formControlName="filterName" />
+            </spr-form-field>
+
+            <spr-form-field
+              [labelText]="'components.filterTemplates.condition' | translate"
+              labelFor="predefinedCondition"
+              [inputErrors]="form.controls.predefinedCondition.touched && form.controls.predefinedCondition.errors"
+            >
+              <input type="text" id="predefinedCondition" formControlName="predefinedCondition" />
+            </spr-form-field>
+            <spr-form-field>
+              <div class="spr-input-with-label">
+                <input
+                  type="checkbox"
+                  id="globalFilter"
+                  formControlName="globalFilter"
+                  class="spr-checkbox"
+                  [attr.aria-label]="'components.filterTemplates.useAsGlobal' | translate"
+                />
+                <label for="globalFilter">{{ 'components.filterTemplates.useAsGlobal' | translate }}</label>
+              </div>
+            </spr-form-field>
+            <spr-form-field
+              [labelText]="'components.filterTemplates.description' | translate"
+              labelFor="filterDescription"
+              [inputErrors]="form.controls.filterDescription.touched && form.controls.filterDescription.errors"
+            >
+              <textarea
+                id="filterDescription"
+                formControlName="filterDescription"
+                cols="30"
+                rows="5"
+                class="form-modal__description-textarea"
+              ></textarea>
+            </spr-form-field>
+            <footer class="form-modal__content-footer">
+              <button type="button" class="spr-button-secondary" (click)="onCancel()">
+                {{ 'common.action.close' | translate }}
+              </button>
+              <button type="submit" class="spr-button-primary">{{ 'common.action.save' | translate}}</button>
+            </footer>
+          </spr-form-field-group>
+        </form>
+      </p-tabPanel>
+
+      <p-tabPanel [header]="('components.filterTemplates.templateList'  | translate)">
+        <section class="list-card-wrapper">
+          <ul *ngIf="filterTemplates.length > 0; else noRecords">
+            <li *ngFor="let row of filterTemplates">
+              <section class="list-card-wrapper__card-content">
+                <div class="list-card-wrapper__card-text-block">
+                  <span
+                    ><strong>{{'components.filterTemplates.name' | translate }}:</strong> {{row.fdf_name}}</span
+                  >
+                  <span *ngIf="row.fdf_description"
+                    ><strong>{{'components.filterTemplates.description' | translate }}:</strong>
+                    {{row.fdf_description}}</span
+                  >
+                </div>
+                <button
+                  type="button"
+                  class="list-card-wrapper__card-delete-button"
+                  (click)="onDelete(row.fdf_id)"
+                  [attr.aria-label]="'components.filterTemplates.deleteFilter' | translate"
+                >
+                  <fa-icon [icon]="faIconsService.fas.faTimes"></fa-icon>
+                </button>
+              </section>
+            </li>
+          </ul>
+        </section>
+        <footer class="list-card-wrapper__card-footer">
+          <button type="button" class="spr-button-secondary" (click)="onCancel()">
+            {{ 'common.action.close' | translate }}
+          </button>
+        </footer>
+      </p-tabPanel>
+    </p-tabView>
+  </div>
+</section>
+
+<ng-template #noRecords>
+  <ul>
+    <li class="list-card-wrapper__card-no-records">{{ 'components.filterTemplates.emptyList' | translate }}</li>
+  </ul>
+</ng-template>

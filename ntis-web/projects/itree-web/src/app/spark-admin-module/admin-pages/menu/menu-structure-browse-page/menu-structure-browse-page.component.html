@@ -1,0 +1,123 @@
+<spr-content-box headerText="pages.sprMenuStructure.headerText">
+  <div class="spr-browse-actions-wrapper">
+    <spr-browse-search-form [formGroup]="searchForm" [formCode]="formCode" (search)="search(dataTableComponent)">
+      <spr-filter-input
+        filters
+        inputType="number"
+        [maxLength]="5"
+        formControlName="mst_id"
+        [placeholder]="'pages.sprMenuStructureBrowse.searchPlaceholderById' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="30"
+        formControlName="mst_title"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="'pages.sprMenuStructureBrowse.searchPlaceholderByName' | translate"
+      ></spr-filter-input>
+      <spr-select
+        formControlName="mst_site"
+        classifierCode="SPR_SITE_TYPE"
+        [placeholder]="'pages.sprMenuStructureBrowse.searchPlaceholderBySiteName' | translate"
+        [advancedFilterParams]="true"
+      ></spr-select>
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="40"
+        formControlName="mst_uri"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="'pages.sprMenuStructureBrowse.searchPlaceholderByUriAddress' | translate"
+      ></spr-filter-input>
+      <spr-select
+        formControlName="mst_lang"
+        classifierCode="SPR_LANGUAGE"
+        [placeholder]="'pages.sprMenuStructureBrowse.searchPlaceholderByLanguage' | translate"
+        [advancedFilterParams]="true"
+      ></spr-select>
+      <spr-select
+        formControlName="mst_is_public"
+        classifierCode="SPR_IS_PUBLIC_TYPE"
+        [placeholder]="'pages.sprMenuStructureBrowse.searchPlaceholderByIsPublic' | translate"
+        [advancedFilterParams]="true"
+      ></spr-select>
+      <spr-filter-input
+        filters
+        inputType="date"
+        formControlName="mst_date_from"
+        [placeholder]="'pages.sprMenuStructureBrowse.searchPlaceholderByDateFrom' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="date"
+        formControlName="mst_date_to"
+        [placeholder]="'pages.sprMenuStructureBrowse.searchPlaceholderByDateTo' | translate"
+      ></spr-filter-input>
+
+      <spr-table-data-export
+        buttons
+        [translation]="'pages.sprMenuStructure'"
+        [tableColumn]="cols"
+        [tableData]="exportData"
+        [fileName]="'pages.sprMenuStructure.headerText'"
+        (exportAllRecEvent)="loadAllRecords($event, dataTableComponent)"
+      ></spr-table-data-export>
+      <spr-button-add buttons [routerLink]="[menuEditLink, 'new']"></spr-button-add>
+    </spr-browse-search-form>
+  </div>
+  <p-table
+    [value]="data"
+    [autoLayout]="true"
+    [lazy]="true"
+    [paginator]="data?.length > 0"
+    (onLazyLoad)="loadDataLazy($event)"
+    [rows]="showRows"
+    [totalRecords]="totalRecords"
+    [rowsPerPageOptions]="rowsPerPageOptions"
+    [showFirstLastIcon]="false"
+    [sortField]="'1'"
+    [sortOrder]="1"
+    class="table-responsive"
+    [rowHover]="true"
+  >
+    <ng-template pTemplate="header" let-row let-index="rowIndex">
+      <tr>
+        <th *ngFor="let col of cols" pSortableColumn="{{col.field}}">
+          <span class="table-header-col">
+            {{'pages.sprMenuStructure.'+col.field |translate}}
+            <p-sortIcon field="{{col.field}}" class="table-header-col__icon"></p-sortIcon>
+          </span>
+        </th>
+        <th></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row let-index="rowIndex">
+      <tr>
+        <td
+          *ngFor="let col of cols"
+          [ngClass]="{'spr-text-right': col.type === dataTypeNumber, 'whitespace-nowrap': col.type === dataTypeDate}"
+        >
+          <span class="p-column-title"> {{'pages.sprMenuStructure.'+col.field | translate}}</span>
+          <span *ngIf="col.field !== 'mst_icon'">{{row[col.field]}}</span>
+          <fa-icon
+            *ngIf="col.field === 'mst_icon' && row[col.field] !== ''"
+            [icon]="faIconsService.fas[row[col.field]]"
+            size="sm"
+          >
+          </fa-icon>
+        </td>
+        <td>
+          <spr-table-rec-actions [actionsList]="menuActions[row.id]"></spr-table-rec-actions>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage" translate>
+      <tr>
+        <td [attr.colspan]="cols.length + 1">
+          <spr-table-no-rec-found></spr-table-no-rec-found>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</spr-content-box>

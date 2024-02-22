@@ -1,0 +1,117 @@
+<p-dialog
+  [visible]="dialogMode === 'map'"
+  (visibleChange)="!$event && reset()"
+  styleClass="ntis-p-dialog-map"
+  [header]="(translationsRef + '.dialogHeaderText') | translate"
+  [draggable]="false"
+  [resizable]="false"
+  [modal]="true"
+  [blockScroll]="true"
+  appendTo="body"
+  [closeAriaLabel]="'common.action.close' | translate"
+>
+  <div class="content-wrapper content-wrapper--map">
+    <p>{{ (translationsRef + '.dialogMapNote') | translate }}</p>
+    <div class="map-legend-wrapper">
+      <div class="map-wrapper">
+        <map-component
+          [layers]="mapLayers"
+          [menuItems]="[]"
+          (mapSingleClick)="handleMapClick($event)"
+          [infoMessage]="selectedWtfText"
+          [translateInfoMessage]="false"
+        ></map-component>
+      </div>
+      <ul class="wtf-legend" [attr.aria-hidden]="true" [title]="(translationsRef + '.legend.titleText') | translate">
+        <li *ngFor="let item of wtfLegendItems" class="wtf-legend-item">
+          <div
+            class="wtf-legend-item__sign"
+            [ngStyle]="{'background-color': ((item && wtfColors[item]) || defaultWtfColor), 'outline-color': ((item && wtfColors[item]) || defaultWtfColor)}"
+            [ngClass]="item && ('wtf-legend-item__sign--' + item)"
+          ></div>
+          <span class="wtf-legend-item__name">
+            {{ (translationsRef + '.legend.' + (item || 'other')) | translate }}
+          </span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="actions-wrapper">
+      <button type="button" class="spr-button-primary" (click)="handleConfirmSelection()" [disabled]="!selectedWtf">
+        {{ (translationsRef + '.confirmSelection') | translate }}
+      </button>
+      <button type="button" class="spr-button-primary" (click)="handleClickCreateNew()">
+        {{ (translationsRef + '.addNew') | translate }}
+      </button>
+      <button type="button" class="spr-button-secondary" (click)="reset()">
+        {{ 'common.action.cancel' | translate }}
+      </button>
+    </div>
+  </div>
+</p-dialog>
+
+<p-dialog
+  [visible]="dialogMode === 'noResults'"
+  (visibleChange)="!$event && reset()"
+  [header]="(translationsRef + '.dialogHeaderText') | translate"
+  [draggable]="false"
+  [resizable]="false"
+  [modal]="true"
+  [blockScroll]="true"
+  appendTo="body"
+  [closeAriaLabel]="'common.action.close' | translate"
+>
+  <div class="content-wrapper">
+    <p>{{ (translationsRef + '.dialogNoResultsNote') | translate }}</p>
+    <div class="actions-wrapper">
+      <button type="button" class="spr-button-primary" (click)="handleClickCreateNew()">
+        {{ (translationsRef + '.addNew') | translate }}
+      </button>
+      <button type="button" class="spr-button-secondary" (click)="reset()">
+        {{ 'common.action.cancel' | translate }}
+      </button>
+    </div>
+  </div>
+</p-dialog>
+
+<p-dialog
+  [visible]="dialogMode === 'exactWtf'"
+  (visibleChange)="!$event && reset()"
+  [header]="(translationsRef + '.dialogHeaderText') | translate"
+  [draggable]="false"
+  [resizable]="false"
+  [modal]="true"
+  [blockScroll]="true"
+  appendTo="body"
+  [closeAriaLabel]="'common.action.close' | translate"
+>
+  <div class="content-wrapper" *ngIf="selectedWtf">
+    <p>
+      {{ (translationsRef + '.dialogExactWtfNoteHeader') | translate }}
+    </p>
+    <p class="exact-wtf-info">
+      <span class="exact-wtf-info__line">
+        <span class="exact-wtf-info__line-title">{{ (translationsRef + '.type') | translate }}:</span>
+        {{ selectedWtf.wtfType}}
+      </span>
+      <span class="exact-wtf-info__line">
+        <span class="exact-wtf-info__line-title">{{ (translationsRef + '.address') | translate }}:</span>
+        {{ selectedWtf.address || (selectedWtf.lksX + ', ' + selectedWtf.lksY)}}
+      </span>
+    </p>
+    <p>
+      {{ (translationsRef + '.dialogExactWtfNoteFooter') | translate }}
+    </p>
+    <div class="actions-wrapper">
+      <button type="button" class="spr-button-primary" (click)="handleConfirmSelection()">
+        {{ ('common.action.choose') | translate }}
+      </button>
+      <button type="button" class="spr-button-primary" (click)="handleClickCreateNew()">
+        {{ (translationsRef + '.addNew') | translate }}
+      </button>
+      <button type="button" class="spr-button-secondary" (click)="reset()">
+        {{ 'common.action.cancel' | translate }}
+      </button>
+    </div>
+  </div>
+</p-dialog>

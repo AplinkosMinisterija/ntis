@@ -1,0 +1,41 @@
+<spr-content-box [headerText]="translationsRef + '.headerText'">
+  <div class="spr-browse-actions-wrapper">
+    <button type="button" class="spr-button-primary" (click)="handleClickClearAllCache()">
+      {{ translationsRef + '.clearAllCache' | translate }}
+    </button>
+  </div>
+
+  <p-table [value]="cacheList" responsiveLayout="stack" breakpoint="1200px" sortField="name">
+    <ng-template pTemplate="header">
+      <tr>
+        <th *ngFor="let col of cols" [pSortableColumn]="col">
+          <span class="table-header-col">
+            {{ translationsRef + '.' + col | translate }}
+            <p-sortIcon [field]="col" class="table-header-col__icon" />
+          </span>
+        </th>
+        <th *ngIf="clearAllowed"></th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-row>
+      <tr>
+        <td *ngFor="let col of cols">
+          <span class="p-column-title">
+            {{ translationsRef + '.' + col |translate}}
+          </span>
+          <span>{{ row[col] }}</span>
+        </td>
+        <td *ngIf="clearAllowed">
+          <button type="button" class="spr-button-primary-light" (click)="handleClickClearCache(row.name)">
+            {{ 'common.action.clear' | translate }}
+          </button>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage" translate>
+      <spr-table-no-rec-found />
+    </ng-template>
+  </p-table>
+</spr-content-box>

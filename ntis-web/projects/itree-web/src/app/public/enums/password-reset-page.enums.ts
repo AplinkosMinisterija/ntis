@@ -1,0 +1,4 @@
+export enum ResetPasswordFormMode {
+  RESET_PASSWORD_MODE = 'CHANGE_PASSWORD_REQUEST',
+  NEW_USER_MODE = 'NEW_USER_REQUEST',
+}

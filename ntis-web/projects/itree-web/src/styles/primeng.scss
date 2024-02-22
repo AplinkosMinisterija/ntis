@@ -1,0 +1,591 @@
+.p-component,
+.p-component span:not(.pi):not(.material-symbols-outlined) {
+  @apply font-sans text-base;
+}
+
+// autocomplete component:
+.p-autocomplete {
+  @apply w-full;
+
+  .p-inputtext {
+    @apply px-4 py-[7px];
+
+    &:enabled:focus {
+      @apply shadow-none border-primary-500;
+    }
+  }
+}
+
+// button component:
+.p-button {
+  @apply border-0;
+  &:focus {
+    @apply shadow-none;
+  }
+}
+
+.p-button.p-button-text:enabled {
+  &:hover {
+    @apply bg-primary-500 bg-opacity-5;
+  }
+
+  &:focus {
+    @apply ring-1 ring-primary-500;
+  }
+}
+
+// calendar component:
+.p-calendar {
+  @apply w-full;
+
+  // calendar trigger button style:
+  .p-button.p-datepicker-trigger {
+    @apply bg-neutral-0 text-primary-500 hover:bg-neutral-100 
+          border border-l-0 border-neutral-300 hover:border-neutral-300;
+
+    .p-button-icon {
+      @apply text-primary-500;
+    }
+  }
+}
+
+.p-datepicker {
+  &:not(.p-datepicker-inline) {
+    @apply bg-neutral-0 border-neutral-300;
+
+    .p-datepicker-header {
+      @apply bg-neutral-0 border-neutral-300;
+    }
+  }
+
+  .p-datepicker-buttonbar {
+    // 'today' and 'clear' buttons container
+    @apply py-1;
+  }
+
+  table td.p-datepicker-today > span.p-highlight,
+  table td > span.p-highlight {
+    @apply bg-primary-500;
+  }
+}
+
+// dialog component:
+p-dialog {
+  .p-dialog {
+    @apply transform-none;
+  }
+}
+.p-dialog {
+  &.p-component {
+    @apply transform-none;
+  }
+
+  @apply max-w-[95vw];
+
+  @screen md {
+    @apply max-w-[90vw];
+  }
+
+  @screen lg {
+    @apply max-w-[85vw];
+  }
+
+  @screen 2xl {
+    @apply max-w-7xl;
+  }
+
+  .p-dialog-header {
+    @apply border-0 py-1;
+  }
+
+  .p-dialog-content {
+    .p-confirm-dialog-message {
+      @apply m-0;
+    }
+  }
+
+  .p-dialog-footer {
+    @apply flex justify-center gap-3 border-0;
+
+    .p-button {
+      @apply m-0;
+    }
+
+    .p-confirm-dialog-reject {
+      @apply hover:bg-neutral-300;
+    }
+
+    .p-confirm-dialog-accept {
+      @apply hover:bg-primary-600;
+    }
+
+    .p-button-icon,
+    .p-button-label {
+      @apply m-0 text-sm;
+    }
+  }
+}
+
+// editor
+.p-editor-container {
+  .p-editor-toolbar.ql-snow {
+    @apply bg-neutral-100 border-2 border-neutral-200 rounded-tr-md rounded-tl-md;
+  }
+
+  .p-editor-content.ql-container.ql-snow {
+    @apply border-2 border-neutral-200 rounded-br-md rounded-bl-md border-t-0;
+  }
+}
+
+// dropdown component:
+.p-dropdown {
+  @apply w-full rounded-md bg-neutral-0 border-2 border-neutral-200;
+
+  .p-dropdown-label {
+    @apply whitespace-nowrap;
+    &.p-placeholder {
+      @apply text-neutral-500;
+    }
+  }
+
+  &:not(.p-disabled).p-focus {
+    // on focus
+    @apply border-primary-500 shadow-sm;
+  }
+
+  .pi {
+    // icons
+    @apply text-neutral-500 text-sm;
+
+    &.pi-times {
+      @apply leading-4;
+    }
+  }
+
+  .p-dropdown-panel {
+    @apply bg-neutral-0 border border-neutral-300;
+  }
+
+  &-panel &-header {
+    // search box container
+    @apply p-0;
+  }
+
+  .p-dropdown-item:hover {
+    @apply bg-neutral-100;
+  }
+
+  &-panel &-items &-item.p-highlight {
+    // selected list item
+    @apply bg-primary-500 hover:bg-primary-600;
+  }
+}
+
+// inputNumber component:
+p-inputnumber.p-element {
+  @apply w-full block;
+
+  .p-disabled,
+  .p-component:disabled {
+    @apply bg-neutral-100 opacity-100 border-neutral-300 text-neutral-500 rounded;
+  }
+
+  .p-inputnumber {
+    @apply block;
+  }
+
+  .p-inputnumber-input {
+    @apply w-full border-neutral-200 border rounded;
+    &:enabled:focus {
+      @apply shadow-none border border-neutral-900 ring-0;
+    }
+  }
+}
+p-inputnumber.ng-dirty.ng-invalid {
+  .p-inputnumber {
+    .p-inputtext {
+      @apply shadow-none border border-neutral-200 ring-0;
+      &:enabled:focus {
+        @apply shadow-none border border-neutral-900 ring-0;
+      }
+    }
+  }
+}
+
+// overlayPanel component:
+.p-overlaypanel .p-overlaypanel-content {
+  @apply p-2;
+}
+
+// selectButton component:
+.p-selectbutton {
+  > .p-button {
+    @apply border-2 border-primary-500 px-4 py-1.5;
+    &.p-component {
+      @apply bg-neutral-0;
+
+      > .p-button-label {
+        @apply text-primary-500 text-base font-medium;
+      }
+
+      &.p-highlight {
+        @apply bg-primary-500 border-primary-500;
+        > .p-button-label {
+          @apply text-neutral-0 px-1;
+        }
+      }
+
+      &:not(.p-disabled):not(.p-highlight):hover {
+        @apply bg-primary-600 border-primary-600;
+        > .p-button-label {
+          @apply text-neutral-0;
+        }
+      }
+    }
+  }
+}
+
+// slider component:
+.p-slider {
+  @apply my-3 bg-neutral-300;
+
+  &:not(.p-disabled) {
+    .p-slider-range {
+      @apply bg-primary-500;
+    }
+
+    .p-slider-handle {
+      @apply bg-primary-500 border-0 rounded-full;
+
+      &:hover {
+        @apply bg-primary-300;
+      }
+
+      &:focus {
+        @apply shadow-none outline outline-2 outline-neutral-700;
+      }
+    }
+  }
+}
+
+// tiered menu component:
+.p-tieredmenu {
+  @apply w-fit;
+}
+.p-tieredmenu.p-tieredmenu-overlay {
+  @apply rounded-none p-0;
+}
+.p-tieredmenu .p-menuitem.p-menuitem-active > .p-menuitem-link {
+  @apply bg-primary-500;
+  .p-menuitem-text {
+    @apply text-neutral-0;
+  }
+  .p-menuitem-icon {
+    @apply text-neutral-0;
+  }
+}
+
+// table component:
+
+.dashboard-table {
+  .p-datatable-thead > tr > th {
+    @apply p-3 border-b-2 border-neutral-500 bg-neutral-0 text-primary-900 text-sm #{!important};
+  }
+  .p-datatable-tbody > tr {
+    @apply hover:bg-neutral-300 #{!important};
+    > td {
+      @apply border-0 #{!important};
+    }
+  }
+}
+
+.dashboard-w-charts-table {
+  .p-datatable-wrapper {
+    @apply p-2 rounded-md border-0 bg-neutral-100 shadow-sm overflow-y-hidden;
+  }
+  .p-datatable-thead > tr > th {
+    @apply p-3 border-b-2 border-primary-500 bg-neutral-100 text-primary-900 text-sm  #{!important};
+  }
+  .p-datatable-thead > tr {
+    & > th:not(:first-child) {
+      @apply text-center;
+    }
+  }
+
+  .p-datatable-tbody > tr {
+    @apply bg-neutral-100  #{!important};
+    > td.button {
+      @apply p-0 #{!important};
+    }
+    > td {
+      @apply border-primary-500 #{!important};
+    }
+    & > td:not(:first-child) {
+      @apply text-center underline hover:bg-primary-500 hover:text-neutral-0;
+    }
+  }
+}
+
+.p-datatable.p-component {
+  .p-datatable-wrapper {
+    @apply border border-neutral-100 shadow-sm overflow-y-hidden;
+  }
+
+  .p-datatable-thead > tr > th {
+    @apply p-3 border-0 bg-primary-500 text-neutral-0 text-sm;
+
+    &.p-highlight {
+      @apply bg-primary-800 text-neutral-0;
+    }
+
+    &.p-sortable-column {
+      @apply hover:bg-primary-800 hover:text-neutral-0;
+
+      .p-sortable-column-icon {
+        @apply text-neutral-0 text-xs;
+
+        &.pi {
+          @apply ml-1;
+        }
+      }
+
+      &.p-highlight .p-sortable-column-icon {
+        @apply text-neutral-0;
+      }
+
+      &:focus {
+        @apply shadow-none ring-2 ring-inset ring-primary-700;
+      }
+    }
+  }
+  .p-datatable-tbody .ntis-disabled-table-row {
+    @apply text-neutral-500;
+    &:hover {
+      @apply text-neutral-900;
+    }
+  }
+
+  .p-datatable-tbody > tr {
+    &:nth-child(even) {
+      @apply bg-neutral-50;
+    }
+
+    & > td {
+      @apply px-3 py-2 border-0 border-y border-neutral-100;
+
+      span,
+      .ql-editor {
+        @apply text-sm;
+      }
+
+      .ql-editor {
+        @apply p-0;
+      }
+
+      .p-column-title {
+        // table column name on responsive mode
+        @apply font-medium;
+      }
+    }
+  }
+
+  .p-paginator-bottom {
+    @apply mt-2;
+
+    &.p-paginator {
+      @apply p-3;
+    }
+  }
+}
+
+// table paginator:
+.p-datatable {
+  .p-paginator-bottom {
+    @apply pt-6 border-0;
+  }
+
+  .p-paginator .p-paginator-pages .p-paginator-page.p-highlight {
+    @apply bg-primary-500 border-primary-500 text-neutral-0;
+  }
+
+  .p-paginator .p-paginator-pages .p-paginator-page,
+  .p-paginator .p-paginator-first,
+  .p-paginator .p-paginator-prev,
+  .p-paginator .p-paginator-next,
+  .p-paginator .p-paginator-last {
+    @apply text-primary-500;
+
+    &:not(.p-highlight):hover {
+      @apply text-primary-600;
+    }
+
+    &:focus {
+      @apply shadow-none;
+    }
+  }
+
+  .p-paginator-bottom.p-paginator.p-component.ng-star-inserted {
+    @apply bg-neutral-0;
+  }
+
+  // table inside table:
+  .p-datatable {
+    .p-datatable-table {
+      @apply border border-neutral-900 border-opacity-10;
+    }
+
+    .p-datatable-thead > tr > th {
+      @apply p-3 bg-primary-300;
+    }
+
+    .p-datatable-tbody > tr > td {
+      @apply p-2 bg-neutral-900 bg-opacity-2.5;
+    }
+  }
+}
+
+//tree
+.p-tree {
+  @apply h-full min-h-48;
+
+  .p-treenode {
+    &-content {
+      @apply hover:bg-neutral-100;
+    }
+  }
+}
+
+// file upload
+.cw-files-upload {
+  .p-fileupload {
+    &-choose {
+      .p-button-icon-left {
+        @apply text-2xl text-neutral-0 rotate-0 ml-2 py-1 pl-3;
+      }
+
+      .p-button-label {
+        @apply text-sm ml-2 mr-2 text-neutral-0  py-1  pr-3;
+      }
+    }
+  }
+  .p-fileupload-content > div {
+    @apply hidden;
+  }
+  .p-fileupload-buttonbar,
+  .p-button {
+    @apply border-0 ring-0 bg-primary-500 flex justify-start rounded-md hover:bg-primary-600 active:bg-primary-700 #{!important};
+  }
+}
+
+.cw-files-display-only {
+  .p-fileupload {
+    &-choose {
+      @apply hidden;
+      .p-button-icon-left {
+        @apply hidden;
+      }
+      .p-button-label {
+        @apply hidden;
+      }
+    }
+  }
+  .p-fileupload-content > div > div > div > fa-icon {
+    @apply hidden;
+  }
+}
+
+.p-fileupload {
+  @apply border-0 #{!important};
+  &-choose {
+    @apply bg-transparent;
+
+    &:not(.p-disabled):hover {
+      @apply bg-transparent;
+    }
+
+    .p-button-icon-left {
+      @apply text-2xl -rotate-45 text-primary-800;
+    }
+
+    .p-button-label {
+      @apply text-sm text-neutral-900 font-semibold;
+    }
+  }
+}
+.p-fileupload-buttonbar,
+.p-fileupload-content,
+.p-fileupload .p-button {
+  @apply border-0 ring-0 bg-transparent flex justify-start p-0 m-0 #{!important};
+}
+
+// tabs
+.p-tabview {
+  .p-tabview-nav li .p-tabview-nav-link,
+  .p-tabview-nav li.p-highlight .p-tabview-nav-link,
+  .p-tabview-panels {
+    @apply bg-neutral-0;
+  }
+
+  .p-tabview-nav li .p-tabview-nav-link {
+    @apply border-t-neutral-0 border-x-neutral-0;
+  }
+
+  .p-tabview-nav li a.p-tabview-nav-link:not(.p-disabled):focus {
+    @apply shadow-none;
+  }
+}
+
+p-tabmenu,
+.p-tabview {
+  .p-tabmenu-nav,
+  .p-tabview-nav {
+    @apply border-b-2 #{!important};
+
+    .p-highlight .p-menuitem-link,
+    .p-highlight .p-tabview-nav-link {
+      @apply border-b-secondary-300 #{!important};
+    }
+  }
+
+  .p-tabmenuitem .p-menuitem-link,
+  .p-tabview-nav-link {
+    @apply border-l-0 border-t-0 border-r-0 border-b-neutral-300 
+           hover:border-b-neutral-600 #{!important};
+  }
+
+  .p-tabmenu .p-tabmenu-nav .p-tabmenuitem .p-menuitem-link:not(.p-disabled):focus {
+    @apply shadow-none;
+  }
+}
+
+// CUSTOM CLASSES:
+
+// toast:
+.custom-toast {
+  max-width: 100vw !important;
+  @apply z-50;
+
+  .p-toast-icon-close {
+    flex-shrink: 0;
+  }
+
+  .p-toast-message-icon {
+    @apply my-auto;
+  }
+}
+
+p-inputswitch {
+  @apply flex lg:mr-0 mr-4;
+
+  .p-inputswitch-slider {
+    @apply w-full;
+  }
+
+  .p-inputswitch-checked .p-inputswitch-slider {
+    @apply bg-primary-500 #{!important};
+  }
+
+  .p-inputswitch.p-focus .p-inputswitch-slider {
+    @apply shadow-none;
+  }
+}

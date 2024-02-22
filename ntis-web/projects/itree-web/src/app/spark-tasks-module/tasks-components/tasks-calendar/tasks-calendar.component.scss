@@ -1,0 +1,75 @@
+.tasks-calendar {
+  @apply bg-neutral-0 p-3 mx-auto border border-neutral-300 rounded-lg shadow-md;
+
+  &__month {
+    @apply flex justify-center p-1;
+  }
+
+  &__month-button {
+    @apply text-neutral-400 px-2;
+    &:hover {
+      @apply text-neutral-500;
+    }
+  }
+
+  &__month-text {
+    @apply text-lg font-semibold min-w-32 text-center;
+  }
+
+  &__week-days-grid {
+    @apply text-neutral-900 text-sm grid gap-1 grid-cols-7;
+  }
+
+  &__week-day {
+    @apply text-center;
+  }
+
+  &__days-grid {
+    @apply text-neutral-900 text-sm grid gap-1 grid-cols-7;
+  }
+
+  &__day {
+    @apply text-neutral-900 text-base text-center select-none cursor-pointer border border-transparent rounded-full;
+    &--current-day {
+      @apply text-primary-500 bg-primary-500 bg-opacity-10;
+    }
+    &--other-month {
+      @apply text-neutral-300;
+    }
+    &--selected {
+      @apply border-primary-500;
+    }
+  }
+}
+
+.tasks-day-view {
+  // @apply flex flex-col gap-y-2;
+  @apply px-1 mt-4 overflow-y-auto max-h-60;
+
+  // scrollbar:
+  scrollbar-width: thin;
+  &::-webkit-scrollbar {
+    @apply w-1.5;
+  }
+  &::-webkit-scrollbar-track {
+    @apply bg-neutral-300 rounded;
+  }
+  &::-webkit-scrollbar-thumb {
+    @apply bg-primary-500 bg-opacity-50 rounded;
+  }
+  &:hover::-webkit-scrollbar-thumb {
+    @apply bg-opacity-100;
+  }
+
+  &__item {
+    @apply pl-2 pb-4 border-l border-primary-500 relative;
+
+    &:last-child {
+      @apply pb-0 border-transparent;
+    }
+  }
+
+  &__item-circle {
+    @apply absolute top-0 -left-1 bg-primary-500 w-2 h-2 rounded-full;
+  }
+}

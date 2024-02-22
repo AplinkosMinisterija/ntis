@@ -1,0 +1,15 @@
+.chart-w-legend-wrapper {
+  @apply flex flex-row justify-center;
+  @screen lg {
+    @apply gap-5;
+  }
+}
+.chart-wrapper {
+  @apply self-start max-w-xs;
+}
+.legend-wrapper {
+  @apply hidden;
+  @screen 2xl {
+    @apply block w-52;
+  }
+}

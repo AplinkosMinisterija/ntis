@@ -1,0 +1,7 @@
+{
+  "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
+  "dest": "../../dist/ngx-s2-commons",
+  "lib": {
+    "entryFile": "src/public-api.ts"
+  }
+}

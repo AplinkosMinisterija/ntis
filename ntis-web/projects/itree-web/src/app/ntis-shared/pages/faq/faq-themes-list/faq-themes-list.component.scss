@@ -1,0 +1,11 @@
+.section-header {
+  @apply text-neutral-500 font-semibold;
+}
+
+::ng-deep .p-datatable.p-component .p-datatable-wrapper {
+  @apply border-0 shadow-none;
+}
+
+.search-form-wrapper {
+  @apply mb-4;
+}

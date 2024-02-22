@@ -1,0 +1,27 @@
+:host {
+  @apply block;
+}
+
+.message-box {
+  @apply flex gap-2 items-center p-3 border rounded;
+
+  &__icon {
+    @apply text-2xl;
+  }
+
+  &__text {
+    @apply text-lg;
+  }
+
+  &--info {
+    @apply bg-info-100 border-info-300 text-info-500;
+  }
+
+  &--error {
+    @apply bg-risk-50 border-risk-300 text-risk-500;
+  }
+
+  &--success {
+    @apply bg-secondary-50 border-secondary-300 text-secondary-500;
+  }
+}

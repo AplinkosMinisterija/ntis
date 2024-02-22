@@ -1,0 +1,35 @@
+.breadcrumbs {
+  @apply flex flex-wrap gap-2;
+}
+
+.breadcrumb {
+  $this: &;
+
+  @apply flex gap-2 items-center;
+
+  &__icon {
+    @apply text-static-xs text-neutral-400;
+  }
+
+  &__text {
+    @apply no-underline text-sm leading-none text-neutral-700;
+
+    &--last {
+      @apply font-medium text-neutral-800;
+    }
+  }
+
+  &__link {
+    @extend #{$this}__text;
+    @apply hover:text-neutral-800;
+
+    &--last {
+      @extend #{$this}__text--last;
+      @apply hover:text-neutral-900;
+    }
+  }
+
+  &__text-icon {
+    @apply text-static-sm pr-1.5;
+  }
+}

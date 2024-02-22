@@ -1,0 +1,86 @@
+<spr-content-box headerText="pages.sprTasksDashboard.headerText">
+  <div class="tasks-dashboard-header">
+    <input
+      type="text"
+      name="search-tasks"
+      id="search-tasks"
+      [placeholder]="'pages.sprTasksDashboard.searchPlaceholder' | translate"
+      (change)="onSearch($event)"
+    />
+
+    <button
+      type="button"
+      class="tasks-dashboard-header__new-task spr-button-primary"
+      [disabled]="!createTaskAllowed"
+      (click)="onCreateNewTask()"
+    >
+      <fa-icon [icon]="faIconsService.fas.faPlus"></fa-icon>
+      {{'pages.sprTasksDashboard.newTask' | translate}}
+    </button>
+  </div>
+  <div class="tasks-dashboard">
+    <section class="task-cards-section">
+      <h2 class="task-cards-section__title">{{'pages.sprTasksDashboard.myTasks' | translate}}</h2>
+      <div class="task-cards-section__tabs">
+        <button
+          *ngFor="let taskFilter of taskFilters"
+          type="button"
+          class="task-cards-section__tab"
+          [ngClass]="{'task-cards-section__tab--selected': filterParam === taskFilter.value}"
+          (click)="onClickFilterButton(taskFilter.value)"
+        >
+          {{ taskFilter.text | translate}}
+        </button>
+
+        <div class="task-cards-section__order-sort-actions">
+          <button
+            *ngIf="orderParam !== '1'"
+            type="button"
+            class="task-cards-section__sort-button"
+            (click)="onClickSortButton()"
+          >
+            <fa-icon
+              class="task-cards-section__sort-icon"
+              [ngClass]="{'task-cards-section__sort-icon--active': sortParam === 'ASC'}"
+              [icon]="faIconsService.fas.faSortAmountUpAlt"
+              [fixedWidth]="true"
+            ></fa-icon>
+            <fa-icon
+              class="task-cards-section__sort-icon"
+              [ngClass]="{'task-cards-section__sort-icon--active': sortParam === 'DESC'}"
+              [icon]="faIconsService.fas.faSortAmountDown"
+              [fixedWidth]="true"
+            ></fa-icon>
+          </button>
+
+          <spr-dropdown
+            className="min-w-36 mx-2.5"
+            [compact]="true"
+            placeholderText="pages.sprTasksDashboard.orderingDropdownPlaceholder"
+            [translatePlaceholderText]="true"
+            [items]="orderingDropdownItems"
+            [translateItemsText]="true"
+            (selectItem)="onSelectOrderingDropdownItem($event)"
+          ></spr-dropdown>
+        </div>
+      </div>
+      <div class="task-cards-section__grid">
+        <p *ngIf="areAllCardsLoaded && taskCards.length === 0" class="task-cards-section__no-tasks-found">
+          {{'pages.sprTasksDashboard.noTasksFound' | translate}}
+        </p>
+        <app-task-card *ngFor="let taskCard of taskCards" [taskData]="taskCard"></app-task-card>
+        <button *ngIf="!areAllCardsLoaded" class="task-cards-section__load-more" (click)="loadCards()" #loadMoreButton>
+          {{ (isLoadingCards ? ('common.action.loading' | translate) : ('common.action.loadMore' | translate)) + '..'}}
+        </button>
+      </div>
+    </section>
+
+    <section class="tasks-calendar-section">
+      <span class="tasks-calendar-section__date">
+        {{('common.date.monthNamesAlt' | translate)[todayMonth]}} {{todayDay}}, {{todayYear}}
+      </span>
+      <h2 class="tasks-calendar-section__text">{{'common.date.today' | translate}}</h2>
+      <app-tasks-calendar></app-tasks-calendar>
+    </section>
+  </div>
+</spr-content-box>

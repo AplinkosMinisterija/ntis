@@ -1,0 +1,44 @@
+<div [ngClass]="{'bg-with-border': bgAndBorder}">
+  <ntis-accordion
+    [label]="(legend | translate)"
+    [asCard]="displayAsCard"
+    [uppercase]="true"
+    [showHeader]="!bgAndBorder"
+  >
+    <div class="spr-form-items-flex">
+      <spr-info-line [name]="'common.generalUse.address' | translate" [value]="data?.address"></spr-info-line>
+      <spr-info-line [name]="translationsReference + '.type' | translate" [value]="data?.type"></spr-info-line>
+      <spr-info-line
+        *ngIf="data?.technicalPassport && (data?.typeClsf === ntisWtfType.septic || data?.typeClsf === ntisWtfType.bio)"
+        [name]="translationsReference + '.technicalPassport' | translate"
+        [value]="data?.technicalPassport"
+      ></spr-info-line>
+      <spr-info-line
+        *ngIf="data?.manufacturer && (data?.typeClsf === ntisWtfType.septic || data?.typeClsf === ntisWtfType.bio)"
+        [name]="translationsReference + '.manufacturer' | translate"
+        [value]="data?.manufacturer"
+      ></spr-info-line>
+      <spr-info-line
+        *ngIf="data?.model && (data?.typeClsf === ntisWtfType.septic || data?.typeClsf === ntisWtfType.bio)"
+        [name]="translationsReference + '.model' | translate"
+        [value]="data?.model"
+      ></spr-info-line>
+      <spr-info-line
+        *ngIf="data?.installationDate"
+        [name]="translationsReference + '.installationDate' | translate"
+        [value]="data?.installationDate"
+      ></spr-info-line>
+      <spr-info-line
+        *ngIf="data?.distance"
+        [name]="translationsReference + '.distance' | translate"
+        [value]="data?.distance ? data.distance + ' ' + ((translationsReference + '.distanceMeters') | translate) : ''"
+      ></spr-info-line>
+      <spr-info-line
+        *ngIf="data?.typeClsf === ntisWtfType.reservoir && data?.capacity"
+        [name]="translationsReference + '.capacity' | translate"
+        [value]="data?.capacity"
+      >
+      </spr-info-line>
+    </div>
+  </ntis-accordion>
+</div>

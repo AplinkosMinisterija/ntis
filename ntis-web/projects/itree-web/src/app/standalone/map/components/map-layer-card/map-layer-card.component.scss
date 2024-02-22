@@ -1,0 +1,53 @@
+:host {
+  @apply relative flex flex-col gap-2 p-2 bg-neutral-0 bg-opacity-10 min-h-14
+         border border-neutral-900 border-opacity-10 rounded-sm shadow;
+}
+
+.layer-header {
+  @apply flex gap-2 px-1.5 bg-primary-500 text-neutral-0 items-center;
+
+  &__toggle {
+    @apply text-static-lg text-neutral-0;
+
+    &--disabled {
+      @apply text-neutral-0;
+    }
+  }
+
+  &__remove {
+    @apply text-static-base text-neutral-400 hover:text-risk-400 active:text-risk-600;
+  }
+
+  &__name {
+    @apply text-sm font-semibold;
+  }
+
+  &__template-right {
+    @apply flex gap-2 ml-auto mb-auto text-neutral-0 py-6;
+  }
+}
+
+.layer-move-arrows {
+  @apply right-0 top-1 py-2
+         flex flex-col gap-px;
+
+  &__button {
+    @apply text-static-base opacity-60 px-1;
+
+    &:disabled {
+      @apply opacity-25;
+    }
+
+    &:hover:not(:disabled) {
+      @apply opacity-100;
+    }
+  }
+}
+
+.layer-transparency {
+  @apply my-2;
+  &__slider-wrapper {
+    @apply pl-2;
+    max-width: 10rem;
+  }
+}

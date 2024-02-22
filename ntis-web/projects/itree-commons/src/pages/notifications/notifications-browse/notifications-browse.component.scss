@@ -1,0 +1,15 @@
+.message-not-read {
+  @apply cursor-pointer font-semibold;
+}
+
+.icon-center {
+  @apply text-center #{!important};
+}
+
+.delete-button {
+  @apply text-risk-800 hover:text-risk-600 active:text-risk-900 text-sm flex justify-start items-center gap-1;
+}
+
+.icon-color {
+  @apply text-neutral-600;
+}

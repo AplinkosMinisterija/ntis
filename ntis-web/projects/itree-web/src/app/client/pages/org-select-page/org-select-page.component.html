@@ -1,0 +1,42 @@
+<ng-container *ngIf="authService.availableOrganizations?.length > 1">
+  <spr-content-box [headerText]="translationsReference + '.headerText'">
+    <div class="content-wrapper">
+      <spr-form-field-group [text]="translationsReference + '.selectOrganization'">
+        <div class="options">
+          <div *ngFor="let org of authService.availableOrganizations" class="spr-choice-input-with-label">
+            <input
+              type="radio"
+              class="spr-radio"
+              name="org-select"
+              [id]="'org-' + org.org_id"
+              [value]="org.org_id"
+              [(ngModel)]="selectedOrgId"
+            />
+            <label [for]="'org-' + org.org_id">{{org.org_name}}</label>
+          </div>
+        </div>
+      </spr-form-field-group>
+
+      <p class="instructions">
+        <span>{{ translationsReference + '.instructionsTextPart1' | translate }}</span>
+        <span class="user-icon">
+          <span class="user-icon__circle">
+            <fa-icon [icon]="faIconsService.solid.faUserAlt" class="user-icon__icon"></fa-icon>
+          </span>
+        </span>
+        <span>{{ translationsReference + '.instructionsTextPart2' | translate }}</span>
+        <fa-icon [icon]="faIconsService.solid.faBuilding"></fa-icon>
+        <span>{{ translationsReference + '.instructionsTextPart3' | translate }}</span>
+      </p>
+
+      <button
+        type="button"
+        class="spr-button-primary continue"
+        [disabled]="!selectedOrgId"
+        (click)="handleClickContinue()"
+      >
+        {{'common.action.continue' | translate}}
+      </button>
+    </div>
+  </spr-content-box>
+</ng-container>

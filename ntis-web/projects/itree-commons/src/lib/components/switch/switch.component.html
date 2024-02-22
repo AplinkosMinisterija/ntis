@@ -1,0 +1,6 @@
+<div class="switch">
+  <button class="switch__option" type="button" *ngFor="let option of options; index as i" (click)="switch(i)">
+    {{ translateOptions ? ((optionLabel ? option[optionLabel] : option) | translate) : option }}
+  </button>
+  <div class="switch__slider" [ngClass]="selectedIndex ? 'switch__slider--right' : 'switch__slider--left'"></div>
+</div>

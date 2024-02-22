@@ -1,0 +1,63 @@
+<spr-form-field-group [text]="translationsReference + (isServiceProvider ? '.spLegend' : '.wmLegend')">
+  <ng-container *ngIf="!isEditable; else inputsBlock">
+    <spr-info-line [name]="translationsReference + '.applicant' | translate" [value]="applicant"></spr-info-line>
+    <spr-info-line [name]="translationsReference + '.spOrgEmail'  | translate" [value]="orgEmail"></spr-info-line>
+    <spr-info-line [name]="translationsReference +  '.spOrgPhone'  | translate" [value]="orgPhone"></spr-info-line>
+    <spr-info-line
+      [name]="translationsReference + (isServiceProvider ? '.spOrganization' : '.wmOrganization') | translate"
+      [value]="organization"
+    ></spr-info-line>
+    <spr-info-line
+      [name]="translationsReference + (isServiceProvider ? '.spOrgAddress' : '.wmOrgAddress') | translate"
+      [value]="orgAddress"
+    ></spr-info-line>
+    <spr-info-line
+      [name]="translationsReference + (isServiceProvider ? '.spOrgWebsite' : '.wmOrgWebsite') | translate"
+      [value]="orgWebsite"
+    ></spr-info-line>
+  </ng-container>
+  <ng-template #inputsBlock>
+    <form [formGroup]="form" (change)="onFormChange()">
+      <spr-info-line [name]="translationsReference + '.applicant' | translate" [value]="applicant"></spr-info-line>
+      <spr-form-field
+        class="mt-4"
+        [labelText]="translationsReference +'.spOrgEmail'  | translate"
+        labelFor="org_email"
+        [mandatory]="true"
+        [inputErrors]="form.controls.org_email.touched && form.controls.org_email.errors"
+      >
+        <input id="org_email" type="text" formControlName="org_email" />
+      </spr-form-field>
+      <spr-form-field
+        [labelText]="translationsReference + '.spOrgPhone'  | translate"
+        labelFor="org_phone"
+        [mandatory]="true"
+        [errorDefs]="{pattern: 'common.error.phone'}"
+        [inputErrors]="form.controls.org_phone.touched && form.controls.org_phone.errors"
+        [errorDefs]="{required: 'common.error', pattern: 'common.error.phone'}"
+      >
+        <input id="org_phone" type="text" formControlName="org_phone" maxlength="12" />
+      </spr-form-field>
+      <spr-info-line
+        [name]="translationsReference + (isServiceProvider ? '.spOrganization' : '.wmOrganization') | translate"
+        [value]="organization"
+      ></spr-info-line>
+
+      <spr-info-line
+        class="mt-4"
+        [name]="translationsReference + (isServiceProvider ? '.spOrgAddress' : '.wmOrgAddress') | translate"
+        [value]="orgAddress"
+      ></spr-info-line>
+      <spr-form-field
+        class="mt-4"
+        [labelText]="translationsReference + (isServiceProvider ? '.spOrgWebsite' : '.wmOrgWebsite') | translate"
+        labelFor="org_website"
+        [errorDefs]="{pattern: 'common.error.website'}"
+        [inputErrors]="form.controls.org_website.touched && form.controls.org_website.errors"
+        [errorDefs]="{ pattern: 'common.error.website'}"
+      >
+        <input id="org_website" type="text" formControlName="org_website" />
+      </spr-form-field>
+    </form>
+  </ng-template>
+</spr-form-field-group>

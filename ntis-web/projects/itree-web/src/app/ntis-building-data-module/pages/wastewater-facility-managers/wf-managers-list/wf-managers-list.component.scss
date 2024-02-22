@@ -1,0 +1,12 @@
+.status-wrapper {
+  @apply flex justify-start items-center gap-2;
+}
+.dialog-footer {
+  @apply flex flex-row justify-center py-5;
+}
+.date-label {
+  @apply font-semibold text-neutral-900;
+}
+.top-info-wrapper {
+  @apply flex flex-col gap-2 py-2;
+}

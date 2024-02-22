@@ -1,0 +1,31 @@
+/* 
+
+  @note Po naujienų puslapių ir susijusių elementų perkėlimo iš "Spark" 
+  prototipo, pakeitimai buvo atlikti pagal NTIS projektą.
+  @date 2023-05-24 
+  
+*/
+
+.browse-actions-wrapper {
+  @apply flex py-3;
+}
+
+.load-more {
+  @apply flex justify-center items-center py-10;
+}
+
+.news-list-wrapper {
+  @apply flex flex-col pb-96;
+}
+
+.list-layout {
+  @apply grid grid-cols-1;
+}
+
+.no-data-card {
+  @apply rounded-md p-10 bg-neutral-100 flex justify-center items-center;
+}
+
+.box-wrapper {
+  @apply h-full;
+}

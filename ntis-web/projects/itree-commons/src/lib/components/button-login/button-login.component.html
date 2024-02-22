@@ -1,0 +1,4 @@
+<button (click)="authenticate()" class="login">
+  <fa-icon [icon]="isUserLoggedIn ? faIconsService.fas.faSignOutAlt : faIconsService.fas.faSignInAlt"></fa-icon>
+  {{ isUserLoggedIn ? ('components.public.logout' | translate) : ('components.public.login' | translate) }}
+</button>

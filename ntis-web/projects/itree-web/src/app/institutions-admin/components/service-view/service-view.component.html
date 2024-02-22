@@ -1,0 +1,74 @@
+<ng-container *ngIf="data">
+  <spr-form-field-group [text]="translationsReference + '.serviceInformation'" [translateText]="true">
+    <div class="spr-form-items-flex">
+      <spr-info-line
+        [name]="translationsReference + '.service'"
+        [translateName]="true"
+        [value]="data.serviceName"
+      ></spr-info-line>
+      <spr-info-line
+        [name]="translationsReference + '.serviceProvider'"
+        [translateName]="true"
+        [value]="data.orgName"
+      ></spr-info-line>
+      <spr-info-line [name]="'common.generalUse.email'" [translateName]="true" [value]="data.email"></spr-info-line>
+      <spr-info-line [name]="'common.generalUse.telNo'" [translateName]="true" [value]="data.phone"></spr-info-line>
+      <spr-info-line
+        [name]="translationsReference + '.price'"
+        [translateName]="true"
+        [value]="data.priceTo ? ((translationsReference + '.priceText') | translate: {priceFrom: data.priceFrom, priceTo: data.priceTo}) : ((translationsReference + '.priceFromText') | translate: {priceFrom: data.priceFrom})"
+      ></spr-info-line>
+      <spr-info-line
+        [name]="translationsReference + '.completionTime'"
+        [translateName]="true"
+        [value]="data.completionInDaysTo ? ((translationsReference + '.workingDaysFromTo') | translate: {daysFrom: data.completionInDays, daysTo: data.completionInDaysTo})  : (data.completionInDays + ' ' + ((translationsReference + '.workingDays') | translate ))"
+      ></spr-info-line>
+      <spr-info-line
+        [name]="translationsReference + '.description'"
+        [translateName]="true"
+        textDisplay="editor"
+        [value]="data.description"
+      ></spr-info-line>
+      <div *ngIf="data.file" class="contract-template">
+        <div class="contract-template__text">
+          {{ ((translationsReference + '.contractTemplate') | translate) + ':' }}
+        </div>
+        <button type="button" class="contract-template__download" (click)="fileUploadService.downloadFile(data.file)">
+          {{ data.file.fil_name }}
+        </button>
+      </div>
+      <div *ngIf="data.labInstructions && data.srv_type === TYRIMAI" class="contract-template pt-2">
+        <div class="contract-template__text">
+          {{ ((translationsReference + '.labTemplate') | translate) + ':' }}
+        </div>
+        <button
+          type="button"
+          class="contract-template__download"
+          (click)="fileUploadService.downloadFile(data.labInstructions)"
+        >
+          {{ data.labInstructions.fil_name }}
+        </button>
+      </div>
+    </div>
+  </spr-form-field-group>
+
+  <spr-form-field-group [text]="translationsReference + '.serviceSettings'" [translateText]="true">
+    <div class="spr-form-items-flex">
+      <spr-info-line
+        [name]="translationsReference + '.contractAvailable'"
+        [translateName]="true"
+        [value]="data.contractAvailable ? ('common.generalUse.yes' | translate) : ('common.generalUse.no' | translate)"
+      ></spr-info-line>
+      <spr-info-line
+        [name]="translationsReference + '.availableInNtisPortal'"
+        [translateName]="true"
+        [value]="data.availableInNtisPortal ? ('common.generalUse.yes' | translate) : ('common.generalUse.no' | translate)"
+      ></spr-info-line>
+      <spr-info-line
+        [name]="translationsReference + '.municipalities'"
+        [translateName]="true"
+        [value]="data?.municipalities.length > 0 ? data.municipalities : ('institutionsAdmin.pages.institutionsServiceDescription.allCountry' | translate)"
+      ></spr-info-line>
+    </div>
+  </spr-form-field-group>
+</ng-container>

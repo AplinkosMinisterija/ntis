@@ -1,0 +1,66 @@
+<spr-content-box>
+  <div class="spr-edit-form-wrapper">
+    <ntis-service-provider-info
+      [name]="data?.orgName"
+      [email]="data?.orgEmail"
+      [phone]="data?.orgPhone"
+    ></ntis-service-provider-info>
+    <ntis-wtf-info [data]="data?.wtfInfo"></ntis-wtf-info>
+    <spr-edit-form
+      [formGroup]="form"
+      [values]="editFormValues"
+      [submitButtonText]="translationsReference + '.submitRequest'"
+      (cancel)="onCancel()"
+      (submit)="handleSubmit()"
+    >
+      <ng-template sprTemplate="services">
+        <ng-template sprTemplate="warpper">
+          <ng-template sprTemplate="dateFrom">
+            <input type="text" />
+          </ng-template>
+          <ng-template sprTemplate="dateTo">
+            <input type="text" />
+          </ng-template>
+        </ng-template>
+
+        <div *ngIf="data?.availableServices" class="services">
+          <p *ngIf="form.touched && form.controls.services.errors" class="error-text">
+            {{ (translationsReference + '.noSelectedServicesError') | translate }}
+          </p>
+          <section *ngFor="let availableService of data.availableServices; index as i" class="service-block">
+            <div class="spr-input-with-label service-block__selection">
+              <input
+                type="checkbox"
+                class="spr-checkbox"
+                [id]="availableService.type"
+                [formControl]="form.controls.services.controls[i]"
+              />
+              <label [for]="availableService.type">{{ availableService.name }}</label>
+            </div>
+            <div class="ntis-section-block spr-form-items-flex">
+              <spr-info-line
+                [name]="(translationsReference + '.service') | translate"
+                [value]="availableService.name"
+              ></spr-info-line>
+              <spr-info-line
+                [name]="(translationsReference + '.serviceDescription') | translate"
+                textDisplay="editor"
+                [value]="availableService.description"
+              ></spr-info-line>
+            </div>
+          </section>
+        </div>
+      </ng-template>
+
+      <ng-template sprTemplate="comments">
+        <app-comments [comments]="comments" (addCommentEvent)="handleAddComment($event)"></app-comments>
+      </ng-template>
+    </spr-edit-form>
+  </div>
+  <ntis-select-or-add-wtf-dialog
+    [showDialog]="addrDialog"
+    [wtfSelectionData]="wtfSelectionData"
+    (addNewFacility)="toAddNewFacility()"
+    (selectFacility)="setFacility($event)"
+  ></ntis-select-or-add-wtf-dialog>
+</spr-content-box>

@@ -1,0 +1,15 @@
+.services {
+  @apply flex flex-col gap-4;
+}
+
+.service-block {
+  @apply flex flex-col gap-2;
+
+  &__selection {
+    @apply px-1.5;
+  }
+}
+
+.error-text {
+  @apply text-risk-500 text-xs;
+}

@@ -1,0 +1,119 @@
+<spr-content-box headerText="institutionsAdmin.pages.ntisCarsBrowse.headerText" transformingText="uppercase">
+  <div class="spr-browse-actions-wrapper">
+    <spr-browse-search-form [formGroup]="searchForm" [formCode]="formCode" (search)="search(dataTableComponent)">
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="20"
+        formControlName="cr_reg_no"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="formTranslationsReference+'.cr_reg_no' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="200"
+        formControlName="cr_model"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="formTranslationsReference+'.cr_model' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="number"
+        [maxLength]="12"
+        formControlName="cr_capacity"
+        [placeholder]="formTranslationsReference+'.cr_capacity' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="number"
+        [maxLength]="12"
+        formControlName="cr_tube_length"
+        [placeholder]="formTranslationsReference+'.cr_tube_length' | translate"
+      ></spr-filter-input>
+      <spr-select
+        filters
+        formControlName="cr_used"
+        [optionData]="isCarUsedOptions"
+        optionLabel="option"
+        optionValue="value"
+        [placeholder]="formTranslationsReference + '.cr_used' | translate"
+        [showFilter]="false"
+        [advancedFilterParams]="true"
+      ></spr-select>
+
+      <spr-table-data-export
+        buttons
+        [translation]="formTranslationsReference"
+        [tableColumn]="cols"
+        [tableData]="exportData"
+        [fileName]="formTranslationsReference+'.headerText'"
+        (exportAllRecEvent)="loadAllRecords($event, dataTableComponent)"
+      ></spr-table-data-export>
+
+      <spr-button-add
+        buttons
+        [routerLink]="[RoutingConst.EDIT, RoutingConst.NEW]"
+        [pTooltip]="userCanCreate ?  null  : (formTranslationsReference +'.tooltipText' | translate)"
+        [disabled]="!userCanCreate"
+      ></spr-button-add>
+    </spr-browse-search-form>
+  </div>
+
+  <p-table
+    [value]="data"
+    [autoLayout]="true"
+    [lazy]="true"
+    (onLazyLoad)="loadDataLazy($event)"
+    [rows]="showRows"
+    [totalRecords]="totalRecords"
+    [paginator]="data?.length > 0"
+    [rowsPerPageOptions]="rowsPerPageOptions"
+    [showFirstLastIcon]="false"
+    responsiveLayout="stack"
+    breakpoint="767px"
+    [rowHover]="true"
+  >
+    <ng-template pTemplate="header" let-row let-index="rowIndex">
+      <tr>
+        <ng-container *ngFor="let col of visibleColumns">
+          <th *ngIf="col.field !== 'cr_id'" pSortableColumn="{{col.field}}">
+            {{formTranslationsReference+'.'+col.field | translate}}
+            <p-sortIcon field="{{col.field}}"></p-sortIcon>
+          </th>
+        </ng-container>
+        <th>{{'common.generalUse.actions' |translate}}</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row let-index="rowIndex">
+      <tr>
+        <ng-container *ngFor="let col of visibleColumns">
+          <td *ngIf="col.field !== 'cr_id'">
+            <span class="p-column-title">
+              {{formTranslationsReference+'.'+col.field |translate}}
+            </span>
+            <span>{{row[col.field]}}</span>
+          </td>
+        </ng-container>
+        <td>
+          <span class="p-column-title">
+            {{'common.generalUse.actions' |translate}}
+          </span>
+          <ntis-table-row-actions [actions]="row.actions"></ntis-table-row-actions>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage" translate>
+      <tr>
+        <td [attr.colspan]="cols.length + 1">
+          <spr-table-no-rec-found></spr-table-no-rec-found>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+  <span class="actions">
+    <spr-button className="ntis-button-link" (click)="onReturn()">
+      {{'common.action.back' | translate}}
+    </spr-button>
+  </span>
+</spr-content-box>

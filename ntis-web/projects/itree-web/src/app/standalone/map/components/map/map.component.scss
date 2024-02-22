@@ -1,0 +1,152 @@
+:host {
+  @apply block relative w-full h-full rounded bg-neutral-50 @container;
+
+  &.full-screen {
+    @apply fixed top-0 left-0 right-0 bottom-0 z-50;
+  }
+}
+
+.map {
+  @apply w-full h-full;
+}
+
+.map-overlay {
+  @apply absolute top-0 left-0 w-full h-full flex flex-col justify-start pointer-events-none
+         @2xl:flex-row;
+}
+
+.map-menu {
+  @apply absolute top-0 left-0 right-0 bottom-0 max-h-0 pointer-events-auto
+         flex flex-col gap-1 overflow-hidden bg-neutral-0/90 transition-all z-[1];
+
+  @apply @2xl:w-0 @2xl:h-0 @2xl:min-h-full @2xl:max-h-full;
+
+  ::ng-deep &__close-button {
+    @apply absolute top-0 right-0 m-1 mt-1.5 text-2xl
+           text-risk-500 hover:text-risk-700 active:text-risk-400;
+  }
+
+  &__content {
+    @apply relative overflow-hidden transition-all;
+
+    &--open {
+      @apply overflow-y-auto px-2.5 py-2 @2xl:min-h-full;
+    }
+  }
+
+  &__heading {
+    @apply text-lg font-semibold mr-8 pb-2 text-neutral-900;
+  }
+
+  &__mobile-resize {
+    @apply mt-auto
+           flex justify-center items-center py-0.5
+           bg-neutral-0 active:bg-neutral-50 border-y border-neutral-200
+           text-neutral-700
+           @2xl:hidden;
+  }
+
+  &--open {
+    @apply flex-shrink-0 max-h-[35%] @2xl:max-h-full
+           @2xl:relative @2xl:right-auto @2xl:w-96 
+           @2xl:border-r @2xl:border-neutral-300;
+  }
+
+  &--open#{&}--expanded {
+    @apply max-h-full;
+  }
+}
+
+.map-on-view {
+  @apply flex flex-col w-full h-full overflow-hidden;
+}
+
+.map-info-message {
+  @apply w-full bg-primary-500/90 text-center text-neutral-0 max-h-0 transition-all;
+
+  &--visible {
+    @apply p-0.5 max-h-[50%];
+  }
+}
+
+.map-buttons {
+  @apply flex flex-col w-full grow;
+
+  &__top {
+    @apply w-full flex gap-2.5 justify-between p-2.5;
+  }
+
+  &__top-left {
+    @apply flex flex-wrap gap-2.5 items-start;
+  }
+
+  &__top-right {
+    @apply flex flex-wrap gap-2.5 items-start;
+  }
+
+  &__bottom {
+    @apply mt-auto flex gap-1 justify-start items-center px-2.5 pb-11;
+  }
+}
+
+%map-button-base {
+  @apply pointer-events-auto bg-neutral-0 p-1 shadow
+         text-primary-500 hover:text-primary-700 active:text-primary-300 
+         border border-neutral-300 hover:border-primary-200
+         disabled:bg-neutral-500 disabled:text-primary-700;
+}
+
+:host ::ng-deep .map-button {
+  @extend %map-button-base;
+  @apply rounded;
+
+  &--selected {
+    @apply text-neutral-0 bg-primary-500 hover:text-neutral-50 active:text-neutral-100;
+  }
+}
+
+.zoom-buttons {
+  @apply flex flex-col;
+}
+
+:host ::ng-deep .zoom-button {
+  @extend %map-button-base;
+  @apply px-0.5;
+
+  &--in {
+    @apply rounded-t border-b;
+  }
+
+  &--out {
+    @apply rounded-b;
+  }
+}
+
+.map-surface-button {
+  @extend %map-button-base;
+  @apply p-0.5;
+
+  img {
+    @apply w-14 @lg:w-16 @2xl:w-20;
+  }
+}
+
+::ng-deep {
+  .ol-overlaycontainer-stopevent {
+    @apply bottom-[var(--map-overlay-bottom-height)] 
+           @2xl:left-[var(--map-menu-width)];
+  }
+}
+
+.template-overlay-top {
+  @apply w-full overflow-hidden transition-[max-height];
+  max-height: Min(50%, 16rem);
+}
+
+.template-overlay-bottom {
+  @extend .template-overlay-top;
+
+  &--expanded {
+    @apply max-h-full;
+  }
+}

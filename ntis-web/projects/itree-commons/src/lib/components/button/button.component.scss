@@ -1,0 +1,36 @@
+.app-button:focus {
+  outline: none !important;
+}
+.app-button {
+  $this: &;
+
+  @apply flex justify-center items-center gap-2;
+
+  &__icon {
+    @apply shrink-0;
+  }
+
+  &__text {
+    font-size: inherit;
+
+    &:empty {
+      @apply hidden;
+    }
+
+    &--hide-on-mobile:not(:empty) {
+      @apply hidden sm:inline;
+    }
+  }
+
+  &--large {
+    @apply min-w-80 py-1;
+
+    #{$this}__icon {
+      @apply text-2xl;
+    }
+
+    #{$this}__text {
+      @apply mx-auto;
+    }
+  }
+}

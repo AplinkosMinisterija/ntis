@@ -1,0 +1,113 @@
+<!-- 
+
+  @note Po naujienų puslapių ir susijusių elementų perkėlimo iš "Spark" 
+  prototipo, pakeitimai buvo atlikti pagal NTIS projektą.
+  @date 2023-05-24 
+  
+-->
+<spr-content-box
+  [headerText]="translationsRef + (!this.data?.nwId || this.isNewsFromTemplate
+  ? '.headerCreate'
+  : this.data?.isTemplate === DB_BOOLEAN_TRUE && !this.isNewsFromTemplate
+  ? '.headerEditTemplate'
+  : this.data?.pageTemplateType ? '.headerEditPageTemplate' : '.headerEdit')"
+  transformingText="uppercase"
+>
+  <spr-button-back [disableLocationBack]="true" (navigateBack)="onCancel()"></spr-button-back>
+  <div class="spr-edit-form-wrapper">
+    <form [formGroup]="form" (submit)="onSubmit($event)">
+      <spr-form-field-group>
+        <spr-form-field
+          [labelText]="translationsRef+'.nwTitle' | translate"
+          labelFor="nw-title"
+          [inputErrors]="form.controls.nw_title.touched && form.controls.nw_title.errors"
+          [mandatory]="true"
+        >
+          <textarea
+            id="nw-title"
+            cols="30"
+            rows="2"
+            formControlName="nw_title"
+            class="resize-none"
+            maxlength="256"
+          ></textarea>
+        </spr-form-field>
+
+        <spr-form-field
+          *ngIf="!this.data?.pageTemplateType"
+          [labelText]="translationsRef+'.nwSummary' | translate"
+          labelFor="nw-summary"
+          [inputErrors]="form.controls.nw_summary.touched && form.controls.nw_summary.errors"
+          [mandatory]="true"
+        >
+          <textarea
+            id="nw-summary"
+            cols="30"
+            rows="3"
+            formControlName="nw_summary"
+            class="resize-none"
+            maxlength="800"
+          ></textarea>
+        </spr-form-field>
+
+        <spr-form-field [inputErrors]="form.controls.nw_text.touched && form.controls.nw_text.errors">
+          <ckeditor
+            [editor]="Editor"
+            id="editor"
+            formControlName="nw_text"
+            styleClass="editor-width ck-content"
+            (ready)="onReady($event)"
+            [data]="editorData"
+          >
+          </ckeditor>
+        </spr-form-field>
+        <ng-container *ngIf="!this.data?.pageTemplateType">
+          <spr-form-field>
+            <spr-file-upload-with-progress
+              [uploadedFiles]="uploadedFiles"
+              (fileToDelete)="onDeleteFile($event)"
+              [fileLimit]="20"
+              acceptedFormat=".docx., .odt., .pdf, .jpg, .jpeg, .tif, tiff, .bmp, .png, .webp, .adoc, .bdoc, .edoc"
+            >
+            </spr-file-upload-with-progress>
+          </spr-form-field>
+          <spr-form-field>
+            <div class="checkbox-wrapper">
+              <input
+                type="checkbox"
+                id="nw-visibility"
+                class="spr-checkbox"
+                [(ngModel)]="isPublic"
+                [ngModelOptions]="{standalone: true}"
+              />
+              <label for="nw-visibility">{{ translationsRef + '.nwVisibility' | translate }}</label>
+            </div>
+          </spr-form-field>
+        </ng-container>
+      </spr-form-field-group>
+      <div class="action-button-wrapper">
+        <spr-button
+          type="button"
+          class="ntis-button-hollow"
+          iconStyle="far"
+          iconName="faCircleXmark"
+          (click)="onCancel()"
+        >
+          {{'common.action.cancel' | translate}}
+        </spr-button>
+        <spr-button type="submit" class="spr-button-primary" iconName="faSave">
+          {{ (data?.nwId && !this.isNewsFromTemplate ? (translationsRef + '.nwUpdatePost') : (translationsRef + '.nwPost')) | translate }}
+        </spr-button>
+        <spr-button
+          *ngIf="!this.data?.pageTemplateType"
+          type="button"
+          class="spr-button-primary"
+          iconName="faSave"
+          (click)="onSaveTemplate()"
+        >
+          {{ translationsRef + (this.data?.isTemplate === DB_BOOLEAN_TRUE && !this.isNewsFromTemplate ? '.saveAsNewTemplate' : '.saveAsTemplate') | translate }}
+        </spr-button>
+      </div>
+    </form>
+  </div>
+</spr-content-box>

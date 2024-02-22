@@ -1,0 +1,55 @@
+.contract {
+  @apply flex flex-col md:flex-row items-start md:items-center md:justify-between;
+
+  &-file {
+    @apply px-4 flex flex-col items-center;
+
+    &__icon {
+      @apply text-2xl;
+    }
+
+    &__name {
+      @apply font-semibold break-words max-w-xs;
+    }
+  }
+
+  .delete-button {
+    @apply mt-2 w-fit;
+  }
+
+  .input-wrapper {
+    @apply flex flex-col sm:flex-row sm:items-baseline my-2 max-w-xs; // flex-wrap;
+
+    &__label {
+      @apply mr-2 text-neutral-900;
+    }
+
+    &__input {
+      @apply sm:w-fit leading-3;
+    }
+  }
+
+  .error-text {
+    @apply text-risk-500 text-xs mt-1;
+  }
+}
+
+.services {
+  @apply flex flex-col gap-4;
+
+  .service-block {
+    @apply flex flex-col gap-2;
+
+    &--border:not(:last-child) {
+      @apply border-b border-dashed border-neutral-700;
+    }
+
+    &__selection {
+      @apply px-1.5;
+    }
+
+    &__price {
+      @apply sm:max-w-fit sm:mr-2;
+    }
+  }
+}

@@ -1,0 +1,21 @@
+:host {
+  @apply block rounded-sm px-3 pt-4 pb-5;
+  box-shadow: 0 1px 8px 0 rgba(var(--color-neutral-900), 0.2);
+}
+
+.remove-wrapper {
+  @apply flex;
+}
+
+::ng-deep {
+  .ck.ck-toolbar.ck-toolbar_grouping > .ck-toolbar__items {
+    @apply flex-wrap;
+  }
+  .ck.ck-editor__editable_inline,
+  .ck.ck-toolbar.ck-toolbar_grouping {
+    @apply border-gray-300 border;
+  }
+  .ck.ck-editor__editable_inline {
+    @apply border-t-0;
+  }
+}

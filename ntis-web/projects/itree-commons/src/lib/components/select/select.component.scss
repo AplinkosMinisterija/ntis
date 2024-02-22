@@ -1,0 +1,129 @@
+.combobox {
+  @apply relative w-full;
+
+  &__input {
+    @apply relative flex items-center;
+  }
+
+  &__input-clear-button {
+    @apply bg-neutral-0;
+  }
+
+  &__input-triangle {
+    @apply bg-neutral-0;
+  }
+
+  &__input-control {
+    &:not(:disabled) {
+      @apply cursor-pointer;
+    }
+
+    &::placeholder {
+      @apply text-neutral-500;
+    }
+  }
+
+  &__input-action-wrapper {
+    @apply flex justify-center items-center px-1 gap-1 absolute right-1 pt-px bg-neutral-0;
+  }
+
+  &__listbox {
+    @apply bg-neutral-0 p-0 rounded-md shadow-md border-primary-500 
+    fixed z-50 overflow-hidden border w-[var(--select-width)];
+
+    &-filter {
+      @apply w-full flex justify-between border-0 bg-primary-500 bg-opacity-5 #{!important};
+
+      &-icon {
+        @apply w-8 min-w-8 leading-8 flex justify-center items-center bg-transparent;
+      }
+
+      &-input {
+        @apply py-2 pl-0 border-0 bg-transparent grow  #{!important};
+      }
+
+      &-clear-button {
+        @apply px-5 text-primary-500 hover:text-primary-600;
+      }
+    }
+
+    &-scrollbar {
+      @apply overflow-y-auto scroll-smooth w-full;
+      max-height: Min(12rem, 100vh);
+    }
+
+    &-single-select {
+      @apply p-2 hover:bg-primary-600 hover:text-neutral-0 active:bg-primary-700 cursor-pointer ease-in-out duration-100 select-none;
+    }
+
+    &-multiple-select {
+      li {
+        @apply p-2 hover:bg-neutral-100 ease-in-out duration-100 select-none;
+      }
+
+      &-control {
+        @apply inline-block align-middle cursor-pointer w-5 h-5 #{!important};
+      }
+
+      &-control:checked + &-label {
+        @apply text-neutral-900;
+      }
+
+      &-label {
+        @apply inline-block align-middle cursor-pointer pl-1;
+      }
+
+      &-readonly-icon {
+        @apply w-5 h-5 mr-1 p-0;
+      }
+    }
+
+    &-grouped-multiple dd {
+      @apply pl-3 py-1 hover:bg-neutral-100 text-sm ease-in-out duration-100 
+      select-none cursor-pointer;
+    }
+
+    &-grouped-multiple dt {
+      @apply p-2 select-none bg-neutral-400 text-neutral-400 bg-opacity-10;
+    }
+
+    &-grouped-single dd {
+      @apply pl-5 py-1 hover:bg-primary-600 hover:text-neutral-0 active:bg-primary-700 
+      text-sm ease-in-out duration-100 select-none cursor-pointer;
+    }
+
+    &-grouped-single dt {
+      @apply p-2 select-none bg-neutral-400 text-neutral-400 bg-opacity-10;
+    }
+  }
+
+  &__listbox-filter-icon {
+    @apply text-sm text-neutral-500 group-focus-within:text-primary-500
+    group-focus-within:rotate-90 duration-200;
+  }
+}
+
+.no-record-found {
+  @apply w-full text-center text-neutral-0 text-sm py-px bg-primary-500 select-none;
+}
+
+.enter-search-text {
+  @apply flex justify-center items-center py-5;
+}
+
+.align-inline {
+  @apply flex justify-start items-center;
+}
+
+.risk {
+  @apply bg-risk-50 text-risk-700 border-risk-100 placeholder-risk-700;
+}
+.warning {
+  @apply bg-warning-50 text-warning-700 border-warning-100 placeholder-warning-700;
+}
+.success {
+  @apply bg-success-50 text-success-700 border-success-100 placeholder-success-700;
+}
+.info {
+  @apply bg-info-50 text-info-700 border-info-100 placeholder-info-700;
+}

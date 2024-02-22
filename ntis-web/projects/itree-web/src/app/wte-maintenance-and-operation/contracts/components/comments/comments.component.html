@@ -1,0 +1,51 @@
+<div *ngIf="comments" class="comments">
+  <article
+    *ngFor="let comment of comments"
+    role="comment"
+    class="comment"
+    [ngClass]="{'comment--deletable': canDeleteComment}"
+  >
+    <div class="comment__header">
+      <div class="comment__header--left">
+        <h3 class="comment__author">
+          <fa-icon [icon]="faIconsService.regular.faUser" [fixedWidth]="true"></fa-icon>{{ comment.author }}
+        </h3>
+        - <time>{{ comment.time }}</time>
+      </div>
+      <div *ngIf="canDeleteComment" class="delete-button">
+        <fa-icon
+          (click)="deleteCommentEvent.emit(comment)"
+          [icon]="faIconsService.solid.faTrashCan"
+          [fixedWidth]="true"
+        ></fa-icon>
+      </div>
+    </div>
+    <p class="comment__text">{{ comment.text }}</p>
+  </article>
+</div>
+
+<div class="add-comment">
+  <div *ngIf="!addCommentMode" class="add-comment__comment-mode">
+    <spr-button
+      type="button"
+      className="spr-button-primary"
+      iconStyle="regular"
+      iconName="faComment"
+      (click)="addCommentMode = true"
+      >{{ (translationsReference + '.addComment') | translate}}</spr-button
+    >
+  </div>
+  <ng-container *ngIf="addCommentMode">
+    <spr-form-field [labelText]="(translationsReference + '.commentAction') | translate" labelFor="comment-field">
+      <textarea id="comment-field" rows="8" [(ngModel)]="commentText"></textarea>
+    </spr-form-field>
+    <div class="add-comment__actions">
+      <button type="button" class="spr-button-primary" (click)="handleAddComment()">
+        {{'common.action.add' | translate}}
+      </button>
+      <button type="button" class="ntis-button-link" (click)="addCommentMode = false">
+        {{'common.action.cancel' | translate}}
+      </button>
+    </div>
+  </ng-container>
+</div>

@@ -1,0 +1,31 @@
+:host {
+  @apply h-4 w-4;
+}
+
+.spinner {
+  &__content div {
+    transform-origin: 8px 8px;
+    animation: spinner-loop 1.2s linear infinite;
+  }
+
+  &__content div:after {
+    content: ' ';
+    @apply bg-primary-500 block absolute h-0.5 w-0.5 rounded-full;
+  }
+
+  @for $i from 0 through 11 {
+    &__content div:nth-child(#{$i}) {
+      transform: rotate(($i * 30deg));
+      animation-delay: -1.1 + $i * 0.1s;
+    }
+  }
+}
+
+@keyframes spinner-loop {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}

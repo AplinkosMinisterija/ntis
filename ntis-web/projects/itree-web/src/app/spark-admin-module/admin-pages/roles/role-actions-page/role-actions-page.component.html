@@ -1,0 +1,285 @@
+<spr-content-box [headerText]="translationsReference + '.headerText'">
+  <p-tabMenu [model]="tabMenu" [activeItem]="activeItem" routerLinkActive="menu-link--active">
+    <router-outlet></router-outlet>
+  </p-tabMenu>
+  <span class="top-area">
+    <h2 *ngIf="!userCanRead" class="top-area__cant-read">
+      {{translationsReference + '.userIsNotGrantedToRead' | translate }}
+    </h2>
+    <span *ngIf="userCanRead" class="top-area__granted-list">
+      <h2 class="top-area__granted-list__selected-role">
+        {{translationsReference + '.selectedRole' | translate }}: {{selected_role}}
+      </h2>
+    </span>
+  </span>
+  <!-- SEARCH START -->
+  <div class="spr-browse-actions-wrapper">
+    <spr-browse-search-form [formGroup]="searchForm" [formCode]="formCode" (search)="search(dataTableComponent)">
+      <spr-filter-input
+        filters
+        inputType="number"
+        [maxLength]="5"
+        formControlName="frm_id"
+        [placeholder]="translationsReference + '.searchPlaceholderById' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="20"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        formControlName="frm_code"
+        [placeholder]="translationsReference + '.searchPlaceholderByCode' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="20"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        formControlName="frm_name"
+        [placeholder]="translationsReference + '.searchPlaceholderByName' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="date"
+        formControlName="roa_date_from"
+        [placeholder]="translationsReference + '.roa_date_from' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="date"
+        formControlName="roa_date_to"
+        [placeholder]="translationsReference + '.roa_date_to' | translate"
+      ></spr-filter-input>
+
+      <div buttons class="right-side-actions">
+        <spr-form-field
+          [labelText]="translationsReference + '.defaultRoleForm' | translate"
+          labelFor="default-form"
+          class="default-form-field"
+        >
+          <spr-select
+            id="default-form"
+            [optionData]="defaultFormOptions"
+            [ngModel]="selectedForm"
+            [ngModelOptions]="{standalone: true}"
+            optionLabel="frm_name"
+            [placeholder]="'common.action.select' | translate"
+            [showFilter]="true"
+            (ngModelChange)="tempSelectedForm = $event"
+          ></spr-select>
+        </spr-form-field>
+        <div class="buttons-wrapper">
+          <spr-table-data-export
+            [translation]="translationsReference"
+            [tableColumn]="cols"
+            [tableData]="exportData"
+            [fileName]="translationsReference + '.headerText'"
+            [formParams]="searchForm"
+            (exportAllRecEvent)="loadAllRecords($event, dataTableComponent)"
+          ></spr-table-data-export>
+          <button
+            type="button"
+            class="spr-button-primary"
+            (click)="onSaveSelectedForms()"
+            [disabled]="!userCanCreate && !userCanDelete"
+          >
+            {{'common.action.save' | translate}}
+          </button>
+        </div>
+      </div>
+    </spr-browse-search-form>
+    <!-- SEARCH END -->
+    <!-- SAVE & EXPORT START -->
+  </div>
+  <!-- SAVE & EXPORT END -->
+  <!-- TABLE START -->
+  <p-table
+    [value]="data"
+    [rows]="showRows"
+    [paginator]="data?.length > 0"
+    [rowHover]="true"
+    [autoLayout]="true"
+    [lazy]="true"
+    [totalRecords]="totalRecords"
+    [rowsPerPageOptions]="rowsPerPageOptions"
+    [showFirstLastIcon]="false"
+    [sortOrder]="1"
+    (onLazyLoad)="loadDataLazy($event)"
+    (onPage)="onPageChange()"
+    class="table-responsive"
+  >
+    <!-- HEADER START -->
+    <ng-template pTemplate="header" let-row let-index="rowIndex">
+      <tr>
+        <th>
+          <input
+            type="checkbox"
+            class="spr-checkbox"
+            pTooltip="{{translationsReference + '.tooltipText' | translate }}"
+            (change)="onChangeForms($event)"
+            [value]="'-1'"
+            [(ngModel)]="parentFormSelector"
+            [disabled]="!userCanCreate && !userCanDelete"
+          />
+        </th>
+        <th *ngFor="let col of visibleColumns" pSortableColumn="{{col.field}}">
+          <span class="table-header-col">
+            {{translationsReference + '.'+col.field | translate}}
+            <p-sortIcon field="{{col.field}}" class="table-header-col__icon"></p-sortIcon>
+          </span>
+        </th>
+        <th></th>
+      </tr>
+    </ng-template>
+    -->
+    <!-- HEADER END -->
+    <!-- ROWS START -->
+    <ng-template pTemplate="body" let-row let-index="rowIndex">
+      <tr>
+        <td>
+          <input
+            type="checkbox"
+            class="spr-checkbox"
+            [checked]="row.select"
+            (change)="onChangeForms($event)"
+            [value]="row.frm_id"
+            [disabled]="!userCanCreate && !userCanDelete"
+          />
+        </td>
+        <td
+          *ngFor="let col of visibleColumns"
+          [ngClass]="{'spr-text-right': col.type === dataTypeNumber, 'whitespace-nowrap': col.type === dataTypeDate}"
+        >
+          <span class="p-column-title">{{translationsReference + '.'+col.field | translate}}</span>
+          <span>{{row[col.field]}}</span>
+        </td>
+        <td>
+          <spr-table-rec-actions [actionsList]="rowMenuItems[row.frm_id]"></spr-table-rec-actions>
+        </td>
+      </tr>
+    </ng-template>
+    <!-- ROWS END -->
+    <!-- IF NO RECORD FOUND START -->
+    <ng-template pTemplate="emptymessage" translate>
+      <tr>
+        <td [attr.colspan]="cols.length + 1">
+          <spr-table-no-rec-found></spr-table-no-rec-found>
+        </td>
+      </tr>
+    </ng-template>
+    <!-- IF NO RECORD FOUND END -->
+  </p-table>
+  <!-- TABLE END -->
+
+  <!-- DIALOG START -->
+  <form [formGroup]="form" autocomplete="off">
+    <p-dialog
+      [(visible)]="actionDialog"
+      [style]="{width: '450px', 'z-index': 20, 'top': '2rem', overflow: 'overlay'}"
+      [modal]="true"
+      [header]="(userCanSetFormActions || userCanUpdate) ? ('common.action.edit' | translate) : ('common.action.read' | translate)"
+      styleClass="p-fluid"
+      [closable]="true"
+      [autoZIndex]="false"
+      [draggable]="false"
+      [blockScroll]="true"
+      [contentStyle]="{'overflow': 'visible !important' }"
+      appendTo="body"
+    >
+      <spr-form-field labelText="{{translationsReference + '.frm_id' | translate}}" [isLabelHorizontal]="false">
+        <input type="text" placeholder="frm_id" [formControlName]="'frm_id'" readonly />
+      </spr-form-field>
+      <spr-form-field labelText="{{translationsReference + '.frm_name' | translate}}" [isLabelHorizontal]="false">
+        <input type="text" placeholder="frm_name" [formControlName]="'frm_name'" readonly />
+      </spr-form-field>
+      <spr-form-field
+        labelText="{{translationsReference + '.roa_date_from' | translate}}"
+        [isLabelHorizontal]="false"
+        [mandatory]="true"
+        [inputErrors]="form.controls.roa_date_from.dirty && form.controls.roa_date_from.errors"
+      >
+        <p-calendar
+          [disabled]="!userCanUpdate"
+          [minDate]="minDate"
+          [formControlName]="'roa_date_from'"
+          [firstDayOfWeek]="1"
+          [showButtonBar]="true"
+          appendTo="body"
+          dateFormat="yy-mm-dd"
+          [showIcon]="true"
+        >
+        </p-calendar>
+      </spr-form-field>
+      <spr-form-field
+        labelText="{{translationsReference + '.roa_date_to' | translate}}"
+        [isLabelHorizontal]="false"
+        [mandatory]="false"
+        [inputErrors]="form.controls.roa_date_from.dirty && form.controls.roa_date_to.errors"
+      >
+        <p-calendar
+          [disabled]="!userCanUpdate"
+          [minDate]="minDate"
+          [formControlName]="'roa_date_to'"
+          [firstDayOfWeek]="1"
+          [showButtonBar]="true"
+          [showIcon]="true"
+          dateFormat="yy-mm-dd"
+          appendTo="body"
+        >
+        </p-calendar>
+      </spr-form-field>
+      <spr-form-field-group text="{{translationsReference + '.availableActions'}}">
+        <span *ngIf="availableActionsData.length === 0">
+          <p>{{translationsReference + '.noActions' | translate}}</p>
+        </span>
+        <span *ngIf="availableActionsData.length > 0" class="dialog-checkbox-area">
+          <span *ngIf="availableActionsData.length > 1 && userCanSetFormActions" class="dialog-checkbox-area__wrapper">
+            <input
+              type="checkbox"
+              class="spr-checkbox"
+              (change)="onChangeActions($event)"
+              [value]="'-1'"
+              [(ngModel)]="parentActionSelector"
+              [ngModelOptions]="{standalone: true}"
+            />
+            <label
+              ><small>{{'common.action.checkAll' | translate}}</small></label
+            >
+          </span>
+          <div *ngFor="let action of availableActionsData">
+            <span class="dialog-checkbox-area__wrapper">
+              <input
+                type="checkbox"
+                class="spr-checkbox"
+                [checked]="action.select"
+                (change)="onChangeActions($event)"
+                [value]="action.fra_id"
+                [disabled]="!userCanSetFormActions"
+              />
+              <label for="{{action.fra_id}}">{{action.fra_name}}</label>
+            </span>
+          </div>
+        </span>
+      </spr-form-field-group>
+      <ng-template pTemplate="footer">
+        <span class="dialog-buttons-area">
+          <spr-button
+            className="dialog-buttons-area__btn ntis-button-hollow"
+            iconName="faTimesCircle"
+            (click)="onCancel()"
+          >
+            {{'common.action.cancel' | translate}} </spr-button
+          ><spr-button
+            [disabled]="!userCanUpdate && !userCanSetFormActions"
+            className="dialog-buttons-area__btn spr-button-primary"
+            iconName="faSave"
+            type="submit"
+            (click)="onSaveFormActions()"
+          >
+            {{'common.action.save' | translate}}
+          </spr-button>
+        </span>
+      </ng-template>
+    </p-dialog>
+  </form>
+</spr-content-box>

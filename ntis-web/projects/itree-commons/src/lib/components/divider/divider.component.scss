@@ -1,0 +1,9 @@
+.divider {
+  &__visible {
+    @apply border-b;
+  }
+
+  &__hidden {
+    @apply border-b border-b-transparent;
+  }
+}

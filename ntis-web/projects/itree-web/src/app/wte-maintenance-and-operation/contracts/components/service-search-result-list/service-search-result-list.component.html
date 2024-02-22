@@ -1,0 +1,95 @@
+<ul *ngIf="results" [ngClass]="['spr-form-items-flex', 'result-list']">
+  <ng-container *ngFor="let result of results; trackBy: resultsTrackBy">
+    <li
+      *ngIf="!(result.services.length === 1 
+  && result.services[0].type === ServiceItemType.sewageRemoval 
+  && result.hasCar === DB_BOOLEAN_FALSE)"
+      [ngClass]="['ntis-section-block my-3', 'service-provider']"
+    >
+      <article class="card-content">
+        <header class="provider-info">
+          <h3 class="provider-info__name">{{ result.orgName }}</h3>
+          <div *ngIf="result?.score" class="score-wrapper">
+            <h3 class="provider-info__name">
+              {{(translationsReference + '.score' | translate) + ': ' + result?.score}}
+            </h3>
+            <div class="stars-wrapper">
+              <div *ngFor="let i of [1,2,3,4,5]">
+                <fa-icon
+                  class="flex flex-row"
+                  [icon]="i <= result?.score && result?.score ? faIconsService.fas.faStar : faIconsService.far.faStar"
+                  [ngClass]="i <= result?.score && result?.score ? 'icon-color' : null"
+                  size="xl"
+                ></fa-icon>
+              </div>
+            </div>
+          </div>
+        </header>
+        <ul class="provider-services">
+          <li *ngFor="let service of result.services; trackBy: servicesTrackBy" class="provider-services__item">
+            <section
+              *ngIf="!(service.type === ServiceItemType.sewageRemoval && result.hasCar === DB_BOOLEAN_FALSE)"
+              class="service"
+            >
+              <header class="service__main-info">
+                <h4 class="service__name">
+                  <span class="service__name-text">{{ service.name }}</span>
+                  <spr-button
+                    className="service__expand-button"
+                    iconStyle="solid"
+                    [iconName]="openDetails[result.orgId] === service.id ? 'faAngleUp' : 'faAngleDown'"
+                    (click)="handleToggleDetails(result.orgId, service.id)"
+                  ></spr-button>
+                </h4>
+                <div *ngIf="openDetails[result.orgId] === service.id" class="service__details" @expandFromTop>
+                  <spr-info-line
+                    [name]="(translationsReference + '.phone') | translate"
+                    [value]="service.phone"
+                  ></spr-info-line>
+                  <spr-info-line
+                    [name]="(translationsReference + '.email') | translate"
+                    [value]="service.email"
+                  ></spr-info-line>
+                  <spr-info-line
+                    [name]="(translationsReference + '.serviceCompletionPeriod') | translate"
+                    [value]="service.completionInDays + (service.completionInDaysTo !== 0 ? ' - ' + service.completionInDaysTo : '')"
+                  ></spr-info-line>
+                  <spr-info-line
+                    [name]="(translationsReference + '.serviceDescription') | translate"
+                    textDisplay="editor"
+                    [value]="service.description"
+                  ></spr-info-line>
+                </div>
+              </header>
+              <strong class="service__price"
+                ><span *ngIf="service.priceTo !== 0; else onlyPriceFromBlock">
+                  {{ service.priceFrom }} EUR &#8211; {{ service.priceTo }} EUR</span
+                >
+                <ng-template #onlyPriceFromBlock>
+                  <span>{{ service.priceFrom }} EUR </span></ng-template
+                >
+              </strong>
+              <div class="service__order-wrapper">
+                <button type="button" class="spr-button-primary" (click)="clickOrderService.emit(service.id)">
+                  {{ 'common.action.order' | translate }}
+                </button>
+              </div>
+            </section>
+          </li>
+        </ul>
+        <footer *ngIf="contractsAvailable[result.orgId]" class="service__contract">
+          <strong>{{ (translationsReference + '.contractAvailable') | translate }}</strong>
+          <button type="button" class="spr-button-secondary" (click)="clickRequestContract.emit(result.orgId)">
+            {{ (translationsReference + '.requestForContract') | translate }}
+          </button>
+        </footer>
+      </article>
+    </li>
+  </ng-container>
+  <p
+    *ngIf="results.length === 0 || (results.length > 0 && !this.otherServicesAvailable && !this.providerHasCar)"
+    class="no-results"
+  >
+    {{ (translationsReference +'.noResultsText') | translate }}
+  </p>
+</ul>

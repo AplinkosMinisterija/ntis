@@ -1,0 +1,131 @@
+<spr-content-box [headerText]="translationsReference + '.headerText'" transformingText="uppercase">
+  <div class="spr-browse-actions-wrapper">
+    <spr-browse-search-form [formGroup]="searchForm" [formCode]="formCode" (search)="search(dataTableComponent)">
+      <spr-filter-input
+        filters
+        inputType="number"
+        formControlName="rev_score"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="translationsReference + '.rev_score' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="text"
+        formControlName="rev_comment"
+        [placeholder]="translationsReference + '.rev_comment' | translate"
+      ></spr-filter-input>
+      <spr-select
+        filters
+        formControlName="rev_receiver_read"
+        [optionData]="readMessagesSelection"
+        optionValue="key"
+        optionLabel="display"
+        [placeholder]="translationsReference + '.rev_admin_read' | translate"
+        [advancedFilterParams]="true"
+        optionType="single"
+      >
+      </spr-select>
+      <spr-table-data-export
+        buttons
+        [translation]="translationsReference"
+        [tableColumn]="cols"
+        [tableData]="exportData"
+        [fileName]="translationsReference + '.headerText'"
+        (exportAllRecEvent)="loadAllRecords($event, dataTableComponent)"
+      ></spr-table-data-export>
+    </spr-browse-search-form>
+  </div>
+
+  <p-table
+    [value]="data"
+    responsiveLayout="stack"
+    breakpoint="767px"
+    [lazy]="true"
+    (onLazyLoad)="loadDataLazy($event)"
+    [rows]="showRows"
+    [totalRecords]="totalRecords"
+    [paginator]="data?.length > 0"
+    [rowsPerPageOptions]="rowsPerPageOptions"
+    [showFirstLastIcon]="false"
+    [rowHover]="true"
+  >
+    <ng-template pTemplate="header" let-row>
+      <tr>
+        <ng-container *ngFor="let col of visibleColumns">
+          <th pSortableColumn="{{col.field}}">
+            <span>
+              {{translationsReference + '.' + col.field | translate}} <p-sortIcon field="{{col.field}}"></p-sortIcon
+            ></span>
+          </th>
+        </ng-container>
+        <th>{{'common.generalUse.actions' | translate}}</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row>
+      <tr [ngClass]="{'message-not-read':row.rev_receiver_read === 'N'}">
+        <ng-container *ngFor="let col of visibleColumns">
+          <td>
+            <span class="p-column-title">
+              {{translationsReference + '.' + col.field |translate}}
+            </span>
+
+            <spr-text-truncate
+              *ngIf="col.field === 'rev_comment'  ; else scoreBlock"
+              [text]="row[col.field]"
+              [textLength]="col.textLength"
+              [showHTML]="true"
+              [headerText]="translationsReference+'.'+col.field"
+              [showComponentDialog]="false"
+              (clickedOnMore)="openDialog(row)"
+            ></spr-text-truncate>
+            <ng-template #scoreBlock>
+              <div class="stars-wrapper" [pTooltip]="row[col.field] + '/5'">
+                <div *ngFor="let i of [1,2,3,4,5]">
+                  <fa-icon
+                    class="flex flex-row"
+                    [icon]="i <= row[col.field] && row[col.field] ? faIconsService.fas.faStar : faIconsService.far.faStar"
+                    [ngClass]="i <= row[col.field] && row[col.field] ? 'icon-color' : null"
+                    size="xl"
+                  ></fa-icon>
+                </div></div
+            ></ng-template>
+          </td>
+        </ng-container>
+        <td><ntis-table-row-actions [actions]="row.actions"></ntis-table-row-actions></td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage" translate>
+      <tr>
+        <td [attr.colspan]="cols.length + 1">
+          <spr-table-no-rec-found></spr-table-no-rec-found>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+  <p-dialog
+    styleClass="ntis-dialog"
+    [(visible)]="showReviewDialog"
+    appendTo="body"
+    [draggable]="false"
+    [resizable]="false"
+    [modal]="true"
+    [blockScroll]="true"
+  >
+    <div class="stars-wrapper pb-2">
+      <span>{{(reviewsTranslationsReference + '.score' | translate) + ':'}}</span>
+      <div *ngFor="let i of [1,2,3,4,5]">
+        <fa-icon
+          class="flex flex-row"
+          [icon]="i <= revScore && revScore ? faIconsService.fas.faStar : faIconsService.far.faStar"
+          [ngClass]="i <= revScore && revScore ? 'icon-color' : null"
+          size="xl"
+        ></fa-icon>
+      </div>
+    </div>
+    <spr-info-line
+      class="pb-5"
+      [name]="reviewsTranslationsReference + '.comment' | translate"
+      [value]="revComment"
+    ></spr-info-line>
+  </p-dialog>
+</spr-content-box>

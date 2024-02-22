@@ -1,0 +1,22 @@
+<ng-container *ngIf="loaderService.showLoader.value.show && type === 'spinner'">
+  <section
+    class="spinner-loader"
+    [ngClass]="{'spinner-loader__dimmed': loaderService.showLoader.value.dimmed === true}"
+    @loaderFadeAnimation
+  >
+    <div class="spinner-loader__content-wrapper">
+      <div class="spinner-loader__content">
+        <div *ngFor="let i of divList"></div>
+      </div>
+      <div class="spinner-loader__message" *ngIf="loaderService.showLoader.value.message !== null">
+        <p>{{loaderService.showLoader.value.message}}</p>
+      </div>
+    </div>
+  </section>
+</ng-container>
+
+<ng-container *ngIf="loaderService.showLoader.value.show && type === 'line'">
+  <section class="line-loader" @fadeOutLineLoader>
+    <div class="line-loader__content"></div>
+  </section>
+</ng-container>

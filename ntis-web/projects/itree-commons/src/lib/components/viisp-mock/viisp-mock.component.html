@@ -1,0 +1,58 @@
+<p-dialog
+  header="VIISP testas"
+  [(visible)]="viispMockDialogVisible"
+  (onHide)="viispMockDialogVisibleChange.emit(this.viispMockDialogVisible)"
+  styleClass="w-full md:w-1/2 lg:w-1/4"
+>
+  <form
+    [formGroup]="viispMockForm"
+    (submit)="initViispLoginMock()"
+    class="form-signinneeds-validation"
+    autocomplete="off"
+  >
+    <spr-form-field
+      labelText="Vardas"
+      labelFor="firstName"
+      [mandatory]="true"
+      [inputErrors]="viispMockForm.controls.firstName.touched && viispMockForm.controls.firstName.errors"
+    >
+      <input type="text" name="firstName" id="firstName" formControlName="firstName" />
+    </spr-form-field>
+    <spr-form-field
+      labelText="Pavardė"
+      labelFor="lastName"
+      [mandatory]="true"
+      [inputErrors]="viispMockForm.controls.lastName.touched && viispMockForm.controls.lastName.errors"
+    >
+      <input type="text" name="lastName" id="lastName" formControlName="lastName" />
+    </spr-form-field>
+    <spr-form-field
+      labelText="AK"
+      labelFor="personCode"
+      [mandatory]="true"
+      [inputErrors]="viispMockForm.controls.personCode.touched && viispMockForm.controls.personCode.errors"
+    >
+      <input type="text" name="personCode" id="personCode" formControlName="personCode" />
+    </spr-form-field>
+    <spr-form-field
+      labelText="JA pavadinimas"
+      labelFor="companyName"
+      [mandatory]="false"
+      [inputErrors]="viispMockForm.controls.companyName.touched && viispMockForm.controls.companyName.errors"
+    >
+      <input type="text" name="companyName" id="companyName" formControlName="companyName" />
+    </spr-form-field>
+    <spr-form-field
+      labelText="JA kodas"
+      labelFor="companyCode"
+      [mandatory]="false"
+      [inputErrors]="viispMockForm.controls.companyCode.touched && viispMockForm.controls.companyCode.errors"
+    >
+      <input type="text" name="companyCode" id="companyCode" formControlName="companyCode" />
+    </spr-form-field>
+
+    <button type="submit" class="spr-button-primary block w-full xs:w-auto xs:min-w-32 mx-auto mt-4">
+      {{'pages.login.loginButton' | translate}}
+    </button>
+  </form>
+</p-dialog>

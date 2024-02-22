@@ -1,0 +1,20 @@
+:host {
+  @apply block;
+}
+
+.filter-box {
+  @apply flex flex-col gap-2 p-2 bg-neutral-0 bg-opacity-10 
+  border border-neutral-900 border-opacity-10 rounded-sm shadow;
+
+  &__heading {
+    @apply font-medium text-md;
+  }
+}
+
+.filter-input-wrapper {
+  @apply pt-2;
+}
+
+.remove-wrapper {
+  @apply pt-2 flex justify-center;
+}

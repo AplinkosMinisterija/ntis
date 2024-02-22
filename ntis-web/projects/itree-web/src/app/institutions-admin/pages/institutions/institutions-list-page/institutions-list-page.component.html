@@ -1,0 +1,154 @@
+<spr-content-box headerText="institutionsAdmin.pages.institutionsList.headerText" transformingText="uppercase">
+  <div class="spr-browse-actions-wrapper">
+    <spr-browse-search-form [formGroup]="searchForm" [formCode]="formCode" (search)="search(dataTableComponent)">
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="20"
+        formControlName="org_name"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="formTranslationsReference + '.org_name' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="200"
+        formControlName="org_code"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="formTranslationsReference + '.org_code' | translate"
+      ></spr-filter-input>
+      <spr-select
+        filters
+        formControlName="org_type"
+        [optionData]="orgTypeSelection"
+        optionValue="key"
+        optionLabel="display"
+        [placeholder]="formTranslationsReference + '.org_type' | translate"
+        [advancedFilterParams]="true"
+        optionType="multiple"
+      ></spr-select>
+      <spr-select
+        filters
+        formControlName="municipality"
+        classifierCode="NTIS_MUNICIPALITIES"
+        [placeholder]="formTranslationsReference + '.municipality' | translate"
+        [advancedFilterParams]="true"
+        optionType="multiple"
+        [showFilter]="true"
+      ></spr-select>
+
+      <spr-table-data-export
+        buttons
+        [translation]="formTranslationsReference"
+        [tableColumn]="cols"
+        [tableData]="exportData"
+        [fileName]="formTranslationsReference + '.headerText' "
+        (exportAllRecEvent)="loadAllRecords($event, dataTableComponent)"
+      ></spr-table-data-export>
+
+      <spr-button-add
+        buttons
+        [routerLink]="[RoutingConst.EDIT, RoutingConst.NEW]"
+        [disabled]="!userCanCreate"
+        [pTooltip]="userCanCreate ?  null  : (formTranslationsReference +'.tooltipText' | translate)"
+      ></spr-button-add>
+    </spr-browse-search-form>
+  </div>
+
+  <p-table
+    [value]="data"
+    [lazy]="true"
+    responsiveLayout="stack"
+    breakpoint="767px"
+    (onLazyLoad)="loadDataLazy($event)"
+    [rows]="showRows"
+    [totalRecords]="totalRecords"
+    [paginator]="data?.length > 0"
+    [rowsPerPageOptions]="rowsPerPageOptions"
+    [showFirstLastIcon]="false"
+    [rowHover]="true"
+  >
+    <ng-template pTemplate="header" let-row let-index="rowIndex">
+      <tr>
+        <ng-container *ngFor="let col of visibleColumns">
+          <th pSortableColumn="{{col.field}}">
+            {{formTranslationsReference + '.' + col.field | translate}}
+            <p-sortIcon field="{{col.field}}"></p-sortIcon>
+          </th>
+        </ng-container>
+        <th>{{'common.generalUse.actions' | translate}}</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row let-index="rowIndex">
+      <tr>
+        <ng-container *ngFor="let col of visibleColumns">
+          <td>
+            <span class="p-column-title">
+              {{formTranslationsReference + '.' +col.field | translate}}
+            </span>
+            <span>{{row[col.field]}}</span>
+          </td>
+        </ng-container>
+        <td>
+          <ntis-table-row-actions [actions]="row.actions"></ntis-table-row-actions>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage" translate>
+      <tr>
+        <td [attr.colspan]="cols.length + 1">
+          <spr-table-no-rec-found></spr-table-no-rec-found>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+  <p-dialog
+    [(visible)]="sendInvitationDialog || removeAdminDialog"
+    [closable]="false"
+    [modal]="true"
+    styleClass="w-5/12 flex"
+  >
+    <div class="flex flex-col p-2">
+      <span
+        class="text-center justify-self-center"
+        >{{formTranslationsReference + (sendInvitationDialog ? '.sendInviteText' : removeAdminDialog ? '.removeAdminText' : '') | translate}}</span
+      >
+      <div class="p-5">
+        <spr-info-line
+          [name]="formTranslationsReference + '.institution' | translate"
+          [value]="institution"
+        ></spr-info-line>
+        <spr-info-line [name]="formTranslationsReference + '.userRole' | translate" [value]="userRole"></spr-info-line>
+        <spr-info-line [name]="formTranslationsReference + '.user' | translate" [value]="user"></spr-info-line>
+        <spr-info-line
+          [name]="formTranslationsReference + '.userEmail' | translate"
+          [value]="userEmail"
+        ></spr-info-line>
+      </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+      <div class="spr-form-buttons">
+        <spr-button class="ntis-button-link" (click)="cancel()">
+          {{'common.action.back' | translate}}
+        </spr-button>
+        <spr-button
+          *ngIf="sendInvitationDialog"
+          className="spr-button-primary"
+          iconName="faEnvelopeOpen"
+          (click)="sendEmailRequest()"
+        >
+          {{'common.action.send' | translate}}
+        </spr-button>
+        <spr-button
+          *ngIf="removeAdminDialog"
+          className="spr-button-primary"
+          iconName="faTrashCan"
+          (click)="removeAdmin()"
+        >
+          {{'common.action.removeAdmin' | translate}}
+        </spr-button>
+      </div>
+    </ng-template>
+  </p-dialog>
+</spr-content-box>

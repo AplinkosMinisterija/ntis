@@ -1,0 +1,40 @@
+.comment {
+  @apply flex flex-col gap-1 p-2 
+             border-b border-dashed border-neutral-700;
+
+  &--deletable:hover {
+    @apply hover:bg-neutral-100;
+
+    .delete-button {
+      @apply block;
+    }
+  }
+
+  &__header {
+    @apply flex gap-1 justify-between;
+
+    &--left {
+      @apply flex gap-1;
+    }
+  }
+
+  &__author {
+    @apply font-bold;
+  }
+}
+
+.delete-button {
+  @apply hidden cursor-pointer;
+}
+
+.add-comment {
+  @apply py-6;
+
+  &__comment-mode {
+    @apply flex justify-end;
+  }
+
+  &__actions {
+    @apply flex gap-4;
+  }
+}

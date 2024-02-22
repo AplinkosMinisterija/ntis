@@ -1,0 +1,44 @@
+<section class="address-list">
+  <ul *ngIf="address; else multiRows">
+    <li class="address-list__item">
+      <span class="address-card" type="button">
+        <span class="address-card__item" *ngIf="address.full_address_text">
+          <spr-icon name="house"></spr-icon
+          ><span class="address-card__address-text">{{address.full_address_text}}</span>
+        </span>
+        <span class="address-card__item" *ngIf="address.latitude"
+          ><spr-icon name="location_on"></spr-icon
+          ><span class="address-card__coord-text">{{address.latitude}}, {{address.longitude}}</span>
+        </span>
+        <span class="address-card__item" *ngIf="address.ntr_building_id || address.inv_code">
+          <spr-icon name="maps_home_work"></spr-icon
+          ><span class="address-card__coord-text">{{address.purpose_of_building}} {{address.inv_code}}</span>
+        </span>
+      </span>
+
+      <button type="button" class="address-list__item-button" *ngIf="showRemove" (click)="remove(address)">
+        <spr-icon name="delete" size="20"></spr-icon>
+      </button>
+    </li>
+  </ul>
+</section>
+<ng-template #multiRows>
+  <li class="address-list__item" *ngFor="let row of addressList">
+    <span class="address-card" type="button">
+      <span class="address-card__item" *ngIf="row.full_address_text">
+        <spr-icon name="house"></spr-icon><span class="address-card__address-text">{{row.full_address_text}}</span>
+      </span>
+      <span class="address-card__item" *ngIf="row.latitude"
+        ><spr-icon name="location_on"></spr-icon
+        ><span class="address-card__coord-text">{{row.latitude}}, {{row.longitude}}</span>
+      </span>
+      <span class="address-card__item" *ngIf="row.ntr_building_id || row.inv_code">
+        <spr-icon name="maps_home_work"></spr-icon
+        ><span class="address-card__coord-text">{{row.purpose_of_building}} {{row.inv_code}}</span>
+      </span>
+    </span>
+    <button type="button" class="address-list__item-button" *ngIf="showRemove" (click)="remove(row)">
+      <spr-icon name="delete" size="20"></spr-icon>
+    </button>
+  </li>
+</ng-template>

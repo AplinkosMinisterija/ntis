@@ -1,0 +1,55 @@
+import { AfterContentInit, OnChanges, OnDestroy, QueryList, SimpleChanges, TemplateRef } from '@angular/core';
+import { ControlValueAccessor } from '@angular/forms';
+import { Subject } from 'rxjs';
+import { TemplateDirective } from '../../directives/template.directive';
+import { S2UiTranslationsService } from '../../services/s2-ui-translations.service';
+import * as i0 from "@angular/core";
+export type CheckboxTreeItemChecked = boolean | 'semi';
+export interface CheckboxTreeItem<T = any> {
+    checked?: CheckboxTreeItemChecked;
+    children?: CheckboxTreeItem<T>[];
+    className?: string;
+    disabled?: boolean;
+    extras?: T;
+    hidden?: boolean;
+    key?: string;
+    label: string;
+    open?: boolean;
+    parent?: CheckboxTreeItem<T>[];
+}
+export declare class CheckboxTreeComponent implements OnChanges, AfterContentInit, OnDestroy, ControlValueAccessor {
+    translationsService: S2UiTranslationsService;
+    static readonly S2_TEMPLATE_ITEM_LABEL = "item-label";
+    static getValues<T = never>(items: CheckboxTreeItem<T>[], valueProperty: keyof CheckboxTreeItem<T>, state?: 'checked' | 'uncheked' | 'any'): CheckboxTreeItem<T>[] | unknown[];
+    readonly destroy$: Subject<void>;
+    templatesQueryList: QueryList<TemplateDirective>;
+    itemLabelTemplate: TemplateRef<unknown>;
+    items: CheckboxTreeItem[];
+    showSelectAll: boolean;
+    selectAllText: string;
+    inputsIdPrefix: string;
+    valueProperty: keyof CheckboxTreeItem;
+    selectAllChecked: CheckboxTreeItemChecked;
+    disabled: boolean;
+    touched: boolean;
+    onChange: (value: unknown[] | CheckboxTreeItem[]) => void;
+    onTouched: () => void;
+    constructor(translationsService: S2UiTranslationsService);
+    ngOnChanges(changes: SimpleChanges): void;
+    ngAfterContentInit(): void;
+    ngOnDestroy(): void;
+    writeValue(newValue: unknown[]): void;
+    registerOnChange(fn: (value: unknown[] | CheckboxTreeItem[]) => void): void;
+    registerOnTouched(fn: () => void): void;
+    setDisabledState(isDisabled: boolean): void;
+    markAsTouched(): void;
+    handleSelectAll(event: Event): void;
+    handleCheckboxChange(item: CheckboxTreeItem, event: Event): void;
+    private getValues;
+    private setChildrenCheckedValue;
+    private isItemChecked;
+    private refreshCheckedValues;
+    private updateTemplates;
+    static ɵfac: i0.ɵɵFactoryDeclaration<CheckboxTreeComponent, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<CheckboxTreeComponent, "s2-checkbox-tree", never, { "items": { "alias": "items"; "required": false; }; "showSelectAll": { "alias": "showSelectAll"; "required": false; }; "selectAllText": { "alias": "selectAllText"; "required": false; }; "inputsIdPrefix": { "alias": "inputsIdPrefix"; "required": false; }; "valueProperty": { "alias": "valueProperty"; "required": false; }; }, {}, ["templatesQueryList"], never, true, never>;
+}

@@ -1,0 +1,7 @@
+<section (click)="onClickButton()">
+  <button class="text-primary-500 font-semibold text-left flex items-center gap-2 hover:gap-3 transition-all">
+    {{title}}
+    <fa-icon size="sm" [icon]="faIconsService.fas.faAngleRight"></fa-icon>
+  </button>
+  <p class="text-sm">{{description}}</p>
+</section>

@@ -1,0 +1,51 @@
+.button-wrapper {
+  @apply w-full flex justify-center items-center;
+}
+
+.dialog {
+  @apply fixed top-0 left-0 w-full z-40 h-screen bg-neutral-600 bg-opacity-20;
+
+  &__content {
+    @apply absolute border p-2 z-50 shadow left-1/2 bg-neutral-0 top-1/2 -translate-y-1/2 -translate-x-1/2 w-full max-w-md rounded overflow-y-scroll max-h-[85vh];
+  }
+
+  &__header {
+    @apply flex justify-between items-center border-b mb-1;
+  }
+
+  &__header-title {
+    @apply py-2 font-semibold text-left uppercase;
+  }
+
+  &__list-label {
+    @apply py-2 font-semibold text-left text-sm;
+  }
+}
+.address-wrapper {
+  @apply py-2 text-sm border-b mb-1;
+  span {
+    @apply font-semibold;
+  }
+}
+
+.address-card {
+  @apply flex flex-col w-full text-left py-1 
+  border border-neutral-200 p-2 rounded mb-1 duration-150;
+  &__item {
+    @apply flex justify-start items-center text-neutral-900 gap-1;
+  }
+  &__address-text {
+    @apply text-sm font-medium;
+  }
+  &__coord-text {
+    @apply text-sm italic text-neutral-600;
+  }
+}
+
+.address-active {
+  @apply hover:bg-neutral-100 bg-neutral-50;
+}
+
+.address-inactive {
+  @apply bg-neutral-200;
+}

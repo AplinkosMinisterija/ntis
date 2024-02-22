@@ -1,0 +1,30 @@
+<spr-content-box
+  [headerText]="translationsReference + (data?.facilityModel.rfc_id ? '.headerTextEdit' : '.headerTextCreate')"
+  transformingText="uppercase"
+>
+  <div class="spr-edit-form-wrapper">
+    <spr-edit-form [formGroup]="form" [values]="editFormValues" (submit)="onSubmit($event)" (cancel)="onCancel()">
+      <ng-template sprTemplate="fam_tech_pass">
+        <spr-form-field
+          [labelText]="translationsReference + '.fam_tech_pass' | translate"
+          labelFor="fam_tech_pass"
+          [inputErrors]="form.controls.fam_tech_pass.touched && form.controls.fam_tech_pass.errors"
+        >
+          <input
+            id="fam_tech_pass"
+            type="text"
+            formControlName="fam_tech_pass"
+            [placeholder]="translationsReference + '.fam_tech_pass' | translate"
+            [maxlength]="20"
+          />
+
+          <spr-file-upload-with-progress
+            [uploadedFiles]="uploadedFiles"
+            [fileLimit]="1"
+            acceptedFormat=".doc, .docx, .odt, .pdf, .txt"
+          ></spr-file-upload-with-progress>
+        </spr-form-field>
+      </ng-template>
+    </spr-edit-form>
+  </div>
+</spr-content-box>

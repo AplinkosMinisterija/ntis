@@ -1,0 +1,86 @@
+<div *ngIf="showSelectAll" class="spr-input-with-label checkbox-tree-select-all">
+  <input
+    type="checkbox"
+    [id]="inputsIdPrefix + (inputsIdPrefix && '-') + 'select-all'"
+    [checked]="selectAllChecked"
+    class="spr-checkbox"
+    [ngClass]="{'checkbox-semi-selected': selectAllChecked === 'semi'}"
+    (change)="handleSelectAll($event)"
+  />
+  <label class="checkbox-tree__label" [for]="inputsIdPrefix + (inputsIdPrefix && '-') + 'select-all'">
+    {{translateSelectAllText ? (selectAllText | translate) : selectAllText}}</label
+  >
+</div>
+
+<ul class="checkbox-tree">
+  <ng-container *ngTemplateOutlet="loop; context: {items: items, idPrefix: inputsIdPrefix}"></ng-container>
+</ul>
+
+<ng-template #loop let-items="items" let-idPrefix="idPrefix">
+  <ng-container *ngFor="let item of items; index as i">
+    <li *ngIf="!item.hidden">
+      <ng-container
+        *ngTemplateOutlet="item.children?.length ? groupView : checkboxView; context: {item: item, idPrefix: ''+idPrefix+i}"
+      ></ng-container>
+    </li>
+  </ng-container>
+</ng-template>
+
+<ng-template #groupView let-group="item" let-idPrefix="idPrefix">
+  <div class="spr-input-with-label">
+    <div class="checkbox-tree__button-placeholder">
+      <button type="button" (click)="group.open = !group.open">
+        <fa-icon
+          [icon]="group.open ? faIconsService.solid.faChevronDown : faIconsService.solid.faChevronRight"
+          [fixedWidth]="true"
+          class="checkbox-tree__chevron-icon"
+        ></fa-icon>
+      </button>
+    </div>
+    <input
+      type="checkbox"
+      [id]="idPrefix + '-' + (group.key !== undefined ? group.key : group.label)"
+      class="spr-checkbox"
+      [checked]="group.checked"
+      [disabled]="disabled || group.disabled"
+      [ngClass]="{'checkbox-semi-selected': group.checked === 'semi'}"
+      (change)="handleCheckboxChange(group, $event)"
+    />
+    <label class="checkbox-tree__label" [for]="idPrefix + '-' + (group.key !== undefined ? group.key : group.label)">
+      <ng-container *ngIf="itemLabelTemplate">
+        <ng-container *ngTemplateOutlet="itemLabelTemplate; context: {$implicit: group}"></ng-container>
+      </ng-container>
+      <ng-container *ngIf="!itemLabelTemplate">
+        {{ group.translateLabel ? ((translationsPrefix + group.label) | translate) : group.label }}
+      </ng-container>
+    </label>
+  </div>
+  <ul *ngIf="group.open">
+    <ng-container *ngTemplateOutlet="loop; context: {items: group.children, idPrefix: idPrefix}"></ng-container>
+  </ul>
+</ng-template>
+
+<ng-template #checkboxView let-checkbox="item" let-idPrefix="idPrefix">
+  <div class="spr-input-with-label">
+    <div class="checkbox-tree__button-placeholder"></div>
+    <input
+      type="checkbox"
+      [id]="idPrefix + '-' + (checkbox.key !== undefined ? checkbox.key : checkbox.label)"
+      class="spr-checkbox"
+      [disabled]="disabled || checkbox.disabled"
+      [(ngModel)]="checkbox.checked"
+      (ngModelChange)="handleCheckboxChange(checkbox, null)"
+    />
+    <label
+      class="checkbox-tree__label"
+      [for]="idPrefix + '-' + (checkbox.key !== undefined ? checkbox.key : checkbox.label)"
+    >
+      <ng-container *ngIf="itemLabelTemplate">
+        <ng-container *ngTemplateOutlet="itemLabelTemplate; context: {$implicit: checkbox}"></ng-container>
+      </ng-container>
+      <ng-container *ngIf="!itemLabelTemplate">
+        {{ checkbox.translateLabel ? ((translationsPrefix + checkbox.label) | translate) : checkbox.label }}
+      </ng-container>
+    </label>
+  </div>
+</ng-template>

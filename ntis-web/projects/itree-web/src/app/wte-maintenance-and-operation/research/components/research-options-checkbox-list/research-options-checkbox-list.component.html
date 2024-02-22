@@ -1,0 +1,34 @@
+<ntis-accordion [label]="labelText" [uppercase]="true" [asCard]="true">
+  <div class="research-options-wrapper" *ngIf="selectionDisabled; else selectionsBlock">
+    <ul *ngFor="let researchType of selectedCriteria">
+      <li class="inline-wrapper">
+        <input
+          type="checkbox"
+          [value]="researchType.code"
+          [id]="researchType.code"
+          class="spr-checkbox"
+          [checked]="researchType.isSelected"
+          [disabled]="selectionDisabled"
+        />
+        <label [for]="researchType.code">{{researchType.display}}</label>
+      </li>
+    </ul>
+  </div>
+  <ng-template #selectionsBlock>
+    <div class="research-options-wrapper">
+      <ul *ngFor="let researchType of criteriaSelectionList">
+        <li class="inline-wrapper">
+          <input
+            type="checkbox"
+            [value]="researchType.code"
+            [id]="researchType.code"
+            [checked]="researchType.isSelected"
+            (change)="onCheckboxChange($event, researchType.code)"
+            class="spr-checkbox"
+          />
+          <label [for]="researchType.code">{{researchType.display}}</label>
+        </li>
+      </ul>
+    </div>
+  </ng-template>
+</ntis-accordion>

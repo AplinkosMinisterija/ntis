@@ -1,0 +1,15 @@
+<p-dialog [(visible)]="showDialog" [closable]="false" styleClass="ntis-dialog" [modal]="true"
+  ><span>{{translationsReference + '.noRegisteredFacilities' | translate}}</span>
+  <span class="dialog-footer">
+    <spr-button className="ntis-button-link" (click)="closeDialog.emit()">
+      {{'common.action.back' | translate}} </spr-button
+    ><spr-button
+      className="spr-button-primary"
+      [iconStyle]="'fas'"
+      [iconName]="'faCirclePlus'"
+      (click)="toCreateNewFacility()"
+    >
+      {{'common.action.createNew' | translate}}
+    </spr-button>
+  </span>
+</p-dialog>

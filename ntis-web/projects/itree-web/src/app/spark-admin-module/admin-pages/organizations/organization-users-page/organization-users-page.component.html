@@ -1,0 +1,226 @@
+<spr-content-box headerText="pages.sprOrgUsersList.headerText">
+  <span class="org-users__header">
+    <p class="text-lg font-medium text-center">
+      {{'pages.sprOrgUsersList.selected_org' | translate }}: {{selected_org}}
+    </p>
+  </span>
+  <div class="spr-browse-actions-wrapper">
+    <spr-browse-search-form [formGroup]="searchForm" [formCode]="formCode" (search)="search(dataTableComponent)">
+      <spr-filter-input
+        filters
+        inputType="number"
+        [maxLength]="5"
+        formControlName="usr_id"
+        [placeholder]="formTranslationsReference+'.usr_id' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="text"
+        formControlName="usr_username"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="formTranslationsReference+'.usr_username' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="text"
+        formControlName="usr_email"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="formTranslationsReference+'.usr_email' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="text"
+        formControlName="usr_person_name"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="formTranslationsReference+'.usr_person_name' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="text"
+        formControlName="usr_person_surname"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="formTranslationsReference+'.usr_person_surname' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="date"
+        formControlName="ou_date_from"
+        [placeholder]="formTranslationsReference+'.ou_date_from' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="date"
+        formControlName="ou_date_to"
+        [placeholder]="formTranslationsReference+'.ou_date_to' | translate"
+      ></spr-filter-input>
+
+      <spr-table-data-export
+        buttons
+        [translation]="formTranslationsReference"
+        [tableColumn]="cols"
+        [tableData]="exportData"
+        [fileName]="formTranslationsReference+'.headerText'"
+        [formParams]="searchForm"
+        (exportAllRecEvent)="loadAllRecords($event, dataTableComponent)"
+      ></spr-table-data-export>
+      <button buttons type="button" (click)="saveRecWithConfirmation()" class="spr-button-primary">
+        {{'common.action.save' | translate}}
+      </button>
+    </spr-browse-search-form>
+  </div>
+  <p-table
+    [value]="joinOrgUsr"
+    [autoLayout]="true"
+    [lazy]="true"
+    [rowHover]="true"
+    [paginator]="joinOrgUsr?.length > 0"
+    (onLazyLoad)="loadDataLazy($event)"
+    [rows]="showRows"
+    [totalRecords]="totalRecords"
+    [rowsPerPageOptions]="rowsPerPageOptions"
+    [showFirstLastIcon]="false"
+    [rowHover]="true"
+  >
+    <ng-template pTemplate="header" let-row let-index="rowIndex">
+      <tr>
+        <th>
+          <input
+            type="checkbox"
+            class="spr-checkbox"
+            [(ngModel)]="checked"
+            (ngModelChange)="onCheckboxesChange($event)"
+          />
+        </th>
+        <th *ngFor="let col of visibleColumns" pSortableColumn="{{col.field}}">
+          <span class="table-header-col">
+            {{formTranslationsReference+'.'+col.field | translate}}
+            <p-sortIcon field="{{col.field}}" class="table-header-col__icon"></p-sortIcon>
+          </span>
+        </th>
+        <th></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row let-index="rowIndex">
+      <tr>
+        <td>
+          <input
+            class="spr-checkbox"
+            type="checkbox"
+            [checked]="row.isSelected"
+            (change)="onCheckboxChange($event, row)"
+            [value]="row.uro_id"
+          />
+        </td>
+        <td
+          *ngFor="let col of visibleColumns"
+          [ngClass]="{'spr-text-right': col.type === dataTypeNumber, 'whitespace-nowrap': col.type === dataTypeDate}"
+        >
+          <span class="p-column-title"> {{formTranslationsReference+'.'+col.field | translate}}</span>
+          <span>{{row[col.field]}}</span>
+        </td>
+        <td>
+          <spr-table-rec-actions [actionsList]="rowMenuItems[row.usr_id]"></spr-table-rec-actions>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage" translate>
+      <tr>
+        <td [attr.colspan]="cols.length + 1">
+          <spr-table-no-rec-found></spr-table-no-rec-found>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+  <span class="actions">
+    <spr-button className="ntis-button-link" (click)="onReturn()">
+      {{'common.action.back' | translate}}
+    </spr-button>
+  </span>
+  <form [formGroup]="form" autocomplete="off">
+    <p-dialog
+      (onHide)="hideDialog()"
+      [(visible)]="actionDialog"
+      [style]="{width: '450px', 'z-index': 999, 'top': '2rem', overflow: 'visible'}"
+      [header]="dialogHeader"
+      [modal]="true"
+      [draggable]="false"
+      [closeOnEscape]="true"
+      styleClass="p-fluid"
+      [autoZIndex]="true"
+      [closable]="true"
+      [blockScroll]="true"
+      [contentStyle]="{'overflow': 'visible !important' }"
+      appendTo="body"
+    >
+      <spr-form-field labelText="{{formTranslationsReference+'.usr_id' | translate}}" [isLabelHorizontal]="false">
+        <input type="text" [formControlName]="'usr_id'" [readonly]="true" />
+      </spr-form-field>
+      <spr-form-field labelText="{{formTranslationsReference+'.usr_username' | translate}}" [isLabelHorizontal]="false">
+        <input type="text" [formControlName]="'usr_username'" [readonly]="true" />
+      </spr-form-field>
+      <spr-form-field labelText="{{formTranslationsReference+'.usr_email' | translate}}" [isLabelHorizontal]="false">
+        <input type="text" [formControlName]="'usr_email'" [readonly]="true" />
+      </spr-form-field>
+      <spr-form-field
+        labelText="{{formTranslationsReference+'.usr_person_name' | translate}}"
+        [isLabelHorizontal]="false"
+      >
+        <input type="text" [formControlName]="'usr_person_name'" [readonly]="true" />
+      </spr-form-field>
+      <spr-form-field
+        labelText="{{formTranslationsReference+'.usr_person_surname' | translate}}"
+        [isLabelHorizontal]="false"
+      >
+        <input type="text" [formControlName]="'usr_person_surname'" [readonly]="true" />
+      </spr-form-field>
+
+      <spr-form-field
+        labelText="{{formTranslationsReference+'.ou_date_from' | translate}}"
+        [isLabelHorizontal]="false"
+        [inputErrors]="form.controls.ou_date_from.dirty && form.controls.ou_date_from.errors"
+        [mandatory]="userCanUpdate"
+      >
+        <p-calendar
+          (onSelect)="updateDateRestriction()"
+          (onClearClick)="updateDateRestriction()"
+          [formControlName]="'ou_date_from'"
+          [firstDayOfWeek]="1"
+          [showButtonBar]="true"
+          appendTo="body"
+          [showIcon]="true"
+          dateFormat="yy-mm-dd"
+          [disabled]="!userCanUpdate"
+        >
+        </p-calendar>
+      </spr-form-field>
+      <spr-form-field
+        labelText="{{formTranslationsReference+'.ou_date_to' | translate}}"
+        [isLabelHorizontal]="false"
+        [mandatory]="false"
+        [inputErrors]="form.controls.ou_date_to.dirty && form.controls.ou_date_to.errors"
+      >
+        <p-calendar
+          [formControlName]="'ou_date_to'"
+          [firstDayOfWeek]="1"
+          [showButtonBar]="true"
+          appendTo="body"
+          [showIcon]="true"
+          dateFormat="yy-mm-dd"
+          [minDate]="minDate"
+          [disabled]="!userCanUpdate"
+        >
+        </p-calendar>
+      </spr-form-field>
+      <ng-template *ngIf="userCanUpdate" pTemplate="footer">
+        <span class="dialog-footer"
+          ><spr-button className="ntis-button-hollow" iconStyle="far" iconName="faCircleXmark" (click)="onCancel()">
+            {{'common.action.cancel' | translate}}
+          </spr-button>
+          <spr-button className="spr-button-primary" iconName="faSave" (click)="saveDate(ou_id+'')" type="submit">
+            {{'common.action.save' | translate}}
+          </spr-button>
+        </span>
+      </ng-template>
+    </p-dialog>
+  </form>
+</spr-content-box>

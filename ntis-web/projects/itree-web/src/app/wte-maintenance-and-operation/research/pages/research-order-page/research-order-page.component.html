@@ -1,0 +1,525 @@
+<spr-content-box
+  [headerText]="headerString !== undefined ? translationsReference + headerString : '' "
+  transformingText="uppercase"
+>
+  <div class="spr-edit-form-wrapper" *ngIf="!enterResults; else enterResultsBlock">
+    <ntis-accordion [label]="translationsReference+'.legendServiceInfo' | translate" [uppercase]="true" [asCard]="true">
+      <spr-info-line [name]="translationsReference + '.created' | translate" [value]="ordCreatedStr"></spr-info-line>
+      <spr-info-line
+        [name]="translationsReference + '.ord_id' | translate"
+        [value]="data?.status ? ordId : null "
+      ></spr-info-line>
+      <spr-info-line
+        [redText]="data?.statusClsf === orderStatus.cancelled || data?.statusClsf === orderStatus.rejected"
+        [name]="translationsReference + '.state' | translate"
+        [value]="data?.status"
+      ></spr-info-line>
+      <div class="order-actions-buttons" *ngIf="data?.statusClsf === orderStatus.submitted && userIsOwner">
+        <spr-button
+          className="ntis-button-hollow"
+          iconStyle="far"
+          iconName="faCircleXmark"
+          iconClassName="text-2xl"
+          (click)="cancelOrder()"
+          >{{ 'common.action.cancelOrder' | translate }}</spr-button
+        >
+      </div>
+      <div class="order-actions-buttons" *ngIf="data?.statusClsf === orderStatus.submitted  && userIsLab">
+        <spr-button
+          className="ntis-button-hollow"
+          iconStyle="far"
+          iconName="faCircleXmark"
+          iconClassName="text-2xl"
+          (click)="rejectOrder()"
+          >{{ 'common.action.rejectOrder' | translate }}</spr-button
+        >
+
+        <spr-button
+          className="spr-button-primary"
+          iconStyle="fas"
+          iconName="faCheckCircle"
+          iconClassName="text-2xl"
+          (click)="confirmOrder()"
+          >{{ 'common.action.confirmOrder' | translate }}</spr-button
+        >
+      </div>
+    </ntis-accordion>
+    <spr-form-field-group [text]="translationsReference + '.review'" *ngIf="userIsOwner">
+      <spr-button
+        *ngIf="data?.revId && data?.revScore === null && userIsOwner"
+        className="spr-button-primary"
+        iconStyle="far"
+        iconName="faStar"
+        iconClassName="text-2xl"
+        (click)="navigateToReviewForm()"
+        >{{ 'common.action.addReview' | translate }}</spr-button
+      >
+      <div *ngIf="data?.revId && data?.revScore !== null && userIsOwner">
+        <div class="stars-wrapper">
+          <div *ngFor="let i of [1,2,3,4,5]">
+            <fa-icon
+              class="flex flex-row"
+              [icon]="i <= data?.revScore && data?.revScore ? faIconsService.fas.faStar : faIconsService.far.faStar"
+              [ngClass]="i <= data?.revScore && data?.revScore ? 'icon-color' : null"
+              size="xl"
+            ></fa-icon>
+          </div>
+        </div>
+        <div class="flex flex-row">
+          <spr-text-truncate
+            [text]="data?.revComment"
+            [textLength]="85"
+            [headerText]="reviewsTranslationsReference + '.comment'"
+            [showComponentDialog]="false"
+            (clickedOnMore)="showReviewDialog = true"
+          ></spr-text-truncate>
+        </div>
+      </div>
+    </spr-form-field-group>
+    <ntis-wtf-info [data]="data?.facility"></ntis-wtf-info>
+
+    <div *ngIf="userIsOwner; else detailsForLab">
+      <ntis-service-provider-info
+        [name]="data?.orgName"
+        [email]="data?.orgEmail"
+        [phone]="data?.orgPhone"
+      ></ntis-service-provider-info>
+
+      <app-research-options-checkbox-list
+        *ngIf="data?.statusClsf !== orderStatus.finished"
+        [labelText]="translationsReference+'.research' | translate"
+        [selectedCriteria]="data?.selectedCriteria"
+      ></app-research-options-checkbox-list>
+      <ntis-accordion [label]="translationsReference + '.researchInfo' | translate" [uppercase]="true" [asCard]="true">
+        <div *ngIf="data?.statusClsf !== orderStatus.finished; else finishedOrderBlock">
+          <ng-container *ngIf="data?.statusClsf === orderStatus.confirmed">
+            <spr-info-line
+              [name]="translationsReference + '.completionEstimate' | translate"
+              [value]="completionEstimateStr ? completionEstimateStr : '-'"
+            ></spr-info-line>
+            <spr-info-line
+              [name]="translationsReference + '.responsiblePerson' | translate"
+              [value]="data?.responsiblePerson ? data?.responsiblePerson : '-'"
+            ></spr-info-line>
+          </ng-container>
+          <spr-info-line
+            [name]="translationsReference + '.requestedDateFrom' | translate"
+            [value]="requestedDateFromStr ? requestedDateFromStr : '-'"
+          ></spr-info-line>
+          <spr-info-line
+            [name]="translationsReference + '.requestedDateTo' | translate"
+            [value]="requestedDateToStr ? requestedDateToStr : '-'"
+          ></spr-info-line>
+          <spr-info-line
+            [name]="translationsReference + '.comment' | translate"
+            [value]="data?.comment ? data?.comment : '-'"
+          ></spr-info-line>
+        </div>
+        <ng-template #finishedOrderBlock>
+          <spr-info-line
+            [name]="translationsReference + '.sampleDate' | translate"
+            [value]="sampleDateStr ? sampleDateStr : '-'"
+          ></spr-info-line>
+          <spr-info-line
+            [name]="translationsReference + '.researchDate' | translate"
+            [value]="researchDateStr ? researchDateStr : '-'"
+          ></spr-info-line>
+          <spr-info-line
+            [name]="translationsReference + '.resultsDate' | translate"
+            [value]="resultsDateStr ? resultsDateStr: '-'"
+          ></spr-info-line>
+        </ng-template>
+      </ntis-accordion>
+      <ntis-accordion
+        [label]="translationsReference + '.ordererComment' | translate"
+        [uppercase]="true"
+        [asCard]="true"
+        *ngIf="data?.comment && data?.statusClsf === orderStatus.finished && data?.createdInNtis !== DB_BOOLEAN_FALSE && data?.createdInNtis !== 'I'"
+      >
+        <span>{{data?.comment}}</span>
+      </ntis-accordion>
+    </div>
+
+    <ng-template #detailsForLab>
+      <app-research-options-checkbox-list
+        *ngIf="data?.statusClsf !== orderStatus.finished"
+        [labelText]="translationsReference+'.research' | translate"
+        [selectedCriteria]="data?.selectedCriteria"
+      ></app-research-options-checkbox-list>
+
+      <ntis-accordion
+        [label]="translationsReference + '.ordererDetails' | translate"
+        [uppercase]="true"
+        [asCard]="true"
+      >
+        <spr-info-line
+          [name]="translationsReference + '.orderer' | translate"
+          [value]="data?.ordererName"
+        ></spr-info-line>
+        <spr-info-line
+          [name]="translationsReference + '.phone' | translate"
+          [value]="data?.ordererPhone"
+        ></spr-info-line>
+        <spr-info-line
+          [name]="translationsReference + '.email' | translate"
+          [value]="data?.ordererEmail"
+        ></spr-info-line>
+        <spr-info-line
+          [name]="translationsReference + '.requestedDateFrom' | translate"
+          [value]="requestedDateFromStr ? requestedDateFromStr : '-'"
+        ></spr-info-line>
+        <spr-info-line
+          [name]="translationsReference + '.requestedDateTo' | translate"
+          [value]="requestedDateToStr ? requestedDateToStr : '-'"
+        ></spr-info-line>
+        <spr-info-line
+          [name]=" (data?.createdInNtis === DB_BOOLEAN_FALSE || data?.createdInNtis === 'I') ?(translationsReference + '.labComment' | translate) : (translationsReference + '.ordererComment' | translate) "
+          [value]="data?.comment ? data?.comment : '-'"
+        ></spr-info-line>
+      </ntis-accordion>
+      <ntis-accordion
+        [label]="translationsReference + '.researchInfo' | translate"
+        [uppercase]="true"
+        [asCard]="true"
+        *ngIf="data?.statusClsf === orderStatus.finished"
+      >
+        <div class="results-form-wrapper">
+          <spr-info-line
+            [name]="translationsReference + '.sampleDate' | translate"
+            [value]="sampleDateStr ? sampleDateStr : '-'"
+          ></spr-info-line>
+          <spr-info-line
+            [name]="translationsReference + '.samplePerson' | translate"
+            [value]="data?.samplePerson"
+          ></spr-info-line>
+          <spr-info-line
+            [name]="translationsReference + '.researchDate' | translate"
+            [value]="researchDateStr ? researchDateStr : '-'"
+          ></spr-info-line>
+          <spr-info-line
+            [name]="translationsReference + '.researchPerson' | translate"
+            [value]="data?.researchPerson"
+          ></spr-info-line>
+          <spr-info-line
+            [name]="translationsReference + '.resultsDate' | translate"
+            [value]="resultsDateStr ? resultsDateStr: '-'"
+          ></spr-info-line>
+          <spr-info-line
+            [name]="translationsReference + '.resultsPerson' | translate"
+            [value]="data?.resultsPerson"
+          ></spr-info-line>
+        </div>
+      </ntis-accordion>
+    </ng-template>
+    <ntis-accordion
+      *ngIf="(data?.statusClsf === orderStatus.cancelled || data?.statusClsf === orderStatus.rejected) && data?.rejectionReason"
+      [label]="data?.statusClsf === orderStatus.cancelled ? (translationsReference + '.cancellationLegend' | translate) : (translationsReference + '.rejectionLegend' | translate)"
+      [uppercase]="true"
+      [asCard]="true"
+    >
+      <div class="info-wrapper">
+        <span>{{data?.rejectionReason}}</span>
+      </div>
+    </ntis-accordion>
+    <ntis-accordion
+      *ngIf="data?.statusClsf === orderStatus.confirmed && userIsLab"
+      [label]="translationsReference + '.researchInfo' | translate"
+      [uppercase]="true"
+      [asCard]="true"
+    >
+      <div class="research-info-wrapper">
+        <spr-info-line
+          [name]="translationsReference + '.completionEstimate' | translate"
+          [value]="completionEstimateStr ? completionEstimateStr : '-'"
+        ></spr-info-line>
+        <spr-info-line
+          [name]="translationsReference + '.responsiblePerson' | translate"
+          [value]="data?.responsiblePerson ? data?.responsiblePerson : '-'"
+        ></spr-info-line>
+      </div>
+    </ntis-accordion>
+    <ntis-accordion
+      [label]="translationsReference + '.researchResults' | translate"
+      [uppercase]="true"
+      [asCard]="true"
+      *ngIf="data?.statusClsf === orderStatus.finished"
+    >
+      <div *ngFor="let item of data?.results">
+        <app-research-criteria-result-info
+          [data]="item"
+          [editMode]="false"
+          [submit]="submit"
+        ></app-research-criteria-result-info>
+      </div>
+      <div class="info-wrapper">
+        <span
+          ><strong>{{translationsReference + '.researchComments' | translate}}:</strong>
+          <span class="info-wrapper__comment-line">{{data?.researchComments ? data.researchComments: '-' }}</span></span
+        >
+      </div>
+      <div *ngIf="data?.resultsFile">
+        <button type="button" class="ntis-button-link" (click)="fileUploadService.downloadFile(data.resultsFile)">
+          {{ data.resultsFile.fil_name }}
+        </button>
+      </div>
+    </ntis-accordion>
+  </div>
+  <ng-template #enterResultsBlock>
+    <div *ngIf="userIsLab" class="spr-edit-form-wrapper">
+      <ntis-accordion
+        [label]="translationsReference+'.legendServiceInfo' | translate"
+        [uppercase]="true"
+        [asCard]="true"
+      >
+        <spr-info-line [name]="translationsReference + '.created' | translate" [value]="ordCreatedStr"></spr-info-line>
+        <spr-info-line
+          [name]="translationsReference + '.ord_id' | translate"
+          [value]="data?.status ? ordId : null "
+        ></spr-info-line>
+        <spr-info-line
+          [redText]="data?.statusClsf === orderStatus.cancelled || data?.statusClsf === orderStatus.rejected"
+          [name]="translationsReference + '.state' | translate"
+          [value]="data?.status"
+        ></spr-info-line>
+      </ntis-accordion>
+
+      <app-research-options-checkbox-list
+        [labelText]="translationsReference+'.research' | translate"
+        [selectedCriteria]="data?.selectedCriteria"
+      ></app-research-options-checkbox-list>
+
+      <ntis-accordion
+        [label]="translationsReference + '.ordererDetails' | translate"
+        [uppercase]="true"
+        [asCard]="true"
+      >
+        <spr-info-line
+          [name]="translationsReference + '.orderer' | translate"
+          [value]="data?.ordererName"
+        ></spr-info-line>
+        <spr-info-line
+          [name]="translationsReference + '.phone' | translate"
+          [value]="data?.ordererPhone"
+        ></spr-info-line>
+        <spr-info-line
+          [name]="translationsReference + '.email' | translate"
+          [value]="data?.ordererEmail"
+        ></spr-info-line>
+        <spr-info-line
+          [name]="translationsReference + '.requestedDateFrom' | translate"
+          [value]="requestedDateFromStr ? requestedDateFromStr : '-'"
+        ></spr-info-line>
+        <spr-info-line
+          [name]="translationsReference + '.requestedDateTo' | translate"
+          [value]="requestedDateToStr ? requestedDateToStr : '-'"
+        ></spr-info-line>
+      </ntis-accordion>
+      <ntis-accordion
+        [label]="data?.createdInNtis === DB_BOOLEAN_FALSE ? (translationsReference + '.labComment' | translate): (translationsReference + '.ordererComment' | translate)"
+        [uppercase]="true"
+        [asCard]="true"
+        *ngIf="data?.comment && data?.statusClsf !== orderStatus.finished"
+      >
+        <span>{{data?.comment}}</span>
+      </ntis-accordion>
+      <form [formGroup]="resultsForm" autocomplete="off">
+        <ntis-accordion
+          [label]="translationsReference + '.researchInfo' | translate"
+          [uppercase]="true"
+          [asCard]="true"
+        >
+          <div class="results-form-wrapper">
+            <spr-info-line
+              [name]="translationsReference + '.estimatedArrival' | translate"
+              [value]="completionEstimateStr"
+            ></spr-info-line>
+            <spr-info-line
+              [name]="translationsReference + '.responsiblePerson' | translate"
+              [value]="data?.responsiblePerson"
+            ></spr-info-line>
+            <spr-form-field
+              [labelText]="translationsReference + '.sampleDate' | translate"
+              labelFor="sampleDate"
+              [inputErrors]="resultsForm.controls.sampleDate.touched && resultsForm.controls.sampleDate.errors"
+              [mandatory]="true"
+            >
+              <p-calendar
+                appendTo="body"
+                inputId="sampleDate"
+                formControlName="sampleDate"
+                [maxDate]="minDate"
+                [showTime]="false"
+                [showIcon]="true"
+              ></p-calendar>
+            </spr-form-field>
+            <spr-form-field
+              [labelText]="translationsReference + '.samplePerson' | translate"
+              labelFor="samplePerson"
+              [inputErrors]="resultsForm.controls.samplePerson.touched && resultsForm.controls.samplePerson.errors"
+              [mandatory]="true"
+            >
+              <input type="text" formControlName="samplePerson" name="samplePerson" id="samplePerson" />
+            </spr-form-field>
+
+            <spr-form-field
+              [labelText]="translationsReference + '.researchDate' | translate"
+              labelFor="researchDate"
+              [inputErrors]="resultsForm.controls.researchDate.touched && resultsForm.controls.researchDate.errors"
+              [mandatory]="true"
+            >
+              <p-calendar
+                appendTo="body"
+                inputId="researchDate"
+                formControlName="researchDate"
+                [maxDate]="minDate"
+                [showTime]="false"
+                [showIcon]="true"
+                [minDate]="defaultResearchDate"
+                [defaultDate]="defaultResearchDate"
+              ></p-calendar>
+            </spr-form-field>
+            <spr-form-field
+              [labelText]="translationsReference + '.researchPerson' | translate"
+              labelFor="researchPerson"
+              [inputErrors]="resultsForm.controls.researchPerson.touched && resultsForm.controls.researchPerson.errors"
+              [mandatory]="true"
+            >
+              <input type="text" formControlName="researchPerson" name="researchPerson" id="researchPerson" />
+            </spr-form-field>
+          </div>
+        </ntis-accordion>
+
+        <ntis-accordion
+          [label]="translationsReference + '.researchResults' | translate"
+          [uppercase]="true"
+          [asCard]="true"
+        >
+          <div *ngFor="let item of data?.results">
+            <app-research-criteria-result-info
+              [data]="item"
+              [editMode]="true"
+              [submit]="submit"
+            ></app-research-criteria-result-info>
+          </div>
+          <spr-form-field
+            [labelText]="translationsReference + '.researchComments' | translate"
+            [isLabelHorizontal]="false"
+            labelFor="researchComments"
+            [inputErrors]="resultsForm.controls.researchComments.touched && resultsForm.controls.researchComments.errors"
+          >
+            <textarea name="researchComments" id="researchComments" formControlName="researchComments"></textarea>
+          </spr-form-field>
+          <spr-file-upload-with-progress
+            [uploadedFiles]="uploadedFiles"
+            [multiple]="false"
+            [disabled]="disabledUpload"
+            (fileUpload)="onFileUpload()"
+            (fileToDelete)="onDeleteFile($event)"
+            acceptedFormat=".doc, .docx., .odt., .pdf"
+          ></spr-file-upload-with-progress>
+        </ntis-accordion>
+      </form>
+    </div>
+  </ng-template>
+  <div class="spr-form-buttons">
+    <spr-button type="button" class="ntis-button-link" (click)="onCancel()">
+      {{'common.action.back' | translate}}
+    </spr-button>
+    <spr-button
+      *ngIf="!enterResults && data?.statusClsf === orderStatus.confirmed && userIsLab"
+      type="button"
+      class="spr-button-primary"
+      iconStyle="fas"
+      iconName="faSave"
+      (click)="showEnterResults()"
+    >
+      {{translationsReference + '.enterResults' | translate}}
+    </spr-button>
+    <spr-button
+      *ngIf="enterResults && userIsLab"
+      type="button"
+      class="spr-button-primary"
+      (click)="updateOrder()"
+      iconStyle="fas"
+      iconName="faSave"
+    >
+      {{ 'common.action.finishOrder' | translate}}
+    </spr-button>
+  </div>
+
+  <p-dialog [(visible)]="showDialog">
+    <div class="dialog-wrapper">
+      <span>{{dialogText}}</span>
+      <form [formGroup]="form" autocomplete="off">
+        <spr-form-field
+          [labelText]="reasonLabel"
+          [isLabelHorizontal]="false"
+          labelFor="rejectionReason"
+          [inputErrors]="form.controls.rejectionReason.touched && form.controls.rejectionReason.errors"
+          *ngIf="changedStatus !== orderStatus.confirmed"
+        >
+          <textarea name="rejectionReason" id="rejectionReason" formControlName="rejectionReason"></textarea>
+        </spr-form-field>
+
+        <spr-form-field
+          *ngIf="changedStatus !== orderStatus.rejected && changedStatus !== orderStatus.cancelled"
+          [labelText]="translationsReference + '.completionEstimate' | translate"
+          labelFor="completionEstimate"
+        >
+          <p-calendar
+            appendTo="body"
+            inputId="completionEstimate"
+            formControlName="completionEstimate"
+            [minDate]="minDate"
+            [showTime]="true"
+            [showIcon]="true"
+          ></p-calendar>
+        </spr-form-field>
+
+        <spr-form-field
+          *ngIf="changedStatus !== orderStatus.rejected && changedStatus !== orderStatus.cancelled"
+          [labelText]="translationsReference + '.responsiblePerson' | translate"
+          labelFor="responsiblePerson"
+          [inputErrors]="form.controls.responsiblePerson.touched && form.controls.responsiblePerson.errors"
+        >
+          <input type="text" formControlName="responsiblePerson" name="responsiblePerson" id="responsiblePerson" />
+        </spr-form-field>
+
+        <div class="spr-form-buttons">
+          <spr-button class="spr-button-link" (click)="showDialog = false">
+            {{'common.action.back' | translate}}
+          </spr-button>
+          <spr-button className="spr-button-primary" type="submit" (click)="updateOrder()">
+            {{ dialogButtonString }}
+          </spr-button>
+        </div>
+      </form>
+    </div>
+  </p-dialog>
+  <p-dialog
+    styleClass="ntis-dialog"
+    [(visible)]="showReviewDialog"
+    appendTo="body"
+    [draggable]="false"
+    [resizable]="false"
+    [modal]="true"
+    [blockScroll]="true"
+  >
+    <div class="stars-wrapper pb-2">
+      <span>{{(reviewsTranslationsReference + '.score' | translate) + ':'}}</span>
+      <div *ngFor="let i of [1,2,3,4,5]">
+        <fa-icon
+          class="flex flex-row"
+          [icon]="i <= data?.revScore && data?.revScore ? faIconsService.fas.faStar : faIconsService.far.faStar"
+          [ngClass]="i <= data?.revScore && data?.revScore ? 'icon-color' : null"
+          size="xl"
+        ></fa-icon>
+      </div>
+    </div>
+    <spr-info-line
+      class="pb-5"
+      [name]="reviewsTranslationsReference + '.comment' | translate"
+      [value]="data?.revComment"
+    ></spr-info-line>
+  </p-dialog>
+</spr-content-box>

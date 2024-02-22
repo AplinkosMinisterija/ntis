@@ -1,0 +1,31 @@
+<spr-content-box [headerText]="formTranslationsReference+'.headerText'" transformingText="uppercase">
+  <h2 class="section-header">{{ (formTranslationsReference + '.chooseTheme') | translate }}</h2>
+
+  <div class="search-form-wrapper">
+    <spr-browse-search-form
+      [formGroup]="searchForm"
+      (search)="search(dataTableComponent)"
+      [detailedSearchEnabled]="false"
+    >
+    </spr-browse-search-form>
+  </div>
+  <p-table
+    [value]="data"
+    [lazy]="true"
+    [rowHover]="true"
+    (onLazyLoad)="loadDataLazy($event)"
+    [rows]="showRows"
+    [totalRecords]="totalRecords"
+    [paginator]="data?.length > 0"
+    [rowsPerPageOptions]="rowsPerPageOptions"
+    [showFirstLastIcon]="false"
+    responsiveLayout="stack"
+  >
+    <ng-template pTemplate="body" let-row>
+      <ntis-faq-theme [specificTheme]="row"></ntis-faq-theme>
+    </ng-template>
+    <ng-template pTemplate="emptymessage" translate>
+      <spr-table-no-rec-found></spr-table-no-rec-found>
+    </ng-template>
+  </p-table>
+</spr-content-box>

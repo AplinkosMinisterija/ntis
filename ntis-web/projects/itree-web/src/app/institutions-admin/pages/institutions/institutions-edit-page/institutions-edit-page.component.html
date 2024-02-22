@@ -1,0 +1,32 @@
+<spr-content-box
+  [headerText]="data?.org_id ? 'institutionsAdmin.pages.institutionsEdit.headerTextEdit' : 'institutionsAdmin.pages.institutionsEdit.headerTextCreate'"
+  transformingText="uppercase"
+>
+  <div class="spr-edit-form-wrapper">
+    <spr-edit-form [formGroup]="form" [values]="editFormValues" (submit)="onSubmit($event)" (cancel)="onCancel()">
+      <ng-template sprTemplate="org_code">
+        <spr-form-field
+          [labelText]="translationsReference + '.org_code' | translate"
+          labelFor="org_code"
+          [mandatory]="true"
+          [inputErrors]="form.controls.org_code.touched && form.controls.org_code.errors"
+        >
+          <input
+            id="org_code"
+            type="text"
+            formControlName="org_code"
+            (keypress)="onKeypressFilterChar($event)"
+            [maxlength]="9"
+            [minlength]="9"
+          />
+        </spr-form-field>
+      </ng-template>
+      <ng-template sprTemplate="sendInvitation"
+        ><spr-form-field
+          ><input class="spr-checkbox" type="checkbox" formControlName="sendInvitation" [(ngModel)]="checked" />
+          <label class="checkbox-label">{{ translationsReference + '.sendInvitationLabel' | translate }}</label>
+        </spr-form-field></ng-template
+      >
+    </spr-edit-form>
+  </div>
+</spr-content-box>

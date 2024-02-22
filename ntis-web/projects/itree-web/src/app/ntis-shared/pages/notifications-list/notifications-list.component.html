@@ -1,0 +1,122 @@
+<spr-content-box [headerText]="translationsReference + '.headerText'" transformingText="uppercase">
+  <div class="spr-browse-actions-wrapper">
+    <spr-browse-search-form [formGroup]="searchForm" [formCode]="formCode" (search)="search(dataTableComponent)">
+      <spr-select
+        *ngIf="isImportantOptions.length > 0"
+        filters
+        formControlName="is_important"
+        [optionData]="isImportantOptions"
+        optionLabel="label"
+        optionValue="value"
+        optionType="multiple"
+        [advancedFilterParams]="true"
+        [placeholder]="translationsReference + '.is_important' | translate"
+      ></spr-select>
+      <spr-select
+        *ngIf="isReadOptions.length > 0"
+        filters
+        formControlName="not_read"
+        [optionData]="isReadOptions"
+        optionLabel="label"
+        optionValue="value"
+        optionType="multiple"
+        [advancedFilterParams]="true"
+        [placeholder]="translationsReference + '.all' | translate"
+      ></spr-select>
+      <spr-filter-input
+        filters
+        inputType="datetime"
+        [maxLength]="30"
+        formControlName="ntf_creation_date"
+        [placeholder]="translationsReference + '.ntf_creation_date' | translate"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="30"
+        formControlName="ntf_title"
+        [placeholder]="translationsReference + '.ntf_title' | translate"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="200"
+        formControlName="ntf_message"
+        [placeholder]="translationsReference + '.ntf_message' | translate"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+      ></spr-filter-input>
+      <spr-table-data-export
+        buttons
+        [translation]="translationsReference"
+        [tableColumn]="cols"
+        [tableData]="exportData"
+        [fileName]="translationsReference + '.headerText'"
+        (exportAllRecEvent)="loadAllRecords($event, dataTableComponent)"
+      ></spr-table-data-export>
+      <fa-icon iconName="faTimes" iconStyle="fas"></fa-icon>
+    </spr-browse-search-form>
+  </div>
+  <p-table
+    [value]="data"
+    [autoLayout]="true"
+    [lazy]="true"
+    (onLazyLoad)="loadDataLazy($event)"
+    [rows]="showRows"
+    [totalRecords]="totalRecords"
+    [paginator]="data?.length > 0"
+    [rowsPerPageOptions]="rowsPerPageOptions"
+    [showFirstLastIcon]="false"
+    [rowHover]="true"
+    responsiveLayout="stack"
+    breakpoint="767px"
+  >
+    <ng-template pTemplate="header" let-row>
+      <tr>
+        <th *ngFor="let col of cols" pSortableColumn="{{col.field}}">
+          <span class="table-header-col">
+            {{translationsReference+'.'+col.field | translate}}
+            <p-sortIcon field="{{col.field}}" class="table-header-col__icon"></p-sortIcon>
+          </span>
+        </th>
+        <th>
+          {{'common.generalUse.actions' |translate}}
+        </th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row>
+      <tr [ngClass]="{'message-not-read':row.not_read === DB_BOOLEAN_TRUE}">
+        <td class="icon">
+          <fa-icon
+            [icon]="row.is_important === DB_BOOLEAN_TRUE ? faIconsService.fas.faStar : faIconsService.far.faStar"
+            [ngClass]="row.is_important === DB_BOOLEAN_TRUE ? 'icon--color' : null"
+            (click)="markNotification(row, row.is_important === DB_BOOLEAN_TRUE ? MarkAction.not_important : MarkAction.important)"
+          ></fa-icon>
+        </td>
+        <td *ngFor="let col of visibleCols">
+          <span class="p-column-title">{{translationsReference+'.'+col.field | translate}}</span>
+          <spr-text-truncate
+            [text]="row[col.field]"
+            [textLength]="col.textLength"
+            [showHTML]="true"
+            [headerText]="translationsReference+'.'+col.field"
+          ></spr-text-truncate>
+        </td>
+        <td>
+          <span class="p-column-title">
+            {{'common.generalUse.actions' |translate}}
+          </span>
+          <ntis-table-row-actions [actions]="row.actions"></ntis-table-row-actions>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage" translate>
+      <tr>
+        <td [attr.colspan]="cols.length + 1">
+          <spr-table-no-rec-found></spr-table-no-rec-found>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</spr-content-box>

@@ -1,0 +1,134 @@
+<header class="header" [ngClass]="{'header-test': showTestHeader}">
+  <div class="flex items-center">
+    <button
+      *ngIf="menuItems.length > 0"
+      type="button"
+      class="nav-icon-wrapper"
+      (click)="toggleNav()"
+      aria-label="Toggle navigation menu"
+    >
+      <fa-icon
+        class="toggle-nav-icon"
+        size="lg"
+        [icon]="isMenuVisible ? faIconsService.fas.faTimes : faIconsService.fas.faBars"
+        [fixedWidth]="true"
+      ></fa-icon>
+    </button>
+    <div class="header__content-wrapper header__content-wrapper--left">
+      <a class="site-logo-link" [routerLink]="'/' + logoRouterLink">
+        <img
+          class="site-logo-link__image"
+          src="../../../assets/img/ntis_logo_light.png"
+          alt="NTIS logo"
+          loading="lazy"
+        />
+        <span class="site-logo-link__text">Nuotekų tvarkymo informacinė sistema</span>
+      </a>
+    </div>
+  </div>
+  <div class="header__content-wrapper header__content-wrapper">
+    <span
+      *ngIf="showTestHeader"
+      class=" text-risk-400 font-bold text-xl"
+      >{{'components.public.testHeader' | translate}}</span
+    >
+  </div>
+
+  <div class="header__content-wrapper header__content-wrapper--right">
+    <ng-content select="[header]"></ng-content>
+  </div>
+</header>
+
+<div class="content-layout">
+  <nav
+    class="navigation"
+    [ngClass]="{'navigation--hidden-on-mobile': !isMenuVisible, 'navigation-test': showTestHeader}"
+  >
+    <ng-container *ngFor="let item of menuItems; index as i">
+      <ng-container *ngIf="(item.type === MenuItemType.Category)">
+        <button
+          type="button"
+          class="nav-item"
+          [ngClass]="{'nav-item--active': (selectedMenuItem === i), 'nav-item-test': showTestHeader, 'nav-item-test--active' : showTestHeader && (selectedMenuItem === i)}"
+          (click)="toggleNav(i)"
+          [attr.aria-label]="('common.action.'+(selectedMenuItem === i ? 'hide' : 'show') | translate) + ' ' + item.name"
+          [pTooltip]="!isMenuVisible ? item.toolTip ? item.toolTip : item.name : null"
+        >
+          <div class="nav-item__icon">
+            <fa-icon
+              size="lg"
+              [icon]="faIconsService.fas[item.iconName] || faIconsService.solid[MENU_DEFAULT_ICON_NAME]"
+              [fixedWidth]="true"
+            ></fa-icon>
+          </div>
+          <div class="nav-item__text" [ngClass]="{'nav-item__text--show': isMenuVisible}">
+            <span>{{item.name}}</span>
+          </div>
+        </button>
+
+        <div
+          class="nav-item-container"
+          [ngClass]="{'nav-item-container--open': selectedMenuItem === i && isMenuVisible}"
+          [ngStyle]="{'max-height': ((selectedMenuItem === i && isMenuVisible) ? item.rows.length*categoryItemMaxHeightInRem + 'rem' : 0)}"
+        >
+          <a
+            *ngFor="let row of item.rows"
+            [ngClass]="{'nav-item-test nav-item-test--child':showTestHeader}"
+            class="nav-item nav-item--child"
+            [routerLink]="'/' + row.link"
+            [routerLinkActive]="!showTestHeader ? 'nav-item--active' : 'nav-item-test--active'"
+            [routerLinkActiveOptions]="{ queryParams: 'ignored', matrixParams: 'exact', paths: 'subset', fragment: 'ignored'}"
+            [attr.tabindex]="(selectedMenuItem === i && isMenuVisible) ? 0 : -1"
+            (click)="hideNavIfMobile()"
+            [pTooltip]="row.toolTip"
+          >
+            <div class="nav-item__icon nav-item__icon--small">
+              <fa-icon
+                size="sm"
+                [icon]="faIconsService.fas[row.iconName] || faIconsService.solid[MENU_DEFAULT_ICON_NAME]"
+                [fixedWidth]="true"
+              ></fa-icon>
+            </div>
+            <div class="nav-item__text nav-item__text--small" [ngClass]="{'nav-item__text--show': isMenuVisible}">
+              {{row.name}}
+            </div>
+          </a>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="(item.type === MenuItemType.Link)">
+        <a
+          class="nav-item"
+          [ngClass]="{'nav-item--active': (selectedMenuItem === i), 'nav-item-test': showTestHeader, 'nav-item-test--active': (selectedMenuItem === i) && showTestHeader}"
+          [routerLink]="'/' + item.link"
+          [routerLinkActive]="showTestHeader ? 'nav-item-test--active': 'nav-item--active'"
+          [routerLinkActiveOptions]="{ queryParams: 'ignored', matrixParams: 'exact', paths: 'subset', fragment: 'ignored'}"
+          (click)="toggleNav(i)"
+          [pTooltip]="!isMenuVisible ? item.toolTip ? item.toolTip : item.name : null"
+        >
+          <div class="nav-item__icon">
+            <fa-icon
+              size="lg"
+              [icon]="faIconsService.solid[item.iconName] || faIconsService.solid[MENU_DEFAULT_ICON_NAME]"
+              [fixedWidth]="true"
+            ></fa-icon>
+          </div>
+          <div class="nav-item__text nav-item__text--small" [ngClass]="{'nav-item__text--show': isMenuVisible}">
+            <span>{{item.name}}</span>
+          </div>
+        </a>
+      </ng-container>
+    </ng-container>
+  </nav>
+
+  <div
+    class="content-layout__content"
+    [ngClass]="{'content-layout__content--hidden-on-mobile': isMenuVisible}"
+    id="content-layout"
+  >
+    <main class="main"><ng-content select="[main]"></ng-content></main>
+    <footer class="footer" [ngClass]="{'footer-test': showTestHeader}">
+      <ng-content select="[footer]"></ng-content>
+    </footer>
+  </div>
+</div>

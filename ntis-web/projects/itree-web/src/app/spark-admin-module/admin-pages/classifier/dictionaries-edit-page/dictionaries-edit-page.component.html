@@ -1,0 +1,45 @@
+<spr-content-box headerText="pages.sprDictionariesEdit.headerText">
+  <div class="spr-edit-form-wrapper">
+    <p-tabView>
+      <p-tabPanel [header]="'pages.sprDictionariesEdit.classifierDetails'| translate">
+        <spr-edit-form
+          [formGroup]="form"
+          [values]="editClassifierDetails"
+          (cancel)="onCancel()"
+          (submit)="onSubmit($event)"
+        >
+        </spr-edit-form>
+      </p-tabPanel>
+      <p-tabPanel [header]="'pages.sprDictionariesEdit.additionalCols'| translate">
+        <p-tabView>
+          <p-tabPanel [header]="'pages.sprDictionariesEdit.refCols'| translate">
+            <spr-edit-form [formGroup]="form" [values]="editRefCols" (cancel)="onCancel()" (submit)="onSubmit($event)">
+            </spr-edit-form>
+          </p-tabPanel>
+          <p-tabPanel [header]="'pages.sprDictionariesEdit.nCols'| translate">
+            <spr-edit-form
+              [formGroup]="form"
+              [values]="editNumericCols"
+              (cancel)="onCancel()"
+              (submit)="onSubmit($event)"
+            >
+            </spr-edit-form>
+          </p-tabPanel>
+          <p-tabPanel [header]="'pages.sprDictionariesEdit.cCols'| translate">
+            <spr-edit-form
+              [formGroup]="form"
+              [values]="editStringCols"
+              (cancel)="onCancel()"
+              (submit)="onSubmit($event)"
+            >
+            </spr-edit-form>
+          </p-tabPanel>
+          <p-tabPanel [header]="'pages.sprDictionariesEdit.dCols'| translate">
+            <spr-edit-form [formGroup]="form" [values]="editDateCols" (cancel)="onCancel()" (submit)="onSubmit($event)">
+            </spr-edit-form>
+          </p-tabPanel>
+        </p-tabView>
+      </p-tabPanel>
+    </p-tabView>
+  </div>
+</spr-content-box>

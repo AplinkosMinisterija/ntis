@@ -1,0 +1,76 @@
+<!-- 
+
+  @note Po naujienų puslapių ir susijusių elementų perkėlimo iš "Spark" 
+  prototipo, pakeitimai buvo atlikti pagal NTIS projektą.
+  @date 2023-05-24 
+  
+-->
+<spr-content-box
+  [headerText]="translationsRef + (loadPageTemplates ? '.pageTemplates' 
+  : loadNewsTemplates ? '.newsTemplates' : '.headerText')"
+  class="box-wrapper"
+  transformingText="uppercase"
+>
+  <div class="news-list-wrapper">
+    <div class="spr-browse-actions-wrapper" *ngIf="!loadPageTemplates">
+      <spr-browse-search-form [formGroup]="searchForm" (search)="loadData(true)">
+        <spr-button-add (click)="navigateToAddNew()" *ngIf="showAddButton" buttons></spr-button-add>
+
+        <spr-filter-input
+          filters
+          inputType="text"
+          [maxLength]="20"
+          formControlName="nw_title"
+          [placeholder]="translationsRef + '.nwTitle' | translate"
+        ></spr-filter-input>
+
+        <spr-filter-input
+          filters
+          inputType="text"
+          [maxLength]="20"
+          formControlName="nw_summary"
+          [placeholder]="translationsRef + '.nwSummary' | translate"
+        ></spr-filter-input>
+        <spr-filter-input
+          filters
+          inputType="date"
+          formControlName="nw_publication_date"
+          [placeholder]="translationsRef + '.nwWasPosted' | translate"
+        ></spr-filter-input>
+        <spr-select
+          *ngIf="isPublicOptions.length > 0"
+          filters
+          formControlName="is_public"
+          [optionData]="isPublicOptions"
+          optionLabel="label"
+          optionValue="value"
+          optionType="multiple"
+          [advancedFilterParams]="true"
+          [placeholder]="translationsRef + '.visibility' | translate"
+        ></spr-select>
+      </spr-browse-search-form>
+    </div>
+
+    <p-tabView [activeIndex]="selectedTab" (onChange)="handleTabChange($event.index)">
+      <ng-container *ngFor="let tab of tabPanels">
+        <p-tabPanel [header]="translationsRef + tab | translate">
+          <ul>
+            <li *ngFor="let row of data">
+              <app-news-card [rowData]="row" [menuItems]="rowMenuItems" [showVisibility]="!loadPageTemplates" />
+            </li>
+          </ul>
+        </p-tabPanel>
+      </ng-container>
+    </p-tabView>
+
+    <div *ngIf="data?.length === 0" class="no-data-card">
+      {{ translationsRef + '.noDataFound' | translate }}
+    </div>
+
+    <div class="load-more" (click)="loadData(false)" *ngIf="!hideLoadMore && data?.length > 0">
+      <button type="button" class="spr-button-secondary">
+        <spr-icon name="history" />{{ translationsRef + '.showOlderNews' | translate }}
+      </button>
+    </div>
+  </div>
+</spr-content-box>

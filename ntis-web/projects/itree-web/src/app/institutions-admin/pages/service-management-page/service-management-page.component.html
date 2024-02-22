@@ -1,0 +1,62 @@
+<spr-content-box [headerText]="translationsReference + '.headerText'" transformingText="uppercase">
+  <div *ngIf="unconfirmedServices?.length" class="messages-wrapper">
+    <ntis-message-box
+      *ngFor="let unconfirmedService of unconfirmedServices"
+      type="info"
+      [text]="(translationsReference + '.unconfirmedServiceMessage') | translate: {serviceName: unconfirmedService}"
+    ></ntis-message-box>
+  </div>
+  <p-table [value]="dataView">
+    <ng-template pTemplate="header" let-row let-index="rowIndex">
+      <tr>
+        <th *ngFor="let col of cols">{{ (translationsReference + '.' + col) | translate}}</th>
+        <th>{{ 'common.generalUse.actions' | translate }}</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row let-index="rowIndex">
+      <tr [ngClass]="{'ntis-disabled-table-row': row['status'] === notRegistered}" class="ntis-disabled-table-row">
+        <td *ngFor="let col of cols">
+          <ng-container *ngIf="col !== 'serviceArea'; else serviceArea">
+            <span [ngClass]="{'text-risk-500': col === 'isConfirmed' && !data[index][col] }">{{ row[col] }}</span>
+          </ng-container>
+          <ng-template #serviceArea>
+            <ng-container *ngIf="row[col] !== null">
+              <span>{{ (translationsReference + '.' + row[col]) | translate}}</span></ng-container
+            >
+          </ng-template>
+        </td>
+        <td>
+          <ntis-table-row-actions [actions]="row.actions"></ntis-table-row-actions>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage" translate>
+      <tr>
+        <td [attr.colspan]="cols.length + 1">
+          <spr-table-no-rec-found></spr-table-no-rec-found>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+  <span class="actions">
+    <spr-button className="ntis-button-link" (click)="onReturn()">
+      {{'common.action.back' | translate}}
+    </spr-button>
+  </span>
+</spr-content-box>
+<p-dialog [(visible)]="showServiceDetails" [draggable]="false">
+  <app-service-view [data]="serviceDetails"></app-service-view>
+  <div class="service-details-buttons">
+    <button type="button" class="ntis-button-link" (click)="showServiceDetails = false">
+      {{'common.action.back' | translate}}
+    </button>
+    <spr-button
+      *ngIf="serviceDetailsConfirmMode"
+      type="button"
+      class="spr-button-primary"
+      iconName="faCheck"
+      (click)="handleConfirmService()"
+      >{{ (translationsReference + '.confirmService') | translate }}</spr-button
+    >
+  </div>
+</p-dialog>

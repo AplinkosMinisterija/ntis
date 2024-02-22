@@ -1,0 +1,2 @@
+export const TEMPLATE_TEXT_CODE_SUBJECT = 'SUBJECT';
+export const TEMPLATE_TEXT_CODE_BODY = 'BODY';

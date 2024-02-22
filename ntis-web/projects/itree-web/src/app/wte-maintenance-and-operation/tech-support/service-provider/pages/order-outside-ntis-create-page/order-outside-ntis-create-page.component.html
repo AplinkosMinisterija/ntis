@@ -1,0 +1,64 @@
+<spr-content-box
+  headerText="wteMaintenanceAndOperation.techSupport.serviceProvider.pages.orderOutsideNtis.headerText"
+  transformingText="uppercase"
+>
+  <div class="spr-edit-form-wrapper">
+    <ng-container *ngFor="let service of services">
+      <ng-container
+        *ngIf="(isCarSpecialist && service.serviceType === ServiceItemType.sewageRemoval) 
+        || (isTechSpecialist && service.serviceType === ServiceItemType.maintenance)"
+      >
+        <ntis-message-box
+          *ngIf="service.status === SRV_STS_ACTIVE && !service.isConfirmed"
+          [text]="translationsReference + '.serviceInactive' | translate : { service: service.serviceName }"
+          type="info"
+          class="mb-3"
+          [link]="isAdmin ? linkForMessage : null"
+          [linkText]="isAdmin ? 'Paslaugos aprašymą galite užpildyti čia.': null"
+        ></ntis-message-box>
+      </ng-container>
+      <ntis-message-box
+        *ngIf="service.serviceType === ServiceItemType.sewageRemoval && service.isConfirmed && carsOptions?.length === 0"
+        [text]="translationsReference + '.noActiveCars' | translate"
+        type="info"
+        class="mb-3"
+        [link]="isAdmin ? linkForNoCarsMessage: null"
+        [linkText]="isAdmin? 'Transporto priemonę galite užregistruoti čia.' : null"
+      ></ntis-message-box>
+    </ng-container>
+    <ntis-existing-facility-search (selectedWtf)="updateWtfSelection($event)"></ntis-existing-facility-search>
+    <spr-edit-form
+      [formGroup]="form"
+      [values]="editFormValues"
+      (submit)="onSubmit($event)"
+      (cancel)="onCancel()"
+      [showSaveButton]="serviceTypeOptions.length > 0"
+    >
+      <ng-template sprTemplate="ocw_discharged_sludge_amount">
+        <input type="number" formControlName="ocw_discharged_sludge_amount" step="0.01" />
+      </ng-template>
+      <ng-template sprTemplate="ocw_cr_id">
+        <spr-select
+          [optionData]="carsOptions"
+          optionLabel="option"
+          optionValue="value"
+          [placeholder]="'common.action.choose' | translate"
+          [showFilter]="false"
+          optionType="single"
+          formControlName="ocw_cr_id"
+        ></spr-select>
+      </ng-template>
+      <ng-template sprTemplate="srv_type">
+        <spr-select
+          [optionData]="serviceTypeOptions"
+          optionLabel="option"
+          optionValue="value"
+          [placeholder]="'common.action.choose' | translate"
+          [showFilter]="false"
+          optionType="single"
+          formControlName="srv_type"
+        ></spr-select>
+      </ng-template>
+    </spr-edit-form>
+  </div>
+</spr-content-box>

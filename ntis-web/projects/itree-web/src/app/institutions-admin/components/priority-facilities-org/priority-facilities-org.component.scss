@@ -1,0 +1,19 @@
+.modal {
+  @apply flex justify-center flex-col w-80 h-auto bg-neutral-0 border-2 border-primary-300 rounded-md absolute p-5 z-10 -ml-80;
+}
+
+.modal ul li {
+  @apply leading-8;
+}
+
+.modal ul li:first-child {
+  @apply font-bold;
+}
+
+.info-icon {
+  @apply text-primary-500;
+}
+
+.button-focus {
+  outline: none !important;
+}

@@ -1,0 +1,138 @@
+:host {
+  @apply w-full;
+}
+
+.login {
+  @apply bg-neutral-0 p-6 rounded-lg m-auto flex flex-col gap-4 items-center w-80;
+
+  & > * {
+    @apply w-full;
+  }
+
+  &__header {
+    @apply flex items-center;
+  }
+
+  &__header-title {
+    @apply text-xl font-semibold text-neutral-700 text-center w-full;
+  }
+
+  &__header-home {
+    @apply text-sm underline text-neutral-500 cursor-pointer;
+  }
+
+  &__helpers {
+    @apply flex justify-between items-center;
+  }
+
+  &__helpers-forgot-password {
+    @apply text-sm font-medium no-underline;
+  }
+
+  &__separator {
+    @apply flex items-center gap-2 leading-none 
+    text-neutral-300 font-medium text-center text-sm 
+    before:content-[''] after:content-[''];
+
+    &::before,
+    &::after {
+      @apply grow rounded border-t-2 border-neutral-200;
+    }
+  }
+
+  &__alt {
+    @apply flex flex-col sm:flex-row gap-4 w-full justify-between [&>*]:w-full;
+  }
+
+  &__alt-other {
+    @apply text-sm text-neutral-600 font-medium py-2 border border-neutral-200 
+    rounded gap-2 flex justify-center items-center w-full hover:bg-neutral-50;
+  }
+
+  &__register {
+    @apply text-neutral-500 font-medium text-sm mt-2 text-center;
+  }
+
+  &__register-link {
+    @apply text-primary-500 font-medium text-sm cursor-pointer;
+  }
+}
+
+.signin-card {
+  @apply bg-neutral-0 rounded-lg m-auto flex items-center 
+  overflow-hidden w-full h-[600px];
+
+  &__content {
+    @apply bg-neutral-0 grow h-full flex flex-col;
+  }
+
+  &__tabs {
+    @apply bg-primary-300 w-80 h-full py-10 pl-10 hidden
+     flex-col gap-6 lg:flex;
+  }
+
+  &__tabs-brand {
+    @apply w-full;
+  }
+
+  &__link {
+    @apply flex items-center gap-2 no-underline;
+
+    &:hover {
+      @apply no-underline;
+    }
+  }
+
+  &__image {
+    @apply w-12;
+  }
+
+  &__text {
+    @apply w-52 text-neutral-50 text-sm uppercase self-end;
+  }
+
+  &__tabs-label {
+    @apply text-neutral-0;
+  }
+}
+
+.button-list {
+  @apply flex flex-col gap-3;
+  &__item {
+    @apply flex grow;
+  }
+  &__button {
+    @apply flex w-full p-2 
+    rounded-lg rounded-r-none font-medium gap-2 duration-150 whitespace-nowrap;
+
+    &--active {
+      @apply bg-neutral-0 text-primary-600;
+    }
+
+    &--inactive {
+      @apply hover:bg-primary-200 text-neutral-0;
+    }
+  }
+}
+
+.button-tabs {
+  @apply bg-primary-300 flex justify-stretch items-center lg:hidden;
+  &__button {
+    @apply p-3 grow flex items-center justify-center;
+    &--active {
+      @apply bg-neutral-0 text-primary-600;
+    }
+
+    &--inactive {
+      @apply hover:bg-primary-200 text-neutral-0;
+    }
+  }
+}
+
+.signature-dialog {
+  @apply fixed z-50 w-screen h-screen top-0 left-0 flex justify-center items-center bg-neutral-0;
+
+  &__close {
+    @apply absolute right-10 top-10 text-neutral-600 hover:text-neutral-500 active:text-neutral-700;
+  }
+}

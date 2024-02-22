@@ -1,0 +1,57 @@
+/* 
+
+  @note Po naujienų puslapių ir susijusių elementų perkėlimo iš "Spark" 
+  prototipo, pakeitimai buvo atlikti pagal NTIS projektą.
+  @date 2023-05-24 
+  
+*/
+
+.card {
+  @apply px-2 pt-2 pb-1 flex flex-col gap-1;
+
+  &__header {
+    @apply flex justify-between items-center;
+  }
+
+  &__link-button {
+    @apply text-left hover:text-primary-600 hover:underline font-semibold truncate text-primary-700;
+  }
+
+  &__date {
+    @apply text-neutral-500 text-sm;
+  }
+
+  &__visibility {
+    @apply text-neutral-500 text-sm;
+
+    fa-icon {
+      @apply pr-1;
+    }
+  }
+
+  &__text {
+    @apply text-base text-neutral-600 text-left;
+  }
+
+  &__read-more {
+    @apply text-secondary-700 flex items-center gap-1;
+  }
+
+  &__read-more-text {
+    @apply text-secondary-600 group-hover:text-secondary-700 text-sm hover:underline;
+  }
+}
+
+.fade-in {
+  @apply opacity-0;
+  animation: fadeInAnimation 0.2s ease-in forwards;
+}
+
+@keyframes fadeInAnimation {
+  0% {
+    @apply opacity-0;
+  }
+  100% {
+    @apply opacity-100;
+  }
+}

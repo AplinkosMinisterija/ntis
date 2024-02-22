@@ -1,0 +1,48 @@
+<spr-form-field-group [text]="translationsReference + '.legend'">
+  <spr-info-line [name]="translationsReference + '.reqNumber' | translate" [value]="reqNumber"></spr-info-line>
+  <spr-info-line
+    [name]="translationsReference + '.registrationDate' | translate"
+    [value]="registrationDate"
+  ></spr-info-line>
+  <spr-info-line [name]="translationsReference + '.reqStatus' | translate" [value]="reqStatus"></spr-info-line>
+  <ng-container *ngIf="reqStatusDate">
+    <spr-info-line
+      [name]="translationsReference + '.reqStatusDate' | translate"
+      [value]="reqStatusDate"
+    ></spr-info-line>
+  </ng-container>
+  <ng-container *ngIf="reqRemovalReason">
+    <spr-info-line
+      [name]="translationsReference + '.reqRemovalReason' | translate"
+      [value]="reqRemovalReason"
+    ></spr-info-line>
+  </ng-container>
+
+  <div *ngIf="showConfirmRejectButtons" class="spr-form-buttons mt-8">
+    <spr-button
+      type="button"
+      class="ntis-button-hollow"
+      iconStyle="far"
+      iconName="faCircleXmark"
+      iconClassName="text-3xl"
+      (click)="onReject()"
+    >
+      {{translationsReference + '.rejectRequest' | translate}}
+    </spr-button>
+    <spr-button
+      type="button"
+      class="spr-button-primary"
+      iconStyle="fas"
+      iconName="faCircleCheck"
+      iconClassName="text-3xl"
+      (click)="onConfirm()"
+    >
+      {{translationsReference + '.confirmRequest' | translate}}
+    </spr-button>
+  </div>
+  <div class="spr-form-buttons mt-8">
+    <spr-button type="button" class="ntis-button-link" (click)="onCancel()">
+      {{'common.action.back' | translate}}
+    </spr-button>
+  </div>
+</spr-form-field-group>

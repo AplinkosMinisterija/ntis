@@ -1,0 +1,6 @@
+.top-info-wrapper {
+  @apply flex flex-col gap-2 py-4;
+  span {
+    @apply text-sm;
+  }
+}

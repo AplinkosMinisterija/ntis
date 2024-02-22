@@ -1,0 +1,311 @@
+<spr-content-box
+  [headerText]="translationsReference + dynamicTranslationRef + '.headerText'"
+  transformingText="uppercase"
+>
+  <div class="spr-edit-form-wrapper">
+    <ntis-message-box
+      *ngIf="(contractState === ContractState.SIGNED_BY_BOTH && data.cot_rejection_reason)"
+      [type]="isClient ? 'success' : contractState === ContractState.SIGNED_BY_BOTH ? 'info' : 'success'"
+      [text]="translationsReference + dynamicTranslationRef + '.messageBoxText' | translate"
+      class="mb-4"
+    ></ntis-message-box>
+    <form [formGroup]="form" autocomplete="off">
+      <!-- CONTRACT INFO BLOCK -->
+      <spr-form-field-group [text]="translationsReference + dynamicTranslationRef + '.contractInfo'">
+        <div class="contract">
+          <div class="contract-info">
+            <spr-info-line
+              [name]="translationsReference + '.cot_state' | translate"
+              [value]="data.cot_state_meaning"
+              [redText]="data.cot_rejection_date ? true : false"
+              [greenText]="contractState === ContractState.SIGNED_BY_SRV_PROVIDER || contractState === ContractState.SIGNED_BY_BOTH"
+            >
+              <span *ngIf="splitStateString.length > 0">
+                <span *ngFor="let item of splitStateString">
+                  <strong>{{' ' + item}}</strong>
+                </span>
+              </span>
+            </spr-info-line>
+            <ng-container *ngIf="contractState !== ContractState.CANCELLED && contractState !== ContractState.REJECTED">
+              <spr-info-line
+                [name]="translationsReference + dynamicTranslationRef + '.cot_from_date' | translate"
+                [value]="dateFrom"
+              ></spr-info-line>
+              <spr-info-line
+                [name]="translationsReference + dynamicTranslationRef + '.cot_to_date' | translate"
+                [value]="dateTo"
+              ></spr-info-line>
+            </ng-container>
+            <ng-container *ngIf="data.cot_rejection_date && contractState !== ContractState.SIGNED_BY_BOTH">
+              <spr-info-line
+                *ngIf="data.cot_project_created && contractState !== ContractState.TERMINATED"
+                [name]="translationsReference + dynamicTranslationRef + '.cot_project_created' | translate"
+                [value]="dateProjectCreated"
+              ></spr-info-line>
+              <spr-info-line
+                [name]="translationsReference + dynamicTranslationRef + '.cot_rejection_date' | translate"
+                [value]="rejectionDate"
+              ></spr-info-line>
+            </ng-container>
+          </div>
+          <div
+            *ngIf="contractState === ContractState.SUBMITTED && isServiceProvider && !data.cot_fil_id"
+            class="contract-file"
+          >
+            <spr-file-upload-with-progress
+              [uploadedFiles]="uploadedFiles"
+              [label]="translationsReference + '.uploadContract' | translate"
+              [multiple]="false"
+              [disabled]="uploadedFiles.length > 0"
+              acceptedFormat=".docx,.odt,.pdf,.xlsx,.pptx,.ods,.ppsx,.odp,.tif,.tiff,.jpg,.jpeg,.jfif,.png"
+              (fileToDelete)="onDeleteFile($event)"
+              (fileUpload)="onUploadFile()"
+            ></spr-file-upload-with-progress>
+          </div>
+          <div
+            *ngIf="data.attachment && contractState !== ContractState.REJECTED 
+            && !(data.attachment && isClient && contractState === ContractState.SUBMITTED)"
+            class="contract-file"
+          >
+            <fa-icon
+              class="contract-file__icon"
+              [icon]="faIconsService.far.faFileLines"
+              (click)="handlePreview()"
+            ></fa-icon>
+            <p class="contract-file__name">{{ data.attachment.fil_name }}</p>
+            <a (click)="download(data.attachment)">{{ 'common.action.download' | translate }} </a>
+          </div>
+        </div>
+        <div *ngIf="data.cot_rejection_reason" class="rejection-reason">
+          <p class="rejection-reason__label">
+            {{ translationsReference + dynamicTranslationRef + '.cot_rejection_reason' | translate }}:
+          </p>
+          <p class="rejection-reason__text">{{ data.cot_rejection_reason }}</p>
+        </div>
+        <div
+          *ngIf="userCanUpdate && (contractState === ContractState.SUBMITTED
+          || (isClient && contractState === ContractState.SIGNED_BY_SRV_PROVIDER) 
+          || (contractState === ContractState.SIGNED_BY_BOTH && !data.cot_rejection_reason) 
+          || (contractState === ContractState.SIGNED_BY_BOTH && data.cot_rejection_reason && isServiceProvider))"
+          class="action-buttons"
+        >
+          <spr-button
+            type="button"
+            class="spr-button-risk-hollow"
+            iconStyle="far"
+            iconName="faCircleXmark"
+            iconClassName="text-xl"
+            (click)="declineDialog = true"
+          >
+            {{translationsReference + dynamicTranslationRef + '.declineAction' | translate}}
+          </spr-button>
+          <spr-button
+            *ngIf="((uploadedFiles.length > 0 && uploadedFiles[0].fil_size !== 0) || data.attachment) && contractState !== ContractState.SIGNED_BY_BOTH
+            && ((isServiceProvider && contractState === ContractState.SUBMITTED) || (isClient && contractState === ContractState.SIGNED_BY_SRV_PROVIDER))"
+            type="button"
+            class="spr-button-primary"
+            iconStyle="fas"
+            iconName="faCircleCheck"
+            iconClassName="text-xl"
+            (click)="handleAcceptAction()"
+          >
+            {{translationsReference + dynamicTranslationRef + '.acceptAction' | translate}}
+          </spr-button>
+        </div>
+      </spr-form-field-group>
+      <!-- SERVICE INFO BLOCK -->
+      <spr-form-field-group [text]="translationsReference + '.serviceInformation'">
+        <div *ngIf="data.cot_services" class="services">
+          <div *ngFor="let service of data.cot_services, index as i" class="service">
+            <span class="flex flex-row justify-between items-center">
+              <spr-info-line
+                [name]="translationsReference + '.service' | translate"
+                [value]="service.name"
+              ></spr-info-line>
+              <spr-button
+                *ngIf="(contractState === ContractState.SIGNED_BY_BOTH || contractState === ContractState.VALID)   && isClient && !isServiceProvider && data.cot_from_date <= today && data.cot_to_date >= today"
+                buttons
+                class="spr-button-primary w-fit"
+                iconName="faCirclePlus"
+                (click)="toOrderNewService(service)"
+                >{{translationsReference + '.orderNew' | translate }}</spr-button
+              ></span
+            >
+
+            <div>
+              <p class="service__desc-legend">{{ translationsReference + '.serviceDescription' | translate }}:</p>
+              <p class="service__desc-text" [innerHTML]="(service.description || '-' ) | safeHtml"></p>
+            </div>
+            <div
+              *ngIf="contractState === ContractState.SUBMITTED && isServiceProvider && (service.price === 0 || !service.price)"
+            >
+              <spr-form-field
+                [labelText]="translationsReference + '.price' | translate"
+                [labelFor]="service.type"
+                [inputErrors]="form.controls.prices.controls[i].touched && form.controls.prices.controls[i].errors"
+              >
+                <input
+                  [id]="service.type"
+                  type="number"
+                  [formControl]="form.controls.prices.controls[i]"
+                  class="service__price"
+                />
+                <label [for]="service.type">{{ translationsReference + '.currency' | translate }}</label>
+              </spr-form-field>
+            </div>
+            <spr-info-line
+              *ngIf="service.price > 0 && (contractState !== ContractState.SUBMITTED || isServiceProvider)"
+              [name]="translationsReference + '.price' | translate"
+              [value]="service.price.toString() + ' ' + (translationsReference + '.currency' | translate)"
+            ></spr-info-line>
+          </div>
+        </div>
+      </spr-form-field-group>
+    </form>
+    <ntis-wtf-info [data]="data.wtf_info"></ntis-wtf-info>
+    <ntis-client-info
+      *ngIf="isServiceProvider"
+      [name]="data.org_name || data.per_name"
+      [email]="data.cot_client_email"
+      [phone]="data.cot_client_phone_no"
+    ></ntis-client-info>
+    <ntis-service-provider-info
+      *ngIf="isClient"
+      [name]="data.sp_info.org_name"
+      [email]="data.sp_info.org_email"
+      [phone]="data.sp_info.org_phone"
+    ></ntis-service-provider-info>
+    <!-- COMMENTS BLOCK -->
+    <spr-form-field-group [text]="translationsReference + '.comments'">
+      <app-comments
+        [comments]="data.cot_comments"
+        [canDeleteComment]="true"
+        (addCommentEvent)="handleAddComment($event)"
+        (deleteCommentEvent)="handleDeleteComment($event)"
+      ></app-comments>
+    </spr-form-field-group>
+    <div class="spr-form-buttons">
+      <button type="button" class="ntis-button-link" (click)="onBackToList()">
+        {{'common.action.back' | translate}}
+      </button>
+      <spr-button
+        *ngIf="isServiceProvider && contractState === ContractState.SUBMITTED"
+        type="submit"
+        className="spr-button-primary"
+        iconName="faSave"
+        (click)="onSave()"
+        >{{ 'common.action.save' | translate }}</spr-button
+      >
+    </div>
+  </div>
+  <form [formGroup]="declineDialogForm" autocomplete="off">
+    <p-dialog
+      (onHide)="hideDialog()"
+      [(visible)]="declineDialog"
+      [style]="{width: '450px', 'z-index': 999, 'top': '2rem', overflow: 'visible'}"
+      [modal]="true"
+      [showHeader]="false"
+      [draggable]="false"
+      styleClass="p-fluid"
+      [autoZIndex]="true"
+      [closable]="false"
+      [blockScroll]="true"
+      [contentStyle]="{'overflow': 'visible !important' }"
+      appendTo="body"
+    >
+      <spr-form-field
+        labelText="{{translationsReference + dynamicTranslationRef + '.declineDialogHeader' | translate}}"
+        labelFor="cot-rejection-reason"
+        [isLabelHorizontal]="false"
+        [inputErrors]="declineDialogForm.controls.cot_rejection_reason.touched && declineDialogForm.controls.cot_rejection_reason.errors"
+        [mandatory]="true"
+      >
+        <textarea
+          formControlName="cot_rejection_reason"
+          id="cot-rejection-reason"
+          [rows]="6"
+          [maxlength]="200"
+        ></textarea>
+      </spr-form-field>
+      <ng-template pTemplate="footer">
+        <span class="dialog-footer">
+          <spr-button className="ntis-button-link" (click)="hideDialog()">
+            {{'common.action.back' | translate}}
+          </spr-button>
+          <spr-button className="spr-button-primary" (click)="onDecline()" type="submit">
+            {{translationsReference + dynamicTranslationRef + '.declineAction' | translate}}
+          </spr-button>
+        </span>
+      </ng-template>
+    </p-dialog>
+  </form>
+  <form [formGroup]="acceptDialogForm" autocomplete="off">
+    <p-dialog
+      (onHide)="hideDialog()"
+      [header]="translationsReference + dynamicTranslationRef + '.acceptDialogHeader' | translate"
+      [(visible)]="acceptDialog"
+      [style]="{width: '450px', 'z-index': 999, 'top': '2rem', overflow: 'visible'}"
+      [modal]="true"
+      [draggable]="false"
+      styleClass="p-fluid"
+      [autoZIndex]="true"
+      [closable]="false"
+      [blockScroll]="true"
+      [contentStyle]="{'overflow': 'visible !important' }"
+      appendTo="body"
+    >
+      <spr-form-field
+        labelText="{{translationsReference + '.cot_code' | translate}}"
+        labelFor="cot-code"
+        [isLabelHorizontal]="false"
+        [inputErrors]="acceptDialogForm.controls.cot_code.touched && acceptDialogForm.controls.cot_code.errors"
+        [mandatory]="true"
+      >
+        <input type="text" formControlName="cot_code" id="cot-code" [maxlength]="50" />
+      </spr-form-field>
+      <spr-form-field
+        labelText="{{translationsReference + dynamicTranslationRef + '.valid_from_date' | translate}}"
+        labelFor="cot-from-date"
+        [isLabelHorizontal]="false"
+        [inputErrors]="acceptDialogForm.controls.cot_from_date.touched && acceptDialogForm.controls.cot_from_date.errors"
+        [mandatory]="true"
+      >
+        <p-calendar
+          formControlName="cot_from_date"
+          placeholder="yyyy-mm-dd"
+          dateFormat="yy-mm-dd"
+          appendTo="body"
+          [showIcon]="true"
+        >
+        </p-calendar>
+      </spr-form-field>
+      <spr-form-field
+        labelText="{{translationsReference + dynamicTranslationRef + '.valid_to_date' | translate}}"
+        labelFor="cot-to-date"
+        [isLabelHorizontal]="false"
+        [inputErrors]="acceptDialogForm.controls.cot_to_date.touched && acceptDialogForm.controls.cot_to_date.errors"
+        [mandatory]="true"
+      >
+        <p-calendar
+          formControlName="cot_to_date"
+          [showIcon]="true"
+          placeholder="yyyy-mm-dd"
+          dateFormat="yy-mm-dd"
+          appendTo="body"
+          [defaultDate]="defaultDateTo"
+        >
+        </p-calendar>
+      </spr-form-field>
+      <ng-template pTemplate="footer">
+        <span class="dialog-footer">
+          <spr-button className="ntis-button-link" (click)="hideDialog()">
+            {{'common.action.back' | translate}}
+          </spr-button>
+          <spr-button className="spr-button-primary" (click)="onAccept()" type="submit">
+            {{translationsReference + dynamicTranslationRef + '.acceptActionDialog' | translate}}
+          </spr-button>
+        </span>
+      </ng-template>
+    </p-dialog>
+  </form>
+</spr-content-box>

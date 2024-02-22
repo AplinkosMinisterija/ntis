@@ -1,0 +1,11 @@
+textarea {
+  @apply resize-none h-52;
+}
+
+.research-file-wrapper {
+  @apply flex flex-row gap-3 items-center pb-5;
+}
+
+.edit-info-line {
+  @apply py-2;
+}

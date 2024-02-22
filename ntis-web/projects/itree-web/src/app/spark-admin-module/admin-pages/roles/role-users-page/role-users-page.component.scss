@@ -1,0 +1,9 @@
+.role-users {
+  &__header {
+    @apply grid grid-rows-1 grid-cols-3 mt-10;
+  }
+}
+
+.dialog-footer {
+  @apply flex flex-row justify-center;
+}

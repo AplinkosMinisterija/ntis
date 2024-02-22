@@ -1,0 +1,44 @@
+<spr-content-box [headerText]="headerTextStr">
+  <div class="spr-edit-form-wrapper">
+    <spr-edit-form [formGroup]="form" [values]="editFormValues" (submit)="onSubmit($event)" (cancel)="onCancel()">
+      <ng-template sprTemplate="texts">
+        <div *ngIf="textsFormArrayGroups?.length" class="texts-wrapper">
+          <ng-container *ngIf="form.controls.type.value === ClsfSprTmplType.Email; else elseBlock">
+            <p-tabView>
+              <ng-container *ngFor="let textGroup of textsFormArrayGroups; index as i">
+                <p-tabPanel
+                  [header]="'pages.sprTemplateEdit.'+textGroup.controls.code.value.toLowerCase() | translate"
+                  *ngIf="textGroup.controls.language.value === form.controls.language.value"
+                >
+                  <app-template-text-edit
+                    [formGroup]="textGroup"
+                    [isTextEditor]="textGroup.controls.code.value === 'BODY' ? true : false"
+                    [hideCode]="true"
+                    [hideName]="true"
+                    [hideDescription]="true"
+                    [showRemoveButton]="false"
+                  ></app-template-text-edit>
+                </p-tabPanel>
+              </ng-container>
+            </p-tabView>
+          </ng-container>
+          <ng-template #elseBlock>
+            <ng-container *ngFor="let textGroup of textsFormArrayGroups; index as i">
+              <app-template-text-edit
+                *ngIf="textGroup.controls.language.value === form.controls.language.value && indexForLoading >= i"
+                [formGroup]="textGroup"
+                (remove)="removeText(i)"
+              ></app-template-text-edit>
+            </ng-container>
+          </ng-template>
+        </div>
+        <div
+          *ngIf="form.controls.language.value && form.controls.type.value && form.controls.type.value !== ClsfSprTmplType.Email"
+          class="add-text-wrapper"
+        >
+          <spr-button-add *ngIf="indexForLoading >= textsFormArrayGroups?.length" (click)="addText()"></spr-button-add>
+        </div>
+      </ng-template>
+    </spr-edit-form>
+  </div>
+</spr-content-box>

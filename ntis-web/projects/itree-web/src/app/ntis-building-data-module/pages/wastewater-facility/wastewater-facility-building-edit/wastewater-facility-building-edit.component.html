@@ -1,0 +1,75 @@
+<spr-content-box [headerText]="formTranslationsReference + '.headerText'" transformingText="uppercase">
+  <div class="spr-edit-form-wrapper">
+    <span class="preview__address">
+      {{data.ba_so_address}}
+    </span>
+
+    <form [formGroup]="form" (submit)="onSubmit($event)">
+      <spr-form-field-group [text]="formTranslationsReference + '.formHeader' ">
+        <spr-form-field
+          [labelText]="formTranslationsReference + '.connectDate' | translate"
+          [isLabelHorizontal]="false"
+          [mandatory]="true"
+          labelFor="network-connection-date"
+          [inputErrors]="form.controls.ba_network_connection_date.touched && form.controls.ba_network_connection_date.errors"
+        >
+          <p-calendar
+            formControlName="ba_network_connection_date"
+            [firstDayOfWeek]="1"
+            [showButtonBar]="true"
+            appendTo="body"
+            [showIcon]="true"
+            dateFormat="yy-mm-dd"
+            [maxDate]="maxDate"
+            [minDate]="minDate"
+            placeholder="YYYY-MM-DD"
+            inputId="network-connection-date"
+            appendTo="body"
+          >
+          </p-calendar>
+        </spr-form-field>
+        <spr-form-field
+          [labelText]="formTranslationsReference + '.organization' | translate"
+          [isLabelHorizontal]="false"
+          [mandatory]="true"
+          labelFor="org-id"
+          [inputErrors]="form.controls.ba_org_id.touched && form.controls.ba_org_id.errors"
+        >
+          <spr-select
+            formControlName="ba_org_id"
+            placeholder="Pasirinkti"
+            optionValue="org_id"
+            optionLabel="org_name"
+            inputId="org-id"
+            [optionData]="managementCompanies"
+          ></spr-select>
+        </spr-form-field>
+
+        <spr-file-upload-with-progress
+          [uploadedFiles]="uploadedFiles"
+          [label]="formTranslationsReference + '.uploadDoc' | translate"
+          acceptedFormat=".doc,.docx,.odt,.pdf,.adoc,.bdoc,.edoc"
+          (fileToDelete)="onDeleteFile($event)"
+        ></spr-file-upload-with-progress>
+
+        <section class="card">
+          {{formTranslationsReference + '.updateBy' | translate}}
+          <b> {{data.ba_update_by}} </b>
+        </section>
+      </spr-form-field-group>
+
+      <div class="spr-form-buttons my-8">
+        <spr-button type="button" class="ntis-button-link" (click)="goBack()">
+          {{'common.action.back' | translate}}
+        </spr-button>
+        <spr-button
+          type="submit"
+          className="spr-button-primary"
+          iconStyle="fas"
+          iconName="faSave"
+          >{{ 'common.action.save' | translate }}</spr-button
+        >
+      </div>
+    </form>
+  </div>
+</spr-content-box>

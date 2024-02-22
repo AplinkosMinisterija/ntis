@@ -1,0 +1,107 @@
+<spr-content-box headerText="pages.sprClassifierBrowse.headerText">
+  <div class="spr-browse-actions-wrapper">
+    <spr-browse-search-form
+      [formGroup]="searchForm"
+      [formCode]="formCode"
+      (search)="search(dataTableComponent)"
+      [detailedSearchEnabled]="true"
+    >
+      <spr-filter-input
+        filters
+        inputType="number"
+        formControlName="rfd_id"
+        [placeholder]="'pages.sprClassifierBrowse.rfd_id' | translate"
+      ></spr-filter-input>
+      <spr-select
+        formControlName="rfd_subsystem"
+        classifierCode="SPR_CLSF_SUBSYSTEM"
+        [placeholder]="'pages.sprClassifierBrowse.rfd_subsystem' | translate"
+        [advancedFilterParams]="true"
+      ></spr-select>
+      <spr-filter-input
+        filters
+        inputType="text"
+        formControlName="rfd_table_name"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="'pages.sprClassifierBrowse.rfd_table_name' | translate"
+      ></spr-filter-input
+      ><spr-filter-input
+        filters
+        inputType="text"
+        formControlName="rfd_name"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="'pages.sprClassifierBrowse.rfd_name' | translate"
+      ></spr-filter-input>
+      <spr-select
+        filters
+        formControlName="rfd_code_type"
+        classifierCode="SPR_CLSF_CODE_TYPE"
+        [placeholder]="'pages.sprClassifierBrowse.rfd_code_type' | translate"
+        [advancedFilterParams]="true"
+      ></spr-select>
+      <spr-filter-input
+        filters
+        inputType="number"
+        formControlName="rfd_code_length"
+        [placeholder]="'pages.sprClassifierBrowse.rfd_code_length' | translate"
+      ></spr-filter-input>
+
+      <spr-table-data-export
+        buttons
+        [tableColumn]="cols"
+        [tableData]="exportData"
+        translation="pages.sprClassifierBrowse"
+        fileName="pages.sprClassifierBrowse.headerText"
+        (exportAllRecEvent)="loadAllRecords($event, dataTableComponent)"
+      ></spr-table-data-export>
+      <spr-button-add buttons [routerLink]="[classifierEditLink, 'new']"></spr-button-add>
+    </spr-browse-search-form>
+  </div>
+  <p-table
+    [value]="data"
+    [autoLayout]="true"
+    [lazy]="true"
+    [paginator]="data?.length > 0"
+    (onLazyLoad)="loadDataLazy($event)"
+    [rows]="showRows"
+    [totalRecords]="totalRecords"
+    [rowsPerPageOptions]="rowsPerPageOptions"
+    [showFirstLastIcon]="false"
+    sortField="1"
+    [sortOrder]="2"
+    [rowHover]="true"
+  >
+    <ng-template pTemplate="header" let-row let-index="rowIndex">
+      <tr>
+        <th *ngFor="let col of visibleColumns" pSortableColumn="{{col.field}}">
+          <span class="table-header-col">
+            {{'pages.sprClassifierBrowse.'+col.field | translate}}
+            <p-sortIcon field="{{col.field}}" class="table-header-col__icon"></p-sortIcon>
+          </span>
+        </th>
+        <th></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row let-index="rowIndex">
+      <tr class="table-row-hover">
+        <td
+          *ngFor="let col of visibleColumns"
+          [ngClass]="{'spr-text-right': col.type === dataTypeNumber, 'whitespace-nowrap': col.type === dataTypeDate}"
+        >
+          <span class="p-column-title">{{'pages.sprClassifierBrowse.'+col.field | translate}}</span>
+          <span>{{row[col.field]}}</span>
+        </td>
+        <td>
+          <spr-table-rec-actions [actionsList]="rowMenuItems[row.rfd_id]"></spr-table-rec-actions>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage" translate>
+      <tr>
+        <td [attr.colspan]="cols.length + 1">
+          <spr-table-no-rec-found></spr-table-no-rec-found>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</spr-content-box>

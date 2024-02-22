@@ -1,0 +1,75 @@
+<div class="map-table-header">
+  <div class="map-table-header__info">
+    <h5 class="map-table-header__layer-name">
+      {{ translateTitle !== false ? (title | translate) : title }}
+    </h5>
+    <div class="map-table-header__items-count" [ngClass]="{'map-table-header__items-count--filtered': filtersApplied}">
+      <fa-icon [icon]="faIconsService.fas.faFilter"></fa-icon>
+      <span
+        >{{ showingItemsCount }}
+        {{ (translationsRef + (showingItemsCount === 1 ? '.recordOf' : '.recordsOf')) | translate }}
+        {{ totalItemsCount }}
+      </span>
+    </div>
+  </div>
+  <div class="map-table-header__actions">
+    <spr-button
+      className="map-table-action map-table-action--small"
+      [iconName]="tableExpanded ? 'faDownLeftAndUpRightToCenter' : 'faUpRightAndDownLeftFromCenter'"
+      [pTooltip]="('map.common.action.' + (tableExpanded ? 'restore' : 'maximize')) | translate"
+      appendTo="body"
+      tooltipZIndex="100"
+      tooltipPosition="left"
+      [ariaLabel]="('map.common.action.' + (tableExpanded ? 'restore' : 'maximize')) | translate"
+      (click)="toggleExpand()"
+    ></spr-button>
+    <spr-button
+      className="map-table-action"
+      iconName="faSave"
+      [pTooltip]="'common.action.export' | translate"
+      appendTo="body"
+      tooltipZIndex="100"
+      tooltipPosition="left"
+      [ariaLabel]="'common.action.export' | translate"
+      (click)="exportPanel.toggle($event)"
+    ></spr-button>
+    <spr-button
+      className="map-table-action map-table-action--risk"
+      iconName="faTimes"
+      [pTooltip]="'common.action.close' | translate"
+      appendTo="body"
+      tooltipZIndex="100"
+      tooltipPosition="left"
+      [ariaLabel]="'common.action.close' | translate"
+      (click)="clickClose.emit()"
+    ></spr-button>
+  </div>
+</div>
+<p-overlayPanel #exportPanel>
+  <div class="export-panel">
+    <strong>Eksportuoti:</strong>
+    <ul class="export-panel__list">
+      <li>
+        <button
+          type="button"
+          class="spr-button-primary export-panel__option"
+          (click)="clickExport.emit(MapExportFormat.CSV)"
+        >
+          CSV
+        </button>
+      </li>
+      <li>
+        <button
+          type="button"
+          class="spr-button-primary export-panel__option"
+          (click)="clickExport.emit(MapExportFormat.GeoJSON)"
+        >
+          GeoJSON
+        </button>
+      </li>
+    </ul>
+  </div>
+</p-overlayPanel>
+<div class="map-table-content">
+  <ng-content></ng-content>
+</div>

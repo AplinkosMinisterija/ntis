@@ -1,0 +1,121 @@
+<spr-form-field-group [text]="translationsReference + '.legend'">
+  <div class="origin-facilities-wrapper" *ngFor="let facility of originFacilities">
+    <div class="origin-facilities-content">
+      <spr-info-line
+        *ngIf="facility.type === ORDER || facility.ord_id !== null"
+        [name]="translationsReference + '.ord_id' | translate"
+        [value]="facility.ord_id"
+        (click)="navigateToOrderPage(facility.ord_id)"
+      ></spr-info-line>
+      <spr-info-line
+        *ngIf="facility.type === FACILITY || facility.ord_id === null"
+        [name]="translationsReference + '.wtf_id' | translate"
+        [value]="facility.wtf_id + ''"
+      ></spr-info-line>
+      <spr-info-line
+        *ngIf="facility.type === ORDER || facility.ord_id !== null"
+        [name]="translationsReference + '.type' | translate"
+        [value]="facility.wtf_type"
+      ></spr-info-line>
+      <spr-info-line
+        *ngIf="facility.type === ORDER || facility.ord_id !== null"
+        [name]="translationsReference + '.discharged_sludge' | translate"
+        [value]="facility.ocw_discharged_sludge_amount"
+        [sqMeters]="true"
+      ></spr-info-line>
+      <spr-info-line
+        *ngIf="facility.type === FACILITY || facility.ord_id === null"
+        [name]="translationsReference + '.facility' | translate"
+        [value]="facility.name"
+      ></spr-info-line>
+    </div>
+    <div *ngIf="editMode && (facility.ord_id !== ordId || facility.ord_id === null)" class="remove-facility-button">
+      <spr-button
+        type="button"
+        class="spr-button-hollow"
+        iconStyle="fas"
+        iconName="faTrashCan"
+        iconClassName="text-2xl text-primary-500"
+        (click)="deleteOriginFacility(facility)"
+      >
+      </spr-button>
+    </div>
+  </div>
+
+  <div class="selection-buttons-wrapper">
+    <spr-button
+      *ngIf="editMode"
+      className="spr-button-primary"
+      iconStyle="fas"
+      iconName="faCirclePlus"
+      size="regular"
+      (click)="sewageOriginDialog = true; chooseFacilities = false"
+      >{{ translationsReference + '.addFacility' | translate }}</spr-button
+    >
+    <spr-button
+      *ngIf="editMode && portableFacilitiesList?.length > 0"
+      className="spr-button-primary"
+      iconStyle="fas"
+      iconName="faCirclePlus"
+      size="regular"
+      (click)="sewageOriginDialog = true; chooseFacilities = true"
+      >{{ translationsReference + '.addPortableFacility' | translate }}</spr-button
+    >
+  </div>
+</spr-form-field-group>
+<form [formGroup]="formSelection" autocomplete="off">
+  <p-dialog
+    [(visible)]="sewageOriginDialog"
+    [modal]="true"
+    [draggable]="false"
+    styleClass="ntis-dialog"
+    [autoZIndex]="true"
+    [closable]="false"
+    [blockScroll]="true"
+    appendTo="body"
+  >
+    <spr-form-field
+      *ngIf="!chooseFacilities"
+      labelFor="ord_id"
+      labelText="{{translationsReference + '.select_order' | translate}}"
+      ><spr-select
+        filters
+        formControlName="ord_id"
+        [optionData]="selectionFacilitiesList"
+        optionLabel="name"
+        optionValue="ord_id"
+        [placeholder]="translationsReference+ '.disposal_order' | translate"
+        [showFilter]="true"
+      ></spr-select
+    ></spr-form-field>
+
+    <spr-form-field
+      *ngIf="chooseFacilities"
+      labelFor="wtf_id"
+      labelText="{{translationsReference + '.selectFacility' | translate}}"
+      ><spr-select
+        filters
+        formControlName="wtf_id"
+        [optionData]="portableFacilitiesList"
+        optionLabel="name"
+        optionValue="wtf_id"
+        [placeholder]="translationsReference+ '.facility' | translate"
+        [showFilter]="true"
+      ></spr-select
+    ></spr-form-field>
+
+    <span class="dialog-footer">
+      <button type="button" class="ntis-button-link" (click)="sewageOriginDialog= false">
+        {{'common.action.back' | translate}}
+      </button>
+      <spr-button
+        type="button"
+        class="spr-button-primary"
+        iconName="faCheck"
+        (click)="getNewFacility(formSelection.controls.ord_id.value, formSelection.controls.wtf_id.value)"
+      >
+        {{'common.action.save' | translate}}
+      </spr-button>
+    </span>
+  </p-dialog>
+</form>

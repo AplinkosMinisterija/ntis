@@ -1,0 +1,19 @@
+:host {
+  @apply block;
+}
+
+.info-line {
+  // &__name {}
+
+  &__value {
+    @apply font-semibold whitespace-pre-wrap;
+  }
+
+  &__block {
+    @apply px-1.5 py-2 whitespace-pre-wrap;
+  }
+
+  &__textEditor {
+    @apply font-semibold;
+  }
+}

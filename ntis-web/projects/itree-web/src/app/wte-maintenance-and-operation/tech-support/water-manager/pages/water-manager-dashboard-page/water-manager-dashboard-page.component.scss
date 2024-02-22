@@ -1,0 +1,21 @@
+.wm-table-wrapper {
+  @apply max-w-4xl mx-auto;
+}
+.order-w-status-btn {
+  @apply flex justify-center items-center underline;
+}
+.action-button-link {
+  @apply flex justify-center items-center underline font-normal py-2 px-3;
+}
+.chart-wrapper {
+  @apply py-10;
+}
+.wto-selection-wrapper {
+  @apply py-5;
+}
+
+tr.show-all-row {
+  td.show-all {
+    @apply border-b-0 p-0 hover:bg-neutral-100 hover:text-neutral-800;
+  }
+}

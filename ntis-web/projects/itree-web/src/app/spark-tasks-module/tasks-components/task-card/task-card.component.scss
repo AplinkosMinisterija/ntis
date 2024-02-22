@@ -1,0 +1,141 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap'); // temporary
+
+$colors-priority: rgb(70, 180, 70), rgb(230, 185, 30), rgb(225, 70, 60), rgb(140, 65, 190);
+
+.task-card {
+  $_this: &;
+  @apply bg-neutral-0 p-3 border border-neutral-300 rounded-lg shadow-md relative;
+
+  &__header {
+    @apply flex justify-between;
+  }
+
+  &__title-group {
+    @apply flex items-center overflow-hidden;
+  }
+
+  &__title {
+    @apply text-xl text-neutral-900 font-semibold mr-2 overflow-hidden whitespace-nowrap;
+    text-overflow: ellipsis;
+  }
+
+  &__priority {
+    @apply text-neutral-0 text-xs font-semibold uppercase px-1 rounded mr-4 cursor-default;
+
+    @for $i from 1 through length($colors-priority) {
+      &--#{$i} {
+        background-color: nth($colors-priority, $i);
+      }
+    }
+  }
+
+  &__time {
+    @apply text-xl text-primary-500 font-semibold;
+  }
+
+  &__description {
+    @apply text-base text-neutral-800 py-1;
+    word-wrap: break-word;
+  }
+
+  &__user-icon {
+    @apply text-primary-500 p-0.5;
+  }
+
+  &:focus {
+    @apply bg-primary-500;
+    #{$_this}__title {
+      @apply text-neutral-0;
+    }
+
+    #{$_this}__time {
+      @apply text-neutral-0;
+    }
+
+    #{$_this}__description {
+      @apply text-neutral-100;
+    }
+
+    #{$_this}__user-icon {
+      @apply text-neutral-0;
+    }
+
+    .task-assignees {
+      &__item {
+        @apply bg-neutral-0 bg-opacity-70;
+        &:hover {
+          @apply bg-opacity-90;
+        }
+      }
+    }
+
+    .task-progress {
+      &__text {
+        @apply text-neutral-0;
+      }
+      &__value {
+        @apply text-neutral-0;
+      }
+      &__bar {
+        @apply bg-neutral-400;
+      }
+      &__bar-line {
+        @apply bg-neutral-0;
+      }
+    }
+
+    .task-actions-button__icon {
+      @apply text-neutral-0;
+    }
+  }
+}
+
+.task-assignees {
+  $_this: &;
+  @apply flex flex-wrap;
+  &__item {
+    @apply bg-primary-50 flex justify-center items-center w-9 h-9 m-0.5
+           rounded-full border-2 border-neutral-300 select-none;
+
+    &:hover {
+      @apply shadow bg-opacity-100;
+    }
+  }
+
+  &__item-initials {
+    @apply text-sm text-primary-500 font-medium;
+    &--sm {
+      @apply text-static-sm;
+    }
+    &--xs {
+      @apply text-static-xs;
+    }
+  }
+}
+
+.task-progress {
+  @apply py-1 flex flex-wrap justify-between;
+
+  &__text {
+    @apply text-sm text-neutral-900 font-semibold;
+  }
+
+  &__value {
+    @apply text-sm text-neutral-900 font-semibold;
+  }
+
+  &__bar {
+    @apply bg-neutral-300 w-full h-2 mt-1 rounded overflow-hidden;
+  }
+
+  &__bar-line {
+    @apply bg-primary-500 h-full rounded;
+  }
+}
+
+.task-actions-button {
+  @apply absolute py-1 px-2 top-3 right-2;
+  &__icon {
+    @apply text-neutral-900;
+  }
+}

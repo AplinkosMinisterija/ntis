@@ -1,0 +1,37 @@
+.codes-translations {
+  &__current-classifier-wrapper {
+    @apply flex flex-col items-center;
+  }
+  &__button-wrapper {
+    @apply flex justify-between items-center;
+    button {
+      @apply w-auto;
+    }
+  }
+
+  &__expanded-rows {
+    @apply w-full;
+  }
+
+  &__translation-edit-button {
+    @apply mr-3;
+  }
+  &__translation-delete-button {
+    @apply mr-4;
+  }
+  &__translation-buttons-wrapper {
+    @apply flex flex-row justify-end;
+  }
+
+  &__current-classifier {
+    @apply text-lg font-medium content-center justify-center text-center;
+  }
+}
+.codes-translations-view {
+  &__button-wrapper {
+    @apply flex flex-row justify-center;
+  }
+  &__button {
+    @apply mt-4 mr-3;
+  }
+}

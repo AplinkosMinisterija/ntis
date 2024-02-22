@@ -1,0 +1,215 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "cli": {
+    "analytics": false,
+    "schematicCollections": ["@angular-eslint/schematics"]
+  },
+  "version": 1,
+  "newProjectRoot": "projects",
+  "projects": {
+    "itree-web": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
+      "root": "projects/itree-web",
+      "sourceRoot": "projects/itree-web/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-builders/custom-webpack:browser",
+          "options": {
+            "preserveSymlinks": true,
+            "outputPath": "dist/itree-web",
+            "index": "projects/itree-web/src/index.html",
+            "main": "projects/itree-web/src/main.ts",
+            "polyfills": "projects/itree-web/src/polyfills.ts",
+            "tsConfig": "projects/itree-web/tsconfig.app.json",
+            "aot": true,
+            "allowedCommonJsDependencies": ["file-saver", "xlsx"],
+            "assets": [
+              "projects/itree-web/src/assets/favicon.ico",
+              "projects/itree-web/src/assets",
+              {
+                "glob": "**/*",
+                "input": "projects/itree-commons/src/assets/",
+                "output": "/assets"
+              }
+            ],
+            "styles": [
+              "./node_modules/primeicons/primeicons.css",
+              "./node_modules/primeng/resources/themes/bootstrap4-light-blue/theme.css",
+              "./node_modules/primeng/resources/primeng.min.css",
+              "./node_modules/quill/dist/quill.core.css",
+              "./node_modules/quill/dist/quill.snow.css",
+              "./node_modules/ol/ol.css",
+              "./node_modules/@itree/ngx-s2-ui/styles/tailwind-config.scss",
+              "projects/itree-web/src/styles.scss",
+              "projects/itree-web/src/styles/flags.css",
+              "projects/itree-web/src/styles/primeng.scss",
+              "projects/itree-web/src/styles/ntis.scss"
+            ],
+            "scripts": ["./node_modules/quill/dist/quill.js"]
+          },
+          "configurations": {
+            "noLog": {
+              "fileReplacements": [
+                {
+                  "replace": "projects/itree-web/src/environments/environment.ts",
+                  "with": "projects/itree-web/src/environments/environment.no.log.ts"
+                }
+              ]
+            },
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "projects/itree-web/src/environments/environment.ts",
+                  "with": "projects/itree-web/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "7mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "12kb",
+                  "maximumError": "20kb"
+                }
+              ]
+            },
+            "development": {
+              "optimization": false,
+              "sourceMap": true,
+              "namedChunks": true,
+              "extractLicenses": true,
+              "vendorChunk": true,
+              "buildOptimizer": false,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "7mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "10kb"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-builders/custom-webpack:dev-server",
+          "options": {
+            "browserTarget": "itree-web:build"
+          },
+          "configurations": {
+            "noLog": {
+              "fileReplacements": [
+                {
+                  "replace": "projects/itree-web/src/environments/environment.ts",
+                  "with": "projects/itree-web/src/environments/environment.no.log.ts"
+                }
+              ]
+            },
+            "production": {
+              "browserTarget": "itree-web:build:production"
+            },
+            "development": {
+              "browserTarget": "itree-web:build:development"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "itree-web:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "src/test.ts",
+            "polyfills": "src/polyfills.ts",
+            "tsConfig": "tsconfig.spec.json",
+            "karmaConfig": "karma.conf.js",
+            "inlineStyleLanguage": "scss",
+            "assets": ["projects/itree-web/src/assets/src/favicon.ico", "projects/itree-web/src/assets"],
+            "styles": ["projects/itree-web/src/styles.scss"],
+            "scripts": []
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": ["projects/itree-web/**/*.ts", "projects/itree-web/**/*.html"]
+          }
+        },
+        "e2e": {
+          "builder": "@angular-devkit/build-angular:protractor",
+          "options": {
+            "protractorConfig": "projects/itree-web/e2e/protractor.conf.js",
+            "devServerTarget": "itree-web:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "itree-web:serve:production"
+            }
+          }
+        }
+      }
+    },
+    "itree-commons": {
+      "projectType": "library",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
+      "root": "projects/itree-commons",
+      "sourceRoot": "projects/itree-commons/src",
+      "prefix": "spr",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "tsConfig": "projects/itree-commons/tsconfig.lib.json",
+            "project": "projects/itree-commons/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/itree-commons/tsconfig.lib.prod.json"
+            }
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/itree-commons/src/test.ts",
+            "tsConfig": "projects/itree-commons/tsconfig.spec.json",
+            "karmaConfig": "projects/itree-commons/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": ["projects/itree-commons/**/*.ts", "projects/itree-commons/**/*.html"]
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,71 @@
+<spr-content-box [headerText]="formTranslationsReference+'.headerText'" transformingText="uppercase">
+  <h2 class="section-header">{{groupName}}</h2>
+
+  <div class="search-form-wrapper">
+    <spr-browse-search-form
+      [formGroup]="searchForm"
+      (search)="search(dataTableComponent)"
+      [detailedSearchEnabled]="false"
+    >
+      <spr-button-add *ngIf="userCanCreate" (click)="createQuestion()" buttons></spr-button-add>
+    </spr-browse-search-form>
+  </div>
+
+  <p-table
+    [value]="data"
+    [lazy]="true"
+    [rowHover]="true"
+    (onLazyLoad)="loadDataLazy($event)"
+    [rows]="showRows"
+    [totalRecords]="totalRecords"
+    [paginator]="data?.length > 0"
+    [rowsPerPageOptions]="rowsPerPageOptions"
+    [showFirstLastIcon]="false"
+    dataKey="fac_id"
+    responsiveLayout="stack"
+    [expandedRowKeys]="expandedFacId"
+  >
+    <ng-template pTemplate="body" let-row let-expanded="expanded" let-index="rowIndex" dataKey="fac_id">
+      <tr class="question">
+        <td class="question__expand">
+          <button
+            type="button"
+            pButton
+            pRipple
+            [pRowToggler]="row"
+            class="p-button-text p-button-rounded p-button-plain "
+            [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
+          ></button>
+        </td>
+        <td>
+          <span class="question__text">{{row.fac_question}}</span>
+        </td>
+        <td class="w-[1%]">
+          <spr-table-rec-actions *ngIf="menuActions[row.fac_id]?.length" [actionsList]="menuActions[row.fac_id] || []">
+          </spr-table-rec-actions>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="rowexpansion" let-row dataKey="fac_id">
+      <tr>
+        <td colspan="3">
+          <spr-editor-viewer [content]="row.fac_answer" />
+
+          <ng-container *ngIf="row.files">
+            <div class="file-card">
+              <div *ngFor="let item of row.files | parseFileObject" class="file-card__item group">
+                <spr-icon name="file_download" class="file-card__item-icon " />
+                <button (click)="downloadFile(item)" type="button" class="file-card__item-text">
+                  {{item.fil_name}}
+                </button>
+              </div>
+            </div>
+          </ng-container>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage" translate>
+      <spr-table-no-rec-found></spr-table-no-rec-found>
+    </ng-template>
+  </p-table>
+</spr-content-box>

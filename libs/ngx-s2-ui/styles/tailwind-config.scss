@@ -1,0 +1,119 @@
+:root {
+  // COLORS:
+  // primary
+  --s2-color-primary-050: 150 88% 97%;
+  --s2-color-primary-100: 149 88% 90%;
+  --s2-color-primary-200: 149 80% 73%;
+  --s2-color-primary-300: 149 70% 58%;
+  --s2-color-primary-400: 149 70% 45%;
+  --s2-color-primary-500: 149 99% 32%;
+  --s2-color-primary-600: 149 99% 27%;
+  --s2-color-primary-700: 149 99% 22%;
+  --s2-color-primary-800: 149 99% 17%;
+  --s2-color-primary-900: 150 99% 12%;
+  // neutral
+  --s2-color-neutral-000: 210 0% 100%;
+  --s2-color-neutral-050: 210 40% 98%;
+  --s2-color-neutral-100: 210 40% 96%;
+  --s2-color-neutral-200: 214 32% 91%;
+  --s2-color-neutral-300: 213 27% 84%;
+  --s2-color-neutral-400: 215 20% 65%;
+  --s2-color-neutral-500: 215 16% 47%;
+  --s2-color-neutral-600: 215 19% 35%;
+  --s2-color-neutral-700: 215 25% 27%;
+  --s2-color-neutral-800: 217 33% 17%;
+  --s2-color-neutral-900: 222 47% 11%;
+  // risk
+  --s2-color-risk-050: 0 86% 97%;
+  --s2-color-risk-100: 0 93% 94%;
+  --s2-color-risk-200: 0 96% 89%;
+  --s2-color-risk-300: 0 94% 82%;
+  --s2-color-risk-400: 0 91% 71%;
+  --s2-color-risk-500: 0 84% 60%;
+  --s2-color-risk-600: 0 72% 51%;
+  --s2-color-risk-700: 0 74% 42%;
+  --s2-color-risk-800: 0 70% 35%;
+  --s2-color-risk-900: 0 63% 31%;
+  // warning
+  --s2-color-warning-050: 48 99% 96%;
+  --s2-color-warning-100: 48 96% 89%;
+  --s2-color-warning-200: 48 97% 77%;
+  --s2-color-warning-300: 46 97% 65%;
+  --s2-color-warning-400: 43 96% 56%;
+  --s2-color-warning-500: 38 92% 50%;
+  --s2-color-warning-600: 32 95% 44%;
+  --s2-color-warning-700: 26 90% 37%;
+  --s2-color-warning-800: 23 82% 31%;
+  --s2-color-warning-900: 22 78% 26%;
+  // success
+  --s2-color-success-050: 138 76% 97%;
+  --s2-color-success-100: 141 84% 93%;
+  --s2-color-success-200: 141 79% 85%;
+  --s2-color-success-300: 142 77% 73%;
+  --s2-color-success-400: 142 69% 58%;
+  --s2-color-success-500: 142 71% 45%;
+  --s2-color-success-600: 142 76% 36%;
+  --s2-color-success-700: 142 72% 29%;
+  --s2-color-success-800: 143 64% 24%;
+  --s2-color-success-900: 144 61% 20%;
+  // info
+  --s2-color-info-050: 204 99% 97%;
+  --s2-color-info-100: 196 99% 93%;
+  --s2-color-info-200: 201 94% 86%;
+  --s2-color-info-300: 199 95% 74%;
+  --s2-color-info-400: 198 93% 60%;
+  --s2-color-info-500: 199 89% 48%;
+  --s2-color-info-600: 200 98% 39%;
+  --s2-color-info-700: 201 96% 32%;
+  --s2-color-info-800: 201 90% 27%;
+  --s2-color-info-900: 202 80% 24%;
+  // text
+  --s2-color-text-000: 210 0% 100%;
+  --s2-color-text-050: 210 40% 98%;
+  --s2-color-text-100: 210 40% 96%;
+  --s2-color-text-200: 214 32% 91%;
+  --s2-color-text-300: 213 27% 84%;
+  --s2-color-text-400: 215 20% 65%;
+  --s2-color-text-500: 215 16% 47%;
+  --s2-color-text-600: 215 19% 35%;
+  --s2-color-text-700: 215 25% 27%;
+  --s2-color-text-800: 217 33% 17%;
+  --s2-color-text-900: 222 47% 11%;
+
+  // FONTSIZE:
+  --s2-font-size-xs: 0.75rem;
+  --s2-font-size-xs-line-height: 1rem;
+  --s2-font-size-sm: 0.875rem;
+  --s2-font-size-sm-line-height: 1.25rem;
+  --s2-font-size-base: 1rem;
+  --s2-font-size-base-line-height: 1.5rem;
+  --s2-font-size-lg: 1.125rem;
+  --s2-font-size-lg-line-height: 1.75rem;
+  --s2-font-size-xl: 1.25rem;
+  --s2-font-size-xl-line-height: 1.75rem;
+  --s2-font-size-2xl: 1.5rem;
+  --s2-font-size-2xl-line-height: 2rem;
+  --s2-font-size-3xl: 1.875rem;
+  --s2-font-size-3xl-line-height: 2.25rem;
+  --s2-font-size-4xl: 2.25rem;
+  --s2-font-size-4xl-line-height: 2.5rem;
+  --s2-font-size-5xl: 3rem;
+  --s2-font-size-5xl-line-height: 1;
+  --s2-font-size-6xl: 3.75rem;
+  --s2-font-size-6xl-line-height: 1;
+  --s2-font-size-7xl: 4.5rem;
+  --s2-font-size-7xl-line-height: 1;
+  --s2-font-size-8xl: 6rem;
+  --s2-font-size-8xl-line-height: 1;
+  --s2-font-size-9xl: 8rem;
+  --s2-font-size-9xl-line-height: 1;
+
+  // SCREENS:
+  --s2-screen-xs: 480px;
+  --s2-screen-sm: 640px;
+  --s2-screen-md: 768px;
+  --s2-screen-mdl: 900px;
+  --s2-screen-lg: 1024px;
+  --s2-screen-xl: 1280px;
+  --s2-screen-2xl: 1536px;
+}

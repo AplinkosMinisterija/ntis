@@ -1,0 +1,42 @@
+<div>
+  <div>
+    <form [formGroup]="form" autocomplete="off" *ngIf="editMode; else infoBlock">
+      <spr-form-field
+        [labelText]="data?.display"
+        [inputErrors]="form.controls.result.touched && form.controls.result.errors"
+        [mandatory]="data.resId !== null"
+      >
+        <div class="flex flex-row w-full gap-5">
+          <input formControlName="result" type="number" class="results-input" />
+          <div class="input-norm-wrapper info-block-wrapper">
+            <span>{{unit}}</span
+            ><span class="font-semibold">{{(translationsReference + '.norm'| translate) + ':'}}</span>
+            <span>{{'≤ ' +data?.norm + ' ' + unit}}</span>
+          </div>
+        </div>
+      </spr-form-field>
+    </form>
+    <ng-template #infoBlock>
+      <div *ngIf="data.resId" class="info-block-wrapper">
+        <div class="research-criteria-col">
+          <span class="col-name">{{data?.display + ': '}}</span>
+          <span
+            [ngClass]="{'text-risk-400': data?.normCompliance === doesNotComply}"
+            >{{data?.result + ' ' + unit}}</span
+          >
+        </div>
+        <div>
+          <span class="col-name">{{(translationsReference + '.norm'| translate) + ': '}}</span>
+          <span>{{'≤ ' + data?.norm + ' ' + unit}}</span>
+        </div>
+        <div>
+          <span class="col-name">{{(translationsReference + '.normCompliance'| translate) + ': '}}</span>
+          <span
+            [ngClass]="{'text-risk-400': data?.normCompliance === doesNotComply}"
+            >{{translationsReference + '.' + data?.normCompliance | translate}}</span
+          >
+        </div>
+      </div>
+    </ng-template>
+  </div>
+</div>

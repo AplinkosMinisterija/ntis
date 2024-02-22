@@ -1,0 +1,22 @@
+<div class="relative flex items-center h-full">
+  <button
+    class="h-9 aspect-square bg-primary-50 rounded-full flex items-center justify-center font-bold uppercase select-none text-xs"
+    (click)="toggleLanguageSwitch(!isLanguageSwitchOpen)"
+    [attr.aria-label]="(('common.action.' + (isLanguageSwitchOpen ? 'hide' : 'show')) | translate) + ' ' + ('components.languageSwitch.languageMenu' | translate )"
+  >
+    {{languages[selectedIndex].code}}
+  </button>
+  <ul class="language-switch__options" [ngClass]="{'language-switch__options--open': isLanguageSwitchOpen}">
+    <li *ngFor="let item of languages; index as i">
+      <button
+        *ngIf="languages[selectedIndex].code !== item.code"
+        class="language-switch__options--option"
+        (click)="onLanguageChange(item.code, i);"
+        [attr.tabindex]="isLanguageSwitchOpen ? 0 : -1"
+        [attr.aria-label]="item.name"
+      >
+        {{item.code}}
+      </button>
+    </li>
+  </ul>
+</div>

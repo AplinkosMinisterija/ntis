@@ -1,0 +1,15 @@
+<spr-form-field-group [text]="translationsReference + '.legend'">
+  <div class="spr-form-items-flex">
+    <spr-info-line [name]="translationsReference + '.wtfCount' | translate" [value]="wtfCount + ''"></spr-info-line>
+    <div class="button-wrapper">
+      <spr-button
+        className="spr-button-primary"
+        iconStyle="fas"
+        iconName="faArrowsSpin"
+        size="large"
+        [routerLink]="[toFacilities]"
+        >{{ (translationsReference + '.manageWtfs') | translate }}</spr-button
+      >
+    </div>
+  </div>
+</spr-form-field-group>

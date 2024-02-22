@@ -1,0 +1,148 @@
+<form [formGroup]="quickSearchForm" class="quick-search-form" autocomplete="off">
+  <spr-form-field
+    [labelText]="translationsReference + '.quickSearchLabel' | translate"
+    labelFor="quick-search"
+    [mandatory]="true"
+    class="grow"
+  >
+    <spr-select
+      id="quick-search"
+      [labelTemplate]="quickSearchAddrList.labelTemplate"
+      [showFilter]="quickSearchAddrList.showFilter !== undefined ? quickSearchAddrList.showFilter : true"
+      [optionType]="quickSearchAddrList.optionType || 'autocomplete-single'"
+      [optionValue]="quickSearchAddrList.optionValue || null"
+      formControlName="quick_search_addr_list"
+      (searchData)="onQuickSearch($event)"
+      [optionData]="quickSearchAddrList.list"
+      [autoComplete]="quickSearchAddrList.autoComplete !== undefined ? quickSearchAddrList.autoComplete : true"
+      [startFilteringLength]="quickSearchAddrList.startFilteringLength || 3"
+      [placeholder]="translationsReference + '.addressOrCoordinates' | translate"
+      [showSearchIcon]="true"
+    ></spr-select>
+  </spr-form-field>
+  <ng-content select="[button]"></ng-content>
+</form>
+
+<spr-form-field>
+  <div class="d-search-btn-wrapper">
+    <spr-button className="spr-button-link" (click)="onDetailedSearch()">
+      {{ translationsReference + '.detailedSearch' | translate}}
+      <fa-icon
+        class="detailed-search-icon"
+        [icon]="faIconsService.fas.faChevronDown"
+        [ngClass]="{'detailed-search-icon--rotate-180': isDetailedSearch}"
+        size="sm"
+      ></fa-icon>
+    </spr-button>
+  </div>
+</spr-form-field>
+<form *ngIf="isDetailedSearch" [formGroup]="detailedSearchForm" (submit)="onSubmit()" class="mb-4">
+  <div class="radio-input-wrapper">
+    <input type="radio" [value]="searchBy.address" id="by-address" formControlName="radioSearchBy" class="spr-radio" />
+    <label for="by-address">{{ translationsReference + '.byAddress' | translate}}</label>
+  </div>
+  <div class="detailed-search-wrapper">
+    <spr-form-field
+      labelFor="municipality"
+      [labelText]="translationsReference + '.municipality' | translate"
+      [mandatory]="true"
+      [inputErrors]="detailedSearchForm.controls.municipality.touched && detailedSearchForm.controls.municipality.errors"
+    >
+      <spr-select
+        id="municipality"
+        optionLabel="option"
+        optionValue="value"
+        formControlName="municipality"
+        [optionData]="municipalities"
+        [showFilter]="true"
+      ></spr-select>
+    </spr-form-field>
+    <spr-form-field
+      labelFor="city"
+      [labelText]="translationsReference + '.city' | translate"
+      [mandatory]="true"
+      [inputErrors]="detailedSearchForm.controls.city.touched && detailedSearchForm.controls.city.errors"
+    >
+      <spr-select
+        id="city"
+        optionLabel="option"
+        optionValue="value"
+        formControlName="city"
+        [optionData]="cities"
+        [showFilter]="true"
+      ></spr-select>
+    </spr-form-field>
+    <spr-form-field
+      labelFor="street"
+      [labelText]="translationsReference + '.street' | translate"
+      [mandatory]="true"
+      [inputErrors]="detailedSearchForm.controls.street.touched && detailedSearchForm.controls.street.errors"
+    >
+      <spr-select
+        id="street"
+        optionLabel="option"
+        optionValue="value"
+        formControlName="street"
+        [optionData]="streets.length > 0 ? streets : [{ option: this.translationsReference + '.noStreets' | translate, value: 0 }]"
+        [showFilter]="true"
+      ></spr-select>
+    </spr-form-field>
+    <div class="address-fields-wrapper">
+      <spr-form-field labelFor="house-no" [labelText]="translationsReference + '.houseNo' | translate">
+        <input id="house-no" type="text" formControlName="houseNo" />
+      </spr-form-field>
+      <spr-form-field labelFor="flat-no" [labelText]="translationsReference + '.flatNo' | translate">
+        <input id="flat-no" type="text" formControlName="flatNo" />
+      </spr-form-field>
+    </div>
+  </div>
+  <div class="radio-input-wrapper">
+    <input
+      type="radio"
+      [value]="searchBy.coordinates"
+      id="by-coordinates"
+      formControlName="radioSearchBy"
+      class="spr-radio"
+    />
+    <label for="by-coordinates">{{ translationsReference + '.byCoordinates' | translate}}</label>
+  </div>
+  <div class="detailed-search-wrapper">
+    <spr-form-field
+      labelFor="coordinates"
+      [labelText]="translationsReference + '.coordinates' | translate"
+      [mandatory]="true"
+      [inputErrors]="detailedSearchForm.controls.coordinates.touched && detailedSearchForm.controls.coordinates.errors"
+    >
+      <input id="coordinates" type="text" formControlName="coordinates" />
+    </spr-form-field>
+  </div>
+  <ng-container *ngIf="searchByNTR">
+    <div class="radio-input-wrapper">
+      <input type="radio" [value]="searchBy.ntr" id="by-ntr" formControlName="radioSearchBy" class="spr-radio" />
+      <label for="by-ntr">{{ translationsReference + '.byNtr' | translate}}</label>
+    </div>
+    <div class="detailed-search-wrapper">
+      <spr-form-field
+        labelFor="ntr-number"
+        [labelText]="translationsReference + '.ntrNumber' | translate"
+        [mandatory]="true"
+        [inputErrors]="detailedSearchForm.controls.ntrNumber.touched && detailedSearchForm.controls.ntrNumber.errors"
+      >
+        <input id="ntr-number" type="text" formControlName="ntrNumber" />
+      </spr-form-field>
+    </div>
+  </ng-container>
+
+  <spr-button type="submit" class="spr-button-primary" iconName="faSearch">
+    {{'common.action.search' | translate}}
+  </spr-button>
+
+  <ul *ngIf="detailedSearchAddrList.length > 0" class="detailed-search-result">
+    <li *ngFor="let address of detailedSearchAddrList">
+      <button type="button" [class.selected]="address === selectedAddr" (click)="onSelectAddr(address)">
+        {{address.address}}
+      </button>
+    </li>
+  </ul>
+</form>
+<ng-content></ng-content>

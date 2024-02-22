@@ -1,0 +1,89 @@
+.ntis-dashboard-section-block {
+  @apply py-3 px-4 bg-neutral-100 rounded-md my-2 flex flex-col;
+}
+
+.table-header-wrapper {
+  @apply @container;
+}
+
+.table-header {
+  @apply flex flex-col justify-between 
+         gap-x-2 pb-2 md:pb-0
+         @md:flex-row @md:justify-between;
+
+  &__action {
+    @apply w-full @md:w-auto md:hidden;
+
+    ::ng-deep {
+      button {
+        @apply w-full;
+      }
+    }
+  }
+}
+
+.block-title {
+  @apply flex items-center gap-2 pb-2 text-lg font-medium;
+}
+
+.dashboard-link-button {
+  @apply self-end;
+}
+
+.regular-view {
+  @apply flex content-start gap-1;
+}
+
+.dialog-footer {
+  @apply flex flex-row justify-center;
+}
+
+.row-action-buttons {
+  @apply text-primary-500 text-2xl hover:text-primary-600 active:text-primary-700;
+}
+
+.radio-input-wrapper {
+  @apply flex gap-2 items-center;
+}
+
+.map-wrapper {
+  @apply h-96 w-full;
+}
+
+.add-new-button-wrapper {
+  @apply flex justify-end;
+}
+
+.action-icons-wrapper {
+  @apply flex flex-row items-center gap-3 justify-end;
+}
+
+.action-buttons {
+  @apply text-primary-500 flex justify-center items-center hover:text-primary-600 active:text-primary-700;
+}
+
+.map-button {
+  @apply text-2xl;
+}
+
+.state-button {
+  @apply text-xl;
+}
+
+.status-wrapper {
+  @apply flex justify-center items-center;
+}
+
+tr {
+  .status-table-header-wrapper {
+    @apply text-center;
+  }
+}
+
+.stars-wrapper {
+  @apply flex flex-row gap-3 pb-2;
+}
+
+.icon-color {
+  @apply text-warning-600;
+}

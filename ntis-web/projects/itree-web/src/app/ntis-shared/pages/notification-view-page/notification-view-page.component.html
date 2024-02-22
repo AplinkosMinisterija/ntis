@@ -1,0 +1,45 @@
+<spr-content-box [headerText]="translationsReference + '.headerText'" transformingText="uppercase">
+  <div class="spr-edit-form-wrapper" *ngIf="data && dateString">
+    <spr-form-field-group [text]="translationsReference + '.messageLegend'">
+      <div class="spr-form-items-flex">
+        <spr-info-line [name]="translationsReference + '.date' | translate" [value]="dateString"></spr-info-line>
+        <div class="info-line">
+          <span>{{translationsReference + '.subject' | translate}}:</span>
+          <span class="font-semibold" [innerHTML]="data.subject | safeHtml"></span>
+        </div>
+        <div class="font-semibold mt-2" [innerHTML]="data.body | safeHtml"></div>
+        <ng-container *ngIf="showContactsBlock">
+          <div class="font-semibold mt-2">{{translationsReference + '.msgFooter' | translate}}</div>
+        </ng-container>
+      </div>
+    </spr-form-field-group>
+    <ng-container *ngIf="showContactsBlock">
+      <spr-form-field-group [text]="translationsReference + '.contactLegend'">
+        <div class="spr-form-items-flex">
+          <spr-info-line
+            [name]="translationsReference + '.' + data.refType.toLowerCase() 
+            + (showClientContacts ? '.clientName' : '.orgName') | translate"
+            [value]="showClientContacts ? data.contactInfo.clientName : data.contactInfo.orgName"
+          ></spr-info-line>
+          <ng-container *ngIf="data.refType !== NtisNtfRefType.FUA_AGREEMENT">
+            <spr-info-line
+              [name]="translationsReference + '.email' | translate"
+              [value]="showClientContacts ? (data.contactInfo.clientEmail ? data.contactInfo.clientEmail : '-') 
+              : (data.contactInfo.orgEmail ? data.contactInfo.orgEmail : '-')"
+            ></spr-info-line>
+            <spr-info-line
+              [name]="translationsReference + '.phone' | translate"
+              [value]="showClientContacts ? (data.contactInfo.clientPhone ? data.contactInfo.clientPhone : '-') 
+              : (data.contactInfo.orgPhone ? data.contactInfo.orgPhone : '-')"
+            ></spr-info-line>
+          </ng-container>
+        </div>
+      </spr-form-field-group>
+    </ng-container>
+    <div class="spr-form-buttons">
+      <spr-button type="button" class="ntis-button-link" (click)="onCancel()">
+        {{'common.action.back' | translate}}
+      </spr-button>
+    </div>
+  </div>
+</spr-content-box>

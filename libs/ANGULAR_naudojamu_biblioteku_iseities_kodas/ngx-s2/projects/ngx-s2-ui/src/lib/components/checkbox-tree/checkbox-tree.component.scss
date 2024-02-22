@@ -1,0 +1,31 @@
+.s2-checkbox-tree {
+  @apply block;
+}
+
+.s2-checkbox-tree-items {
+  li {
+    @apply my-0.5;
+
+    li {
+      @apply ml-6;
+    }
+  }
+}
+
+.s2-checkbox-tree-item {
+  &__button-placeholder {
+    @apply min-w-5;
+  }
+
+  &__chevron-button {
+    @apply flex justify-center items-center text-xl;
+  }
+
+  &__label {
+    @apply text-sm pt-px;
+  }
+
+  &--select-all {
+    @apply pb-0.5;
+  }
+}

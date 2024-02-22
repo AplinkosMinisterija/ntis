@@ -1,0 +1,194 @@
+<spr-content-box
+  headerText="wteMaintenanceAndOperation.techSupport.waterManager.pages.sludgeTreatmentDeliveriesList.headerText"
+  transformingText="uppercase"
+>
+  <div class="spr-browse-actions-wrapper">
+    <spr-browse-search-form [formGroup]="searchForm" [formCode]="formCode" (search)="search(dataTableComponent)">
+      <spr-filter-input
+        filters
+        inputType="number"
+        [maxLength]="10"
+        formControlName="wd_id"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="formTranslationsReference+'.wd_id' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="date"
+        formControlName="wd_delivery_date"
+        [maxLength]="20"
+        [placeholder]="formTranslationsReference+'.wd_delivery_date' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="number"
+        [maxLength]="12"
+        formControlName="wd_delivered_quantity"
+        [placeholder]="formTranslationsReference+'.wd_delivered_quantity' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="20"
+        formControlName="cr_reg_no"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="formTranslationsReference+'.cr_reg_no' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="200"
+        formControlName="org_name"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="formTranslationsReference+'.org_name' | translate"
+      ></spr-filter-input>
+      <spr-select
+        filters
+        formControlName="wd_state"
+        classifierCode="SEWAGE_DELIV_STATUS"
+        [placeholder]="formTranslationsReference + '.wd_state_meaning' | translate"
+        [advancedFilterParams]="true"
+      ></spr-select>
+
+      <spr-table-data-export
+        buttons
+        [translation]="formTranslationsReference"
+        [tableColumn]="cols"
+        [tableData]="exportData"
+        [fileName]="formTranslationsReference+'.headerText'"
+        (exportAllRecEvent)="loadAllRecords($event, dataTableComponent)"
+      ></spr-table-data-export>
+    </spr-browse-search-form>
+  </div>
+
+  <p-table
+    [value]="data"
+    [autoLayout]="true"
+    [lazy]="true"
+    (onLazyLoad)="loadDataLazy($event)"
+    [rows]="showRows"
+    [totalRecords]="totalRecords"
+    [paginator]="data?.length > 0"
+    [rowsPerPageOptions]="rowsPerPageOptions"
+    [showFirstLastIcon]="false"
+    responsiveLayout="stack"
+    breakpoint="767px"
+    [rowHover]="true"
+  >
+    <ng-template pTemplate="header" let-row let-index="rowIndex">
+      <tr>
+        <ng-container *ngFor="let col of visibleColumns">
+          <th pSortableColumn="{{col.field}}">
+            {{formTranslationsReference+'.'+col.field | translate}}
+            <p-sortIcon field="{{col.field}}"></p-sortIcon>
+          </th>
+        </ng-container>
+        <th>
+          {{formTranslationsReference+'.actions' |translate}}
+        </th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row let-index="rowIndex">
+      <tr>
+        <ng-container *ngFor="let col of visibleColumns">
+          <td>
+            <span class="p-column-title">
+              {{formTranslationsReference+'.'+col.field |translate}}
+            </span>
+            <span>{{row[col.field]}}</span>
+          </td>
+        </ng-container>
+        <td>
+          <span class="p-column-title">
+            {{formTranslationsReference+'.actions' |translate}}
+          </span>
+          <ntis-table-row-actions [actions]="row.actions"></ntis-table-row-actions>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage" translate>
+      <tr>
+        <td [attr.colspan]="cols.length + 1">
+          <spr-table-no-rec-found></spr-table-no-rec-found>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+  <form [formGroup]="rejectionDialogForm" autocomplete="off">
+    <p-dialog
+      (onHide)="hideDialog('reject')"
+      [(visible)]="rejectionDialog"
+      [style]="{width: '450px', 'z-index': 999, 'top': '2rem', overflow: 'visible'}"
+      [modal]="true"
+      [draggable]="false"
+      [closeOnEscape]="true"
+      styleClass="p-fluid"
+      [autoZIndex]="true"
+      [closable]="false"
+      [blockScroll]="true"
+      [contentStyle]="{'overflow': 'visible !important' }"
+      appendTo="body"
+    >
+      <div class="dialog-header">{{ formTranslationsReference + '.rejectionDialogHeader' | translate }}</div>
+      <spr-form-field
+        labelText="{{formTranslationsReference+'.wd_rejection_reason' | translate}}"
+        [isLabelHorizontal]="false"
+      >
+        <textarea formControlName="wd_rejection_reason" [maxLength]="200"></textarea>
+      </spr-form-field>
+
+      <ng-template pTemplate="footer">
+        <span class="dialog-footer">
+          <spr-button className="ntis-button-link" (click)="onCancel('reject')">
+            {{'common.action.back' | translate}}
+          </spr-button>
+          <spr-button className="spr-button-primary" (click)="onRejectDelivery()" type="submit">
+            {{formTranslationsReference + '.rejectDelivery' | translate}}
+          </spr-button>
+        </span>
+      </ng-template>
+    </p-dialog>
+  </form>
+  <form [formGroup]="confirmationDialogForm" autocomplete="off">
+    <p-dialog
+      (onHide)="hideDialog('confirm')"
+      [(visible)]="confirmationDialog"
+      [style]="{width: '450px', 'z-index': 999, 'top': '2rem', overflow: 'visible'}"
+      [modal]="true"
+      [draggable]="false"
+      styleClass="p-fluid"
+      [autoZIndex]="true"
+      [closable]="false"
+      [blockScroll]="true"
+      [contentStyle]="{'overflow': 'visible !important' }"
+      appendTo="body"
+    >
+      <div class="dialog-header">{{ formTranslationsReference + '.confirmationDialogHeader' | translate }}</div>
+      <spr-form-field
+        [labelText]="formTranslationsReference+'.wd_accepted_sewage_quantity' | translate"
+        [inputErrors]="confirmationDialogForm.controls.wd_accepted_sewage_quantity.touched && confirmationDialogForm.controls.wd_accepted_sewage_quantity.errors"
+        [isLabelHorizontal]="false"
+        [mandatory]="true"
+      >
+        <input type="number" formControlName="wd_accepted_sewage_quantity" step="0.01" [min]="0" />
+      </spr-form-field>
+      <spr-form-field
+        labelText="{{formTranslationsReference+'.notesOnDeliveredSewage' | translate}}"
+        [isLabelHorizontal]="false"
+      >
+        <textarea formControlName="wd_delivered_wastewater_description" [maxlength]="200"></textarea>
+      </spr-form-field>
+
+      <ng-template pTemplate="footer">
+        <span class="dialog-footer">
+          <spr-button className="ntis-button-link" (click)="onCancel('confirm')">
+            {{'common.action.back' | translate}}
+          </spr-button>
+          <spr-button className="spr-button-primary" (click)="onConfirmDelivery()" type="submit">
+            {{formTranslationsReference + '.confirmDelivery' | translate}}
+          </spr-button>
+        </span>
+      </ng-template>
+    </p-dialog>
+  </form>
+</spr-content-box>

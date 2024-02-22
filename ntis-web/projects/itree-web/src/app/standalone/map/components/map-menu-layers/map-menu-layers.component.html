@@ -1,0 +1,14 @@
+<ng-template
+  *ngIf="mapComponent.templates['layers-menu-header']"
+  [ngTemplateOutlet]="mapComponent.templates['layers-menu-header']"
+/>
+
+<map-layer-card
+  *ngFor="let layer of mapComponent.layers; index as i"
+  [index]="i"
+  (toggleShow)="toggleShowLayer(i)"
+  (moveUp)="moveUpLayer(i)"
+  (moveDown)="moveDownLayer(i)"
+  (changeTransparency)="updateLayersTransparency(i)"
+  (remove)="removeLayer(i)"
+/>

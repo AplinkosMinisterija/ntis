@@ -1,0 +1,9 @@
+export enum UserType {
+  PRIVATE_USER = 'PRIVATE',
+  ORGANIZATION_USER = 'ORGANIZATION',
+}
+
+export enum AuthType {
+  USER_PASSWORD_AUTH = 'USER_PASSWORD_AUTH',
+  VIISP_AUTH = 'VIISP_AUTH',
+}

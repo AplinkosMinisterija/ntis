@@ -1,0 +1,21 @@
+<spr-content-box headerText="pages.confirmEmail.headerText" transformingText="uppercase">
+  <div class="text-center">
+    <div *ngIf="positiveEmailConfirm" class="text-primary-500">
+      <span>
+        <fa-icon [icon]="faIconsService.fas.faCheckCircle" size="lg"></fa-icon>
+        {{ 'pages.confirmEmail.positiveEmailConfirm' | translate }}
+      </span>
+    </div>
+    <div *ngIf="negativeEmailConfirm" class="text-risk-500">
+      <span>
+        <fa-icon [icon]="faIconsService.fas.faTimesCircle" size="lg"></fa-icon>
+        {{ 'pages.confirmEmail.negativeEmailConfirm' | translate }}
+      </span>
+    </div>
+    <div class="flex justify-center my-5">
+      <spr-button class="spr-button-primary w-fit" (click)="navigate()">
+        {{'pages.confirmEmail.homePage' | translate}}
+      </spr-button>
+    </div>
+  </div>
+</spr-content-box>

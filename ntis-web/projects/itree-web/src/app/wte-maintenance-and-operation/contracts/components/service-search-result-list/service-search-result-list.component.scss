@@ -1,0 +1,92 @@
+%last-col {
+  @apply min-w-40;
+}
+
+.card-content {
+  @apply @container;
+}
+
+.provider-info {
+  @apply flex flex-col gap-x-4 gap-y-1
+         @lg:grid @lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto];
+
+  &__name {
+    @apply text-lg font-semibold;
+  }
+
+  &__website,
+  &__phone {
+    @apply block text-md text-neutral-700 no-underline 
+           break-words @lg:text-right;
+  }
+
+  &__phone {
+    @extend %last-col;
+  }
+}
+
+.provider-services {
+  @apply flex flex-col pt-4 gap-6 @lg:gap-4;
+
+  &__item {
+    @apply block;
+  }
+}
+
+.service {
+  $block: &;
+
+  @apply flex flex-col gap-x-4 gap-y-1
+         @lg:grid @lg:grid-cols-[1fr_auto_auto];
+
+  &__main-info {
+    @apply flex flex-col gap-2;
+  }
+
+  &__name {
+    @apply flex items-center gap-2 mb-auto;
+  }
+
+  &__name-text {
+    @apply text-md font-medium;
+  }
+
+  ::ng-deep {
+    #{$block}__expand-button {
+      @apply text-sm;
+    }
+  }
+
+  &__details {
+    @apply flex flex-col gap-2;
+  }
+
+  &__price {
+    @apply block @lg:text-right;
+  }
+
+  &__order-wrapper {
+    @apply flex items-start @lg:justify-end;
+    @extend %last-col;
+  }
+
+  &__contract {
+    @apply flex justify-end items-center gap-3 mt-3 pt-3 border-t border-neutral-700;
+  }
+}
+
+.no-results {
+  @apply text-center text-neutral-700;
+}
+
+.score-wrapper {
+  @apply flex flex-row gap-3 w-fit justify-self-end;
+}
+
+.stars-wrapper {
+  @apply flex flex-row gap-1;
+}
+
+.icon-color {
+  @apply text-warning-600;
+}

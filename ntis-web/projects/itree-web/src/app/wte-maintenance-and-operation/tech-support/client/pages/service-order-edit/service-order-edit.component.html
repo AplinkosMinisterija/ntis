@@ -1,0 +1,65 @@
+<spr-content-box
+  [headerText]="formTranslationsReference + (data?.serviceDescription.srv_type === TYRIMAI ? '.headerTextResearch' : '.headerText')"
+  transformingText="uppercase"
+  *ngIf="data !== null"
+>
+  <div class="spr-edit-form-wrapper">
+    <app-service-description-details
+      *ngIf="data?.serviceDescription.srv_id !== null && data?.serviceDescription.srv_type !== TYRIMAI"
+      [name]="data.serviceDescription.srv_name"
+      [org_name]="data.serviceDescription.srv_org_name"
+      [email]="data.serviceDescription.srv_email"
+      [phone]="data.serviceDescription.srv_phone_no"
+      [completion_time_in_days]="data.serviceDescription.srv_completion_in_days_from?.toString()"
+      [price_from]="data.serviceDescription.srv_price_from?.toString()"
+      [price_to]="data.serviceDescription.srv_price_to?.toString()"
+      [description]="data.serviceDescription.srv_description"
+      [csId]="data.serviceDescription.cs_id"
+    ></app-service-description-details>
+    <ntis-wtf-info [data]="data?.wastewaterFacility"></ntis-wtf-info>
+    <ntis-accordion
+      *ngIf="data?.serviceDescription.srv_type === TYRIMAI"
+      [label]="(formTranslationsReference+'.chosenLab' | translate)"
+      [uppercase]="true"
+      [asCard]="true"
+    >
+      <spr-info-line
+        [name]="formTranslationsReference + '.srvOrgName' | translate"
+        [value]="data?.serviceDescription?.srv_org_name ? data?.serviceDescription?.srv_org_name : '-'"
+      ></spr-info-line>
+      <spr-info-line
+        [name]="formTranslationsReference + '.srvOrgAddress' | translate"
+        [value]="data?.serviceDescription?.srv_address ? data?.serviceDescription?.srv_address : '-'"
+      ></spr-info-line>
+      <spr-info-line
+        [name]="formTranslationsReference + '.srvOrgPhone' | translate"
+        [value]="data?.serviceDescription?.srv_phone_no ? data?.serviceDescription?.srv_phone_no : '-'"
+      ></spr-info-line>
+      <spr-info-line
+        [name]="formTranslationsReference + '.srvOrgEmail' | translate"
+        [value]="data?.serviceDescription?.srv_email ? data?.serviceDescription?.srv_email : '-'"
+      ></spr-info-line>
+    </ntis-accordion>
+    <app-research-options-checkbox-list
+      [selectionDisabled]="false"
+      *ngIf="data?.serviceDescription.srv_type === TYRIMAI"
+      [labelText]="formTranslationsReference+'.research' | translate"
+      (criteriaToOrder)="selectedResearchTypes = $event"
+      [copiedCriteria]="selectedResearchTypes"
+    ></app-research-options-checkbox-list>
+    <app-service-orderer-details
+      *ngIf="data?.orderDetails"
+      [(orderDetails)]="data"
+      [csId]="orderRequest.ord_cs_id"
+      [editMode]="true"
+      [srvType]="data.serviceDescription.srv_type"
+      [selectedServices]="selectedResearchTypes"
+    ></app-service-orderer-details>
+  </div>
+  <ntis-select-or-add-wtf-dialog
+    [showDialog]="addrDialog"
+    [wtfSelectionData]="wtfSelectionData"
+    (addNewFacility)="toAddNewFacility()"
+    (selectFacility)="setFacility($event)"
+  ></ntis-select-or-add-wtf-dialog>
+</spr-content-box>

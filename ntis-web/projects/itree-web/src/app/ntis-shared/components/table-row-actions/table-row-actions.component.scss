@@ -1,0 +1,9 @@
+:host {
+  @apply flex gap-1;
+}
+
+:host ::ng-deep {
+  fa-icon {
+    @apply text-xl;
+  }
+}

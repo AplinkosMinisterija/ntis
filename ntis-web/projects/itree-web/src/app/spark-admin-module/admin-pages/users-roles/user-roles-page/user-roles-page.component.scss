@@ -1,0 +1,20 @@
+.user-roles {
+  &__current-user-wrapper {
+    @apply grid grid-rows-1 grid-cols-3;
+  }
+  &__current-user {
+    @apply text-lg font-medium content-center justify-center text-center;
+  }
+}
+.user-roles-view {
+  &__button-wrapper {
+    @apply flex flex-row justify-center;
+  }
+  &__button {
+    @apply mt-4 mr-3;
+  }
+}
+
+.actions {
+  @apply flex flex-col xs:flex-row justify-center gap-3 mt-5;
+}

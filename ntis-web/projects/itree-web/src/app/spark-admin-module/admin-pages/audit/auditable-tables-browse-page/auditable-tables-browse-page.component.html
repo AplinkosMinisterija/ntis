@@ -1,0 +1,87 @@
+<spr-content-box [headerText]="pageTranslations+'.headerText'">
+  <div class="spr-browse-actions-wrapper">
+    <spr-browse-search-form [formGroup]="searchForm" [formCode]="formCode" (search)="search(dataTableComponent)">
+      <spr-filter-input
+        inputType="text"
+        [maxLength]="20"
+        formControlName="aut_table_schema"
+        [placeholder]="pageTranslations+'.aut_table_schema' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        inputType="text"
+        [maxLength]="100"
+        formControlName="aut_table_name"
+        [placeholder]="pageTranslations+'.aut_table_name' | translate"
+      ></spr-filter-input>
+
+      <spr-table-data-export
+        buttons
+        [translation]="pageTranslations"
+        [tableColumn]="cols"
+        [tableData]="exportData"
+        [fileName]="pageTranslations+'.headerText'"
+        (exportAllRecEvent)="loadAllRecords($event, dataTableComponent)"
+      ></spr-table-data-export>
+    </spr-browse-search-form>
+  </div>
+  <p-table
+    [value]="data"
+    [autoLayout]="true"
+    [lazy]="true"
+    (onLazyLoad)="loadDataLazy($event)"
+    [rows]="showRows"
+    [totalRecords]="totalRecords"
+    [paginator]="data?.length > 0"
+    [rowsPerPageOptions]="rowsPerPageOptions"
+    [sortField]="'1'"
+    [sortOrder]="1"
+    class="table-responsive"
+    [rowHover]="true"
+  >
+    <ng-template pTemplate="header" let-row let-index="rowIndex">
+      <tr>
+        <th *ngFor="let col of visibleColumns" pSortableColumn="{{col.field}}">
+          <span class="table-header-col">
+            {{pageTranslations+'.'+col.field | translate}}
+            <p-sortIcon field="{{col.field}}" class="table-header-col__icon"></p-sortIcon>
+          </span>
+        </th>
+        <th></th>
+      </tr>
+    </ng-template>
+    <ng-template class="body" pTemplate="body" let-row let-index="rowIndex">
+      <tr>
+        <td
+          *ngFor="let col of visibleColumns"
+          [ngClass]="{'spr-text-right': col.type === dataTypeNumber, 'whitespace-nowrap': col.type === dataTypeDate}"
+        >
+          <span class="p-column-title">
+            {{pageTranslations+'.'+col.field |translate}}
+          </span>
+          <ng-container *ngIf="col.field !== 'aut_trigger_enabled';else switch">
+            <span>{{row[col.field]}}</span>
+          </ng-container>
+          <ng-template #switch>
+            <p-inputSwitch
+              trueValue="Y"
+              falseValue="N"
+              [(ngModel)]="row[col.field]"
+              [disabled]="!rowToggleAvailable[row.aut_id]"
+              (onChange)="onInputSwitch($event, row.aut_id)"
+            ></p-inputSwitch>
+          </ng-template>
+        </td>
+        <td>
+          <spr-table-rec-actions [actionsList]="rowMenuItems[row.aut_id] || []"> </spr-table-rec-actions>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage" translate>
+      <tr>
+        <td [attr.colspan]="cols.length + 1">
+          <spr-table-no-rec-found></spr-table-no-rec-found>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</spr-content-box>

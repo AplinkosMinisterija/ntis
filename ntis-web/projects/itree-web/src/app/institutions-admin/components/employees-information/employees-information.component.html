@@ -1,0 +1,18 @@
+<spr-form-field-group [text]="translationsReference + '.legend'">
+  <div class="spr-form-items-flex">
+    <spr-info-line
+      [name]="translationsReference + '.employeesCount' | translate"
+      [value]="employeesCount + ''"
+    ></spr-info-line>
+    <div class="manage-button-wrapper">
+      <spr-button
+        className="spr-button-primary"
+        iconStyle="fas"
+        iconName="faUser"
+        size="large"
+        [routerLink]="['/', RoutingConst.INTERNAL, RoutingConst.ADMIN, RoutingConst.SPARK_USERS_BROWSE]"
+        >{{ (translationsReference + '.manageEmployees') | translate }}</spr-button
+      >
+    </div>
+  </div>
+</spr-form-field-group>

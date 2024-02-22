@@ -1,0 +1,18 @@
+:host {
+  @apply block;
+}
+
+.accordion {
+  @apply w-full py-1;
+
+  &__header {
+    @apply flex justify-between items-center px-1.5 bg-primary-500 w-full min-h-6
+     text-neutral-0 text-left;
+    span {
+      @apply text-sm font-semibold;
+    }
+  }
+  &__body {
+    @apply overflow-hidden px-2 my-1;
+  }
+}

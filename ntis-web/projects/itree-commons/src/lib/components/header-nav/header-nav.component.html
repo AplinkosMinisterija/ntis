@@ -1,0 +1,14 @@
+<nav class="header-navigation">
+  <ul class="header-navigation__list">
+    <li class="header-navigation__list-item" *ngFor="let link of links">
+      <button
+        type="button"
+        (click)="sendData(link)"
+        [ngClass]="link.linkType === linkType ? 'header-navigation__link--active' : ''"
+        class="header-navigation__link"
+      >
+        {{link.linkTitle}}
+      </button>
+    </li>
+  </ul>
+</nav>

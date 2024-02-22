@@ -1,0 +1,193 @@
+<spr-content-box headerText="institutionsAdmin.pages.serviceProvidersList.headerText" transformingText="uppercase">
+  <div class="spr-browse-actions-wrapper">
+    <spr-browse-search-form [formGroup]="searchForm" [formCode]="formCode" (search)="search(dataTableComponent)">
+      <spr-select
+        filters
+        formControlName="org_type"
+        [optionData]="orgTypeSelection"
+        optionValue="key"
+        optionLabel="display"
+        [placeholder]="translationsReference + '.org_type' | translate"
+        [advancedFilterParams]="true"
+        optionType="multiple"
+      ></spr-select
+      ><spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="50"
+        formControlName="org_name"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="translationsReference + '.org_name' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="10"
+        formControlName="org_code"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="translationsReference + '.org_code' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="50"
+        formControlName="org_address"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="translationsReference + '.org_address' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="30"
+        formControlName="org_email"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="translationsReference + '.org_email' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="30"
+        formControlName="org_phone"
+        [placeholder]="translationsReference + '.org_phone' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="30"
+        formControlName="org_delegation_person"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="translationsReference + '.org_delegation_person' | translate"
+      ></spr-filter-input>
+      <spr-select
+        filters
+        [optionData]="facilityInstallerSelection"
+        optionValue="key"
+        optionLabel="display"
+        formControlName="is_facility_installer"
+        [placeholder]="translationsReference + '.is_facility_installer' | translate"
+        [advancedFilterParams]="true"
+        optionType="single"
+      ></spr-select>
+      <spr-select
+        filters
+        [optionData]="orgStatusSelection"
+        optionValue="key"
+        optionLabel="display"
+        formControlName="org_state"
+        [placeholder]="translationsReference + '.org_state' | translate"
+        [advancedFilterParams]="true"
+        optionType="multiple"
+      ></spr-select>
+      <spr-table-data-export
+        buttons
+        [translation]="translationsReference"
+        [tableColumn]="cols"
+        [tableData]="exportData"
+        [fileName]="translationsReference + '.headerText'"
+        (exportAllRecEvent)="loadAllRecords($event, dataTableComponent)"
+      ></spr-table-data-export>
+    </spr-browse-search-form>
+  </div>
+
+  <p-table
+    [value]="data"
+    responsiveLayout="stack"
+    breakpoint="767px"
+    [lazy]="true"
+    (onLazyLoad)="loadDataLazy($event)"
+    [rows]="showRows"
+    [totalRecords]="totalRecords"
+    [paginator]="data?.length > 0"
+    [rowsPerPageOptions]="rowsPerPageOptions"
+    [showFirstLastIcon]="false"
+    [rowHover]="true"
+  >
+    <ng-template pTemplate="header" let-row let-index="rowIndex">
+      <tr>
+        <ng-container *ngFor="let col of visibleColumns">
+          <th pSortableColumn="{{col.field}}">
+            {{translationsReference + '.' + col.field | translate}}
+            <p-sortIcon field="{{col.field}}"></p-sortIcon>
+          </th>
+        </ng-container>
+        <th>{{'common.generalUse.actions' | translate}}</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row let-index="rowIndex">
+      <tr [ngClass]="{'ntis-disabled-table-row': row['org_state_clsf'] !== registered}" class="ntis-disabled-table-row">
+        <ng-container *ngFor="let col of visibleColumns">
+          <td>
+            <span class="p-column-title">
+              {{translationsReference + '.' + col.field |translate}}
+            </span>
+            <span>{{row[col.field]}}</span>
+          </td>
+        </ng-container>
+        <td>
+          <ntis-table-row-actions [actions]="row.actions"></ntis-table-row-actions>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage" translate>
+      <tr>
+        <td [attr.colspan]="cols.length + 1">
+          <spr-table-no-rec-found></spr-table-no-rec-found>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+  <form [formGroup]="form" autocomplete="off">
+    <p-dialog [(visible)]="dialog" styleClass="ntis-dialog" [closable]="false" [modal]="true" appendTo="body">
+      <div *ngIf="!edit; else editBlock">
+        <spr-form-field-group [text]="translationsReference + '.formHeader'">
+          <spr-info-line
+            [name]="translationsReference + '.org_state' | translate"
+            [value]="form.controls.org_state.value"
+          ></spr-info-line>
+          <spr-info-line
+            [name]="translationsReference + '.org_registered_date' | translate"
+            [value]="form.controls.org_registered_date.value | s2Date"
+          ></spr-info-line>
+          <spr-info-line
+            [name]="translationsReference + '.org_deregistered_date' | translate"
+            [value]="form.controls.org_deregistered_date.value | s2Date"
+          ></spr-info-line>
+          <spr-info-line
+            [name]="translationsReference + '.org_rejection_reason' | translate"
+            [value]="form.controls.org_rejection_reason.value"
+          ></spr-info-line>
+        </spr-form-field-group>
+      </div>
+      <ng-template #editBlock>
+        <div class="dialog-edit-block-wrapper">
+          <p class="dialog-rejection-text">
+            {{(translationsReference + '.dialogRejectionText') | translate: {org_name: org_name, org_code: org_code} }}
+          </p>
+          <spr-form-field
+            [labelText]="translationsReference + '.provideRejectionReason' | translate"
+            [isLabelHorizontal]="false"
+            [inputErrors]="form.controls.org_rejection_reason.touched && form.controls.org_rejection_reason.errors"
+            [errorDefs]="{required: 'common.error'}"
+            [mandatory]="true"
+          >
+            <textarea
+              name="org_rejection_reason"
+              id="org_rejection_reason"
+              formControlName="org_rejection_reason"
+            ></textarea>
+          </spr-form-field>
+        </div>
+      </ng-template>
+      <ng-template pTemplate="footer">
+        <div class="spr-form-buttons">
+          <spr-button class="ntis-button-link" (click)="closeDialog()">
+            {{'common.action.back' | translate}}
+          </spr-button>
+          <spr-button *ngIf="edit" className="spr-button-primary" iconName="faBan" (click)="setDisabled()">
+            {{'common.action.disableOrg' | translate}}
+          </spr-button>
+        </div>
+      </ng-template>
+    </p-dialog>
+  </form>
+</spr-content-box>

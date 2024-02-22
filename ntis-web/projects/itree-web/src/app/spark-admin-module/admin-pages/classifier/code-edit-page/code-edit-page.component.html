@@ -1,0 +1,25 @@
+<spr-content-box
+  *ngIf="data"
+  [headerText]="data.rfc_id ? 'pages.sprCodesTranslationsEdit.headerTextEdit' :'pages.sprCodesTranslationsEdit.headerTextAdd'"
+>
+  <div class="spr-edit-form-wrapper">
+    <p-tabView>
+      <p-tabPanel [header]="'pages.sprCodesTranslationsEdit.codeDetails'| translate">
+        <spr-edit-form [formGroup]="form" [values]="editFormValues" (cancel)="onCancel()" (submit)="onSubmit($event)">
+        </spr-edit-form>
+      </p-tabPanel>
+      <p-tabPanel
+        *ngIf="showAdditionalDetails"
+        [header]="'pages.sprCodesTranslationsEdit.additionalDetails'| translate"
+      >
+        <spr-edit-form
+          [formGroup]="form"
+          [values]="additionalFormValues"
+          (cancel)="onCancel()"
+          (submit)="onSubmit($event)"
+        >
+        </spr-edit-form>
+      </p-tabPanel>
+    </p-tabView>
+  </div>
+</spr-content-box>

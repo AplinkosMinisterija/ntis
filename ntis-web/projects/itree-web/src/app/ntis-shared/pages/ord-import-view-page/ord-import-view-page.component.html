@@ -1,0 +1,104 @@
+<spr-content-box [headerText]="translationsReference + '.headerText'" transformingText="uppercase">
+  <span class="info-line"> {{uploadedFileDetails?.org_name}} </span>
+  <span class="info-lines-wrapper info-line">
+    <span>{{ translationsReference + '.fil_name' | translate }}: </span>
+    <a>
+      <spr-button class="file-download-link" (click)="download()">{{uploadedFileDetails?.fil_name}}</spr-button>
+    </a>
+  </span>
+  <spr-info-line
+    class="info-line"
+    [name]="translationsReference + '.orf_import_date' | translate"
+    [value]="importDateStr"
+  ></spr-info-line>
+  <spr-info-line
+    *ngIf="uploadedFileDetails?.orf_status_date !== null && uploadedFileDetails?.orf_status === OrdFilStatus.ord_fil_final"
+    class="info-line"
+    [name]="translationsReference + '.orf_status_date' | translate"
+    [value]="confirmedDateStr"
+  ></spr-info-line>
+  <spr-info-line
+    *ngIf="uploadedFileDetails?.orf_status === OrdFilStatus.ord_fil_err_proccessing"
+    class="info-line"
+    [name]="translationsReference + '.status' | translate"
+    [value]="translationsReference + '.err_processing' | translate"
+    [redText]="true"
+  ></spr-info-line>
+  <spr-info-line
+    *ngIf="uploadedFileDetails?.orf_status === OrdFilStatus.ord_fil_pending_err"
+    class="info-line"
+    [name]="translationsReference + '.status' | translate"
+    [value]="translationsReference + '.pendingErrs' | translate"
+    [redText]="true"
+  ></spr-info-line>
+  <span class="info-lines-wrapper" *ngIf="uploadedFileDetails?.total_errors > 0">
+    <spr-info-line
+      [name]="translationsReference + '.totalErrors' | translate"
+      [value]="totalErrors"
+      [redText]="true"
+    ></spr-info-line>
+    <spr-button
+      class="ntis-button-link"
+      (click)="showErrors = !showErrors"
+      >{{'common.action.view' | translate}}</spr-button
+    >
+  </span>
+  <ntis-ord-import-error-lines-list *ngIf="showErrors"></ntis-ord-import-error-lines-list>
+  <span class="info-lines-wrapper">
+    <spr-info-line [name]="translationsReference + '.totalRecords' | translate" [value]="totalRecords"></spr-info-line>
+    <spr-button
+      class="ntis-button-link"
+      (click)="showData = !showData"
+      >{{'common.action.view' | translate}}</spr-button
+    >
+  </span>
+  <ntis-ord-import-file-lines-list
+    *ngIf="showData && uploadedFileDetails?.srv_type === ServiceItemType.maintenance "
+  ></ntis-ord-import-file-lines-list>
+  <ntis-ord-import-removal-lines-list
+    *ngIf="showData && uploadedFileDetails?.srv_type === ServiceItemType.sewageRemoval"
+  ></ntis-ord-import-removal-lines-list>
+  <ntis-ord-import-research-lines-list
+    *ngIf="showData && uploadedFileDetails?.srv_type === ServiceItemType.tests"
+  ></ntis-ord-import-research-lines-list>
+  <span class="actions">
+    <spr-button className="ntis-button-link" (click)="backToBrowseForm()">
+      {{'common.action.back' | translate}}
+    </spr-button>
+    <spr-button
+      *ngIf="uploadedFileDetails?.orf_status === OrdFilStatus.ord_fil_pending || uploadedFileDetails?.orf_status === OrdFilStatus.ord_fil_pending_err"
+      className="ntis-button-hollow"
+      type="submit"
+      iconName="faCircleXmark"
+      iconClassName="text-2xl"
+      (click)="deleteFile()"
+    >
+      {{'common.action.removeFile' | translate}}
+    </spr-button>
+    <spr-button
+      *ngIf="(uploadedFileDetails?.total_errors === 0 || !uploadedFileDetails?.total_errors)&& uploadedFileDetails?.orf_status === OrdFilStatus.ord_fil_pending"
+      className="spr-button-primary"
+      type="submit"
+      iconName="faCircleCheck"
+      iconClassName="text-2xl"
+      (click)="confirmationDialog = true"
+    >
+      {{translationsReference + '.createOrders' | translate}}
+    </spr-button>
+  </span>
+  <p-dialog [(visible)]="confirmationDialog" [closable]="false" styleClass="ntis-dialog">
+    <ng-container>
+      <p
+        [innerHTML]="(translationsReference + '.confirmation') | translate: { fileName: uploadedFileDetails?.fil_name} | safeHtml"
+      ></p>
+      <p class="py-5">{{translationsReference + '.remarks' | translate}}</p>
+    </ng-container>
+    <span class="dialog-footer">
+      <spr-button className="ntis-button-link" (click)="confirmationDialog = false">
+        {{'common.action.back' | translate}} </spr-button
+      ><spr-button className="spr-button-primary" type="submit" iconName="faCircleCheck" (click)="updateFileState()">
+        {{'common.action.confirm' | translate}}
+      </spr-button>
+    </span>
+  </p-dialog>
+</spr-content-box>

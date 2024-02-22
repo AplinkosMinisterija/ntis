@@ -1,0 +1,90 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "cli": {
+    "analytics": false,
+    "schematicCollections": ["@angular-eslint/schematics"]
+  },
+  "version": 1,
+  "newProjectRoot": "projects",
+  "projects": {
+    "ngx-s2-commons": {
+      "projectType": "library",
+      "root": "projects/ngx-s2-commons",
+      "sourceRoot": "projects/ngx-s2-commons/src",
+      "prefix": "s2",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/ngx-s2-commons/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/ngx-s2-commons/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/ngx-s2-commons/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/ngx-s2-commons/src/test.ts",
+            "tsConfig": "projects/ngx-s2-commons/tsconfig.spec.json",
+            "karmaConfig": "projects/ngx-s2-commons/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": ["projects/ngx-s2-commons/**/*.ts", "projects/ngx-s2-commons/**/*.html"]
+          }
+        }
+      }
+    },
+    "ngx-s2-ui": {
+      "projectType": "library",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
+      "root": "projects/ngx-s2-ui",
+      "sourceRoot": "projects/ngx-s2-ui/src",
+      "prefix": "s2",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/ngx-s2-ui/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/ngx-s2-ui/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/ngx-s2-ui/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "tsConfig": "projects/ngx-s2-ui/tsconfig.spec.json",
+            "polyfills": ["zone.js", "zone.js/testing"]
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": ["projects/ngx-s2-ui/**/*.ts", "projects/ngx-s2-ui/**/*.html"]
+          }
+        }
+      }
+    }
+  },
+  "defaultProject": "ngx-s2-commons"
+}

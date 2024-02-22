@@ -1,0 +1,36 @@
+<spr-content-box headerText="pages.sprMenuStructure.headerText">
+  <div class="spr-edit-form-wrapper">
+    <spr-button-back [disableLocationBack]="true" (navigateBack)="onCancel()"></spr-button-back>
+    <spr-edit-form [formGroup]="form" [values]="editFormValues" (cancel)="onCancel()" (submit)="onSubmit($event)">
+      <ng-template sprTemplate="icon">
+        <p-dropdown
+          [options]="iconList"
+          formControlName="icon"
+          [filter]="true"
+          filterBy="name"
+          optionLabel="icon"
+          [placeholder]="'common.action.select' | translate"
+          [showClear]="true"
+          inputId="icon"
+        >
+          <ng-template let-selectedIcon pTemplate="selectedItem">
+            <div>
+              <fa-icon class="pr-2" [icon]="selectedIcon.icon" size="sm" [fixedWidth]="true"></fa-icon>
+              <span>{{selectedIcon.name}}</span>
+            </div>
+          </ng-template>
+          <ng-template let-icon pTemplate="item">
+            <div>
+              <fa-icon class="pr-2" [icon]="icon.icon" size="sm" [fixedWidth]="true"></fa-icon>
+              <span>{{icon.name}}</span>
+            </div>
+          </ng-template>
+        </p-dropdown>
+      </ng-template>
+
+      <ng-template sprTemplate="isCategory">
+        <input type="checkbox" class="spr-checkbox" id="isCategory" formControlName="isCategory" />
+      </ng-template>
+    </spr-edit-form>
+  </div>
+</spr-content-box>

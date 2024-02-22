@@ -1,0 +1,236 @@
+<spr-content-box headerText="{{pageHeader}}" transformingText="uppercase">
+  <form *ngIf="isCustomer" [formGroup]="wtfFilter">
+    <spr-form-field labelText="{{formTranslationsReference+'.selected_wtf' | translate}}" [isLabelHorizontal]="false">
+      <spr-select
+        *ngIf="wtfOptions.length > 0"
+        filters
+        formControlName="wtf_id"
+        [optionData]="wtfOptions"
+        optionLabel="option"
+        optionValue="value"
+        [placeholder]="formTranslationsReference + '.select_wtf' | translate"
+        [showFilter]="false"
+      ></spr-select>
+    </spr-form-field>
+  </form>
+  <div class="spr-browse-actions-wrapper">
+    <spr-browse-search-form [formGroup]="searchForm" [formCode]="formCode" (search)="search(dataTableComponent)">
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="50"
+        formControlName="cot_code"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="formTranslationsReference+'.cot_code' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="date"
+        formControlName="cot_created"
+        [maxLength]="20"
+        [placeholder]="formTranslationsReference+'.cot_created' | translate"
+      ></spr-filter-input>
+      <spr-select
+        filters
+        formControlName="cot_services"
+        classifierCode="NTIS_SRV_ITEM_TYPE"
+        [placeholder]="formTranslationsReference + '.cot_services' | translate"
+        [advancedFilterParams]="true"
+      ></spr-select>
+      <spr-filter-input
+        *ngIf="isCustomer"
+        filters
+        inputType="text"
+        [maxLength]="50"
+        formControlName="cot_service_provider"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="formTranslationsReference+'.cot_service_provider' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        *ngIf="isServiceProvider"
+        filters
+        inputType="text"
+        [maxLength]="100"
+        formControlName="cot_customer"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="formTranslationsReference+'.cot_customer' | translate"
+      ></spr-filter-input>
+      <spr-select
+        filters
+        formControlName="cot_state"
+        classifierCode="NTIS_COT_STATE"
+        [placeholder]="formTranslationsReference + '.cot_state_meaning' | translate"
+        [advancedFilterParams]="true"
+      ></spr-select>
+      <spr-select
+        filters
+        formControlName="cot_method"
+        classifierCode="NTIS_COT_METHOD"
+        [placeholder]="formTranslationsReference + '.cot_method' | translate"
+        [advancedFilterParams]="true"
+      ></spr-select>
+      <spr-button
+        *ngIf="isCustomer"
+        buttons
+        class="spr-button-primary"
+        [iconStyle]="'fas'"
+        [iconName]="'faCirclePlus'"
+        (click)="navigateToServiceSearch()"
+        >{{formTranslationsReference+'.addCotSrvSearch' | translate}}</spr-button
+      >
+      <spr-table-data-export
+        buttons
+        [translation]="formTranslationsReference"
+        [tableColumn]="cols"
+        [tableData]="exportData"
+        [fileName]="formTranslationsReference+'.headerText' | translate"
+        (exportAllRecEvent)="loadAllRecords($event, dataTableComponent)"
+      ></spr-table-data-export>
+      <spr-button-add
+        buttons
+        [disabled]="!userCanUploadContract || (isServiceProvider && !spHasServices)"
+        [pTooltip]="userCanUploadContract ?  (isServiceProvider && !spHasServices ? (formTranslationsReference +'.noServices' | translate): null)  : (formTranslationsReference +'.tooltipText' | translate)"
+        [textTranslateRef]="formTranslationsReference+'.uploadContract'"
+        (click)="showDialog()"
+      ></spr-button-add>
+    </spr-browse-search-form>
+  </div>
+  <p-table
+    [value]="data"
+    [autoLayout]="true"
+    [lazy]="true"
+    (onLazyLoad)="loadDataLazy($event)"
+    [rows]="showRows"
+    [totalRecords]="totalRecords"
+    [paginator]="data?.length > 0"
+    [rowsPerPageOptions]="rowsPerPageOptions"
+    [showFirstLastIcon]="false"
+    responsiveLayout="stack"
+    breakpoint="767px"
+    [rowHover]="true"
+  >
+    <ng-template pTemplate="header" let-row let-index="rowIndex">
+      <tr>
+        <ng-container *ngFor="let col of visibleColumns">
+          <th pSortableColumn="{{col.field}}">
+            {{formTranslationsReference+'.'+col.field | translate}}
+            <p-sortIcon field="{{col.field}}"></p-sortIcon>
+          </th>
+        </ng-container>
+        <th>{{'common.generalUse.actions' |translate}}</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row let-index="rowIndex">
+      <tr>
+        <ng-container *ngFor="let col of visibleColumns">
+          <td>
+            <span class="p-column-title">
+              {{formTranslationsReference+'.'+col.field |translate}}
+            </span>
+            <span *ngIf="col.field !== 'cot_state_meaning'">{{row[col.field]}}</span>
+            <ntis-record-status
+              *ngIf="col.field === 'cot_state_meaning'"
+              [statusData]="recordStatus"
+              [colField]="col.field"
+              field="cot_state_meaning"
+              [statusValue]="row['cot_state']"
+              statusType="text"
+              [text]="row[col.field]"
+            ></ntis-record-status>
+          </td>
+        </ng-container>
+        <td>
+          <span class="p-column-title">
+            {{'common.generalUse.actions' |translate}}
+          </span>
+          <ntis-table-row-actions [actions]="row.actions"></ntis-table-row-actions>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage" translate>
+      <tr>
+        <td [attr.colspan]="cols.length + 1">
+          <spr-table-no-rec-found></spr-table-no-rec-found>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+  <form [formGroup]="dialogForm" autocomplete="off">
+    <p-dialog
+      (onHide)="hideDialog()"
+      [(visible)]="actionDialog"
+      [style]="{width: '450px', 'z-index': 999, 'top': '2rem', overflow: 'visible'}"
+      [header]="dialogHeader"
+      [modal]="true"
+      [draggable]="false"
+      styleClass="p-fluid"
+      [autoZIndex]="true"
+      [closable]="false"
+      [blockScroll]="true"
+      [contentStyle]="{'overflow': 'visible !important' }"
+      appendTo="body"
+    >
+      <spr-form-field
+        [labelText]="formTranslationsReference+'.cot_service_provider' | translate"
+        labelFor="cot_service_provider"
+        [mandatory]="true"
+        [inputErrors]="dialogForm.controls.cot_service_provider.touched && dialogForm.controls.cot_service_provider.errors"
+      >
+        <ng-container *ngIf="isCustomer; else serviceProvider">
+          <spr-select
+            id="cot_service_provider"
+            formControlName="cot_service_provider"
+            labelTemplate="&org_name& (&org_code&)"
+            [autoComplete]="true"
+            optionType="autocomplete-single"
+            [optionData]="serviceProvidersList"
+            (searchData)="findServiceProviders($event)"
+            optionValue="org_id"
+          ></spr-select>
+        </ng-container>
+        <ng-template #serviceProvider>
+          <input type="text" formControlName="cot_service_provider" id="cot-service-provider" />
+        </ng-template>
+      </spr-form-field>
+      <spr-form-field
+        *ngIf="isCustomer"
+        [labelText]="formTranslationsReference+'.selected_wtf' | translate"
+        labelFor="cot_wtf_id"
+        [mandatory]="true"
+        [inputErrors]="dialogForm.controls.cot_wtf_id.touched && dialogForm.controls.cot_wtf_id.errors"
+      >
+        <spr-select
+          *ngIf="wtfOptions.length > 0"
+          filters
+          formControlName="cot_wtf_id"
+          [optionData]="wtfOptions"
+          optionLabel="option"
+          optionValue="value"
+          [placeholder]="formTranslationsReference + '.select_wtf' | translate"
+          [showFilter]="false"
+        ></spr-select>
+      </spr-form-field>
+      <spr-form-field>
+        <spr-file-upload-with-progress
+          [uploadedFiles]="uploadedFiles"
+          [label]="formTranslationsReference + '.addContract' | translate"
+          (fileToDelete)="onDeleteFile($event)"
+          [multiple]="false"
+          (fileUpload)="onFileUpload()"
+          [disabled]="uploadedFiles.length > 0"
+          acceptedFormat=".docx, .odt, .pdf, .xlsx, .pptx, .ods, .ppsx, .odp, .tif, .tiff, .jpg, .jpeg, .jfif, .png"
+        ></spr-file-upload-with-progress>
+      </spr-form-field>
+      <ng-template pTemplate="footer">
+        <span class="dialog-footer">
+          <spr-button className="ntis-button-link" (click)="onCancel()">
+            {{'common.action.back' | translate}}
+          </spr-button>
+          <spr-button className="spr-button-primary" (click)="onNext()" type="submit">
+            {{formTranslationsReference + '.next' | translate}}
+          </spr-button>
+        </span>
+      </ng-template>
+    </p-dialog>
+  </form>
+</spr-content-box>

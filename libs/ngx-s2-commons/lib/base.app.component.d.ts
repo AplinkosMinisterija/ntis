@@ -1,0 +1,30 @@
+import { WebSessionInfo } from './model/common.api';
+import { TranslateService } from '@ngx-translate/core';
+import { AppMessages } from './message/app.messages';
+import { NgZone, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AuthEvent } from './auth/auth.event';
+import * as i0 from "@angular/core";
+export declare abstract class BaseAppComponent<T extends WebSessionInfo> implements OnInit {
+    protected router: Router;
+    protected appMessages: AppMessages;
+    protected translate: TranslateService;
+    protected route: ActivatedRoute;
+    protected ngZone: NgZone;
+    currentUser: T;
+    paramsLang: string;
+    constructor(router: Router, appMessages: AppMessages, translate: TranslateService, route: ActivatedRoute, ngZone: NgZone);
+    protected onLogin(): void;
+    protected onLogout(): void;
+    protected handleRegStatus(regStatus: AuthEvent): void;
+    protected onUserInfoUpdate(session: T): void;
+    protected abstract getLoginUrl(): string;
+    ngOnInit(): void;
+    protected clearUser(): void;
+    protected setUser(): void;
+    private showNoAuthWarning;
+    getReturnUrl(authEvent: AuthEvent): string;
+    isLoggedIn(): boolean;
+    static ɵfac: i0.ɵɵFactoryDeclaration<BaseAppComponent<any>, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<BaseAppComponent<any>, "ng-component", never, {}, {}, never, never, false, never>;
+}

@@ -1,0 +1,654 @@
+<spr-content-box
+  [headerText]="data ? ntisBuildingDataReference + '.headerText' : ntisBuildingDataReference + '.headerTextCreate'"
+  id="top-position"
+  transformingText="uppercase"
+>
+  <div class="form-content-wrapper">
+    <div class="form-wrapper">
+      <form [formGroup]="form" (submit)="onSubmit($event)" autocomplete="off" (keydown.enter)="$event.preventDefault()">
+        <spr-form-field-group [text]="ntisBuildingDataReference + '.facilityInfo'">
+          <spr-form-field
+            [mandatory]="true"
+            [labelText]="ntisBuildingDataReference + '.wtf_type' | translate"
+            [inputErrors]="form.controls.wtf_type.touched && form.controls.wtf_type.errors"
+            labelFor="facility-type"
+          >
+            <spr-select
+              inputId="facility-type"
+              [placeholder]="commonActionReference + '.choose' | translate"
+              formControlName="wtf_type"
+              optionLabel="display"
+              [optionData]="wtfTypeSelection"
+              optionValue="key"
+            ></spr-select>
+          </spr-form-field>
+
+          <spr-form-field
+            labelFor="facility-search"
+            [mandatory]="true"
+            [labelText]="ntisBuildingDataReference + '.fl_address'| translate"
+            [inputErrors]="form.controls.wtf_facility_latitude.touched && form.controls.wtf_facility_latitude.errors"
+            [errorDefs]="{required: ntisBuildingDataReference + '.selectFaciAlert' }"
+          >
+            <div class="select-button-wrapper">
+              <div class="grow">
+                <spr-select
+                  inputId="facility-search"
+                  optionLabel="full_address_text"
+                  optionType="autocomplete-single"
+                  (searchData)="searchFacilityAddress($event)"
+                  [optionData]="facilitySearchResults"
+                  [autoComplete]="true"
+                  [delaySearch]="1000"
+                  [placeholder]="ntisBuildingDataReference + '.address_register' | translate"
+                  formControlName="facilitySearch"
+                  [showSearchIcon]="true"
+                >
+                </spr-select>
+              </div>
+              <button
+                class="h-10"
+                [ngClass]="focusedMapName === inputNamesEnum.facilityAddress ? 'spr-button-primary':'spr-button-secondary' "
+                type="button"
+                (click)="selectFromMap(inputNamesEnum.facilityAddress)"
+                [attr.aria-label]="ntisBuildingDataReference + '.selectFromMap' | translate"
+              >
+                <spr-icon name="location_on"></spr-icon>
+              </button>
+            </div>
+          </spr-form-field>
+
+          <ntis-address-search-form (addressSelect)="setFacilityAddress($event)"> </ntis-address-search-form>
+
+          <ntis-address-list
+            *ngIf="selectedFacilityAddress"
+            [address]="selectedFacilityAddress"
+            (removeItem)="removeFacilityAddress($event)"
+          ></ntis-address-list>
+          <div
+            class="address-dialog__message"
+            *ngIf="correctAddressConfirmed && data?.wtf_type !== typeSewageFacilityEnum.portableReservoir"
+          >
+            <b>{{(ntisBuildingDataReference + '.important' | translate) + ' '}}</b>
+            <span>{{(ntisBuildingDataReference + '.correctAddressWasConfirmed' | translate) + ' '}}</span>
+            <span
+              (click)="correctAddressConfirmed=false"
+              class="underline font-semibold"
+              >{{ 'common.generalUse.here' | translate}}</span
+            >
+          </div>
+        </spr-form-field-group>
+        <spr-form-field-group
+          [text]="ntisBuildingDataReference + '.servicedFacility'"
+          *ngIf="!this.correctAddressConfirmed && form.controls.wtf_type.value !== typeSewageFacilityEnum.portableReservoir"
+        >
+          <spr-form-field *ngIf="selectedFacilityAddress?.address_id">
+            <div class="inline-wrapper">
+              <input
+                type="checkbox"
+                class="spr-checkbox"
+                id="same-address"
+                [(ngModel)]="facilityAsServedObject"
+                [ngModelOptions]="{standalone: true}"
+                (change)="pushFacilityAddress()"
+                [disabled]="!selectedFacilityAddress || !selectedFacilityAddress.address_id"
+              />
+              <label for="same-address" class="text-sm">
+                {{ntisBuildingDataReference + '.sameAddressLabel' | translate}}</label
+              >
+            </div>
+          </spr-form-field>
+
+          <ng-container *ngIf="showServObjAddressBlock || selectedServedObjectAddress.length === 0">
+            <spr-form-field
+              labelFor="served-object-search"
+              [mandatory]="true"
+              [labelText]="ntisBuildingDataReference + '.so_address'| translate"
+              [inputErrors]="form.controls.so_address.touched && form.controls.so_address.errors"
+              [errorDefs]="{required: ntisBuildingDataReference + '.selectServObjAlert' }"
+            >
+              <div class="select-button-wrapper">
+                <div class="grow">
+                  <spr-select
+                    inputId="served-object-search"
+                    labelTemplate="&full_address_text& (&purpose_of_building& &inv_code&)"
+                    optionType="autocomplete-single"
+                    (searchData)="searchServedObjectAddress($event)"
+                    [optionData]="servedObjectSearchResults"
+                    [autoComplete]="true"
+                    [placeholder]="ntisBuildingDataReference + '.address_register' | translate"
+                    formControlName="servedObjectSearch"
+                    [showSearchIcon]="true"
+                  >
+                  </spr-select>
+                </div>
+                <button
+                  class="h-10"
+                  [ngClass]="focusedMapName === inputNamesEnum.servedObject ? 'spr-button-primary':'spr-button-secondary' "
+                  type="button"
+                  (click)="selectFromMap(inputNamesEnum.servedObject)"
+                  [attr.aria-label]="ntisBuildingDataReference + '.selectFromMap' | translate"
+                >
+                  <spr-icon name="location_on"></spr-icon>
+                </button>
+              </div>
+            </spr-form-field>
+
+            <ntis-address-search-form
+              (addressSelect)="pushServedObjectAddress($event)"
+              [searchNtr]="true"
+            ></ntis-address-search-form>
+          </ng-container>
+
+          <ng-container *ngIf="!showServObjAddressBlock && selectedServedObjectAddress.length > 0">
+            <div class="add-served-object">
+              <span class="add-served-object__label ">
+                {{ ntisBuildingDataReference + '.addSrvObj' | translate }}
+              </span>
+              <button type="button" class="w-10 spr-button-secondary" (click)="showServObjAddressBlock = true">
+                <spr-icon name="add"></spr-icon>
+              </button>
+            </div>
+          </ng-container>
+          <div class="served-object-wrapper">
+            <ntis-address-list
+              *ngIf="selectedServedObjectAddress.length > 0"
+              [addressList]="selectedServedObjectAddress"
+              (removeItem)="removeServedObjectAddress($event)"
+            ></ntis-address-list>
+          </div>
+        </spr-form-field-group>
+
+        <spr-form-field-group [text]="ntisBuildingDataReference + '.infoAboutFacility'">
+          <spr-form-field
+            *ngIf="form.controls.wtf_type.value === typeSewageFacilityEnum.portableReservoir"
+            [inputErrors]="form.controls.wtf_identification_number.touched && form.controls.wtf_identification_number.errors"
+            [labelText]="ntisBuildingDataReference + '.wtf_identification_number' | translate"
+            labelFor="identification-number"
+            [mandatory]="form.controls.wtf_type.value === typeSewageFacilityEnum.portableReservoir"
+            [pTooltip]="ntisBuildingDataReference + '.identificationTooltip' | translate"
+          >
+            <input type="text" formControlName="wtf_identification_number" inputId="wtf_identification_number" />
+          </spr-form-field>
+          <spr-form-field
+            *ngIf="form.controls.wtf_type.value !== typeSewageFacilityEnum.septic && form.controls.wtf_type.value !== typeSewageFacilityEnum.bio"
+            labelFor="facility-capacity"
+            [labelText]="(ntisBuildingDataReference + '.wtf_capacity' | translate) + ' m&#xb3;'"
+          >
+            <spr-select
+              inputId="facility-capacity"
+              classifierCode="NTIS_FACIL_CAPACITY"
+              formControlName="wtf_capacity"
+              optionType="single"
+              [placeholder]="commonActionReference + '.choose' | translate"
+            >
+            </spr-select>
+          </spr-form-field>
+
+          <ng-container
+            *ngIf="form.controls.wtf_type.value && form.controls.wtf_type.value !== typeSewageFacilityEnum.reservoir && form.controls.wtf_type.value !== typeSewageFacilityEnum.portableReservoir"
+          >
+            <spr-form-field
+              [labelText]="ntisBuildingDataReference + '.wtf_manufacturer' | translate"
+              labelFor="facility-manufacturer"
+            >
+              <spr-select
+                [showFilter]="true"
+                inputId="facility-manufacturer"
+                classifierCode="NTIS_FACIL_MANUFA"
+                formControlName="wtf_manufacturer"
+                optionType="single"
+                [placeholder]="ntisBuildingDataReference + '.choose' | translate"
+              >
+              </spr-select>
+            </spr-form-field>
+
+            <spr-form-field
+              [labelText]="ntisBuildingDataReference + '.wtf_manufacturer_description' | translate"
+              [inputErrors]="form.controls.wtf_manufacturer_description.touched && form.controls.wtf_manufacturer_description.errors"
+              labelFor="facility-manufacturer-description"
+              *ngIf="form.controls.wtf_manufacturer.value === OTHER"
+            >
+              <textarea
+                id="facility-manufacturer-description"
+                formControlName="wtf_manufacturer_description"
+                class="resize-none"
+                maxlength="80"
+              >
+              </textarea>
+            </spr-form-field>
+
+            <spr-form-field
+              [labelText]="ntisBuildingDataReference + '.wtf_model' | translate"
+              labelFor="facility-model"
+              *ngIf="form.controls.wtf_manufacturer.value !== OTHER"
+            >
+              <spr-select
+                [showFilter]="true"
+                inputId="facility-model"
+                [optionData]="facilityModels"
+                optionValue="rfc_code"
+                optionLabel="rfc_meaning"
+                formControlName="wtf_model"
+                optionType="single"
+                [placeholder]="ntisBuildingDataReference + '.choose' | translate"
+              >
+              </spr-select>
+            </spr-form-field>
+            <spr-form-field
+              *ngIf="form.controls.wtf_technical_passport_id.value"
+              [labelText]="ntisBuildingDataReference + '.wtf_technical_passport_id' | translate"
+              labelFor="technical-passport"
+            >
+              <input
+                type="text"
+                formControlName="wtf_technical_passport_id"
+                id="technical-passport"
+                [placeholder]="ntisBuildingDataReference + '.passport_number' | translate"
+              />
+
+              <div class="cw-files-display-only">
+                <spr-file-upload-with-progress
+                  [uploadedFiles]="uploadedFiles"
+                  [disabled]="true"
+                ></spr-file-upload-with-progress>
+              </div>
+            </spr-form-field>
+
+            <spr-form-field
+              *ngIf="form.controls.fam_pop_equivalent.value"
+              [labelText]="ntisBuildingDataReference + '.fam_pop_equivalent' | translate"
+              labelFor="technical-passport"
+            >
+              <input
+                type="text"
+                formControlName="fam_pop_equivalent"
+                id="fam_pop_equivalent"
+                [placeholder]="ntisBuildingDataReference + '.fam_pop_equivalent' | translate"
+              />
+            </spr-form-field>
+
+            <spr-form-field
+              *ngIf="form.controls.fam_chds.value"
+              [labelText]="ntisBuildingDataReference + '.fam_chds' | translate"
+              labelFor="fam_chds"
+            >
+              <input
+                type="text"
+                formControlName="fam_chds"
+                id="fam_chds"
+                [placeholder]="ntisBuildingDataReference + '.fam_chds' | translate"
+              />
+            </spr-form-field>
+
+            <spr-form-field
+              *ngIf="form.controls.fam_bds.value"
+              [labelText]="ntisBuildingDataReference + '.fam_bds' | translate"
+              labelFor="fam_bds"
+            >
+              <input
+                type="text"
+                formControlName="fam_bds"
+                id="fam_bds"
+                [placeholder]="ntisBuildingDataReference + '.fam_bds' | translate"
+              />
+            </spr-form-field>
+
+            <spr-form-field
+              *ngIf="form.controls.fam_float_material.value"
+              [labelText]="ntisBuildingDataReference + '.fam_float_material' | translate"
+              labelFor="fam_float_material"
+            >
+              <input
+                type="text"
+                formControlName="fam_float_material"
+                id="fam_float_material"
+                [placeholder]="ntisBuildingDataReference + '.fam_float_material' | translate"
+              />
+            </spr-form-field>
+
+            <spr-form-field
+              *ngIf="form.controls.fam_phosphor.value"
+              [labelText]="ntisBuildingDataReference + '.fam_phosphor' | translate"
+              labelFor="fam_phosphor"
+            >
+              <input
+                type="text"
+                formControlName="fam_phosphor"
+                id="fam_phosphor"
+                [placeholder]="ntisBuildingDataReference + '.fam_phosphor' | translate"
+              />
+            </spr-form-field>
+
+            <spr-form-field
+              *ngIf="form.controls.fam_nitrogen.value"
+              [labelText]="ntisBuildingDataReference + '.fam_nitrogen' | translate"
+              labelFor="fam_nitrogen"
+            >
+              <input
+                type="text"
+                formControlName="fam_nitrogen"
+                id="fam_nitrogen"
+                [placeholder]="ntisBuildingDataReference + '.fam_nitrogen' | translate"
+              />
+            </spr-form-field>
+          </ng-container>
+
+          <spr-form-field
+            [inputErrors]="form.controls.wtf_distance.touched && form.controls.wtf_distance.errors"
+            [labelText]="ntisBuildingDataReference + '.wtf_distance' | translate"
+            labelFor="facility-distance"
+          >
+            <div class="w-32 inline-wrapper">
+              <input
+                id="facility-distance"
+                type="number"
+                formControlName="wtf_distance"
+                inputId="wtf_distance"
+                placeholder="50"
+              />
+              <span>{{ntisBuildingDataReference + '.meters' | translate}}</span>
+            </div>
+          </spr-form-field>
+
+          <spr-form-field
+            [labelText]="ntisBuildingDataReference + '.wtf_installation_date' | translate"
+            labelFor="facility-installation-date"
+          >
+            <p-calendar
+              inputId="facility-installation-date"
+              formControlName="wtf_installation_date"
+              [firstDayOfWeek]="1"
+              [showButtonBar]="true"
+              placeholder="yyyy-mm-dd"
+              dateFormat="yy-mm-dd"
+              appendTo="body"
+              [maxDate]="today"
+              [minDate]="minDate"
+              [showIcon]="true"
+            >
+            </p-calendar>
+          </spr-form-field>
+
+          <spr-form-field
+            [labelText]="ntisBuildingDataReference + '.wtf_checkout_date' | translate"
+            labelFor="facility-checkout-date"
+            *ngIf="data?.wtf_id"
+          >
+            <p-calendar
+              inputId="facility-checkout-date"
+              formControlName="wtf_checkout_date"
+              [firstDayOfWeek]="1"
+              [showButtonBar]="true"
+              placeholder="yyyy-mm-dd"
+              dateFormat="yy-mm-dd"
+              appendTo="body"
+              [maxDate]="today"
+              [minDate]="installationDate"
+              [showIcon]="true"
+            >
+            </p-calendar>
+          </spr-form-field>
+        </spr-form-field-group>
+        <spr-form-field-group
+          [text]="ntisBuildingDataReference + '.dischargeWastewater'"
+          *ngIf="form.controls.wtf_type.value === typeSewageFacilityEnum.bio || form.controls.wtf_type.value === typeSewageFacilityEnum.septic"
+        >
+          <spr-form-field>
+            <div class="inline-wrapper">
+              <input
+                type="checkbox"
+                class="spr-checkbox"
+                id="same-discharge-address"
+                [(ngModel)]="dischargeAsFacility"
+                (change)="replaceDischargeAddress()"
+                [ngModelOptions]="{standalone: true}"
+                [disabled]="!selectedFacilityAddress"
+              />
+              <label for="same-discharge-address">
+                {{ntisBuildingDataReference + '.sameDwAddressLabel' | translate}}</label
+              >
+            </div>
+          </spr-form-field>
+
+          <ntis-address-list
+            *ngIf="selectedDischargeAddress?.full_address_text"
+            [address]="selectedDischargeAddress"
+            (removeItem)="removeDischargeAddress($event)"
+            [showRemove]="!dischargeAsFacility"
+          ></ntis-address-list>
+          <spr-form-field
+            *ngIf="!dischargeAsFacility"
+            [labelText]="ntisBuildingDataReference + '.dw_address' | translate"
+            labelFor="discharge-coordinates"
+            [mandatory]="!dischargeAsFacility && (form.controls.wtf_type.value === ntisWtfType.SEPTIC ||form.controls.wtf_type.value === ntisWtfType.BIO)"
+          >
+            <spr-form-field
+              labelFor="dwCoordinates"
+              [inputErrors]="form.controls.dwCoordinates.touched && form.controls.dwCoordinates.errors"
+            >
+              <div class="search-input-wrapper">
+                <div class="quick-search">
+                  <input
+                    id="discharge-coordinates"
+                    class="quick-search__input-field"
+                    type="text"
+                    [(ngModel)]="dischargeCoordinates"
+                    [pattern]="LKS_94_COORDINATES_PATTERN"
+                    [placeholder]="ntisBuildingDataReference + '.coordinatesPlaceholder' | translate"
+                    formControlName="dwCoordinates"
+                    (keydown.enter)="setDischargeCoordinates()"
+                  />
+
+                  <button type="button" class="quick-search__action-button" (click)="setDischargeCoordinates()">
+                    <spr-icon name="search" size="18"></spr-icon>
+                  </button>
+                </div>
+
+                <button
+                  class="h-10"
+                  [ngClass]="focusedMapName === inputNamesEnum.dischargeWastewatert ? 'spr-button-primary':'spr-button-secondary' "
+                  type="button"
+                  (click)="selectFromMap(inputNamesEnum.dischargeWastewatert)"
+                >
+                  <spr-icon name="location_on"></spr-icon>
+                </button>
+              </div>
+            </spr-form-field>
+          </spr-form-field>
+          <spr-form-field
+            [labelText]="ntisBuildingDataReference + '.dischargeWastewaterElement' | translate"
+            labelFor="dw_coordinates"
+            [inputErrors]="form.controls.wtf_discharge_type.touched && form.controls.wtf_discharge_type.errors"
+          >
+            <ul class="inline-block radio-list">
+              <li>
+                <input
+                  type="radio"
+                  class="spr-radio"
+                  id="soil"
+                  name="wtf_discharge_type"
+                  [value]="RELEASE_INTO_THE_SOIL"
+                  formControlName="wtf_discharge_type"
+                />
+                <label for="soil"> {{ntisBuildingDataReference + '.soil' | translate}}</label>
+              </li>
+              <li class="group-items-inline">
+                <input
+                  type="radio"
+                  class="spr-radio"
+                  id="watter"
+                  name="wtf_discharge_type"
+                  [value]="RELEASE_RESERVOIR"
+                  formControlName="wtf_discharge_type"
+                />
+                <label for="watter"> {{ntisBuildingDataReference + '.waterReservoir' | translate}}</label>
+              </li>
+            </ul>
+          </spr-form-field>
+        </spr-form-field-group>
+        <section class="action-wrapper">
+          <spr-button type="button" className="ntis-button-link" (click)="locationBack()">
+            {{'common.action.back' | translate}}
+          </spr-button>
+          <spr-button type="submit" iconName="faSave" className="spr-button-primary">
+            {{'common.action.save' | translate}}
+          </spr-button>
+        </section>
+        <p-dialog
+          [(visible)]="showFacilityExistsDialog"
+          styleClass="ntis-dialog"
+          [closable]="false"
+          [modal]="true"
+          [draggable]="false"
+          appendTo="body"
+        >
+          <div class="faci-exists-dialog">
+            <div class="faci-exists-dialog__header">
+              <p>{{ ntisBuildingDataReference + '.facilityExists' | translate }}</p>
+            </div>
+            <div class="faci-exists-dialog__buttons">
+              <spr-button
+                type="button"
+                className="spr-button-secondary"
+                iconName="faTimes"
+                (click)="showFacilityExistsDialog = false"
+              >
+                {{'common.action.no' | translate}}
+              </spr-button>
+              <spr-button
+                type="submit"
+                className="spr-button-primary"
+                iconName="faCheck"
+                (click)="checkDistance(existingFaciData)"
+              >
+                {{'common.action.yes' | translate}}
+              </spr-button>
+              <spr-button
+                type="button"
+                className="spr-button-primary"
+                iconName="faPlus"
+                (click)="assignExistingFacility(existingFaciData)"
+              >
+                {{ ntisBuildingDataReference + '.assignExisting' | translate}}
+              </spr-button>
+            </div>
+          </div>
+        </p-dialog>
+        <p-dialog
+          [(visible)]="showFacilityWithIdentificationExists"
+          styleClass="ntis-dialog"
+          [closable]="false"
+          [modal]="true"
+          [draggable]="false"
+          appendTo="body"
+        >
+          <div class="faci-exists-dialog">
+            <div class="faci-exists-dialog__header">
+              <p>{{ ntisBuildingDataReference + '.identificationExists' | translate }}</p>
+            </div>
+            <div class="faci-exists-dialog__buttons">
+              <spr-button
+                type="button"
+                className="spr-button-secondary"
+                iconName="faTimes"
+                (click)="showFacilityWithIdentificationExists = false"
+              >
+                {{ntisBuildingDataReference + '.continueEditing' | translate}}
+              </spr-button>
+
+              <spr-button
+                type="button"
+                className="spr-button-primary"
+                iconName="faCheck"
+                (click)="navigateToOtherFacility()"
+              >
+                {{ ntisBuildingDataReference + '.editPrevious' | translate}}
+              </spr-button>
+            </div>
+          </div>
+        </p-dialog>
+      </form>
+    </div>
+    <div class="map-wrapper" #mapReference>
+      <map-component
+        #mapComponent
+        [showFullScreenButton]="false"
+        [menuItems]="mapMenuItems"
+        [infoMessage]="mapHeadertext"
+        (mapSingleClick)="handleMapSingleClick($event)"
+        (searchByCoordinates)="handleSearchByCoordinates($event)"
+        [settings]="{showPinOnSearch: false}"
+      ></map-component>
+    </div>
+  </div>
+
+  <section class="address-dialog" *ngIf="showAddressDialog">
+    <div class="address-dialog__content">
+      <header class="address-dialog__content-header">
+        <span
+          class="address-dialog__content-header-text"
+          >{{ntisBuildingDataReference + '.searchResult' | translate}}</span
+        >
+        <spr-button iconName="faTimes" type="button" (click)="showAddressDialog = false"></spr-button>
+      </header>
+      <div class="address-dialog__message" *ngIf="showNtrMessage">
+        <b>{{ntisBuildingDataReference + '.important' | translate}}</b>
+        {{ntisBuildingDataReference + '.multiNtrs' | translate}}
+      </div>
+
+      <div class="address-dialog__message" *ngIf="showMessageNtrNotFound">
+        <b>{{ntisBuildingDataReference + '.important' | translate}}</b>
+        {{ntisBuildingDataReference + '.cantFindNtr' | translate}}
+      </div>
+
+      <div *ngIf="showMessageNtrNotFound && showConfirmSameAddressMessage">
+        <div class="inline-wrapper m-2">
+          <input
+            type="checkbox"
+            id="addressExists"
+            class="spr-checkbox"
+            [(ngModel)]="correctAddressConfirmed"
+            [ngModelOptions]="{standalone: true}"
+            (change)="onCheckboxChange($event)"
+          />
+          <label for="addressExists"> {{ntisBuildingDataReference + '.confirmFacilityExists' | translate}}</label>
+        </div>
+      </div>
+
+      <div class="address-dialog__message" *ngIf="textFromOtherPage">
+        {{ntisBuildingDataReference + '.addressWasFound' | translate}}
+      </div>
+
+      <div class="address-dialog__content-body">
+        <ng-container *ngIf="addressList?.length > 0">
+          <ul>
+            <li *ngFor="let row of addressList">
+              <button
+                class="address-button"
+                type="button"
+                (click)="showAddressDialog = false; textFromOtherPage ?  setFacilityAddress(row) : pushServedObjectAddress(row)"
+              >
+                <span class="address-button__item" *ngIf="row.full_address_text">
+                  <spr-icon name="house"></spr-icon
+                  ><span class="address-button__address-text">{{row.full_address_text}}</span>
+                </span>
+                <span class="address-button__item" *ngIf="row.latitude">
+                  <spr-icon name="location_on"></spr-icon
+                  ><span class="address-button__coord-text">{{row.latitude}}, {{row.longitude}}</span>
+                </span>
+                <span class="address-button__item" *ngIf="row.purpose_of_building || row.inv_code">
+                  <spr-icon name="maps_home_work"></spr-icon
+                  ><span class="address-button__coord-text">{{row.purpose_of_building}} {{row.inv_code}}</span>
+                </span>
+              </button>
+            </li>
+          </ul>
+        </ng-container>
+        <div class="no-record-found" *ngIf="addressList?.length === 0 && !showConfirmSameAddressMessage">
+          {{ntisBuildingDataReference + '.addressNotFound' | translate}}
+        </div>
+      </div>
+    </div>
+  </section>
+</spr-content-box>

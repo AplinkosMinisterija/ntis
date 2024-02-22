@@ -1,0 +1,184 @@
+<spr-content-box [headerText]="translationsReference + '.headerText'">
+  <div class="spr-browse-actions-wrapper">
+    <spr-browse-search-form [formGroup]="searchForm" [formCode]="formCode" (search)="search(dataTableComponent)">
+      <spr-filter-input
+        filters
+        inputType="number"
+        [maxLength]="5"
+        formControlName="jrq_id"
+        [placeholder]="translationsReference + '.jrq_id' | translate"
+      ></spr-filter-input>
+      <spr-select
+        filters
+        *ngIf="jobNameOptions.length > 0 && !jobId"
+        formControlName="jde_name"
+        [optionData]="jobNameOptions"
+        optionLabel="jde_name"
+        optionValue="jde_id"
+        optionType="multiple"
+        [placeholder]="translationsReference + '.jde_name' | translate"
+        [showFilter]="true"
+        [advancedFilterParams]="true"
+      ></spr-select>
+      <spr-select
+        filters
+        formControlName="jrq_code"
+        classifierCode="SPR_JOB_REQ_STATUS"
+        [placeholder]="translationsReference + '.jrq_code' | translate"
+        [advancedFilterParams]="true"
+      ></spr-select>
+      <spr-filter-input
+        filters
+        inputType="datetime"
+        formControlName="jrq_start_date"
+        [placeholder]="translationsReference + '.jrq_start_date' | translate"
+        [dateConditions]="true"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="datetime"
+        formControlName="jrq_end_date"
+        [placeholder]="translationsReference + '.jrq_end_date' | translate"
+        [dateConditions]="true"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="text"
+        formControlName="jrq_executer_name"
+        [placeholder]="translationsReference + '.jrq_executer_name' | translate"
+      ></spr-filter-input>
+      <div class="spr-input-with-label" filters>
+        <input
+          type="checkbox"
+          id="isArchiveSearch"
+          class="spr-checkbox"
+          [(ngModel)]="isArchiveSearch"
+          [ngModelOptions]="{standalone: true}"
+        />
+        <label for="isArchiveSearch">{{translationsReference + '.archiveSearch' | translate}}</label>
+      </div>
+
+      <spr-table-data-export
+        buttons
+        [tableColumn]="cols"
+        [tableData]="exportData"
+        [translation]="translationsReference"
+        [fileName]="translationsReference + '.headerText'"
+        (exportAllRecEvent)="loadAllRecords($event, dataTableComponent)"
+      ></spr-table-data-export>
+    </spr-browse-search-form>
+  </div>
+
+  <p-table
+    breakpoint="1079px"
+    [value]="data"
+    dataKey="jrq_id"
+    [autoLayout]="true"
+    [lazy]="true"
+    (onLazyLoad)="loadDataLazy($event)"
+    [rows]="showRows"
+    [totalRecords]="totalRecords"
+    [paginator]="data?.length > 0"
+    [rowsPerPageOptions]="rowsPerPageOptions"
+    [showFirstLastIcon]="false"
+    sortField="jrq_start_date"
+    [sortOrder]="-1"
+    rowExpandMode="single"
+    class="table-responsive"
+    [rowHover]="true"
+  >
+    <ng-template pTemplate="header" let-row let-index="rowIndex">
+      <tr>
+        <th></th>
+        <th *ngFor="let col of visibleColumns" pSortableColumn="{{col.field}}">
+          <span class="table-header-col">
+            {{translationsReference + '.' + col.field | translate}}
+            <p-sortIcon field="{{col.field}}" class="table-header-col__icon"></p-sortIcon>
+          </span>
+        </th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-row let-index="rowIndex" let-expanded="expanded">
+      <tr>
+        <td>
+          <spr-button
+            *ngIf="row.executions?.length"
+            [ariaLabel]="'common.action.' + (expanded ? 'collapse' : 'expand') | translate"
+            [iconName]="expanded ? 'faChevronDown' : 'faChevronRight'"
+            [pRowToggler]="row"
+          ></spr-button>
+        </td>
+        <td
+          *ngFor="let col of visibleColumns"
+          [ngClass]="{'spr-text-right': col.type === dataTypeNumber, 'whitespace-nowrap': col.type === dataTypeDate}"
+        >
+          <span class="p-column-title" style="width: auto;">
+            {{translationsReference + '.' + col.field | translate}}
+          </span>
+          <span>{{row[col.field]}}</span>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="rowexpansion" let-row>
+      <tr>
+        <td [attr.colspan]="cols.length + 1">
+          <div class="spr-browse-actions-wrapper">
+            <spr-table-data-export
+              [tableColumn]="executionCols"
+              [tableData]="row.executions"
+              [translation]="translationsReference"
+              [fileName]="(translationsReference + '.headerText' | translate) + '-' + row['jrq_id']"
+              [translateFileName]="false"
+            ></spr-table-data-export>
+          </div>
+          <p-table [value]="row.executions" [autoLayout]="true" class="w-full">
+            <ng-template pTemplate="header">
+              <tr>
+                <ng-container *ngFor="let executionCol of executionCols">
+                  <th *ngIf="executionCol.field !== 'jre_err'">
+                    {{translationsReference + '.' + executionCol.field | translate}}
+                  </th>
+                </ng-container>
+              </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-execution>
+              <tr>
+                <ng-container *ngFor="let executionCol of executionCols">
+                  <td *ngIf="executionCol.field !== 'jre_err'">
+                    <span class="p-column-title">
+                      {{translationsReference + '.' + executionCol.field | translate}}
+                    </span>
+                    {{execution[executionCol.field]}}
+                  </td>
+                </ng-container>
+              </tr>
+              <ng-container *ngIf="execution['jre_err']">
+                <tr class="tr-header">
+                  <th colspan="3">
+                    {{translationsReference + '.jre_err' | translate}}
+                  </th>
+                </tr>
+                <tr>
+                  <td colspan="3">
+                    {{execution['jre_err']}}
+                  </td>
+                </tr>
+              </ng-container>
+            </ng-template>
+          </p-table>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage" translate>
+      <tr>
+        <td [attr.colspan]="cols.length + 1">
+          <spr-table-no-rec-found></spr-table-no-rec-found>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</spr-content-box>

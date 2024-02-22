@@ -1,0 +1,100 @@
+<spr-content-box [headerText]="translationsReference + '.headerText'" transformingText="uppercase">
+  <div class="wm-table-wrapper">
+    <div class="wto-selection-wrapper">
+      <label for="wto_id">{{translationsReference+'.chosenFacility' | translate}}</label>
+      <spr-select
+        *ngIf="wtoSelection.length > 0"
+        [optionData]="wtoSelection"
+        optionLabel="option"
+        optionValue="value"
+        [placeholder]="translationsReference + '.allFacilities' | translate"
+        [showFilter]="true"
+        [(ngModel)]="wto_id"
+        [ngModelOptions]="{standalone: true}"
+        (ngModelChange)="loadDashboardPage($event)"
+      ></spr-select>
+    </div>
+
+    <div class="dashboard-w-charts-table">
+      <p-table [value]="deliveries">
+        <ng-template pTemplate="header" let-row let-index="rowIndex">
+          <tr>
+            <ng-container *ngFor="let col of cols">
+              <th>
+                {{translationsReference + '.' + col.field | translate}}
+              </th>
+            </ng-container>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-row let-index="rowIndex">
+          <tr>
+            <ng-container *ngFor="let col of cols">
+              <td [ngClass]="{'button' : (col.field !== 'carrier' )}">
+                <span class="p-column-title">
+                  {{translationsReference + '.' + col.field | translate}}
+                </span>
+                <span>
+                  <spr-button
+                    *ngIf="col.field === 'total_submitted'"
+                    class="order-w-status-btn"
+                    (click)="navigateToSubmittedOrders(row)"
+                    >{{row[col.field]}}</spr-button
+                  >
+                  <ng-container *ngIf="col.field === 'carrier'">{{row[col.field]}}</ng-container></span
+                >
+              </td>
+            </ng-container>
+          </tr>
+          <tr *ngIf="index === deliveries.length-1" class="show-all-row">
+            <td class="show-all"></td>
+            <td class="show-all">
+              <spr-button
+                class="action-button-link"
+                (click)="navigateToDeliveriesList()"
+                >{{'common.action.showAll' | translate}}</spr-button
+              >
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage" translate>
+          <tr>
+            <td [attr.colspan]="cols.length">
+              <spr-table-no-rec-found></spr-table-no-rec-found>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+    <div class="chart-wrapper" *ngIf="carrierLabels.length > 1">
+      <ntis-doughnut-chart
+        *ngIf="carrierLabels.length > 0 "
+        [labels]="carrierLabels"
+        [data]="totalSubmitted"
+        [chartName]="submittedChartName"
+        [showLegend]="true"
+      ></ntis-doughnut-chart>
+    </div>
+    <div class="chart-wrapper">
+      <ntis-bar-chart
+        *ngIf="labelsInPeriod.length > 0"
+        [labels]="labelsInPeriod"
+        [data]="confirmedCountInPeriod"
+        [periodLabelTranslationsReference]="translationsReference + '.confirmed_deliveries'"
+        [placeHolder]="confirmedPlaceHolder"
+        (setNewPeriod)="changeConfirmedPeriod($event)"
+      ></ntis-bar-chart>
+    </div>
+    <div class="chart-wrapper">
+      <ntis-bar-chart
+        *ngIf="labelsForSludge.length > 0"
+        [labels]="labelsForSludge"
+        [data]="sludgeSum"
+        [periodLabelTranslationsReference]="translationsReference + '.accepted_sludge'"
+        [placeHolder]="sludgePlaceHolder"
+        [colors]="sludgeColors"
+        (setNewPeriod)="changeSludgePeriod($event)"
+      ></ntis-bar-chart>
+    </div>
+  </div>
+</spr-content-box>

@@ -1,0 +1,239 @@
+<spr-content-box [headerText]="translationsReference + '.headerText'">
+  <p-tabMenu [model]="tabMenu" [activeItem]="activeItem" routerLinkActive="menu-link--active">
+    <router-outlet></router-outlet>
+  </p-tabMenu>
+  <div class="selected-rol-wrapper">
+    <p class="selected-rol">{{'components.internalNavigation.current_role' | translate }}: {{selected_role}}</p>
+  </div>
+  <div class="spr-browse-actions-wrapper">
+    <spr-browse-search-form [formGroup]="searchForm" [formCode]="formCode" (search)="search(dataTableComponent)">
+      <spr-filter-input
+        filters
+        inputType="number"
+        formControlName="org_id"
+        [maxLength]="5"
+        [placeholder]="translationsReference + '.org_id' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="text"
+        formControlName="org_name"
+        [maxLength]="20"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="translationsReference + '.org_name' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="text"
+        formControlName="org_code"
+        [maxLength]="50"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="translationsReference + '.org_code' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="text"
+        formControlName="org_email"
+        [maxLength]="30"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="translationsReference + '.org_email' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="20"
+        formControlName="org_phone"
+        [placeholder]="translationsReference + '.org_phone' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="date"
+        formControlName="oar_date_from"
+        [placeholder]="translationsReference + '.oar_date_from' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="date"
+        formControlName="oar_date_to"
+        [placeholder]="translationsReference + '.oar_date_to' | translate"
+      ></spr-filter-input>
+      <spr-table-data-export
+        buttons
+        [translation]="translationsReference"
+        [tableColumn]="cols"
+        [tableData]="exportData"
+        [fileName]="translationsReference + '.headerText'"
+        (exportAllRecEvent)="loadAllRecords($event, dataTableComponent)"
+      ></spr-table-data-export>
+      <button buttons type="button" class="spr-button-primary" (click)="saveRecWithConfirmation()">
+        {{'common.action.save' | translate}}
+      </button>
+    </spr-browse-search-form>
+  </div>
+  <p-table
+    [value]="roleOrganizations"
+    [autoLayout]="true"
+    [lazy]="true"
+    [paginator]="roleOrganizations?.length > 0"
+    (onLazyLoad)="loadDataLazy($event)"
+    [rows]="showRows"
+    [totalRecords]="totalRecords"
+    [sortField]="'2'"
+    [sortOrder]="1"
+    [rowsPerPageOptions]="rowsPerPageOptions"
+    [showFirstLastIcon]="false"
+    class="table-responsive"
+    [rowHover]="true"
+  >
+    <ng-template pTemplate="header" let-row let-index="rowIndex">
+      <tr>
+        <th>
+          <input
+            type="checkbox"
+            class="spr-checkbox"
+            [(ngModel)]="checked"
+            (ngModelChange)="onCheckboxesChange($event)"
+          />
+        </th>
+        <th *ngFor="let col of visibleColumns" pSortableColumn="{{col.field}}">
+          <span class="table-header-col">
+            {{translationsReference + '.' + col.field |translate}}
+            <p-sortIcon field="{{col.field}}" class="table-header-col__icon"></p-sortIcon>
+          </span>
+        </th>
+        <th></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row let-index="rowIndex">
+      <tr>
+        <td>
+          <input
+            type="checkbox"
+            class="spr-checkbox"
+            [checked]="row.isSelected"
+            [value]="row.org_id"
+            (change)="onCheckboxChange($event, row)"
+          />
+        </td>
+        <td
+          *ngFor="let col of visibleColumns"
+          [ngClass]="{'spr-text-right': col.type === dataTypeNumber, 'whitespace-nowrap': col.type === dataTypeDate}"
+        >
+          <span class="p-column-title">{{translationsReference + '.' + col.field |translate}}</span>
+          <span>{{row[col.field]}}</span>
+        </td>
+        <td>
+          <spr-table-rec-actions [actionsList]="rowMenuItems[row.org_id]"></spr-table-rec-actions>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage" translate>
+      <tr>
+        <td [attr.colspan]="cols.length + 1">
+          <spr-table-no-rec-found></spr-table-no-rec-found>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <form [formGroup]="form" autocomplete="off">
+    <p-dialog
+      [(visible)]="actionDialog"
+      [style]="{width: '450px', 'z-index': 999, 'top': '2rem', overflow: 'visible'}"
+      [header]="translationsReference + '.editForm' | translate"
+      [modal]="true"
+      [draggable]="false"
+      [closeOnEscape]="true"
+      styleClass="p-fluid"
+      [autoZIndex]="true"
+      [closable]="true"
+      [blockScroll]="true"
+      [contentStyle]="{'overflow': 'visible !important' }"
+      appendTo="body"
+      (onShow)="updateDateRestriction()"
+    >
+      <spr-form-field [labelText]="translationsReference + '.org_id' | translate" [isLabelHorizontal]="false">
+        <input
+          type="text"
+          [placeholder]="translationsReference + '.org_id' | translate"
+          formControlName="org_id"
+          [readonly]="true"
+        />
+      </spr-form-field>
+      <spr-form-field [labelText]="translationsReference + '.org_name' | translate" [isLabelHorizontal]="false">
+        <input
+          type="text"
+          [placeholder]="translationsReference + '.org_name' | translate"
+          formControlName="org_name"
+          [readonly]="true"
+        />
+      </spr-form-field>
+      <spr-form-field [labelText]="translationsReference + '.org_code' | translate" [isLabelHorizontal]="false">
+        <input type="text" [placeholder]="translationsReference + '.org_code' | translate" [readonly]="true" />
+      </spr-form-field>
+      <spr-form-field [labelText]="translationsReference + '.org_email' | translate" [isLabelHorizontal]="false">
+        <input
+          type="text"
+          [placeholder]="translationsReference + '.org_email' | translate"
+          formControlName="org_email"
+          [readonly]="true"
+        />
+      </spr-form-field>
+      <spr-form-field [labelText]="translationsReference + '.org_phone' | translate" [isLabelHorizontal]="false">
+        <input
+          type="text"
+          [placeholder]="translationsReference + '.org_phone' | translate"
+          formControlName="org_phone"
+          [readonly]="true"
+        />
+      </spr-form-field>
+      <spr-form-field
+        [labelText]="translationsReference + '.oar_date_from' | translate"
+        [isLabelHorizontal]="false"
+        [mandatory]="true"
+      >
+        <p-calendar
+          formControlName="oar_date_from"
+          [firstDayOfWeek]="1"
+          [showButtonBar]="true"
+          appendTo="body"
+          [showIcon]="true"
+          dateFormat="yy-mm-dd"
+          (onClose)="updateDateRestriction()"
+        >
+        </p-calendar>
+      </spr-form-field>
+      <spr-form-field
+        [labelText]="translationsReference + '.oar_date_to' | translate"
+        [isLabelHorizontal]="false"
+        [mandatory]="false"
+      >
+        <p-calendar
+          formControlName="oar_date_to"
+          [firstDayOfWeek]="1"
+          [showButtonBar]="true"
+          appendTo="body"
+          [showIcon]="true"
+          dateFormat="yy-mm-dd"
+          (onClose)="updateDateRestriction()"
+          [minDate]="minDate"
+        >
+        </p-calendar>
+      </spr-form-field>
+      <ng-template pTemplate="footer">
+        <span class="dialog-button-wrapper"
+          ><spr-button className="ntis-button-hollow" iconName="faTimesCircle" (click)="onCancel()">
+            {{'common.action.cancel' | translate}} </spr-button
+          ><spr-button
+            className="spr-button-primary"
+            iconName="faSave"
+            type="submit"
+            (click)="saveDateWithConfirmation()"
+          >
+            {{'common.action.save' | translate}}
+          </spr-button>
+        </span>
+      </ng-template>
+    </p-dialog>
+  </form>
+</spr-content-box>

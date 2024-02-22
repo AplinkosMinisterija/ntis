@@ -1,0 +1,27 @@
+.search-button {
+  @apply mt-2;
+}
+
+.location-results {
+  @apply pt-3;
+
+  &__heading {
+    @apply text-lg font-semibold;
+  }
+
+  &__no-results {
+    @apply text-neutral-700;
+  }
+}
+
+.location-results-list {
+  @apply flex flex-col gap-1.5 pt-2;
+}
+
+.location-result {
+  @apply block text-left w-full border border-neutral-900 border-opacity-10 bg-neutral-0/25 shadow rounded-sm hover:bg-primary-100/25;
+
+  &__name {
+    @apply text-md font-semibold;
+  }
+}

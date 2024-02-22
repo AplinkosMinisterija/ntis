@@ -1,0 +1,28 @@
+.content-wrapper {
+  @apply max-w-lg mx-auto flex flex-col gap-4;
+}
+
+.options {
+  @apply flex flex-col gap-2;
+}
+
+.no-available-roles {
+  @apply text-risk-500 text-center;
+}
+
+.user-icon {
+  @apply inline-block align-bottom mx-0.5;
+
+  &__circle {
+    height: var(--font-size-2xl);
+    @apply flex justify-center items-center aspect-square bg-neutral-900 rounded-full;
+  }
+
+  &__icon {
+    @apply text-xs text-neutral-0 text-center;
+  }
+}
+
+.continue {
+  @apply xs:ml-auto;
+}

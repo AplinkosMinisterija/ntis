@@ -1,0 +1,104 @@
+<spr-content-box [headerText]="formTranslationsReference + '.headerText'" transformingText="uppercase">
+  <div class="spr-browse-actions-wrapper">
+    <spr-browse-search-form [formGroup]="searchForm" (search)="search(dataTableComponent)">
+      <ng-container filters *ngFor="let col of cols">
+        <ng-container *ngIf="col.filterable === true;">
+          <spr-select
+            *ngIf="col.filterDomain;else textField"
+            [formControlName]="col.field"
+            [classifierCode]="col.filterDomain"
+            optionType="multiple"
+            [placeholder]="formTranslationsReference + '.'+col.field | translate"
+            [advancedFilterParams]="true"
+          ></spr-select>
+          <ng-template #textField>
+            <spr-filter-input
+              [inputType]="col.filterType"
+              [formControlName]="col.field"
+              [placeholder]="formTranslationsReference+'.'+col.field | translate"
+            ></spr-filter-input>
+          </ng-template>
+        </ng-container>
+      </ng-container>
+      <ng-container buttons>
+        <spr-table-data-export
+          [translation]="formTranslationsReference"
+          [tableColumn]="cols"
+          [tableData]="exportData || data"
+          [fileName]="formTranslationsReference + '.headerText'"
+          (exportAllRecEvent)="loadAllRecordsForExport($event)"
+        ></spr-table-data-export>
+      </ng-container>
+    </spr-browse-search-form>
+  </div>
+
+  <form [formGroup]="disabledForm">
+    <p-table
+      [value]="data"
+      responsiveLayout="stack"
+      [lazy]="true"
+      (onLazyLoad)="loadDataLazy($event)"
+      [rows]="showRows"
+      [totalRecords]="totalRecords"
+      [paginator]="data?.length > 0"
+      [rowsPerPageOptions]="rowsPerPageOptions"
+      [showFirstLastIcon]="false"
+      sortField="fua_id"
+      [sortOrder]="-1"
+      [rowHover]="true"
+    >
+      <ng-template pTemplate="header" let-row let-index="rowIndex">
+        <tr>
+          <th *ngFor="let col of visibleColumns" pSortableColumn="{{col.field}}">
+            {{formTranslationsReference+'.'+col.field | translate}}
+            <p-sortIcon field="{{col.field}}"></p-sortIcon>
+          </th>
+          <th></th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-row let-index="rowIndex">
+        <tr>
+          <td *ngFor="let col of visibleColumns">
+            <span class="p-column-title">{{formTranslationsReference+'.'+col.field | translate}}</span>
+            <ng-container>
+              <span>{{row[col.field]}}</span>
+            </ng-container>
+          </td>
+          <td>
+            <spr-button
+              *ngIf="row.fua_type==='WASTEWATER'"
+              type="button"
+              iconStyle="solid"
+              iconName="faEye"
+              class="text-primary-500"
+              [routerLink]="[row.fua_wtf_id+'/'+row.fua_id]"
+              [pTooltip]="'common.action.view' | translate"
+              tooltipPosition="left"
+            ></spr-button>
+            <spr-button
+              *ngIf="row.fua_type!=='WASTEWATER'"
+              type="button"
+              iconStyle="solid"
+              iconName="faEye"
+              class="text-primary-500"
+              [routerLink]="[row.fua_so_id+'/'+NTIS_BUILDING+'/'+row.fua_id]"
+              [pTooltip]="'common.action.view' | translate"
+              tooltipPosition="left"
+            ></spr-button>
+            <spr-table-rec-actions
+              *ngIf="menuActions[row.id]?.length"
+              [actionsList]="menuActions[row.fua_id]"
+            ></spr-table-rec-actions>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage" translate>
+        <tr>
+          <td [attr.colspan]="cols.length + 1">
+            <spr-table-no-rec-found></spr-table-no-rec-found>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </form>
+</spr-content-box>

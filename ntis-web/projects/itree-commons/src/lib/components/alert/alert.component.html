@@ -1,0 +1,31 @@
+<section class="alert">
+  <button class="alert__button" type="button" (click)="showDialog = !showDialog">
+    <fa-icon class="message-box__icon" [icon]="faIconsService.fas.faCircleInfo" [fixedWidth]="true"></fa-icon>
+  </button>
+  <section *ngIf="countUnconfirmedMessages() > 0" class="alert__button-alert-circle">
+    {{countUnconfirmedMessages() > 9 ? '9+' : countUnconfirmedMessages()}}
+  </section>
+  <div class="popover" *ngIf="showDialog">
+    <div *ngIf="texts.length > 0">
+      <h1 class="popover__heading">{{formTranslationsReference + '.header' | translate}}</h1>
+      <div *ngFor="let text of texts trackBy:identify" class="popover__message">
+        <a class="text-lg" [href]="text.link">{{text.text}}</a>
+      </div>
+      <button class="popover__close" type="button" (click)="showDialog = false"><spr-icon name="close" /></button>
+    </div>
+    <div *ngIf="showUsersRolesMessage">
+      <h1 class="popover__heading">{{formTranslationsReference + '.headerUsers' | translate}}</h1>
+      <div class="popover__message">
+        <a class="text-lg" [href]="orgUsersLink">{{formTranslationsReference + '.usersLink' | translate}}</a>
+      </div>
+      <button class="popover__close" type="button" (click)="showDialog = false"><spr-icon name="close" /></button>
+    </div>
+    <div *ngIf="showWaterManagersWtfsMessage">
+      <h1 class="popover__heading">{{formTranslationsReference + '.headerWaterManagers' | translate}}</h1>
+      <div class="popover__message">
+        <a class="text-lg" [href]="facilitiesLink">{{formTranslationsReference + '.waterManagersLink' | translate}}</a>
+      </div>
+      <button class="popover__close" type="button" (click)="showDialog = false"><spr-icon name="close" /></button>
+    </div>
+  </div>
+</section>

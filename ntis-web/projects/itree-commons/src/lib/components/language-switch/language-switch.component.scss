@@ -1,0 +1,42 @@
+.language-switch {
+  @apply relative;
+
+  &__toggle-button {
+    @apply flex justify-between items-center pl-1.5 pr-1 py-1 cursor-pointer;
+  }
+
+  &__label {
+    @apply font-medium uppercase select-none;
+  }
+
+  &__options {
+    @apply w-full xs:w-max overflow-y-auto
+      bg-neutral-0 flex flex-col text-left
+      whitespace-nowrap
+      absolute -bottom-1 right-1/2 translate-x-1/2
+      opacity-0 pointer-events-none transition-all
+      rounded border border-neutral-300 shadow-sm translate-y-3/4;
+
+    &--open {
+      @apply opacity-100 pointer-events-auto translate-y-full;
+    }
+
+    &--option {
+      @apply text-neutral-900 cursor-pointer uppercase py-1.5 px-3 text-sm hover:bg-neutral-100 flex justify-center w-full;
+    }
+
+    // scrollbar:
+    @apply overflow-y-auto;
+    scrollbar-width: thin;
+    &::-webkit-scrollbar {
+      @apply w-2;
+    }
+    &::-webkit-scrollbar-track,
+    &::-webkit-scrollbar-thumb {
+      @apply bg-transparent;
+    }
+    &:hover::-webkit-scrollbar-thumb {
+      @apply bg-neutral-800 bg-opacity-50 rounded-sm;
+    }
+  }
+}

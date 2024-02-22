@@ -1,0 +1,79 @@
+<p-dialog
+  styleClass="ntis-dialog"
+  [(visible)]="show"
+  (onHide)="handleHide()"
+  appendTo="body"
+  [draggable]="false"
+  [resizable]="false"
+  [modal]="true"
+  [blockScroll]="true"
+>
+  <ng-template pTemplate="header">
+    <h2 class="dialog-header">{{ (translationsRef + '.headerText' + (aggId ? 'New' : '')) | translate }}</h2>
+  </ng-template>
+  <form [formGroup]="formGroup" (ngSubmit)="handleSubmit()">
+    <div *ngIf="!aggId" class="fields-wrapper">
+      <spr-form-field
+        [labelText]="(translationsRef + '.approvalDate') | translate"
+        labelFor="approval-date"
+        [mandatory]="true"
+        [inputErrors]="formGroup.controls.approvalDate.touched && formGroup.controls.approvalDate.errors"
+      >
+        <p-calendar appendTo="body" inputId="approval-date" formControlName="approvalDate"></p-calendar>
+      </spr-form-field>
+
+      <spr-form-field
+        [labelText]="(translationsRef + '.approvalDocNo') | translate"
+        labelFor="approval-doc-no"
+        [mandatory]="true"
+        [inputErrors]="formGroup.controls.approvalDocNo.touched && formGroup.controls.approvalDocNo.errors"
+      >
+        <input type="text" id="approval-doc-no" formControlName="approvalDocNo" />
+      </spr-form-field>
+    </div>
+
+    <spr-form-field
+      [labelText]="(translationsRef + '.spatialDataUpload') | translate"
+      [mandatory]="true"
+      [inputErrors]="formGroup.controls.dataDocuments.touched && formGroup.controls.dataDocuments.errors"
+    >
+      <div class="example-files">
+        <a href="/assets/docs/erdviniu_duomenu_rinkinio_specifikacija.pdf" target="_blank"
+          ><fa-icon [icon]="faIconsService.fas.faFilePdf"></fa-icon>
+          <span>{{ (translationsRef + '.spatialDataSpecification') | translate }}</span></a
+        >
+        <a
+          href="/assets/docs/Pavyzdinis_failas_geojson_formatu.geojson"
+          [download]="translationsRef + '.exampleFileGeojsonName' | translate"
+          ><fa-icon [icon]="faIconsService.fas.faFileExport"></fa-icon>
+          <span>{{ (translationsRef + '.exampleFileGeojson') | translate }}</span></a
+        >
+        <a
+          href="/assets/docs/Pavyzdinis_failas_shape_formatu.zip"
+          [download]="translationsRef + '.exampleFileShapeName' | translate"
+          ><fa-icon [icon]="faIconsService.fas.faFileExport"></fa-icon>
+          <span>{{ (translationsRef + '.exampleFileShape') | translate }}</span></a
+        >
+      </div>
+
+      <spr-file-upload-with-progress
+        *ngIf="show"
+        [fileLimit]="null"
+        [multiple]="false"
+        acceptedFormat=".json,.geojson,.zip"
+        [label]="(translationsRef + '.attachDocument') | translate"
+        [uploadedFiles]="formGroup.controls.dataDocuments.value"
+        (fileUpload)="onFileUpload($event)"
+        (fileToDelete)="onFileDelete($event)"
+        [disabled]="formGroup.controls.dataDocuments.value.length >= 1"
+      ></spr-file-upload-with-progress>
+    </spr-form-field>
+
+    <div class="actions-wrapper">
+      <button type="button" class="ntis-button-link" (click)="handleHide()">
+        {{ 'common.action.back' | translate }}
+      </button>
+      <button type="submit" class="spr-button-primary">{{ 'common.action.submitForm' | translate }}</button>
+    </div>
+  </form>
+</p-dialog>

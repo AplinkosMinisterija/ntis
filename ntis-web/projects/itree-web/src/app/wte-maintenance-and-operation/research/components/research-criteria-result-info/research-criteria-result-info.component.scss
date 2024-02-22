@@ -1,0 +1,19 @@
+.info-block-wrapper {
+  @apply bg-neutral-100 w-full rounded-md my-2 px-4 py-1;
+}
+
+.research-criteria-col {
+  @apply col-span-2;
+}
+
+.col-name {
+  @apply font-semibold;
+}
+
+.results-input {
+  @apply w-36;
+}
+
+.input-norm-wrapper {
+  @apply flex justify-between;
+}

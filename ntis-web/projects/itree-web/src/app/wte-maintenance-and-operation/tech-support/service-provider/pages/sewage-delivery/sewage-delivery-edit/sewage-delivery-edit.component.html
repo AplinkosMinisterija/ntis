@@ -1,0 +1,218 @@
+<spr-content-box
+  [headerText]="translationsReference + (data?.wd_id ? '.headerTextEdit' : '.headerTextNew')"
+  transformingText="uppercase"
+>
+  <div class="spr-edit-form-wrapper">
+    <ntis-sewage-origin-facility
+      [ordId]="ordId? ordId.toString() : null"
+      [editMode]="true"
+      [isServiceProvider]="true"
+      [originFacilities]="originFacilitiesList"
+      [selectionFacilitiesList]="originFacilitiesSelection"
+      [portableFacilitiesList]="portableFacilitiesList"
+      (facilitiesList)="getOriginFacilitiesList($event)"
+      (deletedFacilities)="getDeletedOriginFacilitiesList($event)"
+      (addedOrdFacility)="addNewOriginFacility($event)"
+      (addedWtfFacility)="addNewOriginWtfFacility($event)"
+    >
+    </ntis-sewage-origin-facility>
+
+    <form [formGroup]="form" (submit)="onSubmit($event)">
+      <spr-form-field-group [text]="translationsReference + '.formHeader' ">
+        <spr-form-field
+          [labelText]="translationsReference + '.wd_delivery_date' | translate"
+          [isLabelHorizontal]="false"
+          [mandatory]="true"
+          [inputErrors]="form.controls.wd_delivery_date.touched && form.controls.wd_delivery_date.errors"
+        >
+          <p-calendar
+            formControlName="wd_delivery_date"
+            [firstDayOfWeek]="1"
+            [showButtonBar]="true"
+            appendTo="body"
+            [showIcon]="true"
+            dateFormat="yy-mm-dd"
+            [maxDate]="maxDate"
+            [showIcon]="true"
+            [minDate]="minDate"
+          >
+          </p-calendar>
+        </spr-form-field>
+
+        <spr-form-field
+          labelText="{{translationsReference + '.wd_delivered_quantity' | translate}}"
+          [inputErrors]="form.controls.wd_delivered_quantity.touched && form.controls.wd_delivered_quantity.errors"
+          [mandatory]="!isSludgeUsed"
+          [hidden]="isSludgeUsed"
+        >
+          <input formControlName="wd_delivered_quantity" type="number" step="0.01" min="0.01" />
+        </spr-form-field>
+
+        <div class="radio-block-wrapper">
+          <spr-form-field
+            [errorDiv]="!form.controls.wd_sewage_type.valid && form.controls.wd_sewage_type.touched"
+            [labelText]="translationsReference + '.wd_sewage_type'| translate"
+            [mandatory]="true"
+            [inputErrors]="form.controls.wd_sewage_type.touched && form.controls.wd_sewage_type.errors"
+          >
+            <div class="radio-input-wrapper">
+              <input
+                type="radio"
+                name="wd_sewage_type"
+                [value]="SWG_TYP_DOMESTIC"
+                id="dlv_domestic"
+                formControlName="wd_sewage_type"
+                class="spr-radio"
+              />
+              <label for="dlv_domestic">{{ translationsReference + '.swgDomestic' | translate }}</label>
+            </div>
+
+            <div class="radio-input-wrapper">
+              <input
+                type="radio"
+                name="wd_sewage_type"
+                [value]="SWG_TYP_INDUSTRIAL"
+                id="dlv_industrial"
+                formControlName="wd_sewage_type"
+                class="spr-radio"
+              />
+              <label for="dlv_industrial">{{ translationsReference + '.swgIndustrial' | translate }}</label>
+            </div>
+            <div class="radio-input-wrapper">
+              <input
+                type="radio"
+                name="wd_sewage_type"
+                [value]="SWG_TYP_SLUDGE"
+                id="dlv_sludge"
+                formControlName="wd_sewage_type"
+                class="spr-radio"
+              />
+              <label for="dlv_sludge">{{ translationsReference + '.swgSludge' | translate }}</label>
+            </div>
+          </spr-form-field>
+        </div>
+        <div class="radio-block-wrapper" *ngIf="swgIsSludge">
+          <spr-form-field
+            [errorDiv]="!form.controls.wd_additional_information_sludge_delivery.valid && form.controls.wd_additional_information_sludge_delivery.touched"
+            [labelText]="translationsReference + '.wd_additional_information_sludge_delivery'| translate"
+            [mandatory]="swgIsSludge"
+            [hidden]=" !swgIsSludge"
+            [inputErrors]="form.controls.wd_additional_information_sludge_delivery.touched && form.controls.wd_additional_information_sludge_delivery.errors"
+          >
+            <div class="radio-input-wrapper">
+              <input
+                type="radio"
+                name="wd_additional_information_sludge_delivery"
+                [value]="SLD_DLV_WHOLE"
+                id="dlv_whole"
+                formControlName="wd_additional_information_sludge_delivery"
+                class="spr-radio"
+              />
+              <label for="dlv_whole">{{ translationsReference + '.dlvWhole' | translate }}</label>
+            </div>
+
+            <div class="radio-input-wrapper">
+              <input
+                type="radio"
+                name="wd_additional_information_sludge_delivery"
+                [value]="SLD_DLV_PARTIAL"
+                id="dlv_partial"
+                formControlName="wd_additional_information_sludge_delivery"
+                class="spr-radio"
+              />
+              <label for="dlv_partial">{{ translationsReference + '.dlvPartial' | translate }}</label>
+            </div>
+            <div class="radio-input-wrapper">
+              <input
+                type="radio"
+                name="wd_additional_information_sludge_delivery"
+                [value]="SLD_DLV_USED"
+                id="dlv_used"
+                formControlName="wd_additional_information_sludge_delivery"
+                class="spr-radio"
+              />
+              <label for="dlv_used">{{ translationsReference + '.dlvUsed' | translate }}</label>
+            </div>
+          </spr-form-field>
+        </div>
+        <spr-form-field
+          labelText="{{translationsReference + '.wd_used_sludge_quantity' | translate}}"
+          [inputErrors]="form.controls.wd_used_sludge_quantity.touched && form.controls.wd_used_sludge_quantity.errors"
+          [mandatory]="isSludgePartial"
+          [hidden]="!isSludgePartial"
+        >
+          <input [formControlName]="'wd_used_sludge_quantity'" type="number" step="0.01" min="0.01" />
+        </spr-form-field>
+
+        <spr-form-field
+          labelFor="wd_wto_id"
+          labelText="{{translationsReference + '.wd_wto_id' | translate}}"
+          [mandatory]="!isSludgeUsed"
+          [hidden]="isSludgeUsed"
+          [inputErrors]="form.controls.wd_wto_id.touched && form.controls.wd_wto_id.errors"
+        >
+          <spr-select
+            *ngIf="waterManagerFacilities.length > 0"
+            filters
+            formControlName="wd_wto_id"
+            [optionData]="waterManagerFacilities"
+            optionType="grouped-single"
+            groupLabel="group_key"
+            groupListKey="optionList"
+            optionValue="value"
+            optionLabel="label"
+            [showFilter]="true"
+            [placeholder]="'common.action.select' | translate"
+          ></spr-select>
+        </spr-form-field>
+        <spr-form-field
+          *ngIf="carList!==null"
+          labelFor="wd_cr_id"
+          labelText="{{translationsReference + '.wd_cr_id' | translate}}"
+          [mandatory]="!isSludgeUsed"
+          [hidden]="isSludgeUsed"
+          [inputErrors]="form.controls.wd_cr_id.touched && form.controls.wd_cr_id.errors"
+          ><spr-select
+            filters
+            formControlName="wd_cr_id"
+            [optionData]="carList"
+            optionLabel="cr_name"
+            optionValue="cr_id"
+            [showFilter]="true"
+            [placeholder]="'common.action.select' | translate"
+          ></spr-select
+        ></spr-form-field>
+
+        <spr-form-field
+          [labelText]="translationsReference + '.wd_description' | translate"
+          [isLabelHorizontal]="false"
+          [inputErrors]="form.controls.wd_description.touched && form.controls.wd_description.errors"
+        >
+          <textarea name="wd_description" id="wd_description" formControlName="wd_description"></textarea>
+        </spr-form-field>
+      </spr-form-field-group>
+
+      <app-used-sewage-facility
+        [editMode]="true"
+        [usedFacilities]="usedFacilitiesList"
+        *ngIf="isSludgeUsed || isSludgePartial"
+        (facilitiesList)="getUsedFacilitiesList($event)"
+        (deletedFacilities)="getDeletedUsedFacilitiesList($event)"
+        (addedFacility)="addNewUsedFacility($event)"
+      ></app-used-sewage-facility>
+
+      <div class="spr-form-buttons">
+        <spr-button type="button" class="ntis-button-link" (click)="onCancel()">
+          {{'common.action.back' | translate}}
+        </spr-button>
+        <spr-button
+          type="submit"
+          className="spr-button-primary"
+          iconStyle="fas"
+          iconName="faSave"
+          >{{ 'common.action.save' | translate }}</spr-button
+        >
+      </div>
+    </form>
+  </div>
+</spr-content-box>

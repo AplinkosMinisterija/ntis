@@ -1,0 +1,11 @@
+.home-text {
+  @apply text-center;
+}
+
+.internal-site-link-wrapper {
+  @apply flex justify-center items-center pt-6 pb-4;
+}
+
+.internal-site-link {
+  @apply no-underline text-md;
+}

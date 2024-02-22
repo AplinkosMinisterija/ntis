@@ -1,0 +1,176 @@
+<spr-content-box [headerText]="translationsReference + '.headerText'" transformingText="uppercase">
+  <ntis-message-box
+    *ngIf="disposalAvailable && showNoCarMessage "
+    [text]="translationsReferenceForCar + '.noActiveCars' | translate"
+    type="info"
+    class="mb-3"
+    [link]="linkForNoCarsMessage"
+    [linkText]="translationsReference + '.noCarLinkMessage' | translate"
+  ></ntis-message-box>
+  <h2>
+    {{orgName}}
+  </h2>
+  <div class="file-upload-wrapper">
+    <div class="cw-files-upload" *ngIf="researchAvailable">
+      <spr-file-upload-with-progress
+        [label]="translationsReference + '.uploadResearch' | translate"
+        [uploadedFiles]="uploadedResearch"
+        [multiple]="false"
+        (fileUpload)="onResearchFileUpload()"
+        [pTooltip]="userCanCreate ?  null  : (translationsReference +'.tooltipText' | translate)"
+        acceptedFormat=".csv, .xml"
+        [showSuccess]="false"
+        chooseIcon="pi pi-upload"
+        className="min-w-64"
+      ></spr-file-upload-with-progress>
+    </div>
+    <div class="cw-files-upload" *ngIf="techAvailable">
+      <spr-file-upload-with-progress
+        [label]="translationsReference + '.uploadTech' | translate"
+        [uploadedFiles]="uploadedTech"
+        [multiple]="false"
+        (fileUpload)="onTechFileUpload()"
+        [pTooltip]="userCanCreate ?  null  : (translationsReference +'.tooltipText' | translate)"
+        acceptedFormat=".csv, .xml"
+        [showSuccess]="false"
+        chooseIcon="pi pi-upload"
+      ></spr-file-upload-with-progress>
+    </div>
+    <div class="cw-files-upload" *ngIf="disposalAvailable">
+      <spr-file-upload-with-progress
+        [label]="translationsReference + '.uploadDisposal' | translate"
+        [uploadedFiles]="uploadedDisposal"
+        [multiple]="false"
+        (fileUpload)="onDisposalFileUpload()"
+        [pTooltip]="userCanCreate ?  null  : (translationsReference +'.tooltipText' | translate)"
+        acceptedFormat=".csv, .xml"
+        [showSuccess]="false"
+        chooseIcon="pi pi-upload"
+      ></spr-file-upload-with-progress>
+    </div>
+  </div>
+  <div class="spr-browse-actions-wrapper">
+    <spr-browse-search-form [formGroup]="searchForm" [formCode]="formCode" (search)="search(dataTableComponent)">
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="50"
+        formControlName="fil_name"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="translationsReference + '.fil_name' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="date"
+        formControlName="orf_import_date"
+        [placeholder]="translationsReference + '.orf_import_date' | translate"
+      ></spr-filter-input>
+      <spr-select
+        filters
+        formControlName="srv_type"
+        [optionData]="availableServices"
+        optionLabel="display"
+        optionValue="key"
+        [placeholder]="translationsReference + '.srv_type'| translate"
+        [advancedFilterParams]="true"
+        optionType="multiple"
+      ></spr-select
+      ><spr-select
+        filters
+        formControlName="orf_status"
+        classifierCode="NTIS_ORD_FIL_STATUS"
+        [placeholder]="translationsReference + '.orf_status'| translate"
+        [advancedFilterParams]="true"
+        optionType="multiple"
+      ></spr-select>
+      <spr-button buttons class="spr-button-primary" type="button" (click)="navigateToAddressMappings()">
+        {{ translationsReference + '.toMappings' | translate }}
+      </spr-button>
+    </spr-browse-search-form>
+  </div>
+  <p-table
+    [value]="data"
+    responsiveLayout="stack"
+    breakpoint="767px"
+    [lazy]="true"
+    (onLazyLoad)="loadDataLazy($event)"
+    [rows]="showRows"
+    [totalRecords]="totalRecords"
+    [paginator]="data?.length > 0"
+    [rowsPerPageOptions]="rowsPerPageOptions"
+    [showFirstLastIcon]="false"
+    [rowHover]="true"
+  >
+    <ng-template pTemplate="header" let-row>
+      <tr>
+        <ng-container *ngFor="let col of visibleColumns">
+          <th pSortableColumn="{{col.field}}">
+            {{translationsReference + '.' + col.field | translate}}
+            <p-sortIcon field="{{col.field}}"></p-sortIcon>
+          </th>
+        </ng-container>
+        <th>{{'common.generalUse.actions' |translate}}</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row>
+      <tr>
+        <ng-container *ngFor="let col of visibleColumns">
+          <td>
+            <span class="p-column-title">
+              {{translationsReference + '.' + col.field |translate}}
+            </span>
+            <span *ngIf="col.field !== 'fil_name'; else filBlock">{{row?.[col.field]}}</span>
+            <ng-template #filBlock>
+              <a
+                ><span (click)="download(row)" class="break-all">{{row?.[col.field]}}</span>
+              </a>
+            </ng-template>
+          </td>
+        </ng-container>
+        <td>
+          <span class="p-column-title">
+            {{'common.generalUse.actions' |translate}}
+          </span>
+          <ntis-table-row-actions [actions]="row.actions"></ntis-table-row-actions>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage" translate>
+      <tr>
+        <td [attr.colspan]="cols.length + 1">
+          <spr-table-no-rec-found></spr-table-no-rec-found>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+  <span class="actions">
+    <spr-button className="ntis-button-link" (click)="onReturn()">
+      {{'common.action.back' | translate}}
+    </spr-button>
+  </span>
+  <p-dialog [(visible)]="usrInfoDialog" [closable]="false" styleClass="ntis-dialog" [showHeader]="false"
+    ><div class="usr-info">
+      <div class="usr-info-header">{{translationsReference + '.usr_dialog_header' | translate}}</div>
+      <div>
+        <spr-info-line
+          [name]="translationsReference + '.usr_person_name' | translate"
+          [value]="usr_person_name"
+        ></spr-info-line>
+        <spr-info-line
+          [name]="translationsReference + '.usr_person_surname' | translate"
+          [value]="usr_person_surname"
+        ></spr-info-line>
+        <spr-info-line
+          [name]="translationsReference + '.usr_phone_number' | translate"
+          [value]="usr_phone_number"
+        ></spr-info-line>
+        <spr-info-line [name]="translationsReference + '.usr_email' | translate" [value]="usr_email"></spr-info-line>
+      </div>
+    </div>
+    <span class="dialog-footer">
+      <spr-button className="ntis-button-link" (click)="usrInfoDialog = false">
+        {{'common.action.back' | translate}}
+      </spr-button>
+    </span>
+  </p-dialog>
+</spr-content-box>

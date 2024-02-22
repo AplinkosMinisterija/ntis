@@ -1,0 +1,105 @@
+<spr-content-box [headerText]="'pages.sprRolesBrowse.headerText'">
+  <div class="spr-browse-actions-wrapper">
+    <spr-browse-search-form [formGroup]="searchForm" [formCode]="formCode" (search)="search(dataTableComponent)">
+      <spr-filter-input
+        filters
+        inputType="number"
+        [maxLength]="5"
+        formControlName="rol_id"
+        [placeholder]="'pages.sprRolesBrowse.searchPlaceholderById' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="30"
+        formControlName="rol_code"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="'pages.sprRolesBrowse.searchPlaceholderByCode' | translate"
+      ></spr-filter-input>
+      <spr-select
+        formControlName="rol_type"
+        classifierCode="SPR_ROLE_TYPE"
+        [placeholder]="'pages.sprRolesBrowse.searchPlaceholderByType' | translate"
+        [advancedFilterParams]="true"
+      ></spr-select>
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="20"
+        formControlName="rol_name"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="'pages.sprRolesBrowse.searchPlaceholderByName' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="date"
+        [maxDate]="maximumDate"
+        formControlName="rol_date_from"
+        [placeholder]="'pages.sprRoles.rol_date_from' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="date"
+        formControlName="rol_date_to"
+        [placeholder]="'pages.sprRoles.rol_date_to' | translate"
+      ></spr-filter-input>
+      <spr-table-data-export
+        buttons
+        [translation]="'pages.sprRoles'"
+        [tableColumn]="cols"
+        [tableData]="exportData"
+        [fileName]="'pages.sprRolesBrowse.headerText'"
+        (exportAllRecEvent)="loadAllRecords($event, dataTableComponent)"
+      ></spr-table-data-export>
+      <spr-button-add buttons [routerLink]="[roleEditLink, 'new']"></spr-button-add>
+    </spr-browse-search-form>
+  </div>
+  <p-table
+    [value]="data"
+    [autoLayout]="true"
+    [lazy]="true"
+    [paginator]="data?.length > 0"
+    (onLazyLoad)="loadDataLazy($event)"
+    [rows]="showRows"
+    [totalRecords]="totalRecords"
+    [rowsPerPageOptions]="rowsPerPageOptions"
+    [showFirstLastIcon]="false"
+    [sortField]="'1'"
+    [sortOrder]="1"
+    class="table-responsive"
+    [rowHover]="true"
+  >
+    <ng-template pTemplate="header" let-row let-index="rowIndex">
+      <tr>
+        <th *ngFor="let col of cols" pSortableColumn="{{col.field}}">
+          <span class="table-header-col">
+            {{'pages.sprRoles.'+col.field | translate}}
+            <p-sortIcon field="{{col.field}}" class="table-header-col__icon"></p-sortIcon>
+          </span>
+        </th>
+        <th></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row let-index="rowIndex">
+      <tr>
+        <td
+          *ngFor="let col of cols"
+          [ngClass]="{'spr-text-right': col.type === dataTypeNumber, 'whitespace-nowrap': col.type === dataTypeDate}"
+        >
+          <span class="p-column-title">{{'pages.sprRoles.'+col.field | translate}}</span>
+          <span>{{row[col.field]}}</span>
+        </td>
+        <td>
+          <spr-table-rec-actions [actionsList]="menuActions[row.id]"></spr-table-rec-actions>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage" translate>
+      <tr>
+        <td [attr.colspan]="cols.length + 1">
+          <spr-table-no-rec-found></spr-table-no-rec-found>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</spr-content-box>

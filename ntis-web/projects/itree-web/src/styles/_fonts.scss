@@ -1,0 +1,97 @@
+@import 'mixins';
+
+$typeface: 'Roboto';
+$weights: 400, 500, 700;
+
+@each $weight in $weights {
+  @font-face {
+    font-family: $typeface;
+    src: url(../assets/fonts/#{$typeface}-#{$weight}.woff2) format('woff2');
+    src: url(../assets/fonts/#{$typeface}-#{$weight}.woff) format('woff');
+    src: url(../assets/fonts/#{$typeface}-#{$weight}.ttf) format('truetype');
+    font-weight: #{$weight};
+    font-style: normal;
+  }
+}
+
+// tailwind config variables:
+$tailwind-font-sizes: (
+  'xs': (
+    0.75rem,
+    1rem,
+  ),
+  'sm': (
+    0.875rem,
+    1.25rem,
+  ),
+  'base': (
+    1rem,
+    1.5rem,
+  ),
+  'md': (
+    1.1rem,
+    1.5rem,
+  ),
+  'lg': (
+    1.125rem,
+    1.75rem,
+  ),
+  'xl': (
+    1.25rem,
+    1.75rem,
+  ),
+  '2xl': (
+    1.5rem,
+    2rem,
+  ),
+  '3xl': (
+    1.875rem,
+    2.25rem,
+  ),
+  '4xl': (
+    2.25rem,
+    2.5rem,
+  ),
+  '4_5xl': (
+    2.5rem,
+    2.5rem,
+  ),
+  '5xl': (
+    3rem,
+    3rem,
+  ),
+  '6xl': (
+    3.75rem,
+    3.75rem,
+  ),
+  '7xl': (
+    4.5rem,
+    4.5rem,
+  ),
+  '8xl': (
+    6rem,
+    6rem,
+  ),
+  '9xl': (
+    8rem,
+    8rem,
+  ),
+);
+
+@layer base {
+  :root {
+    @include font-size-properties($tailwind-font-sizes);
+    @include font-size-properties($tailwind-font-sizes, 1, true);
+  }
+
+  // accessibility classes:
+  .increase-font-size-1 {
+    @include font-size-properties($tailwind-font-sizes, 1.25);
+  }
+  .increase-font-size-2 {
+    @include font-size-properties($tailwind-font-sizes, 1.5);
+  }
+  .increase-font-size-3 {
+    @include font-size-properties($tailwind-font-sizes, 2);
+  }
+}

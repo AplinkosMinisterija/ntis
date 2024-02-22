@@ -1,0 +1,54 @@
+<spr-content-box
+  headerText="institutionsAdmin.pages.serviceRequest.headerText"
+  transformingText="uppercase"
+  *ngIf="data"
+>
+  <form [formGroup]="form" (submit)="onSubmit()" class="spr-edit-form-wrapper">
+    <app-service-request-content
+      (setItemsEvent)="setServiceItems($event)"
+      (setFilesEvent)="setServiceFiles($event)"
+      [isEditable]="isEditable"
+      [isServiceProvider]="isServiceProvider"
+      [applicant]="applicant"
+      [organization]="organization"
+      [registeredServices]="registeredServices"
+    ></app-service-request-content>
+    <app-service-request-props
+      (setOrgProps)="setOrgDetails($event)"
+      [isEditable]="isEditable"
+      [isServiceProvider]="isServiceProvider"
+      [applicant]="applicant"
+      [organization]="organization"
+      [orgAddress]="data.org_address"
+      [orgEmail]="data.org_email"
+      [orgPhone]="data.org_phone"
+      [orgWebsite]="data.org_website"
+      [markFormAsTouched]="checkChildForm"
+    ></app-service-request-props>
+    <spr-form-field-group [text]="translationsReference + '.termsOfConsent'">
+      <span>{{ translationsReference + '.mandatoryToConfirm' | translate}}</span>
+      <ul>
+        <li class="spr-input-with-label">
+          <input type="checkbox" class="spr-checkbox" formControlName="sr_data_is_correct" id="sr_data_is_correct" />
+          <label for="sr_data_is_correct">{{ translationsReference + '.correctInfoTerms' | translate }}</label>
+        </li>
+        <li class="spr-input-with-label">
+          <input type="checkbox" class="spr-checkbox" formControlName="sr_rules_accepted" id="sr_rules_accepted" />
+          <label for="sr_rules_accepted"
+            >{{ translationsReference + '.acceptTerms' | translate }}
+            <a [href]="termsLink" target="_blank">{{ translationsReference + '.rules' | translate }}</a></label
+          >
+        </li>
+      </ul>
+    </spr-form-field-group>
+
+    <div class="spr-form-buttons mt-8">
+      <spr-button type="button" class="ntis-button-link" (click)="onBackToList()">
+        {{'common.action.back' | translate}}
+      </spr-button>
+      <spr-button type="submit" class="spr-button-primary" iconStyle="fas" iconName="faSave" iconClassName="text-2xl">
+        {{translationsReference + '.submit' | translate}}
+      </spr-button>
+    </div>
+  </form>
+</spr-content-box>

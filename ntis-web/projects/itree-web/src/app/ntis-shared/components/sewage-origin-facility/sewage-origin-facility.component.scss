@@ -1,0 +1,18 @@
+.dialog-footer {
+  @apply flex flex-row justify-center items-center pt-40;
+}
+.origin-facilities-wrapper {
+  @apply flex justify-between border-2 border-primary-500 bg-neutral-100 w-full rounded-md mb-4;
+}
+
+.origin-facilities-content {
+  @apply flex flex-col gap-1.5 p-3;
+}
+
+.remove-facility-button {
+  @apply flex p-5;
+}
+
+.selection-buttons-wrapper {
+  @apply flex flex-row gap-5;
+}

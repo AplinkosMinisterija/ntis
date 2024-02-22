@@ -1,0 +1,69 @@
+<spr-content-box headerText="{{'pages.sprTasks.headerText'}}">
+  <spr-browse-search-form
+    [formGroup]="searchForm"
+    [formCode]="formCode"
+    (search)="search(dataTableComponent)"
+    [detailedSearchEnabled]="false"
+  ></spr-browse-search-form>
+
+  <div class="spr-browse-actions-wrapper" *ngIf="newActionAvailable">
+    <spr-button-add [routerLink]="[editLink, 'new']"> </spr-button-add>
+    <spr-table-data-export
+      [translation]="'pages.sprTasks'"
+      [tableColumn]="cols"
+      [tableData]="exportData"
+      [fileName]="'pages.sprTasks.headerText'"
+      (exportAllRecEvent)="loadAllRecords($event, dataTableComponent)"
+    ></spr-table-data-export>
+  </div>
+
+  <p-table
+    [value]="data"
+    [autoLayout]="true"
+    [lazy]="true"
+    [paginator]="data?.length > 0"
+    (onLazyLoad)="loadDataLazy($event)"
+    [rows]="showRows"
+    [rowHover]="true"
+    [totalRecords]="totalRecords"
+    [rowsPerPageOptions]="rowsPerPageOptions"
+    [showFirstLastIcon]="false"
+    [sortField]="'1'"
+    [sortOrder]="2"
+    id="exportTable"
+    class="table-responsive"
+  >
+    <ng-template pTemplate="header" let-row let-index="rowIndex">
+      <tr>
+        <th *ngFor="let col of visibleColumns" pSortableColumn="{{col.field}}">
+          <span class="table-header-col">
+            {{'pages.sprTasks.'+col.field | translate}}
+            <p-sortIcon field="{{col.field}}" class="table-header-col__icon"></p-sortIcon>
+          </span>
+        </th>
+        <th></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row let-index="rowIndex">
+      <tr>
+        <td
+          *ngFor="let col of visibleColumns"
+          [ngClass]="{'spr-text-right': col.type === dataTypeNumber, 'whitespace-nowrap': col.type === dataTypeDate}"
+        >
+          <span class="p-column-title" style="width: auto;">{{'pages.sprTasks.'+col.field | translate}}</span>
+          <span>{{row[col.field]}}</span>
+        </td>
+        <td>
+          <spr-table-rec-actions [actionsList]="rowMenuItems[row.id]"></spr-table-rec-actions>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage" translate>
+      <tr>
+        <td [attr.colspan]="cols.length + 1">
+          <spr-table-no-rec-found></spr-table-no-rec-found>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</spr-content-box>

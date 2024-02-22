@@ -1,0 +1,138 @@
+<input
+  class="s2-file-upload__input"
+  type="file"
+  [id]="inputId"
+  (change)="handleInputChange($event)"
+  [multiple]="maxFiles > 1 && files.length < (maxFiles-1)"
+  [accept]="accept"
+  [disabled]="disabled"
+  #inputFile
+/>
+
+<ng-template *ngIf="templates[S2_TEMPLATE_HEADER]" [ngTemplateOutlet]="templates[S2_TEMPLATE_HEADER]" />
+
+<div
+  *ngIf="!templates[S2_TEMPLATE_HEADER]"
+  class="s2-file-upload-header"
+  [ngClass]="{'s2-file-upload-header--disabled': disabled || files.length >= maxFiles}"
+  (dragover)="$event.preventDefault(); $event.stopPropagation()"
+  (dragleave)="$event.preventDefault(); $event.stopPropagation()"
+  (drop)="handleDropFile($event)"
+>
+  <ng-template
+    *ngIf="templates[S2_TEMPLATE_HEADER_CONTENT]"
+    [ngTemplateOutlet]="templates[S2_TEMPLATE_HEADER_CONTENT]"
+  />
+
+  <ng-container *ngIf="!templates[S2_TEMPLATE_HEADER_CONTENT]">
+    <s2-icon
+      *ngIf="showHeaderIcon"
+      class="s2-file-upload-header__icon"
+      [ngClass]="{'s2-file-upload-header__icon--responsive': showHeaderIcon === 'responsive'}"
+      >file_upload</s2-icon
+    >
+    <div class="s2-file-upload-header__content-wrapper">
+      <ng-container *ngIf="!error">
+        <ng-container *ngIf="showDragDropText">
+          <span
+            class="s2-file-upload-header__text"
+            [ngClass]="{'s2-file-upload-header__text--responsive': showDragDropText === 'responsive'}"
+            >{{ translationsService.translations.action.dragFilesHere }}</span
+          >
+          <span
+            class="s2-file-upload-header__text"
+            [ngClass]="{'s2-file-upload-header__text--responsive': showDragDropText === 'responsive'}"
+            >{{ translationsService.translations.general.or | lowercase }}</span
+          >
+        </ng-container>
+        <button
+          type="button"
+          class="s2-file-upload-header__choose"
+          [disabled]="disabled || files.length >= maxFiles"
+          (click)="inputFile.click()"
+        >
+          {{ browseButtonText === undefined ? translationsService.translations.action.browse : browseButtonText }}
+        </button>
+      </ng-container>
+      <span *ngIf="error" class="s2-file-upload-header__error">
+        <ng-container
+          *ngIf="error === 'accept'"
+          >{{ translationsService.translations.errorMsg.invalidFileFormat | replace:'{0}':accept }}</ng-container
+        >
+        <ng-container
+          *ngIf="error === 'maxFiles'"
+          >{{ translationsService.translations.errorMsg.maxFilesExceed | replace:'{0}':maxFiles+'' }}</ng-container
+        >
+        <ng-container
+          *ngIf="error === 'maxFileSize'"
+          >{{ translationsService.translations.errorMsg.maxFileSizeExceed | replace:'{0}':(maxFileSize | bytesToText)
+          }}</ng-container
+        >
+      </span>
+    </div>
+  </ng-container>
+</div>
+
+<ul class="s2-uploaded-files">
+  <li *ngFor="let file of files; index as i" class="s2-uploaded-file" @expandFromTop>
+    <div class="s2-uploaded-file__icon-wrapper">
+      <s2-icon
+        class="s2-uploaded-file__icon"
+        [ngClass]="{'s2-uploaded-file__icon--uploaded': file.uploaded}"
+        >{{ file.icon || (file.type | fileTypeToIcon) }}</s2-icon
+      >
+    </div>
+    <ng-container *ngTemplateOutlet="templates[S2_TEMPLATE_FILE_INFO]; context: {$implicit: file, index: i}" />
+    <div *ngIf="!templates[S2_TEMPLATE_FILE_INFO]" class="s2-uploaded-file__info">
+      <span *ngIf="!file.uploaded" class="s2-uploaded-file__info-name" [title]="file.name">{{ file.name }}</span>
+      <button
+        *ngIf="file.uploaded"
+        type="button"
+        class="s2-uploaded-file__info-name"
+        [ngClass]="{'s2-uploaded-file__info-name--downloadable': true}"
+        [title]="file.name"
+        (click)="handleDownloadFile(file)"
+      >
+        {{ file.name }}
+      </button>
+      <div
+        *ngIf="!file.uploaded && (file.uploadProgress || file.uploadProgress === 0)"
+        class="s2-uploaded-file__info-progress"
+      >
+        <div class="s2-uploaded-file__info-progress-background">
+          <div
+            class="s2-uploaded-file__info-progress-line"
+            [ngStyle]="{'width.%': file.uploadProgress}"
+            role="progressbar"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            [attr.aria-valuenow]="file.uploadProgress"
+            [attr.aria-label]="file.name"
+          ></div>
+        </div>
+      </div>
+      <span
+        *ngIf="file.uploaded || (!file.uploadProgress && file.uploadProgress !== 0)"
+        class="s2-uploaded-file__info-details"
+      >
+        <span *ngIf="showDate && file.date" class="s2-uploaded-file__info-details-date">
+          {{ file.date | s2Date }}
+        </span>
+        <span
+          class="s2-uploaded-file__info-details-size"
+          [ngClass]="{'s2-uploaded-file__info-details-size--uploaded': file.uploaded}"
+        >
+          {{ file.size | bytesToText }} <s2-icon *ngIf="file.uploaded">check</s2-icon>
+        </span>
+      </span>
+    </div>
+    <button
+      type="button"
+      class="s2-uploaded-file__remove"
+      (click)="handleRemoveFile(i)"
+      [disabled]="!file.uploaded && (file.uploadProgress || file.uploadProgress === 0)"
+    >
+      <s2-icon class="s2-uploaded-file__remove-icon">{{ file.uploaded ? 'delete' : 'close' }}</s2-icon>
+    </button>
+  </li>
+</ul>

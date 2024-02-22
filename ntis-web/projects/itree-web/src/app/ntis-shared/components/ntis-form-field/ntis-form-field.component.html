@@ -1,0 +1,38 @@
+<div class="flex flex-col" [ngClass]="{'has-error': errorMessage}">
+  <label
+    [for]="labelFor"
+    [ngClass]="{'md:justify-end md:text-right ': isLabelHorizontal}"
+    [ngClass]="{'md:justify-center md:text-center ': isLabelCentered}"
+    class="text-sm flex items-center font-bold leading-none"
+    *ngIf="labelText"
+  >
+    {{ labelText }}
+    <span
+      class="leading-none"
+      *ngIf="mandatory"
+      (mouseenter)="tooltipTextId.show($event)"
+      (mouseleave)="tooltipTextId.hide()"
+      >*</span
+    >
+  </label>
+  <div [ngClass]="{'md:col-span-2 md:col-end-4': isLabelHorizontal}">
+    <div [ngClass]="{'is-invalid': errorMessage}">
+      <div *ngIf="errorDiv" class="invalid-feedback">{{errorMessage ? errorMessage : ''}}</div>
+    </div>
+  </div>
+  <div [ngClass]="{'md:col-span-2': isLabelHorizontal}">
+    <ng-content></ng-content>
+  </div>
+</div>
+
+<p-overlayPanel
+  [showTransitionOptions]="'0ms'"
+  [hideTransitionOptions]="'0ms'"
+  [dismissable]="true"
+  #tooltipTextId
+  [appendTo]="'body'"
+>
+  <div class="max-w-md">
+    <span>{{'common.message.fieldRequired' | translate}}</span>
+  </div>
+</p-overlayPanel>

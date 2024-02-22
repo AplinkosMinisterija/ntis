@@ -1,0 +1,11 @@
+:host {
+  @apply block;
+}
+
+.map-filters-form {
+  @apply flex flex-col gap-2;
+}
+
+.buttons-wrapper {
+  @apply flex flex-wrap justify-center gap-2;
+}

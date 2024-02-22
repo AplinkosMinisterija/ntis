@@ -1,0 +1,11 @@
+.message-not-read {
+  @apply font-semibold;
+}
+
+.icon {
+  @apply cursor-pointer text-center text-neutral-600 #{!important};
+
+  &--color {
+    @apply text-warning-600;
+  }
+}

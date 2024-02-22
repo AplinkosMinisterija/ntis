@@ -1,0 +1,223 @@
+<spr-content-box headerText="pages.sprUserRolesBrowse.headerTextRoles">
+  <p-tabMenu [model]="tabMenu" [activeItem]="activeItem" routerLinkActive="menu-link--active">
+    <router-outlet></router-outlet>
+  </p-tabMenu>
+  <span class="role-actions-role__header">
+    <p class="text-lg font-medium text-center">
+      {{'components.internalNavigation.current_role' | translate }}: {{selected_role}}
+    </p>
+  </span>
+  <div class="spr-browse-actions-wrapper">
+    <spr-browse-search-form [formGroup]="searchForm" [formCode]="formCode" (search)="search(dataTableComponent)">
+      <spr-filter-input
+        filters
+        inputType="number"
+        [maxLength]="5"
+        formControlName="rol_id"
+        [placeholder]="'pages.sprUserRolesBrowse.rol_id' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="20"
+        formControlName="rol_name"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="'pages.sprUserRolesBrowse.rol_name' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="20"
+        formControlName="rol_code"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="'pages.sprUserRolesBrowse.rol_code' | translate"
+      ></spr-filter-input>
+      <spr-select
+        formControlName="rol_type"
+        classifierCode="SPR_ROLE_TYPE"
+        [placeholder]="'pages.sprUserRolesBrowse.rol_type' | translate"
+      ></spr-select>
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="30"
+        formControlName="rol_description"
+        [showFilterConditions]="false"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="'pages.sprUserRolesBrowse.rol_description' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="date"
+        formControlName="roa_date_from"
+        [placeholder]="'pages.sprUserRolesBrowse.roa_date_from' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="date"
+        formControlName="roa_date_to"
+        [placeholder]="'pages.sprUserRolesBrowse.roa_date_to' | translate"
+      ></spr-filter-input>
+
+      <spr-table-data-export
+        buttons
+        [translation]="'pages.sprUserRolesBrowse'"
+        [tableColumn]="cols"
+        [tableData]="exportData"
+        [fileName]="'pages.sprUserRolesBrowse.headerText'"
+        [formParams]="searchForm"
+        (exportAllRecEvent)="loadAllRecords($event, dataTableComponent)"
+      ></spr-table-data-export>
+      <button buttons type="button" (click)="saveRecWithConfirmation()" class="w-auto spr-button-primary">
+        {{'common.action.save' | translate}}
+      </button>
+    </spr-browse-search-form>
+  </div>
+  <p-table
+    [value]="joinRoles"
+    [autoLayout]="true"
+    [lazy]="true"
+    [rowHover]="true"
+    [paginator]="joinRoles?.length > 0"
+    (onLazyLoad)="loadDataLazy($event)"
+    (onPage)="onPageChange()"
+    [rows]="showRows"
+    [totalRecords]="totalRecords"
+    [rowsPerPageOptions]="rowsPerPageOptions"
+    [showFirstLastIcon]="false"
+    [sortField]="'5'"
+    [sortOrder]="1"
+    class="table-responsive"
+  >
+    <ng-template pTemplate="header" let-row let-index="rowIndex">
+      <tr>
+        <th>
+          <input type="checkbox" class="spr-checkbox" (change)="onCheckboxesChange($event)" [checked]="checked" />
+        </th>
+        <th *ngFor="let col of visibleColumns" pSortableColumn="{{col.field}}">
+          <span class="table-header-col">
+            {{'pages.sprUserRolesBrowse.'+col.field | translate}}
+            <p-sortIcon field="{{col.field}}" class="table-header-col__icon"></p-sortIcon>
+          </span>
+        </th>
+        <th></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row let-index="rowIndex">
+      <tr>
+        <td>
+          <input
+            type="checkbox"
+            class="spr-checkbox"
+            (change)="onCheckboxChange($event, row)"
+            [checked]="row.isSelected"
+            [value]="row.roa_rol_id"
+          />
+        </td>
+        <td
+          *ngFor="let col of visibleColumns"
+          [ngClass]="{'spr-text-right': col.type === dataTypeNumber, 'whitespace-nowrap': col.type === dataTypeDate}"
+        >
+          <span class="p-column-title"> {{'pages.sprUserRolesBrowse.'+col.field | translate}}</span>
+          <span *ngIf="col.field !== 'rol_description'; else isDescription">{{row[col.field]}}</span>
+          <ng-template #isDescription>
+            <div class="ql-editor" [innerHTML]="row[col.field] | safeHtml"></div>
+          </ng-template>
+        </td>
+        <td>
+          <spr-table-rec-actions [actionsList]="rowMenuItems[row.rol_id]"></spr-table-rec-actions>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage" translate>
+      <tr>
+        <td [attr.colspan]="cols.length + 1">
+          <spr-table-no-rec-found></spr-table-no-rec-found>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+  <form [formGroup]="form" autocomplete="off">
+    <p-dialog
+      (onHide)="hideDialog()"
+      [(visible)]="actionDialog"
+      [style]="{width: '450px', 'z-index': 999, 'top': '2rem', overflow: 'visible'}"
+      [header]="dialogHeader"
+      [modal]="true"
+      [draggable]="false"
+      [closeOnEscape]="true"
+      styleClass="p-fluid"
+      [autoZIndex]="true"
+      [closable]="true"
+      [blockScroll]="true"
+      [contentStyle]="{'overflow': 'visible !important' }"
+      appendTo="body"
+    >
+      <spr-form-field labelText="{{'pages.sprUserRolesBrowse.rol_id' | translate}}" [isLabelHorizontal]="false">
+        <input type="text" placeholder="rol_id" [formControlName]="'rol_id'" [readonly]="true" />
+      </spr-form-field>
+      <spr-form-field labelText="{{'pages.sprUserRolesBrowse.rol_type' | translate}}" [isLabelHorizontal]="false">
+        <input type="text" placeholder="rol_type" [formControlName]="'rol_type'" [readonly]="true" />
+      </spr-form-field>
+      <spr-form-field labelText="{{'pages.sprUserRolesBrowse.rol_code' | translate}}" [isLabelHorizontal]="false">
+        <input type="text" placeholder="rol_code" [formControlName]="'rol_code'" [readonly]="true" />
+      </spr-form-field>
+      <spr-form-field labelText="{{'pages.sprUserRolesBrowse.rol_name' | translate}}" [isLabelHorizontal]="false">
+        <input type="text" placeholder="rol_name" [formControlName]="'rol_name'" [readonly]="true" />
+      </spr-form-field>
+      <spr-form-field
+        labelText="{{'pages.sprUserRolesBrowse.rol_description' | translate}}"
+        [isLabelHorizontal]="false"
+      >
+        <div class="ql-editor ql-editor--disabled" [innerHTML]="form.controls.rol_description.value | safeHtml"></div>
+      </spr-form-field>
+      <spr-form-field
+        labelText="{{'pages.sprUserRolesBrowse.roa_date_from' | translate}}"
+        [isLabelHorizontal]="false"
+        [inputErrors]="form.controls.roa_date_from.dirty && form.controls.roa_date_from.errors"
+        [mandatory]="userCanUpdate"
+      >
+        <p-calendar
+          (onSelect)="updateDateRestriction()"
+          (onClearClick)="updateDateRestriction()"
+          [formControlName]="'roa_date_from'"
+          [firstDayOfWeek]="1"
+          [showButtonBar]="true"
+          appendTo="body"
+          [showIcon]="true"
+          dateFormat="yy-mm-dd"
+          [minDate]="today"
+          [disabled]="!userCanUpdate"
+        >
+        </p-calendar>
+      </spr-form-field>
+      <spr-form-field
+        labelText="{{'pages.sprUserRolesBrowse.roa_date_to' | translate}}"
+        [isLabelHorizontal]="false"
+        [mandatory]="false"
+        [inputErrors]="form.controls.roa_date_to.dirty && form.controls.roa_date_to.errors"
+      >
+        <p-calendar
+          [formControlName]="'roa_date_to'"
+          [firstDayOfWeek]="1"
+          [showButtonBar]="true"
+          appendTo="body"
+          [showIcon]="true"
+          dateFormat="yy-mm-dd"
+          [minDate]="minDate"
+          [disabled]="!userCanUpdate"
+        >
+        </p-calendar>
+      </spr-form-field>
+      <ng-template *ngIf="userCanUpdate" pTemplate="footer">
+        <span class="dialog-footer"
+          ><spr-button className="ntis-button-hollow" iconName="faTimesCircle" (click)="onCancel()">
+            {{'common.action.cancel' | translate}} </spr-button
+          ><spr-button className="spr-button-primary" iconName="faSave" (click)="saveDate(roa_id+'')" type="submit">
+            {{'common.action.save' | translate}}
+          </spr-button>
+        </span>
+      </ng-template>
+    </p-dialog>
+  </form>
+</spr-content-box>

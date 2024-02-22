@@ -1,0 +1,230 @@
+<spr-content-box [headerText]="translation+'.headerText'">
+  <ng-container *ngIf="selected_user_id">
+    <span class="org-user-roles__current-user-wrapper">
+      <p class="org-user-roles__current-user">
+        {{'components.internalNavigation.current_user' | translate }}: {{selected_user}}
+      </p>
+    </span>
+    <span>
+      <p class="org-user-roles__current-user">
+        {{'components.internalNavigation.current_user_id' | translate }}: {{selected_user_id}}
+      </p>
+    </span>
+    <span>
+      <p class="org-user-roles__current-user">
+        {{'components.internalNavigation.selected_org' | translate }}: {{selected_org}}
+      </p>
+    </span>
+  </ng-container>
+  <div class="spr-browse-actions-wrapper">
+    <spr-browse-search-form [formGroup]="searchForm" [formCode]="formCode" (search)="search(dataTableComponent)">
+      <spr-filter-input
+        filters
+        inputType="number"
+        [maxLength]="5"
+        formControlName="rol_id"
+        [placeholder]="translation+'.rol_id' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="20"
+        formControlName="rol_code"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="translation+'.rol_code' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="10"
+        formControlName="rol_type"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="translation+'.rol_type' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="20"
+        formControlName="rol_name"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="translation+'.rol_name' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="20"
+        formControlName="rol_description"
+        [showFilterConditions]="false"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="translation+'.rol_description' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="date"
+        formControlName="our_date_from"
+        [placeholder]="translation+'.our_date_from' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="date"
+        formControlName="our_date_to"
+        [placeholder]="translation+'.our_date_to' | translate"
+      ></spr-filter-input>
+
+      <spr-table-data-export
+        buttons
+        [translation]="translation"
+        [tableColumn]="cols"
+        [tableData]="exportData"
+        [fileName]="translation+'.headerText'"
+        (exportAllRecEvent)="loadAllRecords($event, dataTableComponent)"
+      ></spr-table-data-export>
+
+      <button buttons type="button" (click)="saveRecWithConfirmation()" class="spr-button-primary">
+        {{'common.action.save' | translate}}
+      </button>
+    </spr-browse-search-form>
+  </div>
+  <p-table
+    [value]="orgUsrRoles"
+    [autoLayout]="true"
+    [lazy]="true"
+    [paginator]="orgUsrRoles?.length > 0"
+    (onLazyLoad)="loadDataLazy($event)"
+    [rows]="showRows"
+    [totalRecords]="totalRecords"
+    [rowsPerPageOptions]="rowsPerPageOptions"
+    [showFirstLastIcon]="false"
+    [sortField]="'1'"
+    [sortOrder]="1"
+    class="table-responsive"
+    [rowHover]="true"
+  >
+    <ng-template pTemplate="header" let-row let-index="rowIndex">
+      <tr>
+        <th>
+          <!-- <input class="spr-checkbox" type="checkbox" (change)="onCheckboxesChange($event)" [checked]="checked" /> -->
+        </th>
+        <th *ngFor="let col of visibleColumns" pSortableColumn="{{col.field}}">
+          <span class="table-header-col">
+            {{translation +'.'+col.field | translate}}
+            <p-sortIcon field="{{col.field}}" class="table-header-col__icon"></p-sortIcon>
+          </span>
+        </th>
+        <th></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row let-index="rowIndex">
+      <tr>
+        <td>
+          <input
+            class="spr-checkbox"
+            type="checkbox"
+            (change)="onCheckboxChange($event, row)"
+            [checked]="row.our_id"
+            [value]="row.rol_id"
+          />
+        </td>
+        <td
+          *ngFor="let col of visibleColumns"
+          [ngClass]="{'spr-text-right': col.type === dataTypeNumber, 'whitespace-nowrap': col.type === dataTypeDate}"
+        >
+          <span class="p-column-title">{{translation+'.'+col.field | translate}}</span>
+          <span *ngIf="col.field !== 'rol_description'; else isDescription">{{row[col.field]}}</span>
+          <ng-template #isDescription>
+            <div class="ql-editor" [innerHTML]="row[col.field] | safeHtml"></div>
+          </ng-template>
+        </td>
+        <td>
+          <spr-table-rec-actions *ngIf="row.our_id" [actionsList]="rowMenuItems[row.rol_id]"></spr-table-rec-actions>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage" translate>
+      <tr>
+        <td [attr.colspan]="cols.length + 1">
+          <spr-table-no-rec-found></spr-table-no-rec-found>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+  <span class="actions">
+    <spr-button className="ntis-button-link" (click)="onReturn()">
+      {{'common.action.back' | translate}}
+    </spr-button>
+  </span>
+
+  <!-- DIALOG START -->
+  <form [formGroup]="form" autocomplete="off">
+    <p-dialog
+      [(visible)]="actionDialog"
+      [style]="{width: '450px', 'z-index': 999, 'top': '2rem', overflow: 'visible'}"
+      header="{{translation+'.editForm' | translate}}"
+      [modal]="true"
+      [draggable]="false"
+      [closeOnEscape]="true"
+      styleClass="p-fluid"
+      [autoZIndex]="true"
+      [closable]="true"
+      [blockScroll]="true"
+      [contentStyle]="{'overflow': 'visible !important' }"
+      appendTo="body"
+    >
+      <spr-form-field
+        labelText="{{translation+'.our_date_from' | translate}}"
+        [isLabelHorizontal]="false"
+        [mandatory]="true"
+        [inputErrors]="form.controls.our_date_from.dirty && form.controls.our_date_from.errors"
+      >
+        <p-calendar
+          [formControlName]="'our_date_from'"
+          [firstDayOfWeek]="1"
+          [showButtonBar]="true"
+          appendTo="body"
+          [showIcon]="true"
+          [maxDate]="form.controls.our_date_to.value"
+          dateFormat="yy-mm-dd"
+          [showIcon]="true"
+        >
+        </p-calendar>
+      </spr-form-field>
+      <spr-form-field
+        labelText="{{translation+'.our_date_to' | translate}}"
+        [isLabelHorizontal]="false"
+        [mandatory]="false"
+        [inputErrors]="form.controls.our_date_to.dirty && form.controls.our_date_to.errors"
+      >
+        <p-calendar
+          [formControlName]="'our_date_to'"
+          [firstDayOfWeek]="1"
+          [showButtonBar]="true"
+          appendTo="body"
+          [showIcon]="true"
+          dateFormat="yy-mm-dd"
+          [minDate]="form.controls.our_date_from.value"
+        >
+        </p-calendar>
+      </spr-form-field>
+      <ng-template pTemplate="footer">
+        <span class="org-user-roles-view__button-wrapper"
+          ><spr-button
+            className="ntis-button-hollow org-user-roles-view__button"
+            iconStyle="far"
+            iconName="faCircleXmark"
+            (click)="onCancel()"
+          >
+            {{'common.action.cancel' | translate}} </spr-button
+          ><spr-button
+            className="spr-button-primary org-user-roles-view__button"
+            iconName="faSave"
+            type="submit"
+            (click)="saveDate()"
+          >
+            {{'common.action.save' | translate}}
+          </spr-button>
+        </span>
+      </ng-template>
+    </p-dialog>
+  </form>
+  <!-- DIALOG ENDS -->
+</spr-content-box>

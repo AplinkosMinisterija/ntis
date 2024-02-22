@@ -1,0 +1,52 @@
+.contract {
+  @apply flex flex-col lg:flex-row items-start lg:items-center lg:justify-between;
+
+  &-file {
+    @apply px-4 flex flex-col items-center;
+
+    &__icon {
+      @apply text-2xl cursor-pointer;
+    }
+
+    &__name {
+      @apply font-semibold lg:max-w-xs;
+      overflow-wrap: anywhere;
+    }
+  }
+}
+
+.rejection-reason__text {
+  @apply border border-neutral-500 p-2;
+}
+
+.action-buttons {
+  @apply flex flex-col sm:flex-row sm:items-center justify-start gap-4 mt-4;
+}
+
+.service {
+  @apply flex flex-col gap-4 py-2;
+
+  &:not(:last-child) {
+    @apply border-b border-dashed border-neutral-700;
+  }
+
+  &:not(:first-child) {
+    @apply pt-4;
+  }
+
+  &__desc-legend {
+    @apply text-neutral-600;
+  }
+
+  &__desc-text {
+    @apply text-justify;
+  }
+
+  &__price {
+    @apply max-w-fit mr-2;
+  }
+}
+
+.dialog-footer {
+  @apply flex flex-row justify-center;
+}

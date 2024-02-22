@@ -1,0 +1,42 @@
+.import {
+  @apply relative;
+
+  &__content {
+    @apply absolute w-1/5 min-w-72 z-10 right-0;
+  }
+
+  &__content-arrow-wrapper {
+    @apply w-full flex justify-end;
+  }
+
+  &__content-arrow-up {
+    @apply w-0 h-0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 10px solid #d8dadb;
+  }
+
+  &__import-body {
+    @apply bg-neutral-0 border p-3 rounded-tr-none z-auto w-full right-0 rounded shadow-inner;
+  }
+
+  &__import-body ul li {
+    @apply py-2;
+  }
+
+  &__import-footer {
+    @apply flex mt-4;
+  }
+
+  &__hr {
+    @apply py-2 border-b;
+  }
+
+  &__button {
+    @apply grow rounded-none first:rounded-l last:rounded-r;
+  }
+}
+
+.spr-button-secondary {
+  outline: none !important;
+}

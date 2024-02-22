@@ -1,0 +1,12 @@
+.address-card {
+  @apply flex flex-col w-full text-left p-1 text-primary-600 bg-neutral-50 border gap-2 m-2;
+  &__item {
+    @apply flex justify-start items-center text-neutral-900 gap-1;
+  }
+  &__address-text {
+    @apply text-sm font-medium;
+  }
+  &__coord-text {
+    @apply text-sm italic text-neutral-600;
+  }
+}

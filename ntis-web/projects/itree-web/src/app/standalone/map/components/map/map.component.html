@@ -1,0 +1,137 @@
+<div #mapElement class="map"></div>
+<div class="map-overlay">
+  <div
+    #mapMenu
+    class="map-menu"
+    [ngClass]="{'map-menu--open': selectedMenuIndex$.value !== null, 'map-menu--expanded': mobileMenuExpanded}"
+    [attr.aria-hidden]="selectedMenuIndex$.value === null"
+  >
+    <div class="map-menu__content" [ngClass]="{'map-menu__content--open': selectedMenuIndex$.value !== null}">
+      <h3
+        *ngIf="selectedMenuIndex$.value !== null && selectedMenuIndex$.value !== -1 && menuItems?.[selectedMenuIndex$.value]?.label"
+        class="map-menu__heading"
+      >
+        {{ menuItems[selectedMenuIndex$.value].translateLabel !== false ? (menuItems[selectedMenuIndex$.value].label | translate) : menuItems[selectedMenuIndex$.value].label }}
+      </h3>
+      <spr-button
+        iconStyle="fas"
+        iconName="faTimes"
+        className="map-menu__close-button"
+        (click)="closeMenu()"
+        [tabindex]="selectedMenuIndex$.value !== null ? 0 : -1"
+      ></spr-button>
+      <ng-container *ngIf="selectedMenuIndex$.value !== null">
+        <map-menu-search *ngIf="menuItems?.[selectedMenuIndex$.value]?.mode === MapMenuMode.Search"></map-menu-search>
+        <map-menu-layers *ngIf="menuItems?.[selectedMenuIndex$.value]?.mode === MapMenuMode.Layers"></map-menu-layers>
+        <ng-template
+          *ngIf="selectedMenuIndex$.value === -1 && templates['custom-menu']"
+          [ngTemplateOutlet]="templates['custom-menu']"
+        ></ng-template>
+      </ng-container>
+    </div>
+    <button
+      type="button"
+      class="map-menu__mobile-resize"
+      [ngClass]="{'map-menu__mobile-resize--expanded': mobileMenuExpanded}"
+      (click)="toggleMobileMenuExpand()"
+    >
+      <spr-icon [name]="mobileMenuExpanded ? 'expand_less' : 'expand_more'" size="24" />
+    </button>
+  </div>
+
+  <div class="map-on-view">
+    <div class="template-overlay-top">
+      <ng-template
+        *ngIf="selectedMenuIndex$.value === -1 && templates['overlay-top']"
+        [ngTemplateOutlet]="templates['overlay-top']"
+      ></ng-template>
+    </div>
+    <div class="map-buttons">
+      <div class="map-buttons__top">
+        <div class="map-buttons__top-left">
+          <div class="zoom-buttons">
+            <spr-button
+              className="zoom-button zoom-button--in"
+              iconStyle="fas"
+              iconName="faPlus"
+              [pTooltip]="(translationsRef + '.common.action.zoomIn') | translate"
+              appendTo="body"
+              tooltipZIndex="100"
+              (click)="zoom(true)"
+            ></spr-button>
+            <spr-button
+              className="zoom-button zoom-button--out"
+              iconStyle="fas"
+              iconName="faMinus"
+              [pTooltip]="(translationsRef + '.common.action.zoomOut') | translate"
+              appendTo="body"
+              tooltipZIndex="100"
+              (click)="zoom(false)"
+            ></spr-button>
+          </div>
+          <ng-container *ngFor="let menuItem of menuItems; index as i">
+            <spr-button
+              *ngIf="menuItem.visible !== false"
+              className="map-button {{selectedMenuIndex$.value === i ? 'map-button--selected' : ''}}"
+              [iconStyle]="menuItem.icon.iconStyle"
+              [iconName]="menuItem.icon.iconName"
+              [pTooltip]="menuItem.label | translate"
+              appendTo="body"
+              tooltipZIndex="100"
+              (click)="setSelectedMenuIndex(i)"
+            ></spr-button>
+          </ng-container>
+        </div>
+        <div class="map-buttons__top-right">
+          <spr-button
+            *ngIf="showLocationButton"
+            className="map-button"
+            iconStyle="fas"
+            iconName="faLocationCrosshairs"
+            [pTooltip]="(translationsRef + '.common.action.showYourLocation') | translate"
+            appendTo="body"
+            tooltipZIndex="100"
+            tooltipPosition="left"
+            [disabled]="isLocationButtonDisabled"
+            (click)="showClientLocation()"
+          ></spr-button>
+          <spr-button
+            *ngIf="showFullScreenButton"
+            className="map-button"
+            iconStyle="fas"
+            iconName="faExpand"
+            [pTooltip]="(translationsRef + '.common.action.' + (fullScreen ? 'restore' : 'maximize')) | translate"
+            appendTo="body"
+            tooltipZIndex="100"
+            tooltipPosition="left"
+            (click)="toggleFullScreen()"
+          ></spr-button>
+        </div>
+      </div>
+      <div class="map-info-message" [ngClass]="{'map-info-message--visible': infoMessage}">
+        {{ infoMessage ? (translateInfoMessage ? (infoMessage | translate) : infoMessage) : '' }}
+      </div>
+      <div class="map-buttons__bottom">
+        <button
+          *ngIf="backgroundLayers?.length > 1"
+          type="button"
+          (click)="changeBackgroundLayer()"
+          class="map-surface-button"
+          [attr.aria-label]="(translationsRef + '.common.action.changeSurface') | translate"
+        >
+          <img
+            [src]="backgroundLayers[selectedBackgroundLayerIndex+1]?.imagePath || backgroundLayers[0].imagePath"
+            [alt]="(translationsRef + '.common.action.changeSurface') | translate"
+          />
+        </button>
+      </div>
+    </div>
+    <div
+      #overlayBottom
+      class="template-overlay-bottom"
+      [ngClass]="{'template-overlay-bottom--expanded': overlayBottomExpanded}"
+    >
+      <ng-template *ngIf="templates['overlay-bottom']" [ngTemplateOutlet]="templates['overlay-bottom']"></ng-template>
+    </div>
+  </div>
+</div>

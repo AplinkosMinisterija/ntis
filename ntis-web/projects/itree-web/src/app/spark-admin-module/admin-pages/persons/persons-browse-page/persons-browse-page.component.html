@@ -1,0 +1,122 @@
+<spr-content-box [headerText]="'pages.sprPersonsBrowse.headerText'">
+  <div class="spr-browse-actions-wrapper">
+    <spr-browse-search-form [formGroup]="searchForm" [formCode]="formCode" (search)="search(dataTableComponent)">
+      <spr-filter-input
+        filters
+        inputType="number"
+        [maxLength]="5"
+        formControlName="per_id"
+        [placeholder]="'pages.sprPersonsBrowse.per_id' | translate"
+        [useInForm]="true"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="20"
+        formControlName="per_name"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="'pages.sprPersonsBrowse.per_name' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="30"
+        formControlName="per_surname"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="'pages.sprPersonsBrowse.per_surname' | translate"
+      ></spr-filter-input>
+
+      <spr-filter-input
+        filters
+        inputType="date"
+        [maxLength]="20"
+        [maxDate]="maximumDate"
+        formControlName="per_date_of_birth"
+        [placeholder]="'pages.sprPersonsBrowse.per_date_of_birth' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="20"
+        formControlName="per_email"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="'pages.sprPersonsBrowse.per_email' | translate"
+      ></spr-filter-input>
+
+      <spr-filter-input
+        filters
+        inputType="date"
+        [maxLength]="20"
+        formControlName="rec_create_timestamp"
+        [placeholder]="'pages.sprPersonsBrowse.rec_create_timestamp' | translate"
+      ></spr-filter-input>
+
+      <spr-table-data-export
+        buttons
+        [tableColumn]="cols"
+        [tableData]="exportData"
+        translation="pages.sprPersonsBrowse"
+        fileName="pages.sprPersonsBrowse.headerText"
+        (exportAllRecEvent)="loadAllRecords($event, dataTableComponent)"
+      ></spr-table-data-export>
+
+      <spr-button-add [routerLink]="[personEditLink, 'new']" buttons></spr-button-add>
+    </spr-browse-search-form>
+  </div>
+
+  <p-table
+    [value]="data"
+    [autoLayout]="true"
+    [lazy]="true"
+    (onLazyLoad)="loadDataLazy($event)"
+    [totalRecords]="totalRecords"
+    [rows]="showRows"
+    [paginator]="data?.length > 0"
+    [rowsPerPageOptions]="rowsPerPageOptions"
+    [showFirstLastIcon]="false"
+    [sortField]="'1'"
+    [sortOrder]="2"
+    class="table-responsive"
+    responsiveLayout="stack"
+    breakpoint="1000px"
+    [rowHover]="true"
+  >
+    <ng-template pTemplate="header" let-row let-index="rowIndex">
+      <tr>
+        <th *ngFor="let col of cols" pSortableColumn="{{col.field}}">
+          <span class="table-header-col">
+            {{'pages.sprPersonsBrowse.'+col.field | translate}}
+            <p-sortIcon field="{{col.field}}" class="table-header-col__icon"></p-sortIcon>
+          </span>
+        </th>
+        <th></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row let-index="rowIndex">
+      <tr>
+        <td
+          *ngFor="let col of cols"
+          [ngClass]="{'spr-text-right': col.type === dataTypeNumber, 'whitespace-nowrap': col.type === dataTypeDate}"
+        >
+          <span class="p-column-title">{{'pages.sprPersonsBrowse.'+col.field | translate}}</span>
+          <spr-text-truncate
+            [text]="row[col.field]"
+            [textLength]="col.textLength"
+            [headerText]="'pages.sprPersonsBrowse.'+col.field"
+          ></spr-text-truncate>
+        </td>
+        <td>
+          <spr-table-rec-actions *ngIf="rowMenuItems[row.per_id]?.length" [actionsList]="rowMenuItems[row.per_id]" />
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage" translate>
+      <tr>
+        <td [attr.colspan]="cols.length + 1">
+          <spr-table-no-rec-found [messageOnLoad]="paramsIsEmpty"></spr-table-no-rec-found>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</spr-content-box>

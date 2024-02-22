@@ -1,0 +1,7 @@
+.fit-action-col {
+  @apply w-0 #{!important};
+}
+
+.status-wrapper {
+  @apply flex justify-start items-center gap-2;
+}

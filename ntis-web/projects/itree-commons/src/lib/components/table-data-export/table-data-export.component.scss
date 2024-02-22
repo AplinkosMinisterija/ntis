@@ -1,0 +1,102 @@
+.export {
+  @apply relative;
+
+  &__content {
+    @apply absolute w-1/5 min-w-72 z-10 right-0;
+  }
+
+  &__content-arrow-wrapper {
+    @apply w-full flex justify-end;
+  }
+
+  &__content-arrow-up {
+    @apply w-0 h-0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 10px solid #d8dadb;
+  }
+
+  &__export-body {
+    @apply bg-neutral-0 border p-3 rounded-tr-none z-auto w-full right-0 rounded shadow-inner;
+  }
+
+  &__export-body ul li {
+    @apply py-2;
+  }
+
+  &__export-footer {
+    @apply flex mt-4;
+  }
+
+  &__button {
+    @apply grow rounded-none first:rounded-l last:rounded-r;
+  }
+}
+
+.export-options {
+  @apply flex justify-between items-center;
+  &__button {
+    @apply text-neutral-0 text-base rounded-full bg-gradient-to-r from-success-400 
+    to-info-500 hover:from-success-500 hover:to-info-600 active:from-success-700 
+    active:to-info-700 duration-300 hover:rotate-45;
+
+    width: 26px;
+    line-height: 26px;
+  }
+}
+
+.export-themes {
+  @apply mt-2;
+  &__header {
+    @apply text-center text-sm py-2 text-neutral-400;
+  }
+
+  &__buttons-wrapper {
+    @apply flex;
+  }
+
+  &__button {
+    @apply border text-sm hover:text-primary-500
+    active:text-primary-700 grow rounded duration-300;
+
+    &--active {
+      @apply border-primary-500 text-primary-500;
+    }
+
+    &--inactive {
+      @apply border-transparent text-neutral-400;
+    }
+  }
+}
+
+.checkbox-wrapper {
+  @apply flex items-center;
+  &__label {
+    @apply text-base pl-2 text-left align-middle cursor-pointer;
+  }
+}
+
+.spr-button-secondary {
+  @apply w-60 sm:w-auto;
+  outline: none !important;
+}
+
+.message-box {
+  @apply flex gap-2 items-center p-3 border bg-info-100 text-info-500;
+
+  &__icon {
+    @apply text-2xl;
+  }
+
+  &__text {
+    @apply flex mb-3 text-center;
+  }
+}
+
+.spr-button-primary {
+  outline: none !important;
+}
+
+.loading {
+  @apply flex justify-center pt-4 text-2xl text-neutral-900;
+}

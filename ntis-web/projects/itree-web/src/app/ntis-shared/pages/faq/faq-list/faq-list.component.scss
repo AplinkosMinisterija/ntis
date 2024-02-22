@@ -1,0 +1,44 @@
+.section-header {
+  @apply text-neutral-500 font-semibold w-full text-center pb-5;
+}
+
+.actions-wrapper {
+  @apply flex flex-row w-full justify-between;
+}
+
+.file-card {
+  @apply flex justify-start flex-col gap-2 p-2 rounded border mt-2 bg-neutral-0;
+
+  &__item {
+    @apply flex justify-start items-center gap-2 w-fit;
+  }
+
+  &__item-icon {
+    @apply text-neutral-600 group-hover:text-primary-600;
+  }
+
+  &__item-text {
+    @apply text-neutral-600 group-hover:text-primary-600 hover:underline;
+  }
+}
+
+.question {
+  @apply flex table:block;
+
+  td:first-child,
+  td:last-child {
+    @apply basis-0;
+  }
+
+  &__text {
+    @apply text-neutral-500 font-semibold;
+  }
+
+  &__expand {
+    @apply w-[1%] px-0.5 #{!important};
+  }
+}
+
+.search-form-wrapper {
+  @apply mb-4;
+}

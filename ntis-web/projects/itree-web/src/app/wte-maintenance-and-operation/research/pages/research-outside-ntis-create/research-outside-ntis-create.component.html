@@ -1,0 +1,205 @@
+<spr-content-box
+  [headerText]="!showEnterResults ? translationsReference + '.headerText' :  translationsReference + '.enterResultsHeader'"
+  transformingText="uppercase"
+>
+  <div class="spr-edit-form-wrapper" *ngIf="!showEnterResults; else resultsBlock">
+    <ntis-message-box
+      *ngIf="hasResearchService && !this.srvId"
+      [text]="translationsReference + '.serviceInactive' | translate"
+      type="info"
+      class="mb-3"
+      [link]="isAdmin ? linkForDescription: null"
+      [linkText]="isAdmin? 'Paslaugos aprašymą galite užpildyti čia.': null"
+    ></ntis-message-box>
+    <ntis-message-box
+      *ngIf="!hasResearchService"
+      [text]="translationsReference + '.registerFirst' | translate "
+      type="info"
+      class="mb-3"
+      [link]="isAdmin? linkForRequest : null"
+      [linkText]="isAdmin? 'Pateikti prašymą registruotis arba peržiūrėti jau pateikto prašymo būseną galite čia.': null"
+    ></ntis-message-box>
+    <ntis-existing-facility-search (selectedWtf)="setSelectedWtf($event)"></ntis-existing-facility-search>
+    <app-research-options-checkbox-list
+      [selectionDisabled]="false"
+      [labelText]="translationsReference + '.research' | translate"
+      (criteriaToOrder)="selectedResearchTypes = $event"
+    ></app-research-options-checkbox-list>
+    <spr-edit-form [formGroup]="form" [values]="orderFormValues" [showSaveButton]="false" [showCancelButton]="false">
+    </spr-edit-form>
+  </div>
+  <ng-template #resultsBlock>
+    <div class="spr-edit-form-wrapper">
+      <ntis-accordion
+        [label]="translationsReference+'.legendServiceInfo' | translate"
+        [uppercase]="true"
+        [asCard]="true"
+      >
+        <spr-info-line
+          [name]="translationsReference + '.created' | translate"
+          [value]="newResearchOrder.ordCreated | s2Date"
+        ></spr-info-line>
+
+        <spr-info-line
+          [name]="translationsReference + '.status' | translate"
+          [value]="translationsReference + '.confirmed' | translate"
+        ></spr-info-line>
+      </ntis-accordion>
+      <app-research-options-checkbox-list
+        [labelText]="translationsReference + '.research' | translate"
+        [selectedCriteria]="newResearchOrder.selectedCriteria"
+      ></app-research-options-checkbox-list>
+      <ntis-accordion
+        [label]="translationsReference + '.ordererDetails' | translate"
+        [uppercase]="true"
+        [asCard]="true"
+      >
+        <spr-info-line
+          [name]="translationsReference + '.orderer' | translate"
+          [value]="newResearchOrder.ordererName"
+        ></spr-info-line>
+        <spr-info-line
+          [name]="translationsReference + '.phone' | translate"
+          [value]="newResearchOrder.ordererPhone"
+        ></spr-info-line>
+        <spr-info-line
+          [name]="translationsReference + '.email' | translate"
+          [value]="newResearchOrder.ordererEmail"
+        ></spr-info-line>
+      </ntis-accordion>
+      <ntis-accordion
+        *ngIf="newResearchOrder?.comment"
+        [label]="translationsReference + '.labComment' | translate"
+        [uppercase]="true"
+        [asCard]="true"
+        ><span> {{newResearchOrder?.comment}}</span></ntis-accordion
+      >
+      <form [formGroup]="resultsForm" autocomplete="off">
+        <ntis-accordion
+          [label]="translationsReference + '.researchInfo' | translate"
+          [uppercase]="true"
+          [asCard]="true"
+        >
+          <div class="results-form-wrapper">
+            <spr-info-line
+              [name]="translationsReference + '.estimatedArrival' | translate"
+              [value]="completionEstimateStr"
+            ></spr-info-line>
+            <spr-info-line
+              [name]="translationsReference + '.responsiblePerson' | translate"
+              [value]="newResearchOrder.responsiblePerson"
+            ></spr-info-line>
+            <spr-form-field
+              [labelText]="translationsReference + '.sampleDate' | translate"
+              labelFor="sampleDate"
+              [inputErrors]="resultsForm.controls.sampleDate.touched && resultsForm.controls.sampleDate.errors"
+              [mandatory]="true"
+            >
+              <p-calendar
+                appendTo="body"
+                inputId="sampleDate"
+                formControlName="sampleDate"
+                [maxDate]="minDate"
+                [showTime]="false"
+                [showIcon]="true"
+              ></p-calendar>
+            </spr-form-field>
+            <spr-form-field
+              [labelText]="translationsReference + '.samplePerson' | translate"
+              labelFor="samplePerson"
+              [inputErrors]="resultsForm.controls.samplePerson.touched && resultsForm.controls.samplePerson.errors"
+              [mandatory]="true"
+            >
+              <input type="text" formControlName="samplePerson" name="samplePerson" id="samplePerson" />
+            </spr-form-field>
+
+            <spr-form-field
+              [labelText]="translationsReference + '.researchDate' | translate"
+              labelFor="researchDate"
+              [inputErrors]="resultsForm.controls.researchDate.touched && resultsForm.controls.researchDate.errors"
+              [mandatory]="true"
+            >
+              <p-calendar
+                appendTo="body"
+                inputId="researchDate"
+                formControlName="researchDate"
+                [maxDate]="minDate"
+                [showTime]="false"
+                [showIcon]="true"
+              ></p-calendar>
+            </spr-form-field>
+            <spr-form-field
+              [labelText]="translationsReference + '.researchPerson' | translate"
+              labelFor="researchPerson"
+              [inputErrors]="resultsForm.controls.researchPerson.touched && resultsForm.controls.researchPerson.errors"
+              [mandatory]="true"
+            >
+              <input type="text" formControlName="researchPerson" name="researchPerson" id="researchPerson" />
+            </spr-form-field>
+          </div>
+        </ntis-accordion>
+
+        <ntis-accordion
+          [label]="translationsReference + '.researchResults' | translate"
+          [uppercase]="true"
+          [asCard]="true"
+        >
+          <div *ngFor="let item of newResearchOrder.results">
+            <app-research-criteria-result-info [data]="item" [editMode]="true"></app-research-criteria-result-info>
+          </div>
+          <spr-form-field
+            [labelText]="translationsReference + '.researchComments' | translate"
+            [isLabelHorizontal]="false"
+            labelFor="researchComments"
+            [inputErrors]="resultsForm.controls.researchComments.touched && resultsForm.controls.researchComments.errors"
+          >
+            <textarea name="researchComments" id="researchComments" formControlName="researchComments"></textarea>
+          </spr-form-field>
+          <spr-file-upload-with-progress
+            [uploadedFiles]="uploadedFiles"
+            [multiple]="false"
+            [disabled]="disabledUpload"
+            (fileUpload)="onFileUpload()"
+            (fileToDelete)="onDeleteFile($event)"
+            acceptedFormat=".doc, .docx., .odt., .pdf"
+          ></spr-file-upload-with-progress>
+        </ntis-accordion>
+      </form>
+    </div>
+  </ng-template>
+  <div class="spr-form-buttons">
+    <spr-button type="button" class="ntis-button-link" (click)="onCancel()">
+      {{'common.action.back' | translate}}
+    </spr-button>
+    <spr-button
+      *ngIf="!showEnterResults &&  hasResearchService"
+      type="button"
+      class="spr-button-primary"
+      (click)="saveConfirmedOrder()"
+      iconStyle="fas"
+      iconName="faSave"
+    >
+      {{ translationsReference + '.createOrder' | translate}}
+    </spr-button>
+    <spr-button
+      *ngIf="showEnterResults &&  hasResearchService"
+      type="button"
+      class="spr-button-primary"
+      (click)="saveFinishedOrder()"
+      iconStyle="fas"
+      iconName="faSave"
+    >
+      {{ translationsReference + '.finishOrder' | translate}}
+    </spr-button>
+    <spr-button
+      type="button"
+      class="spr-button-primary"
+      iconStyle="fas"
+      iconName="faSave"
+      (click)="changeToEnterResults()"
+      *ngIf="!showEnterResults && hasResearchService"
+    >
+      {{translationsReference + '.enterResults' | translate}}
+    </spr-button>
+  </div>
+</spr-content-box>

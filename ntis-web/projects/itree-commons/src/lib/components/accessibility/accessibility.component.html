@@ -1,0 +1,51 @@
+<button
+  class="accessibility-toggle"
+  type="button"
+  [attr.aria-label]="(isPanelVisible ? 'components.accessibility.ariaLabel_toggleHide' : 'components.accessibility.ariaLabel_toggleShow') | translate"
+  (click)="togglePanel()"
+>
+  <fa-icon [icon]="faIconsService.fas.faEye" size="sm" [fixedWidth]="true"></fa-icon>
+</button>
+<div class="accessibility-panel" [ngClass]="{'accessibility-panel--visible' : isPanelVisible}">
+  <ul class="accessibility-panel__list">
+    <li>
+      <spr-accessibility-button
+        [level]="increaseTextSizeLevel"
+        [maxLevel]="3"
+        iconName="faTextHeight"
+        text="components.accessibility.button_resizeText"
+        (click)="onIncreaseTextSize()"
+      ></spr-accessibility-button>
+    </li>
+    <li>
+      <spr-accessibility-button
+        [level]="isLinkBolded ? 1 : 0"
+        [maxLevel]="1"
+        iconName="faLink"
+        text="components.accessibility.button_highlightLinks"
+        (click)="onBoldLinks()"
+      ></spr-accessibility-button>
+    </li>
+    <li>
+      <spr-accessibility-button
+        [level]="isChangedContrast ? 1 : 0"
+        [maxLevel]="1"
+        iconName="faAdjust"
+        text="components.accessibility.button_contrast"
+        (click)="onAddContrast()"
+      ></spr-accessibility-button>
+    </li>
+    <li>
+      <spr-accessibility-button
+        [level]="isAddedCursor ? 1 : 0"
+        [maxLevel]="1"
+        iconName="faMousePointer"
+        text="components.accessibility.button_cursor"
+        (click)="onAddCursor()"
+      ></spr-accessibility-button>
+    </li>
+  </ul>
+  <button type="button" class="spr-button-primary" (click)="onRemoveAccessibility()">
+    {{'components.accessibility.button_reset' | translate}}
+  </button>
+</div>

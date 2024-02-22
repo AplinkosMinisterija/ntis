@@ -1,0 +1,24 @@
+<p class="info-line">
+  <span class="info-line__name"
+    >{{ translateName ? (name | translate) : name }}<span *ngIf="sqMeters"> (m<sup>3</sup>)</span>:
+  </span>
+  <ng-container *ngIf="!listMode">
+    <strong
+      *ngIf="textDisplay === 'inline'"
+      class="info-line__value"
+      [ngClass]="{'text-risk-400': redText, 'text-success-400': greenText}"
+      >{{value}}</strong
+    >
+    <ng-content></ng-content>
+    <div
+      *ngIf="textDisplay === 'editor'"
+      class="ql-editor info-line__textEditor"
+      [innerHTML]="editorValue | safeHtml"
+    ></div>
+    <div *ngIf="textDisplay === 'box'" class="spr-input-text info-line__block">{{value}}</div>
+  </ng-container>
+</p>
+
+<ul *ngIf="listMode">
+  <li *ngFor="let valueItem of value" class="info-line__value">{{valueItem}}</li>
+</ul>

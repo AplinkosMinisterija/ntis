@@ -1,0 +1,45 @@
+.button-wrapper,
+.checkbox-wrapper,
+.info-icon-wrapper {
+  @apply w-16;
+}
+
+.user-orgs {
+  &__current-classifier-wrapper {
+    @apply flex flex-col items-center;
+  }
+
+  &__button-wrapper {
+    @apply flex justify-between items-center;
+
+    button {
+      @apply w-auto;
+    }
+  }
+
+  &__expanded-rows {
+    @apply w-full;
+  }
+
+  &__user-buttons-wrapper {
+    @apply flex flex-row justify-end;
+  }
+
+  &__current-classifier {
+    @apply text-lg font-medium content-center justify-center text-center;
+  }
+}
+
+.user-orgs-view {
+  &__button-wrapper {
+    @apply flex flex-row;
+  }
+
+  &__button {
+    @apply mt-4 mr-3;
+  }
+}
+
+.action-buttons {
+  @apply text-primary-500 flex justify-center items-center hover:text-primary-600 active:text-primary-700  flex-col sm:flex-row gap-4 mt-4;
+}

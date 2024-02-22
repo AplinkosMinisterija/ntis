@@ -1,0 +1,61 @@
+<spr-content-box headerText="pages.sprMenuStructureTree.headerText">
+  <form [formGroup]="searchForm" class="input-search">
+    <div class="input-search">
+      <div class="input-search__main">
+        <div class="input-search__detailed--search">
+          <spr-select
+            formControlName="mst_lang"
+            classifierCode="SPR_LANGUAGE"
+            [placeholder]="'pages.sprMenuStructureTree.searchPlaceholderByLanguage' | translate"
+            (ngModelChange)="loadData()"
+            [showClearIcon]="false"
+          ></spr-select>
+          <spr-select
+            formControlName="mst_is_public"
+            classifierCode="SPR_IS_PUBLIC_TYPE"
+            [placeholder]="'pages.sprMenuStructureBrowse.searchPlaceholderByIsPublic' | translate"
+            (ngModelChange)="loadData()"
+          ></spr-select>
+          <spr-select
+            formControlName="mst_site"
+            classifierCode="SPR_SITE_TYPE"
+            [placeholder]="'pages.sprMenuStructureBrowse.searchPlaceholderBySiteName' | translate"
+            (ngModelChange)="loadData()"
+          ></spr-select>
+        </div>
+      </div>
+    </div>
+    <div class="flex items-center mb-2">
+      <button (click)="saveWithConfirmation()" class="spr-button-primary mr-3" style="margin-top: 2rem;">
+        <fa-icon class="pl-2" [icon]="faIconsService.fas.faSave" size="sm"></fa-icon>
+        {{'common.action.save' | translate}}
+      </button>
+    </div>
+  </form>
+  <div class="pages-structure">
+    <div class="pages-structure__menu" *ngIf="unassignedPages">
+      <div style="height: 100%;">
+        <h4 class="tree-heading">{{'pages.sprMenuStructureTree.notAssignedTitle' | translate}}</h4>
+        <p-tree
+          [value]="unassignedPages"
+          [draggableNodes]="true"
+          [droppableNodes]="true"
+          droppableScope="assigned"
+          draggableScope="unassigned"
+        >
+        </p-tree>
+      </div>
+    </div>
+    <div class="pages-structure__menu" *ngIf="menuPages">
+      <h4 class="tree-heading">{{'pages.sprMenuStructureTree.menuStructureTitle' | translate}}</h4>
+      <p-tree
+        [value]="menuPages"
+        [draggableNodes]="true"
+        [droppableNodes]="true"
+        [droppableScope]="['unassigned', 'assigned']"
+        draggableScope="assigned"
+      >
+      </p-tree>
+    </div>
+  </div>
+</spr-content-box>

@@ -1,0 +1,70 @@
+<spr-content-box
+  headerText="institutionsAdmin.pages.serviceRequest.headerText"
+  transformingText="uppercase"
+  *ngIf="data"
+>
+  <div class="spr-edit-form-wrapper">
+    <app-service-request-content
+      [isEditable]="isEditable"
+      [isServiceProvider]="isServiceProvider"
+      [applicant]="data.sr_resp_person_description"
+      [organization]="organization"
+      [requestFiles]="requestFiles"
+      [registeredServices]="registeredServices"
+    ></app-service-request-content>
+    <app-service-request-props
+      [isEditable]="isEditable"
+      [isServiceProvider]="isServiceProvider"
+      [applicant]="data.sr_resp_person_description"
+      [organization]="organization"
+      [orgAddress]="data.org_address"
+      [orgEmail]="data.sr_email"
+      [orgPhone]="data.sr_phone"
+      [orgWebsite]="data.sr_homepage"
+    ></app-service-request-props>
+    <app-service-request-details
+      (confirmRequest)="onConfirm()"
+      (cancelRequest)="onCancel()"
+      (rejectRequest)="showDialog = true"
+      [showConfirmRejectButtons]="showConfirmRejectButtons"
+      [reqNumber]="data.sr_id.toString()"
+      [registrationDate]="registrationDate"
+      [reqStatus]="data.sr_status_meaning"
+      [reqStatusDate]="statusDate"
+      [reqRemovalReason]="data.sr_removal_reason"
+    ></app-service-request-details>
+    <form [formGroup]="dialogForm" autocomplete="off">
+      <p-dialog
+        (onHide)="hideDialog()"
+        [(visible)]="showDialog"
+        [style]="{width: '450px', 'z-index': 999, 'top': '2rem', overflow: 'visible'}"
+        [header]="translationsReference + '.dialogHeader' | translate"
+        [modal]="true"
+        [draggable]="false"
+        styleClass="p-fluid"
+        [autoZIndex]="true"
+        [closable]="false"
+        [blockScroll]="true"
+        [contentStyle]="{'overflow': 'visible !important' }"
+        appendTo="body"
+      >
+        <spr-form-field
+          labelText="{{ translationsReference + '.sr_removal_reason' | translate}}"
+          [isLabelHorizontal]="false"
+        >
+          <textarea formControlName="sr_removal_reason"></textarea>
+        </spr-form-field>
+        <ng-template pTemplate="footer">
+          <span class="dialog-footer">
+            <spr-button className="ntis-button-link" (click)="onCancel()">
+              {{'common.action.back' | translate}}
+            </spr-button>
+            <spr-button className="spr-button-primary" (click)="onReject()" type="submit">
+              {{translationsReference + '.rejectRequest' | translate}}
+            </spr-button>
+          </span>
+        </ng-template>
+      </p-dialog>
+    </form>
+  </div>
+</spr-content-box>

@@ -1,0 +1,40 @@
+/* To learn more about this file see: https://angular.io/config/tsconfig. */
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "baseUrl": "./",
+    "outDir": "./dist/out-tsc",
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "strictNullChecks": false, // *
+    "noImplicitOverride": true,
+    // "noPropertyAccessFromIndexSignature": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "sourceMap": true,
+    "declaration": false,
+    "downlevelIteration": true,
+    "experimentalDecorators": true,
+    "moduleResolution": "node",
+    "importHelpers": true,
+    "target": "ES2022",
+    "module": "ES2022",
+    "lib": ["ES2022", "dom"],
+    //
+    "paths": {
+      "@angular/*": ["./node_modules/@angular/*"],
+      "@itree-commons/*": ["./projects/itree-commons/*"],
+      "@itree-web/*": ["./projects/itree-web/*"],
+      "@itree/ngx-s2-commons": ["./node_modules/@itree/ngx-s2-commons"],
+      "@itree/ngx-s2-ui": ["./node_modules/@itree/ngx-s2-ui"]
+    },
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true
+  },
+  "allowSyntheticDefaultImports": true,
+  "angularCompilerOptions": {
+    "preserveSymlinks": true,
+    "strictTemplates": true
+  }
+}

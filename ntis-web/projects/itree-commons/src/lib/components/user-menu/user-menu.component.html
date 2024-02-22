@@ -1,0 +1,113 @@
+<button class="toggle-menu" (click)="toggleUserMenu()">
+  <div class="toggle-menu__icon-wrapper">
+    <fa-icon class="toggle-menu__icon" [icon]="faIconsService.fas.faUserAlt"></fa-icon>
+  </div>
+  <ng-container *ngTemplateOutlet="userDetails"></ng-container>
+</button>
+<ul class="menu-list" [ngClass]="{'menu-list--open': isMenuOpen}">
+  <li class="menu-list__item">
+    <ng-container *ngTemplateOutlet="userDetails; context: {$implicit: true}"></ng-container>
+  </li>
+
+  <li
+    *ngIf="authService.availableOrganizations?.length"
+    class="menu-list__item"
+    [ngClass]="{'menu-list__item--open': openListItem === 'organizations'}"
+  >
+    <button
+      type="button"
+      [attr.aria-label]="(('common.action.' + (openListItem === 'organizations' ? 'hide' : 'show')) | translate) + ' ' + ((translationsReference + '.organizations') | translate)"
+      [attr.tabindex]="isMenuOpen ? 0 : -1"
+      (click)="toggleListItem('organizations')"
+    >
+      <fa-icon [icon]="faIconsService.fas.faBuilding" [fixedWidth]="true"></fa-icon>
+      {{ translationsReference + '.organizations' | translate }}
+      <spr-icon [name]="openListItem === 'organizations' ? 'expand_less' : 'expand_more'" />
+    </button>
+    <ul
+      class="sub-list"
+      [ngClass]="{'sub-list--open': openListItem === 'organizations'}"
+      [style]="'--items-count: ' + authService.availableOrganizations.length"
+      [attr.aria-hidden]="openListItem === 'organizations' ? 'false' : 'true'"
+    >
+      <li *ngFor="let org of authService.availableOrganizations" class="sub-list__item">
+        <button
+          class="text-sm"
+          type="button"
+          [attr.tabindex]="openListItem === 'organizations' ? 0 : -1"
+          (click)="handleOrganizationSelect(org)"
+        >
+          <fa-icon
+            class="sub-list__item-icon"
+            [ngClass]="{'sub-list__item-icon--active': selectedOrgText === org.org_name}"
+            [icon]="faIconsService.fas.faGripLines"
+          ></fa-icon>
+          {{org.org_name}}
+        </button>
+      </li>
+    </ul>
+  </li>
+
+  <li *ngIf="(!singleRoleMode)" class="menu-list__item" [ngClass]="{'menu-list__item--open': openListItem === 'roles'}">
+    <button
+      type="button"
+      [attr.aria-label]="(('common.action.' + (openListItem === 'roles' ? 'hide' : 'show')) | translate) + ' ' + ((translationsReference + '.roles') | translate)"
+      [attr.tabindex]="isMenuOpen ? 0 : -1"
+      (click)="toggleListItem('roles')"
+    >
+      <fa-icon [icon]="faIconsService.fas.faUserTag" [fixedWidth]="true"></fa-icon>
+      {{ translationsReference + '.roles' | translate }}
+      <spr-icon [name]="openListItem === 'roles' ? 'expand_less' : 'expand_more'" />
+    </button>
+    <ul
+      class="sub-list"
+      [ngClass]="{'sub-list--open': openListItem === 'roles'}"
+      [style]="'--items-count: ' + authService.availableRoles.length"
+      [attr.aria-hidden]="openListItem === 'roles' ? 'false' : 'true'"
+    >
+      <li *ngFor="let role of authService.availableRoles" class="sub-list__item">
+        <button
+          class="text-sm"
+          type="button"
+          [attr.tabindex]="openListItem === 'roles' ? 0 : -1"
+          (click)="onRoleSelect(role)"
+        >
+          <fa-icon
+            class="sub-list__item-icon"
+            [ngClass]="{'sub-list__item-icon--active': selectedRoleText === role.rol_name}"
+            [icon]="faIconsService.fas.faGripLines"
+          ></fa-icon>
+          {{role.rol_name}}
+        </button>
+      </li>
+    </ul>
+  </li>
+
+  <li class="menu-list__item">
+    <button type="button" [attr.tabindex]="isMenuOpen ? 0 : -1" (click)="navigateToLink(profileSettingsLink)">
+      <spr-icon name="settings" />
+      {{ translationsReference + '.profileSettings' | translate }}
+    </button>
+  </li>
+  <li class="menu-list__item" *ngIf="passwordChangingEnabled&& passwordExist">
+    <button type="button" [attr.tabindex]="isMenuOpen ? 0 : -1" (click)="navigateToLink(passwordChangingLink)">
+      <spr-icon name="lock" />
+      {{ translationsReference + '.changePassword' | translate }}
+    </button>
+  </li>
+
+  <li class="menu-list__item" (click)="onLogout()">
+    <button type="button" [attr.tabindex]="isMenuOpen ? 0 : -1">
+      <fa-icon [icon]="faIconsService.fas.faDoorOpen" [fixedWidth]="true"></fa-icon>
+      {{ translationsReference + '.logout' | translate }}
+    </button>
+  </li>
+</ul>
+
+<ng-template #userDetails let-mobile>
+  <ul class="user-details" [ngClass]="{'user-details--mobile': mobile}">
+    <li>{{userName}}</li>
+    <li *ngIf="selectedOrgText">{{selectedOrgText}}</li>
+    <li *ngIf="!singleRoleMode && selectedRoleText">{{selectedRoleText}}</li>
+  </ul>
+</ng-template>

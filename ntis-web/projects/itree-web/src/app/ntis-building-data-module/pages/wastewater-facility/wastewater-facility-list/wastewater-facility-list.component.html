@@ -1,0 +1,150 @@
+<spr-content-box [headerText]="formTranslationsReference + '.headerText'" transformingText="uppercase">
+  <div class="spr-browse-actions-wrapper">
+    <spr-browse-search-form
+      [formGroup]="searchForm"
+      [formCode]="formCode"
+      (search)="search(dataTableComponent)"
+      [quickSearchEnabled]="false"
+    >
+      <spr-select
+        filters
+        classifierCode="NTIS_INTS_STATUS"
+        formControlName="wtf_state"
+        [placeholder]="formTranslationsReference + '.status' | translate"
+        [advancedFilterParams]="true"
+      >
+      </spr-select>
+      <spr-filter-input
+        filters
+        inputType="text"
+        formControlName="wtf_address"
+        [placeholder]="formTranslationsReference + '.table.wtf_address' | translate"
+      ></spr-filter-input>
+
+      <spr-select
+        filters
+        classifierCode="NTIS_WTF_TYPE"
+        formControlName="wtf_type"
+        [placeholder]="formTranslationsReference + '.table.wtf_title' | translate"
+        [advancedFilterParams]="true"
+      >
+      </spr-select>
+      <spr-filter-input
+        filters
+        inputType="text"
+        formControlName="wtf_latitude"
+        [placeholder]="formTranslationsReference + '.table.latitude' | translate"
+      ></spr-filter-input>
+
+      <spr-filter-input
+        filters
+        inputType="text"
+        formControlName="wtf_longitude"
+        [placeholder]="formTranslationsReference + '.table.longitude' | translate"
+      ></spr-filter-input>
+
+      <spr-table-data-export
+        buttons
+        [tableColumn]="exportCols"
+        [tableData]="exportData"
+        [translation]="formTranslationsReference + '.table'"
+        [fileName]="formTranslationsReference + '.headerText'"
+        (exportAllRecEvent)="loadAllRecords($event, dataTableComponent)"
+      ></spr-table-data-export>
+
+      <spr-button-add
+        [routerLink]="[wastewaterFacilityEditLink, 'new']"
+        buttons
+        [pTooltip]="userCanCreate ?  null  : (formTranslationsReference +'.tooltipText' | translate)"
+        [disabled]="!userCanCreate"
+      ></spr-button-add>
+    </spr-browse-search-form>
+  </div>
+
+  <p-table
+    [value]="data"
+    [autoLayout]="true"
+    [lazy]="true"
+    [rowHover]="true"
+    (onLazyLoad)="loadDataLazy($event)"
+    [rows]="showRows"
+    [totalRecords]="totalRecords"
+    [paginator]="data?.length > 0"
+    [rowsPerPageOptions]="rowsPerPageOptions"
+    [showFirstLastIcon]="false"
+    [sortField]="'wtf_id'"
+    [sortOrder]="0"
+    responsiveLayout="stack"
+    breakpoint="767px"
+  >
+    <ng-template pTemplate="header" let-row let-index="rowIndex">
+      <tr>
+        <th *ngFor="let col of visibleColumns" pSortableColumn="{{col.field}}">
+          <span class="table-header-col">
+            {{formTranslationsReference+'.table.'+col.field | translate}}
+            <p-sortIcon field="{{col.field}}" class="table-header-col__icon"></p-sortIcon>
+          </span>
+        </th>
+        <th class="fit-action-col whitespace-nowrap">
+          {{formTranslationsReference+'.table.served_objects' | translate}}
+        </th>
+        <th class="fit-action-col">{{formTranslationsReference+'.table.actions' | translate}}</th>
+        <th class="fit-action-col"></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row let-index="rowIndex">
+      <tr>
+        <td
+          *ngFor="let col of visibleColumns"
+          [ngClass]="{'spr-text-right': col.type === dataTypeNumber, 'whitespace-nowrap': col.type === dataTypeDate}"
+        >
+          <span class="p-column-title">
+            {{formTranslationsReference+'.table.'+col.field | translate}}
+          </span>
+
+          <div class="status-wrapper">
+            <ntis-record-status
+              [statusData]="recordStatus"
+              [colField]="col.field"
+              field="wtf_address"
+              [statusValue]="row['wtf_state']"
+              [pTooltip]="('pages.intsOwnerDashboard.'+row['wtf_state']) | translate"
+            ></ntis-record-status>
+            <span
+              class="mt-0.5"
+              >{{col.field === 'coordinates' ? row['wtf_fl_latitude']+', '+row['wtf_fl_longitude'] : row[col.field] }}</span
+            >
+          </div>
+        </td>
+        <td>
+          <ntis-view-served-objects
+            *ngIf="row.wtf_served_objects"
+            [servedObjects]="row.wtf_served_objects"
+            [rowTitle]="row['wtf_address']+' '+row['wtf_fl_latitude']+', '+row['wtf_fl_longitude']"
+          ></ntis-view-served-objects>
+        </td>
+        <td>
+          <spr-table-rec-actions [actionsList]="rowMenuItems[row.wtf_id] || []"> </spr-table-rec-actions>
+        </td>
+        <td>
+          <spr-button
+            [attr.title]="formTranslationsReference + '.agreementStatus' | translate"
+            [attr.aria-label]="formTranslationsReference + '.agreementStatusButton' | translate"
+            *ngIf="row.wtf_fua_id"
+            className="text-neutral-700"
+            iconName="faClockRotateLeft"
+            iconStyle="fas"
+            (click)="navigateToAgreementView(row.wtf_id, row.wtf_fua_id)"
+          ></spr-button>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage" translate>
+      <tr>
+        <td [attr.colspan]="cols.length + 3">
+          <spr-table-no-rec-found [messageOnLoad]="paramsIsEmpty"></spr-table-no-rec-found>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</spr-content-box>

@@ -1,0 +1,341 @@
+<spr-content-box
+  headerText="institutionsAdmin.pages.ntisWaterManagerFacilitiesList.headerText"
+  transformingText="uppercase"
+>
+  <div class="spr-browse-actions-wrapper">
+    <spr-browse-search-form [formGroup]="searchForm" [formCode]="formCode" (search)="search(dataTableComponent)">
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="20"
+        formControlName="wto_name"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="formTranslationsReference+'.wto_name' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="200"
+        formControlName="wto_address"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="formTranslationsReference+'.wto_address' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="number"
+        [maxLength]="12"
+        formControlName="wto_productivity"
+        [placeholder]="formTranslationsReference+'.wto_productivity' | translate"
+      ></spr-filter-input>
+      <spr-select
+        filters
+        formControlName="wto_domestic_sewage"
+        optionLabel="option"
+        [optionData]="usedOptions"
+        optionValue="value"
+        [placeholder]="formTranslationsReference + '.wto_domestic_sewage' | translate"
+        [showFilter]="false"
+        [advancedFilterParams]="true"
+      ></spr-select>
+      <spr-select
+        filters
+        formControlName="wto_industrial_sewage"
+        optionLabel="option"
+        [optionData]="usedOptions"
+        optionValue="value"
+        [placeholder]="formTranslationsReference + '.wto_industrial_sewage' | translate"
+        [showFilter]="false"
+        [advancedFilterParams]="true"
+      ></spr-select>
+      <spr-select
+        filters
+        formControlName="wto_sludge"
+        optionLabel="option"
+        [optionData]="usedOptions"
+        optionValue="value"
+        [placeholder]="formTranslationsReference + '.wto_sludge' | translate"
+        [showFilter]="false"
+        [advancedFilterParams]="true"
+      ></spr-select>
+      <spr-select
+        filters
+        formControlName="wto_auto_accept"
+        optionLabel="option"
+        [optionData]="usedOptions"
+        optionValue="value"
+        [placeholder]="formTranslationsReference + '.wto_auto_accept' | translate"
+        [showFilter]="false"
+        [advancedFilterParams]="true"
+      ></spr-select>
+      <spr-select
+        filters
+        formControlName="wto_is_it_used"
+        optionLabel="option"
+        [optionData]="usedOptions"
+        optionValue="value"
+        [placeholder]="formTranslationsReference + '.wto_is_it_used' | translate"
+        [showFilter]="false"
+        [advancedFilterParams]="true"
+      ></spr-select>
+      <spr-table-data-export
+        buttons
+        [translation]="formTranslationsReference"
+        [tableColumn]="cols"
+        [tableData]="exportData"
+        [fileName]="formTranslationsReference + '.headerText'"
+        (exportAllRecEvent)="loadAllRecords($event, dataTableComponent)"
+      ></spr-table-data-export>
+      <spr-button-add
+        buttons
+        [disabled]="!userCanCreate"
+        [pTooltip]="userCanCreate ?  null  : (formTranslationsReference +'.tooltipText' | translate)"
+        (click)="addNewFacility()"
+      ></spr-button-add>
+    </spr-browse-search-form>
+  </div>
+
+  <p-table
+    [value]="data"
+    responsiveLayout="stack"
+    breakpoint="767px"
+    [lazy]="true"
+    (onLazyLoad)="loadDataLazy($event)"
+    [rows]="showRows"
+    [totalRecords]="totalRecords"
+    [paginator]="data?.length > 0"
+    [rowsPerPageOptions]="rowsPerPageOptions"
+    [showFirstLastIcon]="false"
+    [rowHover]="true"
+  >
+    <ng-template pTemplate="header" let-row let-index="rowIndex">
+      <tr>
+        <ng-container *ngFor="let col of visibleColumns">
+          <th *ngIf="col.field !== 'cr_id'" pSortableColumn="{{col.field}}">
+            {{formTranslationsReference+'.'+col.field | translate}}
+            <p-sortIcon field="{{col.field}}"></p-sortIcon>
+          </th>
+        </ng-container>
+        <th>{{'common.generalUse.actions' | translate}}</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row let-index="rowIndex">
+      <tr [ngClass]="{'ntis-disabled-table-row': row['wto_is_it_used'] === falseDB}" class="ntis-disabled-table-row">
+        <ng-container *ngFor="let col of visibleColumns">
+          <td>
+            <span class="p-column-title">
+              {{formTranslationsReference + '.' +col.field |translate}}
+            </span>
+            <span
+              *ngIf="col.field === 'wto_name' || col.field === 'wto_address' || col.field === 'wto_productivity'; else otherCols"
+              >{{row[col.field]}}</span
+            >
+            <ng-template #otherCols>
+              <span> {{convertShownValue(row[col.field])}}</span>
+            </ng-template>
+          </td>
+        </ng-container>
+        <td>
+          <ntis-table-row-actions [actions]="row.actions"></ntis-table-row-actions>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage" translate>
+      <tr>
+        <td [attr.colspan]="cols.length + 1">
+          <spr-table-no-rec-found></spr-table-no-rec-found>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <form [formGroup]="form" autocomplete="off">
+    <p-dialog
+      [(visible)]="editDialog"
+      styleClass="ntis-dialog"
+      [showHeader]="true"
+      [closable]="false"
+      [draggable]="false"
+    >
+      <spr-form-field-group [text]="formTranslationsReference + '.editHeader'">
+        <spr-form-field
+          labelText="{{formTranslationsReference+'.wto_name_edit' | translate}}"
+          [inputErrors]="form.controls.wto_name.touched && form.controls.wto_name.errors"
+          [mandatory]="true"
+        >
+          <input type="text" [formControlName]="'wto_name'" />
+        </spr-form-field>
+        <spr-form-field
+          labelText="{{formTranslationsReference+'.wto_address_edit' | translate}}"
+          [inputErrors]="form.controls.wto_address.touched && form.controls.wto_address.errors"
+          [mandatory]="true"
+        >
+          <input
+            type="text"
+            formControlName="wto_address"
+            [readOnly]="true"
+            [hidden]="!form.controls.wto_address.value"
+            class="mb-2"
+          />
+
+          <ntis-address-search-form (addressSelect)="setFacilityAddress($event)" [addressId]="addressId">
+          </ntis-address-search-form>
+        </spr-form-field>
+
+        <spr-form-field
+          labelText="{{formTranslationsReference+'.wto_productivity' | translate}}"
+          [inputErrors]="form.controls.wto_productivity.touched && form.controls.wto_productivity.errors"
+        >
+          <input [formControlName]="'wto_productivity'" type="number" step="0.01" min="0.01" />
+        </spr-form-field>
+
+        <div class="form-field-wrapper">
+          <spr-form-field
+            [errorDiv]="!form.controls.wto_auto_accept.valid && form.controls.wto_id.value === null && form.controls.wto_auto_accept.touched"
+            [labelText]="formTranslationsReference + '.wto_auto_accept'| translate"
+            [mandatory]="true"
+            [inputErrors]="form.controls.wto_auto_accept.touched && form.controls.wto_auto_accept.errors"
+          >
+            <div class="radio-input-wrapper">
+              <input
+                type="radio"
+                [value]="trueDB"
+                id="auto_accept_true"
+                formControlName="wto_auto_accept"
+                class="spr-radio"
+              />
+              <label for="auto_accept_true">{{'common.action.yes' | translate}}</label>
+            </div>
+
+            <div class="radio-input-wrapper">
+              <input
+                type="radio"
+                [value]="falseDB"
+                id="auto_accept_false"
+                formControlName="wto_auto_accept"
+                class="spr-radio"
+              />
+              <label for="auto_accept_false">{{'common.action.no' | translate}}</label>
+            </div>
+          </spr-form-field>
+          <div *ngIf="form.controls.wto_auto_accept.value === 'Y'">
+            <div class="pb-2 pt-2 spr-input-with-label">
+              <input
+                type="checkbox"
+                id="noNotifications"
+                [checked]="noNotifications"
+                class="spr-checkbox"
+                (change)="onNotificationCheckboxChange()"
+              />
+              <label for="noNotifications">{{formTranslationsReference + '.noNotifications' | translate}}</label>
+            </div>
+          </div>
+          <spr-form-field
+            [errorDiv]="!form.controls.wto_domestic_sewage.valid && form.controls.wto_id.value === null && form.controls.wto_domestic_sewage.touched"
+            [labelText]="formTranslationsReference + '.wto_domestic_sewage_edit'| translate"
+            [mandatory]="true"
+            [inputErrors]="form.controls.wto_domestic_sewage.touched && form.controls.wto_domestic_sewage.errors"
+          >
+            <div class="radio-input-wrapper">
+              <input
+                type="radio"
+                [value]="trueDB"
+                id="domestic_sewage_true"
+                formControlName="wto_domestic_sewage"
+                class="spr-radio"
+              />
+              <label for="domestic_sewage_true">{{'common.action.yes' | translate}}</label>
+            </div>
+
+            <div class="radio-input-wrapper">
+              <input
+                type="radio"
+                [value]="falseDB"
+                id="domestic_sewage_false"
+                formControlName="wto_domestic_sewage"
+                class="spr-radio"
+              />
+              <label for="domestic_sewage_false">{{'common.action.no' | translate}}</label>
+            </div>
+          </spr-form-field>
+          <spr-form-field
+            [errorDiv]="!form.controls.wto_industrial_sewage.valid && form.controls.wto_id.value === null && form.controls.wto_industrial_sewage.touched"
+            [labelText]="formTranslationsReference + '.wto_industrial_sewage_edit'| translate"
+            [mandatory]="true"
+            [inputErrors]="form.controls.wto_industrial_sewage.touched && form.controls.wto_industrial_sewage.errors"
+          >
+            <div class="radio-input-wrapper">
+              <input
+                type="radio"
+                [value]="trueDB"
+                id="industrial_sewage_true"
+                formControlName="wto_industrial_sewage"
+                class="spr-radio"
+              />
+              <label for="industrial_sewage_true">{{'common.action.yes' | translate}}</label>
+            </div>
+
+            <div class="radio-input-wrapper">
+              <input
+                type="radio"
+                [value]="falseDB"
+                id="industrial_sewage_false"
+                formControlName="wto_industrial_sewage"
+                class="spr-radio"
+              />
+              <label for="industrial_sewage_false">{{'common.action.no' | translate}}</label>
+            </div>
+          </spr-form-field>
+          <spr-form-field
+            [errorDiv]="!form.controls.wto_sludge.valid && form.controls.wto_id.value === null && form.controls.wto_sludge.touched"
+            [labelText]="formTranslationsReference + '.wto_sludge_edit'| translate"
+            [mandatory]="true"
+            [inputErrors]="form.controls.wto_sludge.touched && form.controls.wto_sludge.errors"
+          >
+            <div class="radio-input-wrapper">
+              <input
+                type="radio"
+                [value]="trueDB"
+                id="wto_sludge_true"
+                formControlName="wto_sludge"
+                class="spr-radio"
+              />
+              <label for="wto_sludge_true">{{'common.action.yes' | translate}}</label>
+            </div>
+
+            <div class="radio-input-wrapper">
+              <input
+                type="radio"
+                [value]="falseDB"
+                id="wto_sludge_false"
+                formControlName="wto_sludge"
+                class="spr-radio"
+              />
+              <label for="wto_sludge_false">{{'common.action.no' | translate}}</label>
+            </div>
+          </spr-form-field>
+        </div>
+        <spr-form-field>
+          <div class="pt-3 spr-input-with-label" *ngIf="form.controls.wto_id.value !== null">
+            <input type="checkbox" id="isUsed" class="spr-checkbox" [checked]="checked" (change)="onCheckboxChange()" />
+            <label for="isUsed">{{formTranslationsReference + '.wto_is_it_used_edit' | translate}}</label>
+          </div>
+        </spr-form-field>
+      </spr-form-field-group>
+      <ng-template pTemplate="footer">
+        <span class="dialog-footer">
+          <spr-button className="ntis-button-link" (click)="editDialog = false; facilitySearch = false">
+            {{'common.action.back' | translate}}
+          </spr-button>
+          <spr-button className="spr-button-primary" iconName="faSave" type="submit" (click)="saveFacility()">
+            {{'common.action.save' | translate}}
+          </spr-button>
+        </span>
+      </ng-template>
+    </p-dialog>
+  </form>
+  <span class="actions">
+    <spr-button className="ntis-button-link" (click)="onReturn()">
+      {{'common.action.back' | translate}}
+    </spr-button>
+  </span>
+</spr-content-box>

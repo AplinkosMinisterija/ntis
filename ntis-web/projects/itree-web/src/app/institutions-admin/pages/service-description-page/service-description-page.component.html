@@ -1,0 +1,349 @@
+<spr-content-box [headerText]="translationsReference + '.headerText'" transformingText="uppercase">
+  <div class="spr-edit-form-wrapper">
+    <form [formGroup]="form" (submit)="onSubmit($event)">
+      <spr-form-field-group [text]="translationsReference + '.serviceInformation' ">
+        <spr-info-line
+          [name]="translationsReference + '.srv_name' | translate"
+          [value]="form.controls.srv_name.value"
+        ></spr-info-line
+        ><spr-info-line
+          [name]="translationsReference + '.srv_org_name' | translate"
+          [value]="form.controls.srv_org_name.value"
+        ></spr-info-line>
+        <spr-form-field
+          [labelText]="translationsReference + '.srv_email' | translate"
+          labelFor="srv_email"
+          [mandatory]="true"
+          [errorDefs]="{required: 'common.error'}"
+          [inputErrors]="form.controls.srv_email.touched && form.controls.srv_email.errors"
+        >
+          <input type="email" name="srv_email" id="srv_email" formControlName="srv_email" />
+        </spr-form-field>
+        <spr-form-field
+          [labelText]="translationsReference + '.srv_phone_no' | translate"
+          labelFor="srv_phone_no"
+          [mandatory]="true"
+          [errorDefs]="{required: 'common.error', pattern: 'common.error.phone'}"
+          [inputErrors]="form.controls.srv_phone_no.touched && form.controls.srv_phone_no.errors"
+        >
+          <input type="tel" name="srv_phone_no" id="srv_phone_no" formControlName="srv_phone_no" />
+        </spr-form-field>
+        <ng-container *ngIf="form.controls.srv_type.value !== TYRIMAI; else labPriceDaysBlock">
+          <spr-form-field
+            [labelText]="translationsReference + '.srv_price_from' | translate"
+            labelFor="srv_price_from"
+            [inputErrors]="(form.controls.srv_price_to.touched && form.controls.srv_price_to.errors) ? form.controls.srv_price_to.touched && form.controls.srv_price_to.errors : form.controls.srv_price_from.touched && form.controls.srv_price_from.errors"
+            [mandatory]="true"
+            ><div class="changing-fields-wrapper">
+              <div class="input-wrapper">
+                <span>{{translationsReference + '.from' | translate}}</span>
+                <input type="number" name="srv_price_from" id="srv_price_from" formControlName="srv_price_from" />
+                <span>{{translationsReference + '.currency' | translate}}</span>
+              </div>
+
+              <div class="input-wrapper">
+                <span>{{translationsReference + '.to' | translate}}</span>
+                <input type="number" name="srv_price_to" id="srv_price_to" formControlName="srv_price_to" />
+                <span>{{translationsReference + '.currency' | translate}}</span>
+              </div>
+            </div>
+          </spr-form-field>
+
+          <spr-form-field
+            [labelText]="translationsReference + '.srv_completion_in_days' | translate"
+            labelFor="srv_completion_in_days_from"
+            [mandatory]="true"
+            [errorDefs]="{required: 'common.error'}"
+            [inputErrors]="form.controls.srv_completion_in_days_from.touched && form.controls.srv_completion_in_days_from.errors"
+          >
+            <div class="input-wrapper">
+              <input
+                type="number"
+                name="srv_completion_in_days_from"
+                id="srv_completion_in_days_from"
+                formControlName="srv_completion_in_days_from"
+              />
+              <span>{{translationsReference + '.workingDays' | translate}}</span>
+            </div>
+          </spr-form-field>
+        </ng-container>
+
+        <ng-template #labPriceDaysBlock>
+          <spr-form-field
+            [labelText]="translationsReference + '.srv_price_from' | translate"
+            labelFor="srv_price_from"
+            [mandatory]="true"
+            [errorDefs]="{required: 'common.error'}"
+            [inputErrors]="form.controls.srv_price_from.touched && form.controls.srv_price_from.errors"
+          >
+            <div class="input-wrapper">
+              <span>{{translationsReference + '.from' | translate}}</span>
+              <input type="number" name="srv_price_from" id="srv_price_from" formControlName="srv_price_from" />
+              <span>{{translationsReference + '.currency' | translate}}</span>
+            </div>
+          </spr-form-field>
+
+          <spr-form-field
+            [labelText]="translationsReference + '.srv_completion_in_days' | translate"
+            labelFor="srv_completion_in_days_from"
+            [mandatory]="true"
+            [errorDefs]="{required: 'common.error'}"
+            [inputErrors]="(form.controls.srv_completion_in_days_to.touched && form.controls.srv_completion_in_days_to.errors) ? form.controls.srv_completion_in_days_to.touched && form.controls.srv_completion_in_days_to.errors : form.controls.srv_completion_in_days_from.touched && form.controls.srv_completion_in_days_from.errors"
+          >
+            <div class="changing-fields-wrapper">
+              <div class="input-wrapper">
+                <span>{{translationsReference + '.from' | translate}}</span>
+                <input
+                  type="number"
+                  name="srv_completion_in_days_from"
+                  id="srv_completion_in_days_from"
+                  formControlName="srv_completion_in_days_from"
+                />
+              </div>
+
+              <div class="input-wrapper">
+                <span>{{translationsReference + '.to' | translate}}</span>
+                <input
+                  type="number"
+                  name="srv_completion_in_days_to"
+                  id="srv_completion_in_days_to"
+                  formControlName="srv_completion_in_days_to"
+                />
+                <span>{{translationsReference + '.toDays' | translate}}</span>
+              </div>
+            </div>
+          </spr-form-field>
+        </ng-template>
+
+        <spr-form-field
+          [labelText]="translationsReference + '.srv_description' | translate"
+          labelFor="srv_description"
+          [mandatory]="true"
+          [errorDefs]="{required: 'common.error'}"
+          [inputErrors]="form.controls.srv_description.touched && form.controls.srv_description.errors"
+        >
+          <p-editor
+            formControlName="srv_description"
+            [style]="{'height':'200px', 'maxWidth': '765px'}"
+            id="srv_description"
+            maxlength="1500"
+            (onTextChange)="handleChange($event)"
+          >
+            <ng-template pTemplate="header">
+              <div class="flex justify-items-start">
+                <span class="ql-formats">
+                  <button class="ql-bold" aria-label="Bold" type="button"></button>
+                  <button class="ql-italic" aria-label="Italic" type="button"></button>
+                  <button class="ql-underline" aria-label="Underline" type="button"></button>
+                </span>
+                <span class="ql-formats">
+                  <button class="ql-list" value="ordered" aria-label="Ordered List" type="button"></button>
+                  <button class="ql-list" value="bullet" aria-label="Unordered List" type="button"></button>
+                </span>
+                <span class="ql-formats">
+                  <button class="ql-link" aria-label="Insert Link" type="button"></button>
+                </span>
+                <span class="flex ml-auto"> {{form.controls.srv_description.value?.length ?? 0}}/1500</span>
+              </div>
+            </ng-template>
+          </p-editor>
+        </spr-form-field>
+        <spr-form-field
+          [labelText]="translationsReference +  '.sample' | translate"
+          labelFor="labInstructions"
+          [hidden]="form.controls.srv_type.value !== TYRIMAI"
+          [mandatory]="true"
+          [inputErrors]="form.controls.labInstructions.touched && form.controls.labInstructions.errors"
+        >
+          <spr-file-upload-with-progress
+            [uploadedFiles]="uploadedLabInstructions"
+            [multiple]="false"
+            [label]="translationsReference +  '.addSingleDocument' | translate"
+            (fileToDelete)="onLabInstructionsDelete($event)"
+            (fileUpload)="onLabInstructionsUpload()"
+            [disabled]="disabledLabUpload"
+            acceptedFormat=".doc, .docx, .odt, .pdf"
+          ></spr-file-upload-with-progress>
+        </spr-form-field>
+      </spr-form-field-group>
+
+      <spr-form-field-group [text]="translationsReference + '.serviceSettings' "
+        ><div [ngClass]="{'grid ' : addMunicipalities}">
+          <div class="form-field-wrapper">
+            <spr-form-field
+              [errorDiv]="!form.controls.srv_contract_available.valid && form.controls.srv_contract_available.touched"
+              [labelText]="translationsReference + '.srv_contract_available'| translate"
+              [mandatory]="true"
+              [inputErrors]="form.controls.srv_contract_available.touched && form.controls.srv_contract_available.errors"
+            >
+              <div class="radio-buttons-block">
+                <div class="radio-input-wrapper">
+                  <input
+                    type="radio"
+                    name="srv_contract_available"
+                    [value]="DB_BOOLEAN_TRUE"
+                    id="available-true"
+                    formControlName="srv_contract_available"
+                    class="spr-radio"
+                  />
+                  <label for="available-true">{{'common.action.yes' | translate}}</label>
+                </div>
+
+                <div class="radio-input-wrapper">
+                  <input
+                    type="radio"
+                    name="srv_contract_available"
+                    [value]="DB_BOOLEAN_FALSE"
+                    id="available-false"
+                    formControlName="srv_contract_available"
+                    class="spr-radio"
+                  />
+                  <label for="available-false">{{'common.action.no' | translate}}</label>
+                </div>
+              </div>
+            </spr-form-field>
+          </div>
+          <spr-form-field
+            class="max-w-fit"
+            [labelText]="translationsReference +  '.addDocument' | translate"
+            labelFor="contractFile"
+            [hidden]="!addDocument"
+            [mandatory]="addDocument"
+            [inputErrors]="form.controls.contractFile.touched && form.controls.contractFile.errors"
+          >
+            <spr-file-upload-with-progress
+              [uploadedFiles]="uploadedContractFiles"
+              [multiple]="false"
+              [label]="translationsReference +  '.addSingleDocument' | translate"
+              (fileToDelete)="onDeleteFile($event)"
+              (fileUpload)="onFileUpload()"
+              [disabled]="disabledContractUpload"
+              acceptedFormat=".doc, .docx, .odt, .pdf"
+            ></spr-file-upload-with-progress>
+          </spr-form-field>
+          <div class="form-field-wrapper">
+            <spr-form-field
+              [errorDiv]="!form.controls.srv_available_in_ntis_portal.valid && form.controls.srv_available_in_ntis_portal.touched"
+              [labelText]="translationsReference + '.srv_available_in_ntis_portal'| translate"
+              [mandatory]="true"
+              [inputErrors]="form.controls.srv_available_in_ntis_portal.touched && form.controls.srv_available_in_ntis_portal.errors"
+            >
+              <div class="radio-buttons-block">
+                <div class="radio-input-wrapper">
+                  <input
+                    type="radio"
+                    name="srv_available_in_ntis_portal"
+                    [value]="DB_BOOLEAN_TRUE"
+                    id="ntis-available-true"
+                    formControlName="srv_available_in_ntis_portal"
+                    class="spr-radio"
+                  />
+                  <label for="ntis-available-true">{{'common.action.yes' | translate}}</label>
+                </div>
+
+                <div class="radio-input-wrapper">
+                  <input
+                    type="radio"
+                    name="srv_available_in_ntis_portal"
+                    [value]="DB_BOOLEAN_FALSE"
+                    id="ntis-available-false"
+                    formControlName="srv_available_in_ntis_portal"
+                    class="spr-radio"
+                  />
+                  <label for="ntis-available-false">{{'common.action.no' | translate}}</label>
+                </div>
+              </div>
+            </spr-form-field>
+          </div>
+
+          <div class="form-field-wrapper">
+            <spr-form-field
+              [labelText]="translationsReference + '.srv_lithuanian_level' | translate"
+              [mandatory]="true"
+              [errorDiv]="!form.controls.srv_lithuanian_level.valid && form.controls.srv_lithuanian_level.touched"
+              [inputErrors]="form.controls.srv_lithuanian_level.touched && form.controls.srv_lithuanian_level.errors"
+            >
+              <div class="radio-buttons-block">
+                <div class="radio-input-wrapper">
+                  <input
+                    type="radio"
+                    name="srv_lithuanian_level"
+                    [value]="DB_BOOLEAN_TRUE"
+                    id="level-true"
+                    formControlName="srv_lithuanian_level"
+                    class="spr-radio"
+                  />
+                  <label for="level-true">{{translationsReference + '.allCountry' | translate}}</label>
+                </div>
+
+                <div class="radio-input-wrapper">
+                  <input
+                    type="radio"
+                    name="srv_lithuanian_level"
+                    [value]="DB_BOOLEAN_FALSE"
+                    id="level-false"
+                    (change)="scrollToCheckboxes(checkboxes)"
+                    formControlName="srv_lithuanian_level"
+                    class="spr-radio"
+                  />
+                  <label for="level-false">{{translationsReference + '.separateMunicipalities' | translate}}</label>
+                </div>
+              </div></spr-form-field
+            >
+          </div>
+          <div class="municipalities-wrapper">
+            <spr-form-field
+              [isLabelCentered]="true"
+              [labelText]="translationsReference + '.municipalities' | translate"
+              labelFor="municipalities"
+              [hidden]="!addMunicipalities"
+              ><div class="municipalities-checkbox-wrapper">
+                <div class="input-wrapper">
+                  <input
+                    #checkboxes
+                    type="checkbox"
+                    id="select-all"
+                    (change)="onCheckboxesChange($event)"
+                    [checked]="checked"
+                    class="spr-checkbox"
+                  />
+                  <label for="select-all">{{translationsReference + '.selectAll' | translate}}</label>
+                </div>
+
+                <div *ngFor="let municipality of form.controls.municipalities.value" class="input-wrapper">
+                  <input
+                    type="checkbox"
+                    [value]="municipality.rfc_code"
+                    [id]="municipality.rfc_code"
+                    (change)="onCheckboxChange($event, municipality)"
+                    [checked]="municipality.selected"
+                    class="spr-checkbox"
+                  />
+                  <label [for]="municipality.rfc_code">{{municipality.rfc_meaning}}</label>
+                </div>
+              </div>
+            </spr-form-field>
+          </div>
+        </div>
+      </spr-form-field-group>
+      <div class="action-buttons">
+        <spr-button type="button" class="ntis-button-link" (click)="onCancel()">
+          {{'common.action.back' | translate}}
+        </spr-button>
+        <spr-button
+          *ngIf="!data?.ntisServiceDescription?.srv_date_from"
+          type="submit"
+          class="spr-button-secondary"
+          iconName="faSave"
+        >
+          {{ translationsReference +
+            '.saveForLater' | translate}}
+        </spr-button>
+        <spr-button type="submit" (click)="confirmDescription = true" class="spr-button-primary" iconName="faSave">
+          {{ translationsReference +
+            '.saveAndConfirm' | translate}}
+        </spr-button>
+      </div>
+    </form>
+  </div>
+</spr-content-box>

@@ -1,0 +1,11 @@
+<button type="button" class="button-focus" (click)="this.displayModal = !this.displayModal">
+  <fa-icon class="info-icon" [icon]="faIconsService.fas.faInfo" size="lg" [fixedWidth]="true"></fa-icon>
+</button>
+<section *ngIf="displayModal" class="modal">
+  <ul>
+    <li>{{data.org_name}}</li>
+    <li>{{data.org_phone}}</li>
+    <li>{{data.org_email}}</li>
+    <li>{{data.org_website}}</li>
+  </ul>
+</section>

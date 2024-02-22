@@ -1,0 +1,268 @@
+@import 'tailwindcss/base';
+@import 'styles/colors';
+@import 'styles/inputs';
+
+@import 'tailwindcss/components';
+@import 'styles/buttons';
+
+@import 'tailwindcss/utilities';
+@import 'styles/fonts';
+
+@import 'styles/ckeditor';
+
+* {
+  @apply text-base m-0 p-0 box-border;
+}
+
+fa-icon,
+fa-icon svg {
+  @apply leading-none;
+  font-size: inherit;
+}
+
+body {
+  @apply font-sans text-neutral-900 text-base overflow-y-hidden;
+}
+
+router-outlet + * {
+  @apply w-full;
+}
+
+.ntis-link {
+  @apply text-primary-500 underline hover:text-primary-600 cursor-pointer;
+}
+
+a {
+  @extend .ntis-link;
+}
+
+// layout:
+
+// input with label wrapper:
+@layer components {
+  .spr-input-with-label {
+    @apply flex gap-2 items-center;
+
+    input {
+      @apply flex-shrink-0;
+    }
+
+    label {
+      @apply text-neutral-900;
+    }
+
+    &--vertical-aligned {
+      @apply items-center;
+    }
+  }
+}
+
+// label:
+label {
+  @apply text-neutral-800;
+}
+
+// other:
+.ql-editor--disabled {
+  @apply bg-neutral-900 border border-neutral-300 text-neutral-800 rounded-md py-2 px-4 bg-opacity-10;
+  min-height: 42px;
+}
+
+// layout:
+.spr-choice-input-with-label {
+  @apply flex items-center gap-2;
+  label {
+    @apply text-sm text-neutral-500 cursor-pointer;
+  }
+}
+
+.spr-boolean-choice-inputs {
+  @apply flex gap-4;
+}
+
+// wrappers:
+.spr-browse-actions-wrapper {
+  @apply gap-2 py-3;
+
+  > :last-child {
+    @apply ml-auto;
+  }
+}
+
+.increase-font-size-1 {
+  .site-logo-link {
+    &__image {
+      @apply min-h-10;
+    }
+  }
+  .nav-item {
+    @apply min-h-14 pl-2 gap-1;
+  }
+  .toggle-menu {
+    &__icon-wrapper {
+      @apply min-h-10;
+    }
+  }
+  .accessibility-toggle {
+    @apply min-h-10 min-w-10;
+  }
+
+  .notification {
+    &__button {
+      @apply min-h-10 min-w-10;
+    }
+  }
+  .signin-card {
+    @apply h-[650px] w-[750px] #{!important};
+
+    &__tabs {
+      @apply min-w-[350px] h-full #{!important};
+    }
+  }
+}
+
+.increase-font-size-2 {
+  .site-logo-link {
+    &__image {
+      @apply min-h-10 xs:min-h-16;
+    }
+    &__text {
+      @apply min-w-80;
+    }
+  }
+  .nav-item {
+    @apply min-h-20 pl-2 gap-3;
+  }
+  .toggle-menu {
+    &__icon-wrapper {
+      @apply min-h-12;
+    }
+  }
+  .accessibility-toggle {
+    @apply min-h-12 min-w-12;
+  }
+
+  .notification {
+    &__button {
+      @apply min-h-12 min-w-12;
+    }
+  }
+  .signin-card {
+    @apply h-[700px] w-[800px] #{!important};
+
+    &__tabs {
+      @apply min-w-[400px] h-full #{!important};
+    }
+    &__text {
+      @apply min-w-80;
+    }
+  }
+  .input-wrapper {
+    &__dropdown-panel {
+      @apply min-w-80;
+    }
+  }
+  .tasks-calendar {
+    &__month-button {
+      @apply min-h-8 min-w-8;
+    }
+  }
+  .p-paginator .p-dropdown {
+    @apply min-h-12;
+  }
+}
+
+.increase-font-size-3 {
+  .site-logo-link {
+    &__image {
+      @apply min-h-8 xs:min-h-16;
+    }
+    &__text {
+      @apply min-w-96;
+    }
+  }
+  .nav-item {
+    @apply min-h-20  pl-3 gap-5;
+    &__text {
+      @apply min-h-28 flex items-center;
+
+      span {
+        @apply text-left;
+      }
+
+      &--small {
+        @apply text-xs;
+      }
+    }
+  }
+  .toggle-menu {
+    &__icon-wrapper {
+      @apply min-h-14;
+    }
+  }
+
+  .accessibility-toggle {
+    @apply min-h-14 min-w-14;
+  }
+
+  .notification {
+    &__button {
+      @apply min-h-14 min-w-14;
+    }
+  }
+
+  .signin-card {
+    @apply h-[900px] w-[1000px] #{!important};
+
+    &__tabs {
+      @apply min-w-[450px] h-full #{!important};
+    }
+    &__text {
+      @apply min-w-80;
+    }
+    form {
+      @apply min-w-[450px];
+    }
+  }
+
+  .input-wrapper {
+    &__dropdown-panel {
+      @apply min-w-96;
+    }
+  }
+  .tasks-calendar {
+    &__month-button {
+      @apply min-h-12 min-w-12;
+    }
+
+    &__month-text {
+      @apply py-1;
+    }
+  }
+
+  .p-paginator .p-dropdown {
+    @apply min-h-16;
+  }
+}
+
+.spr-edit-form-wrapper {
+  @apply max-w-3xl mx-auto;
+}
+
+.spr-form-buttons {
+  @apply flex justify-center items-center gap-6;
+}
+
+// text:
+.spr-text-right {
+  @apply text-right #{!important};
+}
+
+// table:
+.table-header-col {
+  @apply flex justify-start items-center text-sm;
+
+  &__icon {
+    @apply flex;
+  }
+}

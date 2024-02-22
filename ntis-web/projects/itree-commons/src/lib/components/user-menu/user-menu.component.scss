@@ -1,0 +1,100 @@
+:host {
+  @apply relative flex items-center h-full;
+}
+
+.toggle-menu {
+  @apply text-right flex items-center gap-2;
+
+  &__icon-wrapper {
+    @apply h-9 aspect-square bg-primary-50 rounded-full flex items-center justify-center;
+  }
+
+  &__icon {
+    @apply text-primary-700;
+  }
+}
+
+.user-details {
+  @apply hidden sm:flex sm:flex-col;
+
+  li {
+    @apply text-left text-primary-50;
+
+    &:first-child {
+      @apply text-sm font-bold;
+    }
+
+    &:not(:first-child) {
+      @apply text-xs leading-[1.15];
+    }
+  }
+
+  &--mobile {
+    @apply block sm:hidden pointer-events-none px-2 py-1;
+  }
+}
+
+.menu-list {
+  @apply w-max overflow-y-auto
+         bg-neutral-0 flex flex-col text-left
+         whitespace-nowrap
+         absolute -bottom-1 right-0
+         opacity-0 pointer-events-none transition-all
+         rounded border border-neutral-300 shadow-sm translate-y-3/4;
+
+  &--open {
+    @apply opacity-100 pointer-events-auto translate-y-full;
+  }
+
+  &__item {
+    @apply border-b border-neutral-300 last:border-0;
+
+    button {
+      @apply flex items-center gap-2 w-full px-3 py-2 text-sm font-medium hover:bg-neutral-100;
+    }
+
+    &--open {
+      @apply bg-neutral-100;
+
+      button {
+        @apply hover:bg-neutral-200;
+      }
+    }
+  }
+
+  //scrollbar
+  scrollbar-width: thin;
+  &::-webkit-scrollbar {
+    @apply w-2;
+  }
+  &::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    @apply bg-transparent rounded-md;
+  }
+  &:hover::-webkit-scrollbar-thumb {
+    @apply bg-neutral-300;
+  }
+}
+
+.sub-list {
+  transition: max-height 150ms ease-out;
+  @apply flex-col max-h-0 overflow-hidden;
+
+  &--open {
+    max-height: calc(var(--items-count) * 4em);
+  }
+
+  &__item {
+    @apply border-t border-neutral-300 hover:bg-neutral-200;
+  }
+
+  &__item-icon {
+    @apply opacity-60 ml-2;
+
+    &--active {
+      @apply text-primary-500 opacity-100;
+    }
+  }
+}

@@ -1,0 +1,39 @@
+<spr-content-box
+  [headerText]="'institutionsAdmin.pages.waterManagerSettings.headerText'"
+  textAlignment="text-center"
+  transformingText="uppercase"
+>
+  <div class="spr-edit-form-wrapper">
+    <ntis-message-box
+      *ngIf="!isWaterManager"
+      [text]="'institutionsAdmin.pages.waterManagerSettings.notWaterManager' | translate "
+      type="info"
+      class="mb-3"
+      [link]="linkText"
+      linkText="Pateikti arba peržiūrėti prašymą galite čia"
+    ></ntis-message-box>
+    <app-legal-entity-details
+      [name]="data?.name"
+      [code]="data?.code"
+      [address]="data?.address"
+      [manager]="data?.manager"
+    ></app-legal-entity-details>
+    <app-contact-information
+      *ngIf="data?.contacts"
+      [(contacts)]="data.contacts"
+      [isWaterManager]="true"
+    ></app-contact-information>
+    <app-service-provider-information
+      *ngIf="isWaterManager"
+      [registeredFrom]="data?.registeredFrom"
+      [deregisteredFrom]="data?.deregisteredFrom"
+      [deregisteredReason]="data?.deregisteredReason"
+      [isWaterManager]="true"
+    ></app-service-provider-information>
+    <app-employees-information [employeesCount]="data?.employeesCount"></app-employees-information>
+    <app-water-manager-wtf-information
+      [wtfCount]="data?.wtoCount"
+      *ngIf="isWaterManager"
+    ></app-water-manager-wtf-information>
+  </div>
+</spr-content-box>

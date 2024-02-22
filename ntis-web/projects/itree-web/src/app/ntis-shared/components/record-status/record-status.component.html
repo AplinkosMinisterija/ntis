@@ -1,0 +1,24 @@
+<ng-container *ngIf="colField === field && statusType === 'icon'">
+  <div *ngFor="let row of statusData">
+    <section
+      class="icon-status"
+      *ngIf="row.status === statusValue"
+      [ngClass]="row.status === statusValue ? 'icon-status--' + row.type : ''"
+    >
+      <spr-icon [name]="row.iconName" size="24"></spr-icon>
+    </section>
+  </div>
+  <span class="mt-0.5" [ngClass]="{'truncate-text': truncateText}">{{text}}</span>
+</ng-container>
+
+<ng-container *ngIf="colField === field && statusType === 'text'">
+  <section *ngFor="let row of statusData">
+    <span
+      class="text-status"
+      *ngIf="row.status === statusValue"
+      [ngClass]="row.status === statusValue ? 'icon-status--' + row.type : ''"
+    >
+      {{text}}
+    </span>
+  </section>
+</ng-container>

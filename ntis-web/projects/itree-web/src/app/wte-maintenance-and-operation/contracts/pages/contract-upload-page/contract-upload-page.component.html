@@ -1,0 +1,230 @@
+<spr-content-box [headerText]="translationsReference + '.headerText'" transformingText="uppercase">
+  <div class="spr-edit-form-wrapper">
+    <form [formGroup]="form">
+      <!-- CONTRACT INFO BLOCK -->
+      <spr-form-field-group [text]="translationsReference + '.contractInfo'">
+        <div class="contract">
+          <div class="contract-info">
+            <spr-info-line
+              [name]="translationsReference + '.cot_state' | translate"
+              [value]="data.cot_state_meaning"
+              [greenText]="data.cot_state !== ContractState.CANCELLED && data.cot_state !== ContractState.TERMINATED&&  data.cot_state !== ContractState.REJECTED"
+              [redText]="data.cot_state === ContractState.TERMINATED || data.cot_state === ContractState.CANCELLED ||  data.cot_state === ContractState.REJECTED"
+            >
+              <span *ngIf="splitStateString.length > 0">
+                <span *ngFor="let item of splitStateString">
+                  <strong>{{' ' + item}}</strong>
+                </span>
+              </span>
+            </spr-info-line>
+            <ng-container *ngIf="editMode; else viewMode">
+              <div class="input-wrapper">
+                <label for="cot_code" class="input-wrapper__label"
+                  >{{translationsReference + '.cot_code' | translate}}:*</label
+                >
+                <div>
+                  <input
+                    type="text"
+                    id="cot_code"
+                    formControlName="cot_code"
+                    class="input-wrapper__input"
+                    [maxlength]="100"
+                  />
+                  <p *ngIf="form.controls.cot_code.touched && form.controls.cot_code.errors" class="error-text">
+                    {{ 'common.error.required' | translate }}
+                  </p>
+                </div>
+              </div>
+              <div class="input-wrapper">
+                <label for="cot_from_date" class="input-wrapper__label"
+                  >{{translationsReference + '.cot_from_date' | translate}}:*</label
+                >
+                <div>
+                  <p-calendar
+                    formControlName="cot_from_date"
+                    id="cot_from_date"
+                    class="input-wrapper__input"
+                    dateFormat="yy-mm-dd"
+                    [showIcon]="true"
+                    [maxlength]="10"
+                    [maxDate]="form.controls.cot_to_date.value"
+                    appendTo="body"
+                  >
+                  </p-calendar>
+                  <p
+                    *ngIf="form.controls.cot_from_date.touched && form.controls.cot_from_date.errors?.required"
+                    class="error-text"
+                  >
+                    {{ 'common.error.required' | translate }}
+                  </p>
+                  <p
+                    *ngIf="form.controls.cot_from_date.touched && form.controls.cot_from_date.errors?.dateFrom"
+                    class="error-text"
+                  >
+                    {{ 'common.error.dateFrom' | translate }}
+                  </p>
+                </div>
+              </div>
+              <div class="input-wrapper">
+                <label for="cot_to_date" class="input-wrapper__label"
+                  >{{translationsReference + '.cot_to_date' | translate}}:*</label
+                >
+                <div>
+                  <p-calendar
+                    formControlName="cot_to_date"
+                    id="cot_to_date"
+                    class="input-wrapper__input"
+                    dateFormat="yy-mm-dd"
+                    [maxlength]="10"
+                    [showIcon]="true"
+                    [minDate]="form.controls.cot_from_date.value"
+                    [defaultDate]="defaultDateTo"
+                    appendTo="body"
+                  >
+                  </p-calendar>
+                  <p
+                    *ngIf="form.controls.cot_to_date.touched && form.controls.cot_to_date.errors?.required"
+                    class="error-text"
+                  >
+                    {{ 'common.error.required' | translate }}
+                  </p>
+                  <p
+                    *ngIf="form.controls.cot_to_date.touched && form.controls.cot_to_date.errors?.dateTo"
+                    class="error-text"
+                  >
+                    {{ 'common.error.dateTo' | translate }}
+                  </p>
+                </div>
+              </div>
+            </ng-container>
+            <ng-template #viewMode>
+              <spr-info-line
+                [name]="translationsReference + '.cot_from_date' | translate"
+                [value]="dateFrom"
+              ></spr-info-line>
+              <spr-info-line
+                [name]="translationsReference + '.cot_to_date' | translate"
+                [value]="dateTo"
+              ></spr-info-line>
+              <spr-button
+                *ngIf="data.cot_state !== ContractState.TERMINATED && data.cot_state !== ContractState.CANCELLED && data.cot_state !== ContractState.REJECTED && userCanDelete"
+                type="button"
+                class="ntis-button-hollow delete-button"
+                iconStyle="far"
+                iconName="faCircleXmark"
+                iconClassName="text-2xl"
+                (click)="onDeleteContract()"
+              >
+                {{translationsReference + '.deleteContract' | translate}}
+              </spr-button>
+            </ng-template>
+          </div>
+          <div *ngIf="data.attachment" class="contract-file">
+            <fa-icon class="contract-file__icon" [icon]="faIconsService.far.faFileLines"></fa-icon>
+            <p class="contract-file__name">{{ data.attachment.fil_name }}</p>
+            <a (click)="download(data.attachment)">{{ 'common.action.download' | translate }} </a>
+          </div>
+        </div>
+      </spr-form-field-group>
+
+      <!-- WTF INFO BLOCK -->
+      <ng-container *ngIf="data.cot_wtf_id; else selectFacility">
+        <ntis-wtf-info [data]="data.wtf_info"></ntis-wtf-info>
+      </ng-container>
+      <ng-template #selectFacility>
+        <ntis-existing-facility-search (selectedWtf)="handleWtfSelection($event)"></ntis-existing-facility-search>
+      </ng-template>
+
+      <!-- SERVICE INFO BLOCK -->
+      <spr-form-field-group [text]="translationsReference + '.serviceInfo'">
+        <div *ngIf="availableServices.length > 0" class="services">
+          <section
+            *ngFor="let availableService of availableServices; index as i"
+            class="service-block"
+            [ngClass]="{'service-block--border': !editMode}"
+          >
+            <div *ngIf="editMode" class="spr-input-with-label service-block__selection">
+              <input
+                type="checkbox"
+                class="spr-checkbox"
+                [id]="availableService.type"
+                [formControl]="form.controls.services.controls[i]"
+              />
+              <label [for]="availableService.type">{{ availableService.name }}</label>
+            </div>
+            <div class="spr-form-items-flex" [ngClass]="{'ntis-section-block ': editMode}">
+              <div class="flex flex-row justify-between items-center">
+                <spr-info-line
+                  [name]="(translationsReference + '.service') | translate"
+                  [value]="availableService.name"
+                ></spr-info-line>
+                <spr-button
+                  *ngIf="!editMode && (contractState === ContractState.SIGNED_BY_BOTH || contractState === ContractState.VALID)   && isClient && !isServiceProvider && data.cot_from_date <= today && data.cot_to_date >= today"
+                  buttons
+                  class="spr-button-primary w-fit"
+                  iconName="faCirclePlus"
+                  (click)="toOrderNewService(availableService)"
+                  >{{translationsReference + '.orderNew' | translate }}</spr-button
+                >
+              </div>
+
+              <ng-container *ngIf="editMode; else serviceView">
+                <spr-info-line
+                  *ngIf="availableService.description"
+                  [name]="(translationsReference + '.serviceDescription') | translate"
+                  textDisplay="editor"
+                  [value]="availableService.description"
+                ></spr-info-line>
+              </ng-container>
+              <ng-template #serviceView>
+                <div>
+                  <p class="service__desc-legend">{{ translationsReference + '.serviceDescription' | translate }}:</p>
+                  <p class="service__desc-text" [innerHTML]="availableService.description | safeHtml"></p>
+                </div>
+              </ng-template>
+            </div>
+            <ng-container *ngIf="editMode; else priceView">
+              <spr-form-field
+                *ngIf="form.controls.services.controls[i].value"
+                [labelText]="translationsReference + '.price' | translate"
+                [labelFor]="availableService.type + '-price'"
+                [inputErrors]="form.controls.prices.controls[i].touched && form.controls.prices.controls[i].errors"
+              >
+                <input
+                  [id]="availableService.type + '-price'"
+                  type="number"
+                  [formControl]="form.controls.prices.controls[i]"
+                  class="service-block__price"
+                />
+              </spr-form-field>
+            </ng-container>
+            <ng-template #priceView>
+              <spr-info-line
+                [name]="translationsReference + '.price' | translate"
+                [value]="availableService.price ? availableService.price?.toString() + ' ' + ('common.generalUse.currency' | translate) : null"
+                class="mb-2"
+              ></spr-info-line>
+            </ng-template>
+          </section>
+        </div>
+      </spr-form-field-group>
+
+      <!-- CONTACT INFO BLOCK -->
+      <ntis-service-provider-info
+        [name]="data.sp_info.org_name"
+        [email]="data.sp_info.org_email"
+        [phone]="data.sp_info.org_phone"
+      ></ntis-service-provider-info>
+
+      <!-- FOOTER -->
+      <div class="spr-form-buttons">
+        <spr-button className="ntis-button-link" (click)="onCancel()">
+          {{'common.action.back' | translate}}
+        </spr-button>
+        <spr-button *ngIf="editMode" className="spr-button-primary" iconName="faSave" (click)="onSave()" type="submit">
+          {{'common.action.save' | translate}}
+        </spr-button>
+      </div>
+    </form>
+  </div>
+</spr-content-box>

@@ -1,0 +1,3 @@
+<spr-content-box *ngIf="data" [headerText]="data.nwTitle" [translateHeader]="false">
+  <div class="ck-content" [innerHTML]="data.nwText | safeHtml"></div>
+</spr-content-box>

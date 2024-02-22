@@ -1,0 +1,196 @@
+<spr-content-box
+  headerText="wteMaintenanceAndOperation.techSupport.serviceProvider.pages.techOrdersList.headerText"
+  transformingText="uppercase"
+>
+  <div class="spr-browse-actions-wrapper">
+    <spr-browse-search-form [formGroup]="searchForm" [formCode]="formCode" (search)="search(dataTableComponent)">
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="10"
+        formControlName="ord_id"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="formTranslationsReference+'.ord_id' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="date"
+        formControlName="ord_created"
+        [maxLength]="20"
+        [placeholder]="formTranslationsReference+'.ord_created' | translate"
+      ></spr-filter-input>
+      <spr-select
+        filters
+        formControlName="ord_method"
+        classifierCode="NTIS_ORDER_METHOD"
+        optionType="multiple"
+        [advancedFilterParams]="true"
+        [placeholder]="formTranslationsReference + '.ord_method' | translate"
+      ></spr-select>
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="50"
+        formControlName="ord_customer"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="formTranslationsReference+'.ord_customer' | translate"
+      ></spr-filter-input>
+      <spr-select
+        filters
+        formControlName="ord_state"
+        classifierCode="NTIS_ORDER_STATUS"
+        optionType="multiple"
+        [advancedFilterParams]="true"
+        [placeholder]="formTranslationsReference + '.ord_status' | translate"
+      ></spr-select>
+      <spr-filter-input
+        filters
+        inputType="date"
+        formControlName="ocw_completed_date"
+        [maxLength]="20"
+        [placeholder]="formTranslationsReference+'.ocw_completed_date' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="text"
+        [maxLength]="50"
+        formControlName="address"
+        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
+        [placeholder]="formTranslationsReference+'.address' | translate"
+      ></spr-filter-input>
+
+      <spr-table-data-export
+        buttons
+        [translation]="formTranslationsReference"
+        [tableColumn]="cols"
+        [tableData]="exportData"
+        [fileName]="formTranslationsReference+'.headerText'"
+        (exportAllRecEvent)="loadAllRecords($event, dataTableComponent)"
+      ></spr-table-data-export>
+      <spr-button
+        buttons
+        class="spr-button-primary"
+        iconName="faFileCsv"
+        (click)="navigateToOrdersImport()"
+        >{{formTranslationsReference + '.importOrders' | translate }}</spr-button
+      >
+      <spr-button
+        buttons
+        (click)="toAddNewOrder()"
+        class="spr-button-primary"
+        iconName="faCirclePlus"
+        >{{formTranslationsReference + '.addNewOrder' | translate }}</spr-button
+      >
+    </spr-browse-search-form>
+  </div>
+
+  <p-table
+    [value]="data"
+    [autoLayout]="true"
+    [lazy]="true"
+    (onLazyLoad)="loadDataLazy($event)"
+    [rows]="showRows"
+    [totalRecords]="totalRecords"
+    [paginator]="data?.length > 0"
+    [rowsPerPageOptions]="rowsPerPageOptions"
+    [showFirstLastIcon]="false"
+    responsiveLayout="stack"
+    breakpoint="767px"
+    [rowHover]="true"
+  >
+    <ng-template pTemplate="header" let-row let-index="rowIndex">
+      <tr>
+        <ng-container *ngFor="let col of visibleColumns">
+          <th pSortableColumn="{{col.field}}">
+            {{formTranslationsReference+'.'+col.field | translate}}
+            <p-sortIcon field="{{col.field}}"></p-sortIcon>
+          </th>
+        </ng-container>
+        <th>
+          {{formTranslationsReference+'.actions' |translate}}
+        </th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row let-index="rowIndex">
+      <tr>
+        <ng-container *ngFor="let col of visibleColumns">
+          <td>
+            <span class="p-column-title">
+              {{formTranslationsReference+'.'+col.field |translate}}
+            </span>
+            <span>{{row[col.field]}}</span>
+          </td>
+        </ng-container>
+        <td>
+          <span class="p-column-title">
+            {{formTranslationsReference+'.actions' |translate}}
+          </span>
+          <ntis-table-row-actions [actions]="row.actions"></ntis-table-row-actions>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage" translate>
+      <tr>
+        <td [attr.colspan]="cols.length + 1">
+          <spr-table-no-rec-found></spr-table-no-rec-found>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+  <form [formGroup]="form" autocomplete="off">
+    <p-dialog
+      (onHide)="hideDialog()"
+      [(visible)]="actionDialog"
+      [style]="{width: '450px', 'z-index': 999, 'top': '2rem', overflow: 'visible'}"
+      [modal]="true"
+      [draggable]="false"
+      styleClass="p-fluid"
+      [autoZIndex]="true"
+      [closable]="false"
+      [blockScroll]="true"
+      [contentStyle]="{'overflow': 'visible !important' }"
+      appendTo="body"
+    >
+      <div class="order-dialog-wrapper">
+        <div class="order-dialog-text-wrapper">
+          <span>{{formTranslationsReference + '.dialogHeader'  | translate}}</span>
+        </div>
+        <div class="order-dialog-inputs-wrapper">
+          <spr-form-field
+            labelText="{{formTranslationsReference+'.ocw_completed_date_dialog' | translate}}"
+            [isLabelHorizontal]="false"
+            [inputErrors]="form.controls.ocw_completed_date.dirty && form.controls.ocw_completed_date.errors"
+            [mandatory]="true"
+          >
+            <p-calendar
+              formControlName="ocw_completed_date"
+              [firstDayOfWeek]="1"
+              [showButtonBar]="true"
+              appendTo="body"
+              [showIcon]="true"
+              dateFormat="yy-mm-dd"
+              [maxDate]="today"
+              [minDate]="minDate"
+            >
+            </p-calendar>
+          </spr-form-field>
+          <spr-form-field
+            labelText="{{formTranslationsReference+'.ocw_completed_works_description' | translate}}"
+            [isLabelHorizontal]="false"
+            [errorDiv]="false"
+          >
+            <textarea formControlName="ocw_completed_works_description"></textarea>
+          </spr-form-field>
+        </div>
+      </div>
+      <div class="mt-5 mb-3 spr-form-buttons">
+        <spr-button className="ntis-button-link" (click)="onCancel()">
+          {{'common.action.back' | translate}}
+        </spr-button>
+        <spr-button className="spr-button-primary" (click)="saveDate()" type="submit">
+          {{formTranslationsReference + '.completeOrder' | translate}}
+        </spr-button>
+      </div>
+    </p-dialog>
+  </form>
+</spr-content-box>

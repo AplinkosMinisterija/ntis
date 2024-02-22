@@ -1,0 +1,32 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "baseUrl": "./",
+    "outDir": "./dist/out-tsc",
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "strictNullChecks": false, // *
+    "noImplicitOverride": true,
+    // "noPropertyAccessFromIndexSignature": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "sourceMap": true,
+    "declaration": false,
+    "downlevelIteration": true,
+    "experimentalDecorators": true,
+    "moduleResolution": "node",
+    "importHelpers": true,
+    "target": "ES2022",
+    "module": "ES2022",
+    "lib": ["ES2022", "dom"],
+    "paths": {
+      "ngx-s2-commons": ["dist/ngx-s2-commons"],
+      "ngx-s2-ui": ["dist/ngx-s2-ui"]
+    }
+  },
+  "allowSyntheticDefaultImports": true,
+  "angularCompilerOptions": {
+    "preserveSymlinks": true,
+    "strictTemplates": true
+  }
+}

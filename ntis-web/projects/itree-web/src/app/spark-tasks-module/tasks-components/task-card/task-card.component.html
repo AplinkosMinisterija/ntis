@@ -1,0 +1,49 @@
+<section class="task-card" tabindex="0">
+  <div class="task-card__header">
+    <div class="task-card__title-group">
+      <h3 class="task-card__title">{{taskDataView.tas_name}}</h3>
+      <div
+        *ngIf="taskDataView.tas_priority"
+        class="{{'task-card__priority task-card__priority--' + taskDataView.tas_priority}}"
+      >
+        {{('pages.sprTasks.priorityLevels' | translate)[taskDataView.tas_priority-1]}}
+      </div>
+    </div>
+    <span *ngIf="timeline && taskDataView.hour && taskDataView.minute" class="task-card__time">
+      {{taskDataView.hour}}:{{taskDataView.minute}}
+    </span>
+  </div>
+  <p class="task-card__description">{{taskDataView.tas_description}}</p>
+  <div class="task-assignees">
+    <div *ngFor="let item of taskDataView.assigneesView; let i = index" class="task-assignees__item">
+      <span
+        class="task-assignees__item-initials"
+        [ngClass]="{'task-assignees__item-initials--sm': (i === 4 && item.textShow.length === 3), 'task-assignees__item-initials--xs': (i === 4 && item.textShow.length > 3)}"
+        [pTooltip]="item.textHover"
+        tooltipPosition="top"
+      >
+        {{item.textShow}}
+      </span>
+    </div>
+  </div>
+  <div *ngIf="!timeline" class="task-progress">
+    <span class="task-progress__text">{{'pages.sprTasksDashboard.progress' | translate}}</span>
+    <span class="task-progress__value">{{taskDataView.progressView}}%</span>
+    <div class="task-progress__bar">
+      <div class="task-progress__bar-line" [style]="'width: ' + taskDataView.progressView +'%'"></div>
+    </div>
+  </div>
+  <button
+    *ngIf="!timeline"
+    type="button"
+    class="task-actions-button"
+    [attr.aria-label]="'pages.sprTasksDashboard.ariaLabel_actions' | translate"
+  >
+    <fa-icon
+      class="task-actions-button__icon"
+      (click)="navigateToEdit()"
+      [icon]="faIconsService.fas.faEllipsisV"
+      size="lg"
+    ></fa-icon>
+  </button>
+</section>

@@ -1,0 +1,36 @@
+<spr-content-box *ngIf="data" [headerText]="translationsRef + '.headerText'">
+  <div class="spr-edit-form-wrapper info-wrapper">
+    <spr-info-line
+      [name]="(translationsRef + '.status') | translate"
+      [value]="data.status"
+      [redText]="true"
+    ></spr-info-line>
+
+    <spr-info-line [name]="(translationsRef + '.uploadDate') | translate" [value]="data.uploadDate"></spr-info-line>
+
+    <spr-info-line
+      [name]="(translationsRef + '.rejectDate') | translate"
+      [value]="data.rejectDate + ' (' + data.person + ')'"
+    ></spr-info-line>
+
+    <spr-info-line
+      [name]="(translationsRef + '.errorDescription') | translate"
+      [value]="data.description"
+      textDisplay="box"
+    ></spr-info-line>
+
+    <spr-button
+      *ngIf="data.file"
+      iconName="faPaperclip"
+      className="ntis-button-link"
+      (click)="fileUploadService.downloadFile(data.file)"
+      >{{ data.file.fil_name }}</spr-button
+    >
+
+    <spr-info-line
+      [name]="(translationsRef + '.autoInspectionReport') | translate"
+      [value]="notesString || ('common.dataTable.noRecordsFound' | translate)"
+      textDisplay="box"
+    ></spr-info-line>
+  </div>
+</spr-content-box>

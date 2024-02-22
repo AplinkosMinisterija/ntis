@@ -1,0 +1,55 @@
+:host {
+  @apply [&>button]:w-full;
+}
+
+.form-modal {
+  @apply bg-neutral-900 bg-opacity-25 fixed top-0 left-0 z-50 w-full h-full flex justify-center items-center p-3;
+
+  &__content {
+    @apply bg-neutral-0 rounded shadow-md p-3 min-w-80 w-full sm:max-w-sm md:max-w-md lg:max-w-lg;
+  }
+
+  &__content-header {
+    @apply w-full border-b-2 border-b-primary-600 flex justify-between  items-center font-semibold;
+  }
+
+  &__content-close-button {
+    @apply flex justify-center items-center text-primary-600 hover:text-primary-800;
+  }
+
+  &__description-textarea {
+    @apply outline-none resize-none;
+  }
+
+  &__content-footer {
+    @apply flex justify-center gap-3;
+  }
+}
+
+.list-card-wrapper {
+  @apply max-h-96 overflow-y-auto pr-1;
+
+  &__card-content {
+    @apply flex flex-row w-full justify-between items-center border shadow-inner bg-neutral-100 px-2 py-1 rounded mb-3;
+  }
+
+  &__card-text-block {
+    @apply flex flex-col text-neutral-800;
+    span,
+    strong {
+      @apply text-sm;
+    }
+  }
+
+  &__card-delete-button {
+    @apply mr-2 text-risk-600;
+  }
+
+  &__card-footer {
+    @apply flex justify-center gap-3 pt-3;
+  }
+
+  &__card-no-records {
+    @apply text-center p-3 font-semibold;
+  }
+}

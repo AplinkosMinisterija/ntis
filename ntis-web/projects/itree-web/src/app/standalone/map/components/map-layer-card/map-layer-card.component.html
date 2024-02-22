@@ -1,0 +1,89 @@
+<div class="layer-header">
+  <button
+    type="button"
+    class="layer-header__toggle"
+    [ngClass]="{'layer-header__toggle--disabled' : !mapComponent.layers[index].show}"
+    [attr.aria-label]="(translationsRef + '.'+ (mapComponent.layers[index].show ? 'hideLayer' : 'showLayer')) | translate"
+    [pTooltip]="(translationsRef + '.'+ (mapComponent.layers[index].show ? 'hideLayer' : 'showLayer')) | translate"
+    tooltipEvent="hover"
+    tooltipPosition="bottom"
+    (click)="toggleShow.emit()"
+  >
+    <fa-icon
+      [icon]="mapComponent.layers[index].show ? faIconsService.solid.faToggleOn : faIconsService.solid.faToggleOff"
+      [fixedWidth]="true"
+    ></fa-icon>
+  </button>
+
+  <button
+    *ngIf="mapComponent.layers[index].removable"
+    type="button"
+    class="layer-header__remove"
+    [attr.aria-label]="'common.action.remove' | translate"
+    [pTooltip]="'common.action.remove' | translate"
+    tooltipEvent="hover"
+    tooltipPosition="bottom"
+    (click)="remove.emit()"
+  >
+    <fa-icon [icon]="faIconsService.solid.faTrashCan" [fixedWidth]="true"></fa-icon>
+  </button>
+
+  <h4 class="layer-header__name">
+    {{ mapComponent.layers[index].translateName === false ? mapComponent.layers[index].name : (mapComponent.layers[index].name | translate | uppercase) }}
+  </h4>
+
+  <div class="layer-header__template-right">
+    <ng-template
+      *ngIf="mapComponent.templates.layer?.[mapComponent.layers[index].key]?.['header-right']"
+      [ngTemplateOutlet]="mapComponent.templates.layer[mapComponent.layers[index].key]['header-right']"
+    ></ng-template>
+  </div>
+
+  <div *ngIf="mapComponent.layers.length > 1" class="layer-move-arrows">
+    <button
+      type="button"
+      class="layer-move-arrows__button"
+      [disabled]="index === 0"
+      [attr.aria-label]="(translationsRef + '.moveUp') | translate"
+      [pTooltip]="(translationsRef + '.moveUp') | translate"
+      tooltipEvent="hover"
+      tooltipPosition="bottom"
+      (click)="moveUp.emit()"
+    >
+      <fa-icon [icon]="faIconsService.solid.faArrowUpLong" [fixedWidth]="true"></fa-icon>
+    </button>
+    <button
+      type="button"
+      class="layer-move-arrows__button"
+      [disabled]="index === mapComponent.layers.length-1"
+      [attr.aria-label]="(translationsRef + '.moveDown') | translate"
+      [pTooltip]="(translationsRef + '.moveDown') | translate"
+      tooltipEvent="hover"
+      tooltipPosition="bottom"
+      (click)="moveDown.emit()"
+    >
+      <fa-icon [icon]="faIconsService.solid.faArrowDownLong" [fixedWidth]="true"></fa-icon>
+    </button>
+  </div>
+</div>
+
+<ng-container *ngIf="mapComponent.layers[index].show">
+  <div class="layer-transparency">
+    <span [id]="'layer-transparency-'+index">{{ (translationsRef + '.transparency') | translate }}</span>
+    <div class="layer-transparency__slider-wrapper">
+      <p-slider
+        [(ngModel)]="mapComponent.layers[index].transparency"
+        styleClass="spr-p-slider spr-p-slider--alt"
+        [ariaLabelledBy]="'layer-transparency-'+index"
+        (onChange)="changeTransparency.emit()"
+      ></p-slider>
+    </div>
+  </div>
+
+  <div class="layer-extra-content">
+    <ng-template
+      *ngIf="mapComponent.templates.layer?.[mapComponent.layers[index].key]?.bottom"
+      [ngTemplateOutlet]="mapComponent.templates.layer[mapComponent.layers[index].key].bottom"
+    ></ng-template>
+  </div>
+</ng-container>

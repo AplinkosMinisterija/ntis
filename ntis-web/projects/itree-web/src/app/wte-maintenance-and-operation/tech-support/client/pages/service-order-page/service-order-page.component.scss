@@ -1,0 +1,36 @@
+.ord-state-change-notification {
+  @apply text-secondary-500 my-2;
+}
+.field-label {
+  @apply text-sm flex items-center pr-4 font-bold;
+}
+.order-actions-buttons {
+  @apply flex justify-start items-center gap-6 pt-2;
+}
+.order-dialog-wrapper {
+  @apply flex flex-col justify-center items-center;
+  .order-dialog-text-wrapper {
+    @apply mb-3 text-center;
+  }
+}
+.order-dialog-inputs-wrapper {
+  @apply w-80;
+  textarea {
+    @apply min-h-32;
+  }
+}
+
+.delivery-details-block-wrapper {
+  @apply flex flex-col border-2 border-primary-500 bg-neutral-100 w-full rounded-md py-1 px-2;
+  &:not(:last-child) {
+    @apply mb-3;
+  }
+}
+
+.stars-wrapper {
+  @apply flex flex-row gap-3 pb-2;
+}
+
+.icon-color {
+  @apply text-warning-600;
+}

@@ -1,0 +1,120 @@
+<spr-content-box
+  [headerText]="data?.per_id ? 'pages.sprPersonsBrowse.editUserForm' : 'pages.sprPersonsBrowse.createUserForm'"
+>
+  <div class="spr-edit-form-wrapper">
+    <spr-button-back [disableLocationBack]="true" (navigateBack)="onCancel()"></spr-button-back>
+    <spr-edit-form
+      [formGroup]="form"
+      [values]="editFormValues"
+      (submit)="onFormSubmit($event)"
+      (cancel)="onCancel()"
+      [autoComplete]="autoComplete"
+    >
+      <ng-template sprTemplate="name_wrapper">
+        <div class="control-wrapper">
+          <spr-form-field
+            [labelText]="formTranslationsReference + '.per_name' | translate"
+            labelFor="per_name"
+            [mandatory]="true"
+            [inputErrors]="form.controls.per_name.touched && form.controls.per_name.errors"
+          >
+            <input id="per_name" type="text" formControlName="per_name" maxlength="20" />
+          </spr-form-field>
+          <spr-form-field
+            [labelText]="formTranslationsReference + '.per_surname' | translate"
+            labelFor="per_surname"
+            [mandatory]="true"
+            [inputErrors]="form.controls.per_surname.touched && form.controls.per_surname.errors"
+          >
+            <input id="per_surname" type="text" formControlName="per_surname" maxlength="20" />
+          </spr-form-field>
+        </div>
+      </ng-template>
+      <ng-template sprTemplate="per_lrt_resident">
+        <div class="spr-boolean-choice-inputs">
+          <div class="spr-choice-input-with-label">
+            <input
+              type="radio"
+              class="spr-radio"
+              formControlName="per_lrt_resident"
+              [value]="DB_BOOLEAN_TRUE"
+              id="boolean-true"
+            />
+            <label for="boolean-true">{{'common.action.yes' | translate}}</label>
+          </div>
+          <div class="spr-choice-input-with-label">
+            <input
+              type="radio"
+              class="spr-radio"
+              formControlName="per_lrt_resident"
+              [value]="DB_BOOLEAN_FALSE"
+              id="boolean-false"
+            />
+            <label for="boolean-false">{{'common.action.no' | translate}}</label>
+          </div>
+        </div>
+      </ng-template>
+      <ng-template sprTemplate="address_wrapper">
+        <div class="control-wrapper">
+          <spr-form-field
+            [labelText]="formTranslationsReference + '.city' | translate"
+            labelFor="per_address_city"
+            class="sm:max-w-fit"
+            [inputErrors]="form.controls.per_address_city.touched && form.controls.per_address_city.errors"
+          >
+            <input id="per_address_city" type="text" formControlName="per_address_city" maxlength="20" />
+          </spr-form-field>
+          <spr-form-field
+            [labelText]="formTranslationsReference + '.street' | translate"
+            labelFor="per_address_street"
+            [inputErrors]="form.controls.per_address_street.touched && form.controls.per_address_street.errors"
+          >
+            <input id="per_address_street" type="text" formControlName="per_address_street" maxlength="20" />
+          </spr-form-field>
+        </div>
+      </ng-template>
+      <ng-template sprTemplate="housing_wrapper">
+        <div class="control-wrapper">
+          <spr-form-field
+            [labelText]="formTranslationsReference + '.house_number' | translate"
+            labelFor="per_address_house_number"
+            [inputErrors]="form.controls.per_address_house_number.touched && form.controls.per_address_house_number.errors"
+          >
+            <input
+              id="per_address_house_number"
+              type="text"
+              formControlName="per_address_house_number"
+              maxlength="10"
+            />
+          </spr-form-field>
+          <spr-form-field
+            [labelText]="formTranslationsReference + '.flat_number' | translate"
+            labelFor="per_address_flat_number"
+            [inputErrors]="form.controls.per_address_flat_number.touched && form.controls.per_address_flat_number.errors"
+          >
+            <input id="per_address_flat_number" type="text" formControlName="per_address_flat_number" maxlength="10" />
+          </spr-form-field>
+        </div>
+      </ng-template>
+      <ng-template sprTemplate="contact_wrapper">
+        <div class="control-wrapper">
+          <spr-form-field
+            [labelText]="formTranslationsReference + '.per_email' | translate"
+            labelFor="per_email"
+            [inputErrors]="form.controls.per_email.touched && form.controls.per_email.errors"
+          >
+            <input id="per_email" type="text" formControlName="per_email"/>
+          </spr-form-field>
+          <spr-form-field
+            [labelText]="formTranslationsReference + '.phone_number' | translate"
+            labelFor="per_phone_number"
+            [inputErrors]="form.controls.per_phone_number.touched && form.controls.per_phone_number.errors"
+            [errorDefs]="{pattern: 'common.error.phone'}"
+          >
+            <input id="per_phone_number" type="text" formControlName="per_phone_number" maxlength="12" />
+          </spr-form-field>
+        </div>
+      </ng-template>
+    </spr-edit-form>
+  </div>
+</spr-content-box>

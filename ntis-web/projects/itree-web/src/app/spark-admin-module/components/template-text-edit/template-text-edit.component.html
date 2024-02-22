@@ -1,0 +1,24 @@
+<spr-edit-form [formGroup]="formGroup" [values]="editFormValues" [showSaveButton]="false" [showCancelButton]="false">
+  <ng-template sprTemplate="text">
+    <ckeditor
+      maxlength="30000"
+      [editor]="Editor"
+      id="editor"
+      formControlName="text"
+      styleClass="editor-width ck-content"
+      (ready)="onReady($event)"
+      [data]="editorData"
+      [config]="{ removePlugins: ['MediaEmbed', 'CKFinderUploadAdapter', 'CKFinder', 'EasyImage', 'Image', 'ImageCaption', 'ImageStyle', 'ImageToolbar', 'ImageUpload'], mediaEmbed: {} }"
+    >
+    </ckeditor>
+  </ng-template>
+</spr-edit-form>
+<div class="remove-wrapper">
+  <spr-button
+    *ngIf="showRemoveButton"
+    iconName="faTrash"
+    className="spr-button-risk-hollow"
+    (click)="remove.emit()"
+    >{{'common.action.delete' | translate}}</spr-button
+  >
+</div>

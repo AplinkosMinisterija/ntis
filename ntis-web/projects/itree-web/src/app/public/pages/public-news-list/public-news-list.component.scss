@@ -1,0 +1,73 @@
+.browse-actions-wrapper {
+  @apply flex py-3;
+}
+
+.load-more {
+  @apply flex justify-center items-center py-10;
+}
+
+.news-list-wrapper {
+  @apply flex flex-col gap-2 pb-96;
+}
+
+.list-layout {
+  @apply grid gap-4 grid-cols-1;
+
+  &__col-one {
+    @apply lg:grid-cols-1;
+  }
+
+  &__col-two {
+    @apply lg:grid-cols-2;
+  }
+}
+
+.no-data-card {
+  @apply rounded-md p-10 bg-neutral-100 flex justify-center items-center;
+}
+
+.card {
+  @apply px-2 pt-2 pb-1 flex flex-col gap-1;
+
+  &__header {
+    @apply flex justify-between items-center;
+  }
+
+  &__link-button {
+    @apply text-left hover:text-primary-600 hover:underline font-semibold truncate text-primary-700;
+  }
+
+  &__date {
+    @apply text-neutral-500 text-sm;
+  }
+
+  &__text {
+    @apply text-base text-neutral-600 text-left;
+  }
+
+  &__read-more {
+    @apply text-secondary-700 flex items-center gap-1;
+  }
+
+  &__read-more-text {
+    @apply text-secondary-600 group-hover:text-secondary-700 text-sm hover:underline;
+  }
+}
+
+.fade-in {
+  @apply opacity-0;
+  animation: fadeInAnimation 0.2s ease-in forwards;
+}
+
+@keyframes fadeInAnimation {
+  0% {
+    @apply opacity-0;
+  }
+  100% {
+    @apply opacity-100;
+  }
+}
+
+.box-wrapper {
+  @apply h-full;
+}

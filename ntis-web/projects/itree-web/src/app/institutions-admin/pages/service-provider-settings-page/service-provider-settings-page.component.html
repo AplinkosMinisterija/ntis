@@ -1,0 +1,52 @@
+<spr-content-box
+  [headerText]="translationsReference + '.headerText'"
+  textAlignment="text-center"
+  transformingText="uppercase"
+>
+  <div class="spr-edit-form-wrapper">
+    <ntis-message-box
+      *ngIf="showNoCarMessage"
+      type="info"
+      class="mb-4"
+      [text]="translationsReference + '.noCarMessage' | translate"
+    ></ntis-message-box>
+    <ntis-message-box
+      *ngIf="!isServiceProvider"
+      [text]="translationsReference +'.notServiceProvider' | translate "
+      type="info"
+      class="mb-3"
+      [link]="linkText"
+      linkText="Pateikti arba peržiūrėti prašymą galite čia"
+    ></ntis-message-box>
+    <app-legal-entity-details
+      [name]="data?.name"
+      [code]="data?.code"
+      [address]="data?.address"
+      [manager]="data?.manager"
+    ></app-legal-entity-details>
+    <app-contact-information
+      *ngIf="data?.contacts"
+      [(contacts)]="data.contacts"
+      [editAvailable]="userCanUpdate"
+    ></app-contact-information>
+    <app-service-provider-information
+      *ngIf="data && isServiceProvider && showSrvProviderInfoBlock"
+      [registeredFrom]="data.registeredFrom"
+      [deregisteredFrom]="data.deregisteredFrom"
+      [deregisteredReason]="data.deregisteredReason"
+      [registeredServices]="activeServices"
+    ></app-service-provider-information>
+    <app-facilities-installer-information
+      *ngIf="data && isServiceProvider && data.facilityInstallerFrom"
+      [registeredFrom]="data.registeredFrom"
+      [deregisteredFrom]="data.deregisteredFrom"
+      [deregisteredReason]="data.deregisteredReason"
+      (statusChanged)="data.facilityInstallerFrom = null"
+    ></app-facilities-installer-information>
+    <app-employees-information [employeesCount]="data?.employeesCount"></app-employees-information>
+    <ng-container *ngIf="showSewageRemovalBlocks">
+      <app-vehicles-information [vehiclesCount]="data?.vehiclesCount"></app-vehicles-information>
+      <app-my-fav-water-managers [favWaterManagers]="data?.favWaterManagers"></app-my-fav-water-managers>
+    </ng-container>
+  </div>
+</spr-content-box>

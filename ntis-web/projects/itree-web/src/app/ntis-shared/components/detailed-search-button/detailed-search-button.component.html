@@ -1,0 +1,10 @@
+<button
+  class="button"
+  type="button"
+  (click)="showContent()"
+  [ngClass]="showCont ? 'button__active' : 'button__inactive'"
+>
+  <span class="button__text">{{text}}</span>
+  <spr-icon [name]="showCont ? 'menu_open' : 'menu'" size="24"></spr-icon>
+</button>
+<ng-content></ng-content>

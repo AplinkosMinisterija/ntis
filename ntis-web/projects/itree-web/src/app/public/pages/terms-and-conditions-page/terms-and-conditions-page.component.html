@@ -1,0 +1,23 @@
+<spr-content-box *ngIf="data" [headerText]="data.nwTitle" [translateHeader]="false">
+  <div class="terms-and-conditions-form-wrapper">
+    <div class="ck-content" [innerHTML]="data.nwText | safeHtml"></div>
+    <div class="grid grid-cols-1 xs:grid-cols-2 gap-4 pt-5">
+      <spr-button
+        className="spr-button-risk-hollow w-full xs:w-auto xs:min-w-36"
+        class="xs:ml-auto"
+        iconName="faTimes"
+        (click)="cancel()"
+      >
+        {{'common.action.refuse' | translate}}
+      </spr-button>
+      <spr-button
+        className="spr-button-primary w-full xs:w-auto xs:min-w-36"
+        class="xs:mr-auto"
+        iconName="faCheck"
+        (click)="accept()"
+      >
+        {{'common.action.accept' | translate}}
+      </spr-button>
+    </div>
+  </div>
+</spr-content-box>

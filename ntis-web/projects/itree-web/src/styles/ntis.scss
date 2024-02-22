@@ -1,0 +1,32 @@
+.ntis-section-block {
+  @apply py-3 px-4 bg-neutral-100 rounded-md;
+}
+
+.ntis-button-link {
+  @apply flex justify-center items-center gap-2 rounded py-2 px-3 underline text-primary-500 font-normal hover:text-primary-300;
+}
+
+.ntis-button-hollow {
+  @apply flex justify-center items-center gap-2 rounded py-2 px-3 
+  ring-2 ring-inset ring-primary-500 text-primary-500 font-semibold hover:shadow-lg;
+}
+
+.ntis-dialog {
+  min-width: Max(Min(32rem, 90vw), 42%);
+}
+
+.ntis-map-dialog {
+  @apply w-11/12;
+}
+
+.ntis-p-dialog-map.p-dialog {
+  @apply w-full h-full max-h-[98%] md:max-h-[95%];
+
+  .p-dialog-header {
+    @apply px-1 py-0;
+  }
+
+  .p-dialog-content {
+    @apply p-1 pt-0;
+  }
+}

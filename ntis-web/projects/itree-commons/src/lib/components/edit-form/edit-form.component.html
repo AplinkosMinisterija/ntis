@@ -1,0 +1,147 @@
+<form *ngIf="formGroup" [formGroup]="formGroup" [autocomplete]="autoComplete">
+  <ng-container *ngFor="let itemsGroup of values">
+    <spr-form-field-group
+      *ngIf="!itemsGroup.hidden"
+      [text]="itemsGroup.legend"
+      [translateText]="!!itemsGroup.translateLegend"
+    >
+      <ng-container *ngFor="let item of itemsGroup.items">
+        <spr-form-field
+          *ngIf="!item.hidden && item.type !== EditFormItemType.CustomEmpty"
+          [labelText]="item.translateLabel ? (item.label | translate) : item.label"
+          [isLabelHorizontal]="false"
+          [labelFor]="item.formControlName"
+          [mandatory]="!!item.isRequired"
+          [inputErrors]="formGroup.controls[item.formControlName].touched && formGroup.controls[item.formControlName].errors"
+          [errorDefs]="item.errorDefs"
+          [tooltipText]="item.tooltipText"
+          [infoText]="item.infoText | translate"
+        >
+          <ng-container *ngIf="item.type === EditFormItemType.Custom">
+            <ng-template *ngIf="templates[item.formControlName]" [ngTemplateOutlet]="templates[item.formControlName]">
+            </ng-template>
+          </ng-container>
+
+          <ng-container *ngIf="item.type === EditFormItemType.Date">
+            <p-calendar
+              [formControlName]="item.formControlName"
+              [inputId]="item.formControlName"
+              [showButtonBar]="true"
+              [firstDayOfWeek]="1"
+              [placeholder]="'common.action.select' | translate"
+              [minDate]="item.minDate || null"
+              [maxDate]="item.maxDate || null"
+              [showTime]="!!item.showTime"
+              [defaultDate]="item.defaultDateTo || null"
+              [showIcon]="!!item.showIcon ? item.showIcon : true"
+              [timeOnly]="!!item.timeOnly"
+              [showButtonBar]="item.showButtonBar !== false"
+              appendTo="body"
+              (onBlur)="item.onFocusOut && item.onFocusOut($event)"
+            ></p-calendar>
+          </ng-container>
+
+          <ng-container *ngIf="item.type === EditFormItemType.Select">
+            <spr-select
+              *ngIf="item.options?.length > 0 || item.classifierCode"
+              [labelTemplate]="item.labelTemplate"
+              [groupLabelTemplate]="item.groupLabelTemplate"
+              [formControlName]="item.formControlName"
+              [optionData]="item.options"
+              [optionValue]="item.optionValue"
+              [optionLabel]="item.optionLabel"
+              [groupLabel]="item.groupLabel"
+              [optionType]="item.optionType"
+              [placeholder]="'common.action.select' | translate"
+              [showFilter]="item.filter"
+              [readonly]="item.readonly"
+              [groupListKey]="item.groupListKey"
+              [startFilteringLength]="item.startFilteringLength"
+              [delaySearch]="item.delaySearch || 1000"
+              [classifierCode]="item.classifierCode"
+              [customClassifier]="item.customClassifier"
+              [autoComplete]="item.autoComplete"
+              [classifierFilterParams]="item.classifierFilterParams"
+              [inputId]="item.formControlName"
+              [showClearIcon]="item.showClear === undefined ? true : item.showClear"
+            ></spr-select>
+          </ng-container>
+
+          <ng-container *ngIf="item.type === EditFormItemType.Number">
+            <p-inputNumber
+              [formControlName]="item.formControlName"
+              [inputId]="item.formControlName"
+              [min]="item.min"
+              [max]="item.max"
+              [maxlength]="item.maxLength || null"
+              [minFractionDigits]="item.minFractionDigits"
+              [maxFractionDigits]="item.maxFractionDigits"
+              [useGrouping]="item.useGrouping || false"
+              [format]="item.format"
+              (onBlur)="item.onFocusOut && item.onFocusOut($event)"
+            ></p-inputNumber>
+          </ng-container>
+
+          <ng-container *ngIf="item.type === EditFormItemType.Text">
+            <input
+              type="text"
+              [formControlName]="item.formControlName"
+              [id]="item.formControlName"
+              [maxlength]="item.maxLength"
+              (focusout)="item.onFocusOut && item.onFocusOut($event)"
+            />
+          </ng-container>
+
+          <ng-container *ngIf="item.type === EditFormItemType.TextArea">
+            <textarea
+              [formControlName]="item.formControlName"
+              [id]="item.formControlName"
+              [maxlength]="item.maxLength"
+              [rows]="item.rows"
+              (focusout)="item.onFocusOut && item.onFocusOut($event)"
+            ></textarea>
+          </ng-container>
+
+          <ng-container *ngIf="item.type === EditFormItemType.Password">
+            <spr-input-password
+              [id]="item.formControlName"
+              [controlName]="item.formControlName"
+              [maxLength]="item.maxLength"
+              (focusOut)="item.onFocusOut && item.onFocusOut($event)"
+            ></spr-input-password>
+          </ng-container>
+
+          <ng-container *ngIf="item.type === EditFormItemType.Files">
+            <s2-file-upload
+              [inputId]="item.formControlName"
+              [formControlName]="item.formControlName"
+              [accept]="item.accept"
+              [autoUploadMethod]="item.autoUploadMethod !== null ? (item.autoUploadMethod || boundS2AutoUploadMethod) : undefined"
+              [maxFiles]="item.maxFiles || 1"
+              [maxFileSize]="item.maxFileSize !== undefined ? (item.maxFileSize || defaultMaxFileSize) : undefined"
+              [showDate]="item.showDate === undefined ? true : item.showDate"
+              [showDragDropText]="item.showDragDropText === undefined ? true : item.showDragDropText"
+              [showHeaderIcon]="item.showHeaderIcon === undefined ? true : item.showHeaderIcon"
+              (clickRemove)="item.onClickRemove !== undefined ? item.onClickRemove?.($event) : defaultHandleClickRemoveFile($event)"
+              (clickDownload)="item.onClickDownload !== undefined ? item.onClickDownload?.($event) : defaultHandleClickDownloadFile($event)"
+              (autoUploadSuccess)="item.onAutoUploadSuccess?.($event)"
+              (autoUploadError)="item.onAutoUploadError?.($event)"
+            />
+          </ng-container>
+        </spr-form-field>
+
+        <ng-container *ngIf="!item.hidden && item.type === EditFormItemType.CustomEmpty">
+          <ng-template *ngIf="templates[item.selector]" [ngTemplateOutlet]="templates[item.selector]"></ng-template>
+        </ng-container>
+      </ng-container>
+    </spr-form-field-group>
+  </ng-container>
+  <div class="actions">
+    <spr-button *ngIf="showCancelButton" type="button" class="ntis-button-link" (click)="cancel.emit()">
+      {{ translateCancelButtonText ? (cancelButtonText | translate) : cancelButtonText }}
+    </spr-button>
+    <spr-button *ngIf="showSaveButton" type="submit" class="spr-button-primary" iconName="faSave">
+      {{ translateSubmitButtonText ? (submitButtonText | translate) : submitButtonText }}
+    </spr-button>
+  </div>
+</form>
