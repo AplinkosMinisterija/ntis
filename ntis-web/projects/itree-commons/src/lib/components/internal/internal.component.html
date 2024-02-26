@@ -17,23 +17,14 @@
   <ng-container footer>
     <div class="grid grid-cols-1 grid-rows-3 gap-3 p-2 2xl:container place-items-center sm:grid-cols-2 sm:grid-rows-2">
       <div class="flex flex-col col-span-2 text-center sm:col-span-1 sm:justify-self-start sm:text-left">
-        <!-- <span class="text-sm">
-          {{'components.public.phone' | translate}}
-          <a
-            class="text-sm text-neutral-0 hover:text-neutral-500"
-            [href]="'tel:' + ('components.public.phoneNumber' | translate)"
-          >
-            {{'components.public.phoneNumber' | translate}}
-          </a>
-        </span> -->
-        <span class="text-sm">
-          {{'components.public.email' | translate}}
-          <a
-            class="text-sm text-neutral-0 hover:text-neutral-500"
-            [href]="'mailto:' + ('components.public.emailAddress' | translate)"
-          >
-            {{'components.public.emailAddress' | translate}}
-          </a>
+        <span *ngIf="footerLine1" class="text-sm" [innerHTML]="footerLine1 | safeHtml">
+          {{footerLine1}}
+        </span>
+        <span *ngIf="footerLine2" class="text-sm" [innerHTML]="footerLine2 | safeHtml">
+          {{footerLine2}}
+        </span>
+        <span *ngIf="footerLine3" class="text-sm" [innerHTML]="footerLine3 | safeHtml">
+          {{footerLine3}}
         </span>
       </div>
       <img

@@ -9,6 +9,7 @@ import {
   CodeDictionaryModel,
   ForeignKeyParams,
   MenuStructureRequest,
+  NtisJobEditModel,
   NtisMstAdditionalText,
   OrgUserRequest,
   OrgUserRoleRequest,
@@ -1064,5 +1065,20 @@ export class AdminService {
   markReviewAsRead(id: string): Observable<null> {
     const url = REST_API_BASE_URL + '/ntis-system-admin/mark-review-as-read-admin';
     return this.http.post<null>(url, id);
+  }
+
+  getNtisJob(id: string): Observable<NtisJobEditModel> {
+    const url = REST_API_BASE_URL + '/ntis-system-admin/get-job';
+    return this.http.post<NtisJobEditModel>(url, { id });
+  }
+
+  setNtisJob(template: NtisJobEditModel): Observable<NtisJobEditModel> {
+    const url = REST_API_BASE_URL + '/ntis-system-admin/set-job';
+    return this.http.post<NtisJobEditModel>(url, template);
+  }
+
+  getJobByToken(token: string): Observable<number> {
+    const url = REST_API_BASE_URL + '/ntis-system-admin/get-job-by-token';
+    return this.http.post<number>(url, token);
   }
 }

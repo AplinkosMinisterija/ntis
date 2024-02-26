@@ -63,18 +63,60 @@
             [name]="treatmentFacilityReview + '.manufacturer' | translate"
             [value]="agreementData.wtf_manufacturer"
           ></spr-info-line>
-          <ng-container *ngIf="data.wtf_model!== agreementData.wtf_model">
+          <spr-info-line
+            *ngIf="agreementData.wtf_manufacturer === 'Kiti' && data.fam_manufacturer !== agreementData.fam_manufacturer"
+            [name]="treatmentFacilityReview + '.modelDescription'|translate"
+            [value]="agreementData.fam_manufacturer"
+          ></spr-info-line>
+          <ng-container *ngIf="data.wtf_model!== agreementData.wtf_model || data.fam_model !== agreementData.fam_model">
             <spr-info-line
-              *ngIf="data.wtf_model &&  data.wtf_model!== agreementData.wtf_model"
+              *ngIf="agreementData.wtf_manufacturer !== 'Kiti' &&  data.wtf_model!== agreementData.wtf_model"
               [name]="treatmentFacilityReview + '.model' | translate"
               [value]="agreementData.wtf_model"
             ></spr-info-line>
+            <spr-info-line
+              *ngIf="agreementData.wtf_manufacturer === 'Kiti' &&  data.fam_model !== agreementData.fam_model"
+              [name]="treatmentFacilityReview + '.model' | translate"
+              [value]="agreementData.fam_model"
+            ></spr-info-line>
           </ng-container>
+
           <spr-info-line
-            *ngIf="!data.wtf_model && data.wtf_manufacturer_description!== agreementData.wtf_manufacturer_description"
-            [name]="treatmentFacilityReview + '.modelDescription' | translate"
-            [value]="agreementData.wtf_manufacturer_description"
+            *ngIf="!data.wtf_model && data.fam_description !== agreementData.fam_description"
+            [name]="treatmentFacilityReview + '.fam_description' | translate"
+            [value]="agreementData.fam_description"
           ></spr-info-line>
+          <spr-info-line
+            *ngIf="data.fam_pop_equivalent!== agreementData.fam_pop_equivalent"
+            [name]="treatmentFacilityReview + '.famPop' | translate"
+            [value]="agreementData.fam_pop_equivalent ? agreementData.fam_pop_equivalent + '' : ''"
+          ></spr-info-line>
+          <spr-info-line
+            *ngIf=" data.fam_bds!== agreementData.fam_bds"
+            [name]="treatmentFacilityReview + '.bds' | translate"
+            [value]="agreementData.fam_bds ? agreementData.fam_bds + '' : ''"
+          ></spr-info-line>
+          <spr-info-line
+            *ngIf="data.fam_chds!== agreementData.fam_chds"
+            [name]="treatmentFacilityReview + '.chds' | translate"
+            [value]="agreementData.fam_chds ? agreementData.fam_chds + '' : ''"
+          ></spr-info-line>
+          <spr-info-line
+            *ngIf="data.fam_float_material!== agreementData.fam_float_material"
+            [name]="treatmentFacilityReview + '.float' | translate"
+            [value]="agreementData.fam_float_material ? agreementData.fam_float_material + '' : ''"
+          ></spr-info-line>
+          <spr-info-line
+            *ngIf="data.fam_phosphor!== agreementData.fam_phosphor"
+            [name]="treatmentFacilityReview + '.phosphor' | translate"
+            [value]="agreementData.fam_phosphor ? agreementData.fam_phosphor + '' : ''"
+          ></spr-info-line>
+          <spr-info-line
+            *ngIf="data.fam_nitrogen !== agreementData.fam_nitrogen"
+            [name]="treatmentFacilityReview + '.nitrogen' | translate"
+            [value]="agreementData.fam_nitrogen ? agreementData.fam_nitrogen + '' : ''"
+          ></spr-info-line>
+
           <spr-info-line
             *ngIf="!instalationDateEq"
             [name]="treatmentFacilityReview + '.installiationDate' | translate"
@@ -225,6 +267,7 @@
           [label]="(treatmentFacilityReview + '.servedObject' | translate)"
           [asCard]="true"
           [uppercase]="true"
+          *ngIf="servedObjects?.length > 0"
         >
           <ul>
             <li *ngFor="let row of servedObjects">
@@ -251,25 +294,72 @@
           [uppercase]="true"
         >
           <spr-info-line
-            *ngIf="data.wtf_type !== typeSewageFacilityEnum.reservoir"
+            *ngIf="data?.wtf_identification_number && data.wtf_type === typeSewageFacilityEnum.portableReservoir"
+            [name]="treatmentFacilityReview + '.wtfIdentificationNumber' | translate"
+            [value]="data.wtf_identification_number"
+          ></spr-info-line>
+          <spr-info-line
+            *ngIf="data.wtf_type !== typeSewageFacilityEnum.reservoir && data.wtf_type !== typeSewageFacilityEnum.portableReservoir"
             [name]="treatmentFacilityReview + '.technicalPassport' | translate"
             [value]="data.wtf_technical_passport_id"
           ></spr-info-line>
           <spr-info-line
-            *ngIf="data.wtf_type !== typeSewageFacilityEnum.reservoir"
+            *ngIf="data.wtf_type !== typeSewageFacilityEnum.reservoir && data.wtf_type !== typeSewageFacilityEnum.portableReservoir"
             [name]="treatmentFacilityReview + '.manufacturer' | translate"
             [value]="data.wtf_manufacturer"
           ></spr-info-line>
+
           <spr-info-line
-            *ngIf="data.wtf_model && data.wtf_type !== typeSewageFacilityEnum.reservoir"
+            *ngIf="data.wtf_model && data.wtf_type !== typeSewageFacilityEnum.reservoir && data.wtf_type !== typeSewageFacilityEnum.portableReservoir"
             [name]="treatmentFacilityReview + '.model' | translate"
             [value]="data.wtf_model"
           ></spr-info-line>
           <spr-info-line
-            *ngIf="!data.wtf_model  && data.wtf_type !== typeSewageFacilityEnum.reservoir"
+            *ngIf="!data.wtf_model  && data.wtf_type !== typeSewageFacilityEnum.reservoir && data.wtf_type !== typeSewageFacilityEnum.portableReservoir"
             [name]="treatmentFacilityReview + '.modelDescription' | translate"
             [value]="data.wtf_manufacturer_description"
           ></spr-info-line>
+          <spr-info-line
+            *ngIf="!data.wtf_model  && data.wtf_type !== typeSewageFacilityEnum.reservoir && data.wtf_type !== typeSewageFacilityEnum.portableReservoir"
+            [name]="treatmentFacilityReview + '.fam_model' | translate"
+            [value]="data.fam_model"
+          ></spr-info-line>
+          <spr-info-line
+            *ngIf="!data.wtf_model  && data.wtf_type !== typeSewageFacilityEnum.reservoir && data.wtf_type !== typeSewageFacilityEnum.portableReservoir"
+            [name]="treatmentFacilityReview + '.fam_description' | translate"
+            [value]="data.fam_description "
+          ></spr-info-line>
+          <spr-info-line
+            *ngIf="data.wtf_model  && data.wtf_type !== typeSewageFacilityEnum.reservoir && data.wtf_type !== typeSewageFacilityEnum.portableReservoir"
+            [name]="treatmentFacilityReview + '.famPop' | translate"
+            [value]="data.fam_pop_equivalent ? data.fam_pop_equivalent + '' : ''"
+          ></spr-info-line>
+          <spr-info-line
+            *ngIf="data.wtf_type !== typeSewageFacilityEnum.reservoir && data.wtf_type !== typeSewageFacilityEnum.portableReservoir"
+            [name]="treatmentFacilityReview + '.bds' | translate"
+            [value]="data.fam_bds ? data.fam_bds + '': ''"
+          ></spr-info-line>
+          <spr-info-line
+            *ngIf="data.wtf_type !== typeSewageFacilityEnum.reservoir && data.wtf_type !== typeSewageFacilityEnum.portableReservoir"
+            [name]="treatmentFacilityReview + '.chds' | translate"
+            [value]="data.fam_chds ? data.fam_chds + '': ''"
+          ></spr-info-line>
+          <spr-info-line
+            *ngIf="data.wtf_type !== typeSewageFacilityEnum.reservoir && data.wtf_type !== typeSewageFacilityEnum.portableReservoir"
+            [name]="treatmentFacilityReview + '.float' | translate"
+            [value]="data.fam_float_material ? data.fam_float_material + '' : ''"
+          ></spr-info-line>
+          <spr-info-line
+            *ngIf="data.wtf_type !== typeSewageFacilityEnum.reservoir && data.wtf_type !== typeSewageFacilityEnum.portableReservoir"
+            [name]="treatmentFacilityReview + '.phosphor' | translate"
+            [value]="data.fam_phosphor ? data.fam_phosphor + '' : ''"
+          ></spr-info-line>
+          <spr-info-line
+            *ngIf="data.wtf_type !== typeSewageFacilityEnum.reservoir && data.wtf_type !== typeSewageFacilityEnum.portableReservoir"
+            [name]="treatmentFacilityReview + '.nitrogen' | translate"
+            [value]="data.fam_nitrogen ? data.fam_nitrogen + '' : ''"
+          ></spr-info-line>
+
           <spr-info-line
             [name]="treatmentFacilityReview + '.installiationDate' | translate"
             [value]="data.wtf_installation_date | s2Date"
@@ -280,7 +370,7 @@
           ></spr-info-line>
 
           <spr-info-line
-            *ngIf="data.wtf_type === typeSewageFacilityEnum.reservoir"
+            *ngIf="data.wtf_type === typeSewageFacilityEnum.reservoir || data.wtf_type === typeSewageFacilityEnum.portableReservoir"
             [name]="treatmentFacilityReview + '.wtfCapacity' | translate"
             [value]="data.wtf_capacity"
           ></spr-info-line>
@@ -301,7 +391,7 @@
         </ntis-accordion>
 
         <ntis-accordion
-          *ngIf="data.wtf_type !== typeSewageFacilityEnum.reservoir"
+          *ngIf="data.wtf_type !== typeSewageFacilityEnum.reservoir && data.wtf_type !== typeSewageFacilityEnum.portableReservoir"
           [label]="(treatmentFacilityReview + '.graduationInformation' | translate)"
           [asCard]="true"
           [uppercase]="true"

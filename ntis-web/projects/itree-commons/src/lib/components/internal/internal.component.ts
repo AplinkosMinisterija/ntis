@@ -10,6 +10,7 @@ import { NtisRoutingConst } from '@itree-web/src/app/ntis-shared/constants/ntis-
 import { AlertTextInfo } from '../alert/alert.component';
 import { AdminService } from '@itree-web/src/app/spark-admin-module/admin-services/admin.service';
 import { MenuStructure } from '../../model/browse-pages';
+import { getLang } from '@itree/ngx-s2-commons';
 
 @Component({
   selector: 'spr-internal',
@@ -26,6 +27,10 @@ export class InternalComponent implements OnInit, OnDestroy {
   showUsersRolesMessage: boolean = false;
   showWaterManagersWtfsMessage: boolean = false;
   showAlert = true;
+  footerLine1: string = '';
+  footerLine2: string = '';
+  footerLine3: string = '';
+
   constructor(
     public faIconsService: FaIconsService,
     private authService: AuthService,
@@ -50,6 +55,16 @@ export class InternalComponent implements OnInit, OnDestroy {
     this.getOrgUserRolesChecked();
     this.adminService.orgUserRolesAssignedSubject.subscribe(() => this.getOrgUserRolesChecked());
     this.institutionsAdminService.waterManagersWtfsSubject.subscribe(() => this.getWaterManagersWtfs());
+
+    if (getLang() === 'lt') {
+      this.footerLine1 = this.appDataService.getPropertyValue('FOOTER_VAR_LT_1');
+      this.footerLine2 = this.appDataService.getPropertyValue('FOOTER_VAR_LT_2');
+      this.footerLine3 = this.appDataService.getPropertyValue('FOOTER_VAR_LT_3');
+    } else {
+      this.footerLine1 = this.appDataService.getPropertyValue('FOOTER_VAR_EN_1');
+      this.footerLine2 = this.appDataService.getPropertyValue('FOOTER_VAR_EN_2');
+      this.footerLine3 = this.appDataService.getPropertyValue('FOOTER_VAR_EN_3');
+    }
   }
 
   getServiceStatuses(): void {

@@ -12,6 +12,7 @@ import { ResetPasswordFormMode } from '../../enums/password-reset-page.enums';
 import { SprPasswordValidator } from '@itree-commons/src/lib/validators/password-validator';
 import { ValueMatchValidator } from '@itree-commons/src/lib/validators/value-match-validator';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { NtisCommonService } from '@itree-web/src/app/ntis-shared/services/ntis-common.service';
 
 export enum ResetPasswordHeaders {
   NEW_USER_RESET_PASSWROD_HEADER = 'pages.resetPassword.newUserHeaderText',
@@ -25,6 +26,7 @@ export enum ResetPasswordHeaders {
 export class ResetPasswordPageComponent implements OnInit, OnDestroy {
   readonly formTranslationsReference = 'pages.resetPassword';
   readonly destroy$ = new Subject<void>();
+  showSaveButton: boolean = false;
   form = new FormGroup({
     newPassword: new FormControl(''),
     repeatedPassword: new FormControl(''),
@@ -35,6 +37,8 @@ export class ResetPasswordPageComponent implements OnInit, OnDestroy {
     minLength: number;
     minCapital: number;
     minDigits: number;
+    minSpecial: number;
+    specialSymbols: string;
   };
 
   editFormValues: EditFormValues = [
@@ -51,6 +55,7 @@ export class ResetPasswordPageComponent implements OnInit, OnDestroy {
             minCapital: 'common.error.passwordValidator',
             minDigits: 'common.error.passwordValidator',
             minLength: 'common.error.passwordValidator',
+            minSpecial: 'common.error.passwordValidator',
           },
         },
         {
@@ -64,6 +69,7 @@ export class ResetPasswordPageComponent implements OnInit, OnDestroy {
             minCapital: 'common.error.passwordValidator',
             minDigits: 'common.error.passwordValidator',
             minLength: 'common.error.passwordValidator',
+            minSpecial: 'common.error.passwordValidator',
           },
         },
       ],
@@ -74,6 +80,7 @@ export class ResetPasswordPageComponent implements OnInit, OnDestroy {
   constructor(
     private authService: AuthService,
     private router: Router,
+    private ntisCommonService: NtisCommonService,
     protected commonFormServices: CommonFormServices,
     protected activatedRoute?: ActivatedRoute
   ) {
@@ -94,6 +101,10 @@ export class ResetPasswordPageComponent implements OnInit, OnDestroy {
     });
     if (!this.token) {
       void this.router.navigate([RoutingConst.LOGIN]);
+    } else {
+      this.ntisCommonService.checkIfResetLinkIsValid(this.token, this.mode).subscribe(() => {
+        this.showSaveButton = true;
+      });
     }
     this.updateValidators();
     this.loadPasswordParams();
@@ -136,6 +147,8 @@ export class ResetPasswordPageComponent implements OnInit, OnDestroy {
         minLength: result['psw_min_length'] ? parseInt(result['psw_min_length'], 10) : 0,
         minCapital: result['psw_min_length'] ? parseInt(result['psw_min_capital'], 10) : 0,
         minDigits: result['psw_min_digits'] ? parseInt(result['psw_min_digits'], 10) : 0,
+        minSpecial: result['pwd_min_spec_simb'] ? parseInt(result['pwd_min_spec_simb'], 10) : 0,
+        specialSymbols: result['pwd_spec_simb_list'],
       };
       this.updatePasswordRequirementsText();
       this.updateValidators();
@@ -148,7 +161,8 @@ export class ResetPasswordPageComponent implements OnInit, OnDestroy {
         .getPasswordRequirementsText(
           this.passwordParams.minLength,
           this.passwordParams.minDigits,
-          this.passwordParams.minCapital
+          this.passwordParams.minCapital,
+          this.passwordParams.minSpecial
         )
         .subscribe((result) => {
           EditFormComponent.setItemPropertyInValues(this.editFormValues, 'newPassword', 'tooltipText', result);
@@ -168,7 +182,9 @@ export class ResetPasswordPageComponent implements OnInit, OnDestroy {
         SprPasswordValidator(
           this.passwordParams.minLength,
           this.passwordParams.minCapital,
-          this.passwordParams.minDigits
+          this.passwordParams.minDigits,
+          this.passwordParams.minSpecial,
+          this.passwordParams.specialSymbols
         )
       );
     }

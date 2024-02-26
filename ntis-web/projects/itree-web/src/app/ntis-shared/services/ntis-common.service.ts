@@ -22,6 +22,7 @@ import {
 import { Observable } from 'rxjs';
 import { NtisNotificationsBrowseRow } from '../models/browse-page';
 import { SelectOption } from '../../wte-maintenance-and-operation/tech-support/models/browse-pages';
+import { ResetPasswordFormMode } from '../../public/enums/password-reset-page.enums';
 
 @Injectable({
   providedIn: 'root',
@@ -34,6 +35,14 @@ export class NtisCommonService {
   getReviewInfo(id: string): Observable<NtisReviewsDAO> {
     const url = `${this.restUrl}/get-review-info`;
     return this.http.post<NtisReviewsDAO>(url, id);
+  }
+
+  checkIfResetLinkIsValid(token: string, mode: ResetPasswordFormMode): Observable<void> {
+    const link =
+      mode === ResetPasswordFormMode.NEW_USER_MODE
+        ? '/check-if-new-user-link-valid'
+        : '/check-if-change-password-valid';
+    return this.http.post<void>(`${this.restUrl + link}`, token);
   }
 
   // ----------- ntis review start --------------

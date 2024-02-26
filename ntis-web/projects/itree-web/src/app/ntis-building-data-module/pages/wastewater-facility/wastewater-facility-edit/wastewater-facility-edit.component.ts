@@ -1,7 +1,15 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
+import {
+  AfterContentChecked,
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  OnDestroy,
+  ViewChild,
+} from '@angular/core';
 import { CommonFormServices, DeprecatedBaseEditForm } from '@itree/ngx-s2-commons';
 import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { CommonModule, Location } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Geometry, LineString } from 'ol/geom';
 import {
   AddressSearchResponse,
@@ -96,7 +104,7 @@ interface MapResizeParams {
 })
 export class WastewaterFacilityEditComponent
   extends DeprecatedBaseEditForm<NtisWastewaterTreatmentFaci>
-  implements AfterViewInit, OnDestroy
+  implements AfterViewInit, OnDestroy, AfterContentChecked
 {
   readonly ntisBuildingDataReference = 'ntisBuildingData.pages.wastewaterFacilityEdit';
   readonly commonActionReference = 'common.action';
@@ -110,6 +118,7 @@ export class WastewaterFacilityEditComponent
   readonly today: Date = new Date();
   readonly minDate = new Date(1900, 0, 1);
   readonly ntisWtfType = NtisWtfType;
+  readonly CENTRALIZED_UPLOAD = 'CENTRALIZED_UPLOAD';
 
   resizeObserver: ResizeObserver;
   mapResizeParams: MapResizeParams = {
@@ -159,6 +168,7 @@ export class WastewaterFacilityEditComponent
   existingWtfId: number;
   isIntsOwner: boolean = false;
   correctAddressConfirmed: boolean = false;
+  originalValues: NtisWastewaterTreatmentFaci;
 
   @ViewChild(MapComponent, { static: false }) mapComponent: MapComponent;
   @ViewChild('mapReference') mapReference: ElementRef<HTMLDivElement>;
@@ -168,7 +178,6 @@ export class WastewaterFacilityEditComponent
     private commonService: CommonService,
     protected override commonFormServices: CommonFormServices,
     private buildingDataService: BuildingDataService,
-    private location: Location,
     private datePipe: S2DatePipe,
     private authService: AuthService,
     protected override activatedRoute?: ActivatedRoute,
@@ -182,19 +191,23 @@ export class WastewaterFacilityEditComponent
       ActionsEnum.INTS_OWNER_ACTIONS
     );
   }
+  ngAfterContentChecked(): void {
+    this.cdr.detectChanges();
+  }
 
   protected buildForm(formBuilder: FormBuilder): void {
     this.form = formBuilder.group({
       wtf_id: new FormControl(null),
       wtf_type: new FormControl(null, Validators.required),
-      wtf_technical_passport_id: new FormControl({ value: null, disabled: true }),
+      wtf_technical_passport_id: new FormControl({ value: null, disabled: true }, Validators.maxLength(20)),
       wtf_manufacturer: new FormControl({ value: null, disabled: false }),
       wtf_model: new FormControl({ value: null, disabled: false }),
       wtf_distance: new FormControl({ value: null, disabled: false }, [
         Validators.pattern(AN_INTEGER),
         Validators.max(1000),
+        Validators.required,
       ]),
-      wtf_installation_date: new FormControl({ value: null, disabled: false }),
+      wtf_installation_date: new FormControl({ value: null, disabled: false }, Validators.required),
       wtf_checkout_date: new FormControl({ value: null, disabled: false }),
       wtf_capacity: new FormControl({ value: null, disabled: false }),
       wtf_manufacturer_description: new FormControl({ value: null, disabled: false }, Validators.maxLength(80)),
@@ -209,17 +222,21 @@ export class WastewaterFacilityEditComponent
       facilitySearch: new FormControl(null),
       servedObjectSearch: new FormControl(null),
       dwCoordinates: new FormControl(null),
-      fam_pop_equivalent: new FormControl({ value: null, disabled: true }),
-      fam_chds: new FormControl({ value: null, disabled: true }),
-      fam_bds: new FormControl({ value: null, disabled: true }),
-      fam_float_material: new FormControl({ value: null, disabled: true }),
-      fam_phosphor: new FormControl({ value: null, disabled: true }),
-      fam_nitrogen: new FormControl({ value: null, disabled: true }),
+      fam_pop_equivalent: new FormControl({ value: null, disabled: true }, Validators.max(100000000000)),
+      fam_chds: new FormControl({ value: null, disabled: true }, Validators.max(9999999.99)),
+      fam_bds: new FormControl({ value: null, disabled: true }, Validators.max(9999999.99)),
+      fam_float_material: new FormControl({ value: null, disabled: true }, Validators.max(9999999.99)),
+      fam_phosphor: new FormControl({ value: null, disabled: true }, Validators.max(9999999.99)),
+      fam_nitrogen: new FormControl({ value: null, disabled: true }, Validators.max(9999999.99)),
+      fam_manufacturer: new FormControl({ value: null, disabled: false }, Validators.maxLength(50)),
+      fam_model: new FormControl({ value: null, disabled: false }, Validators.maxLength(50)),
+      fam_description: new FormControl({ value: null, disabled: false }, Validators.maxLength(200)),
+      wtf_fam_id: new FormControl({ value: null, disabled: false }),
     });
+
     this.form.controls.wtf_type.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
       this.form.controls.so_address.clearValidators();
       this.form.controls.so_address.updateValueAndValidity();
-      this.form.controls.wtf_technical_passport_id.setValue(null);
       this.form.controls.wtf_manufacturer_description.setValue(null);
       this.form.controls.wtf_manufacturer.setValue(null);
       this.form.controls.wtf_model.setValue(null);
@@ -265,6 +282,7 @@ export class WastewaterFacilityEditComponent
         this.form.controls.wtf_discharge_longitude.updateValueAndValidity();
       }
     });
+
     this.form.controls.wtf_ad_id.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
       if (
         value &&
@@ -308,6 +326,71 @@ export class WastewaterFacilityEditComponent
         });
       }
     });
+    this.form.controls.wtf_manufacturer.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
+      this.uploadedFiles = [];
+      this.form.controls.fam_pop_equivalent.setValue(null);
+      this.form.controls.fam_pop_equivalent.removeValidators(Validators.required);
+      this.form.controls.fam_pop_equivalent.updateValueAndValidity();
+      this.form.controls.fam_chds.setValue(null);
+      this.form.controls.fam_chds.removeValidators(Validators.required);
+      this.form.controls.fam_chds.updateValueAndValidity();
+      this.form.controls.fam_bds.setValue(null);
+      this.form.controls.fam_bds.removeValidators(Validators.required);
+      this.form.controls.fam_bds.updateValueAndValidity();
+      this.form.controls.fam_float_material.setValue(null);
+      this.form.controls.fam_float_material.removeValidators(Validators.required);
+      this.form.controls.fam_float_material.updateValueAndValidity();
+      this.form.controls.fam_phosphor.setValue(null);
+      this.form.controls.fam_phosphor.removeValidators(Validators.required);
+      this.form.controls.fam_phosphor.updateValueAndValidity();
+      this.form.controls.fam_nitrogen.setValue(null);
+      this.form.controls.fam_nitrogen.removeValidators(Validators.required);
+      this.form.controls.fam_nitrogen.updateValueAndValidity();
+      this.form.controls.fam_description.setValue(null);
+      this.form.controls.fam_description.updateValueAndValidity();
+      this.form.controls.fam_model.setValue(null);
+      this.form.controls.fam_model.updateValueAndValidity();
+      this.form.controls.fam_manufacturer.setValue(null);
+      this.form.controls.fam_manufacturer.updateValueAndValidity();
+      if (value === OTHER) {
+        this.form.controls.wtf_technical_passport_id.enable();
+        this.form.controls.fam_pop_equivalent.enable();
+        this.form.controls.fam_pop_equivalent.addValidators(Validators.required);
+        this.form.controls.fam_bds.enable();
+        this.form.controls.fam_bds.addValidators(Validators.required);
+        if (this.form.controls.wtf_type.value === this.ntisWtfType.BIO) {
+          this.form.controls.fam_chds.enable();
+          this.form.controls.fam_chds.addValidators(Validators.required);
+          this.form.controls.fam_float_material.enable();
+          this.form.controls.fam_float_material.addValidators(Validators.required);
+          this.form.controls.fam_phosphor.enable();
+          this.form.controls.fam_phosphor.addValidators(Validators.required);
+          this.form.controls.fam_nitrogen.enable();
+          this.form.controls.fam_nitrogen.addValidators(Validators.required);
+        }
+        this.form.controls.fam_description.enable();
+        this.form.controls.fam_model.enable();
+        this.form.controls.fam_manufacturer.enable();
+      } else {
+        this.form.controls.wtf_fam_id.setValue(null);
+        this.form.controls.fam_model.disable();
+        this.form.controls.fam_manufacturer.disable();
+        this.form.controls.fam_description.disable();
+        this.form.controls.wtf_technical_passport_id.disable();
+        this.form.controls.wtf_technical_passport_id.setValue(null);
+        this.form.controls.wtf_technical_passport_id.updateValueAndValidity();
+        this.form.controls.fam_pop_equivalent.disable();
+        this.form.controls.fam_chds.disable();
+        this.form.controls.fam_bds.disable();
+        this.form.controls.fam_float_material.disable();
+        this.form.controls.fam_phosphor.disable();
+        this.form.controls.fam_nitrogen.disable();
+      }
+    });
+    this.form.controls.fam_manufacturer.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
+      this.form.controls.wtf_manufacturer_description.setValue(value);
+      this.form.controls.wtf_manufacturer_description.updateValueAndValidity();
+    });
     this.getDataOnLoad();
     this.subscribeFormControls();
 
@@ -334,56 +417,81 @@ export class WastewaterFacilityEditComponent
       }
     });
   }
+
   protected doSave(value: NtisWastewaterTreatmentFaci): void {
-    if (value.wtf_type === this.ntisWtfType.PORTABLE_RESERVOIR) {
-      this.buildingDataService
-        .checkIfIdentificationNumberExists(value?.wtf_identification_number)
-        .subscribe((wtfId) => {
-          if (wtfId && value.wtf_id != wtfId) {
-            this.showFacilityWithIdentificationExists = true;
-            this.existingWtfId = wtfId;
-          } else {
-            if (value.wtf_ad_id && !this.data?.wtf_id) {
-              this.buildingDataService
-                .verifyAddress(value.wtf_ad_id, this.form.controls.wtf_type.value as string)
-                .subscribe((response) => {
-                  if (response) {
-                    this.existingFaciData = value;
-                    this.showFacilityExistsDialog = true;
-                  } else {
-                    this.checkDistance(value);
-                  }
-                });
-            } else {
-              this.checkDistance(value);
-            }
-          }
-        });
+    let changed: boolean = false;
+    if (value.wtf_id) {
+      for (const name in this.form.controls) {
+        if (
+          this.form.controls[name].dirty &&
+          (this.form.controls[name]?.value as string) !== this.originalValues[name as keyof NtisWastewaterTreatmentFaci]
+        ) {
+          changed = true;
+        }
+      }
     } else {
-      if (value.wtf_ad_id && !this.data?.wtf_id) {
+      changed = true;
+    }
+
+    if (changed || !this.isIntsOwner) {
+      if (value.wtf_type === this.ntisWtfType.PORTABLE_RESERVOIR) {
         this.buildingDataService
-          .verifyAddress(value.wtf_ad_id, this.form.controls.wtf_type.value as string)
-          .subscribe((response) => {
-            if (response) {
-              this.existingFaciData = value;
-              this.showFacilityExistsDialog = true;
+          .checkIfIdentificationNumberExists(value?.wtf_identification_number)
+          .subscribe((wtfId) => {
+            if (wtfId && value.wtf_id != wtfId) {
+              this.showFacilityWithIdentificationExists = true;
+              this.existingWtfId = wtfId;
             } else {
-              this.checkDistance(value);
+              if (value.wtf_ad_id && !this.data?.wtf_id) {
+                this.buildingDataService
+                  .verifyAddress(value.wtf_ad_id, this.form.controls.wtf_type.value as string)
+                  .subscribe((response) => {
+                    if (response) {
+                      this.existingFaciData = value;
+                      this.showFacilityExistsDialog = true;
+                    } else {
+                      this.checkDistance(value);
+                    }
+                  });
+              } else {
+                this.checkDistance(value);
+              }
             }
           });
       } else {
-        this.checkDistance(value);
+        if (value.wtf_ad_id && !this.data?.wtf_id) {
+          this.buildingDataService
+            .verifyAddress(value.wtf_ad_id, this.form.controls.wtf_type.value as string)
+            .subscribe((response) => {
+              if (response) {
+                this.existingFaciData = value;
+                this.showFacilityExistsDialog = true;
+              } else {
+                this.checkDistance(value);
+              }
+            });
+        } else {
+          this.checkDistance(value);
+        }
       }
+    } else {
+      this.locationBack(value?.wtf_id);
     }
   }
 
   protected doLoad(): void {
     this.onLoadSuccess(this.activatedRoute.snapshot.data['wastewaterFacilityData'] as NtisWastewaterTreatmentFaci);
+    this.originalValues = this.form.getRawValue() as NtisWastewaterTreatmentFaci;
     if (
       this.data?.wtf_id !== null &&
+      this.data.wtf_type !== this.ntisWtfType.PORTABLE_RESERVOIR &&
       (this.data?.servedObjectsAddr === null || this.data?.servedObjectsAddr?.length === 0)
     ) {
       this.correctAddressConfirmed = true;
+      if (this.correctAddressConfirmed) {
+        this.form.controls.so_address.clearValidators();
+        this.form.controls.so_address.updateValueAndValidity();
+      }
     }
   }
 
@@ -401,7 +509,7 @@ export class WastewaterFacilityEditComponent
     this.form.controls.wtf_manufacturer_description.setValue(data.wtf_manufacturer_description);
     this.form.controls.wtf_ad_id.setValue(data.wtf_ad_id);
     this.form.controls.wtf_facility_latitude.setValue(data.wtf_facility_latitude);
-    this.form.controls.wtf_facility_longitude.setValue(data.wtf_facility_latitude);
+    this.form.controls.wtf_facility_longitude.setValue(data.wtf_facility_longitude);
     this.form.controls.wtf_discharge_latitude.setValue(data.wtf_discharge_latitude);
     this.form.controls.wtf_discharge_longitude.setValue(data.wtf_discharge_longitude);
     this.form.controls.wtf_discharge_type.setValue(data.wtf_discharge_type);
@@ -412,6 +520,11 @@ export class WastewaterFacilityEditComponent
     this.form.controls.fam_nitrogen.setValue(data.fam_nitrogen);
     this.form.controls.fam_phosphor.setValue(data.fam_phosphor);
     this.form.controls.fam_pop_equivalent.setValue(data.fam_pop_equivalent);
+    this.form.controls.fam_model.setValue(data.fam_model);
+    this.form.controls.fam_manufacturer.setValue(data.fam_manufacturer);
+    this.form.controls.fam_description.setValue(data.fam_description);
+    this.form.controls.wtf_fam_id.setValue(data.wtf_fam_id);
+
     this.installationDate = new Date(data.wtf_installation_date);
     this.form.controls.wtf_identification_number.setValue(data.wtf_identification_number);
     if (
@@ -457,6 +570,22 @@ export class WastewaterFacilityEditComponent
       .value as NtisWastewaterTreatmentFaci['wtf_facility_longitude'];
     result.wtf_identification_number = this.form.controls.wtf_identification_number
       .value as NtisWastewaterTreatmentFaci['wtf_identification_number'];
+    result.fam_model = this.form.controls.fam_model.value as NtisWastewaterTreatmentFaci['fam_model'];
+    result.fam_bds = this.form.controls.fam_bds.value as NtisWastewaterTreatmentFaci['fam_bds'];
+    result.fam_pop_equivalent = this.form.controls.fam_pop_equivalent
+      .value as NtisWastewaterTreatmentFaci['fam_pop_equivalent'];
+    result.fam_chds = this.form.controls.fam_chds.value as NtisWastewaterTreatmentFaci['fam_chds'];
+    result.fam_float_material = this.form.controls.fam_float_material
+      .value as NtisWastewaterTreatmentFaci['fam_float_material'];
+    result.fam_nitrogen = this.form.controls.fam_nitrogen.value as NtisWastewaterTreatmentFaci['fam_nitrogen'];
+    result.fam_phosphor = this.form.controls.fam_phosphor.value as NtisWastewaterTreatmentFaci['fam_phosphor'];
+    result.fam_description = this.form.controls.fam_description.value as NtisWastewaterTreatmentFaci['fam_description'];
+    result.wtf_fam_id = this.form.controls.wtf_fam_id.value as NtisWastewaterTreatmentFaci['wtf_fam_id'];
+    result.fam_float_material = this.form.controls.fam_float_material
+      .value as NtisWastewaterTreatmentFaci['fam_float_material'];
+    result.fam_manufacturer = this.form.controls.fam_manufacturer
+      .value as NtisWastewaterTreatmentFaci['fam_manufacturer'];
+
     result.servedObjects = this.form.controls.so_address.value as NtisServedObjectsDAO[];
     result.attachments = this.uploadedFiles;
     return result;
@@ -1182,8 +1311,10 @@ export class WastewaterFacilityEditComponent
       this.form.controls.so_address.setValue(null);
       this.form.controls.so_address.clearValidators();
       this.form.controls.so_address.updateValueAndValidity();
+      this.form.controls.so_address.markAsDirty();
       if (this.data?.servedObjectsAddr) {
         this.data.servedObjectsAddr = [];
+        this.data.servedObjects = [];
       }
     }
   }

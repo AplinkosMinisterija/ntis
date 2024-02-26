@@ -19,6 +19,8 @@ export class ChangePasswordPageComponent implements OnInit, OnDestroy {
     minLength: number;
     minCapital: number;
     minDigits: number;
+    minSpecial: number;
+    specialSymbols: string;
   };
 
   form = new FormGroup({
@@ -84,6 +86,8 @@ export class ChangePasswordPageComponent implements OnInit, OnDestroy {
         minLength: result['psw_min_length'] ? parseInt(result['psw_min_length'], 10) : 0,
         minCapital: result['psw_min_length'] ? parseInt(result['psw_min_capital'], 10) : 0,
         minDigits: result['psw_min_digits'] ? parseInt(result['psw_min_digits'], 10) : 0,
+        minSpecial: result['pwd_min_spec_simb'] ? parseInt(result['pwd_min_spec_simb'], 10) : 0,
+        specialSymbols: result['pwd_spec_simb_list'],
       };
       this.updatePasswordRequirementsText();
       this.updateValidators();
@@ -96,7 +100,8 @@ export class ChangePasswordPageComponent implements OnInit, OnDestroy {
         .getPasswordRequirementsText(
           this.passwordParams.minLength,
           this.passwordParams.minDigits,
-          this.passwordParams.minCapital
+          this.passwordParams.minCapital,
+          this.passwordParams.minSpecial
         )
         .subscribe((result) => {
           this.passwordRequirementsText = result;
@@ -116,7 +121,9 @@ export class ChangePasswordPageComponent implements OnInit, OnDestroy {
         SprPasswordValidator(
           this.passwordParams.minLength,
           this.passwordParams.minCapital,
-          this.passwordParams.minDigits
+          this.passwordParams.minDigits,
+          this.passwordParams.minSpecial,
+          this.passwordParams.specialSymbols
         )
       );
     }

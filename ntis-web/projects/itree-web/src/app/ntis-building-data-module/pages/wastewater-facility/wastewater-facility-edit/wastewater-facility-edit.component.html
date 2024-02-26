@@ -67,7 +67,7 @@
           ></ntis-address-list>
           <div
             class="address-dialog__message"
-            *ngIf="correctAddressConfirmed && data?.wtf_type !== typeSewageFacilityEnum.portableReservoir"
+            *ngIf="correctAddressConfirmed && data?.wtf_type !== typeSewageFacilityEnum.portableReservoir && data?.wtf_data_source !== CENTRALIZED_UPLOAD"
           >
             <b>{{(ntisBuildingDataReference + '.important' | translate) + ' '}}</b>
             <span>{{(ntisBuildingDataReference + '.correctAddressWasConfirmed' | translate) + ' '}}</span>
@@ -75,6 +75,20 @@
               (click)="correctAddressConfirmed=false"
               class="underline font-semibold"
               >{{ 'common.generalUse.here' | translate}}</span
+            >
+          </div>
+          <div class="address-dialog__message" *ngIf="data?.wtf_data_source === CENTRALIZED_UPLOAD">
+            <b>{{(ntisBuildingDataReference + '.important' | translate) + ' '}}</b>
+            <span>{{(ntisBuildingDataReference + '.createdWithCentralizedUpload' | translate) + ' '}}</span>
+            <span
+              *ngIf="(data?.servedObjects?.length === 0 || data?.servedObjects === null) && data?.servedObjectsAddr.length === 0 "
+            >
+              <span>{{(ntisBuildingDataReference + '.addObject' | translate) + ' '}}</span>
+              <span
+                (click)="correctAddressConfirmed=false"
+                class="underline font-semibold"
+                >{{ 'common.generalUse.here' | translate}}</span
+              ></span
             >
           </div>
         </spr-form-field-group>
@@ -204,18 +218,30 @@
             </spr-form-field>
 
             <spr-form-field
-              [labelText]="ntisBuildingDataReference + '.wtf_manufacturer_description' | translate"
-              [inputErrors]="form.controls.wtf_manufacturer_description.touched && form.controls.wtf_manufacturer_description.errors"
-              labelFor="facility-manufacturer-description"
+              [labelText]="ntisBuildingDataReference + '.fam_manufacturer' | translate"
+              [inputErrors]="form.controls.fam_manufacturer.touched && form.controls.fam_manufacturer.errors"
+              labelFor="fam-manufacturer-other"
               *ngIf="form.controls.wtf_manufacturer.value === OTHER"
             >
-              <textarea
-                id="facility-manufacturer-description"
-                formControlName="wtf_manufacturer_description"
-                class="resize-none"
-                maxlength="80"
-              >
-              </textarea>
+              <input type="text" formControlName="fam_manufacturer" id="fam-manufacturer-other" maxlength="50" />
+            </spr-form-field>
+
+            <spr-form-field
+              [labelText]="ntisBuildingDataReference + '.fam_model' | translate"
+              [inputErrors]="form.controls.fam_model.touched && form.controls.fam_model.errors"
+              labelFor="fam-model-other"
+              *ngIf="form.controls.wtf_manufacturer.value === OTHER"
+            >
+              <input type="text" formControlName="fam_model" id="fam-model-other" maxlength="50" />
+            </spr-form-field>
+
+            <spr-form-field
+              [labelText]="ntisBuildingDataReference + '.fam_description' | translate"
+              [inputErrors]="form.controls.fam_description.touched && form.controls.fam_description.errors"
+              labelFor="fam-description"
+              *ngIf="form.controls.wtf_manufacturer.value === OTHER"
+            >
+              <input type="text" formControlName="fam_description" id="fam_description" maxlength="200" />
             </spr-form-field>
 
             <spr-form-field
@@ -235,10 +261,13 @@
               >
               </spr-select>
             </spr-form-field>
+
+            <!-- Kai OTHER, visada atvaizduoti ne readonly, ELSE kaip yra -->
             <spr-form-field
-              *ngIf="form.controls.wtf_technical_passport_id.value"
+              *ngIf="form.controls.wtf_manufacturer.value === OTHER || form.controls.wtf_technical_passport_id.value"
               [labelText]="ntisBuildingDataReference + '.wtf_technical_passport_id' | translate"
               labelFor="technical-passport"
+              [inputErrors]="form.controls.wtf_technical_passport_id.touched && form.controls.wtf_technical_passport_id.errors"
             >
               <input
                 type="text"
@@ -246,22 +275,29 @@
                 id="technical-passport"
                 [placeholder]="ntisBuildingDataReference + '.passport_number' | translate"
               />
-
-              <div class="cw-files-display-only">
+              <div
+                [ngClass]="{
+                'cw-files-display-only': form.controls.wtf_manufacturer.value !== OTHER,
+              }"
+              >
                 <spr-file-upload-with-progress
                   [uploadedFiles]="uploadedFiles"
-                  [disabled]="true"
+                  [disabled]="uploadedFiles.length > 0"
+                  acceptedFormat=".doc, .docx, .odt, .pdf, .txt"
                 ></spr-file-upload-with-progress>
               </div>
             </spr-form-field>
 
             <spr-form-field
-              *ngIf="form.controls.fam_pop_equivalent.value"
+              *ngIf="form.controls.wtf_manufacturer.value === OTHER || form.controls.fam_pop_equivalent.value"
               [labelText]="ntisBuildingDataReference + '.fam_pop_equivalent' | translate"
-              labelFor="technical-passport"
+              labelFor="fam_pop_equivalent"
+              [inputErrors]="form.controls.fam_pop_equivalent.touched && form.controls.fam_pop_equivalent.errors"
+              [mandatory]="form.controls.wtf_manufacturer.value === OTHER"
             >
               <input
-                type="text"
+                type="number"
+                step=".01"
                 formControlName="fam_pop_equivalent"
                 id="fam_pop_equivalent"
                 [placeholder]="ntisBuildingDataReference + '.fam_pop_equivalent' | translate"
@@ -269,38 +305,47 @@
             </spr-form-field>
 
             <spr-form-field
-              *ngIf="form.controls.fam_chds.value"
+              *ngIf="(form.controls.wtf_manufacturer.value === OTHER && form.controls.wtf_type.value === ntisWtfType.BIO) || form.controls.fam_chds.value"
               [labelText]="ntisBuildingDataReference + '.fam_chds' | translate"
               labelFor="fam_chds"
+              [inputErrors]="form.controls.fam_chds.touched && form.controls.fam_chds.errors"
+              [mandatory]="form.controls.wtf_manufacturer.value === OTHER && form.controls.wtf_type.value === ntisWtfType.BIO"
             >
               <input
-                type="text"
+                type="number"
                 formControlName="fam_chds"
                 id="fam_chds"
+                step=".01"
                 [placeholder]="ntisBuildingDataReference + '.fam_chds' | translate"
               />
             </spr-form-field>
 
             <spr-form-field
-              *ngIf="form.controls.fam_bds.value"
+              *ngIf="form.controls.wtf_manufacturer.value === OTHER || form.controls.fam_bds.value"
               [labelText]="ntisBuildingDataReference + '.fam_bds' | translate"
               labelFor="fam_bds"
+              [inputErrors]="form.controls.fam_bds.touched && form.controls.fam_bds.errors"
+              [mandatory]="form.controls.wtf_manufacturer.value === OTHER"
             >
               <input
-                type="text"
+                type="number"
                 formControlName="fam_bds"
                 id="fam_bds"
+                step=".01"
                 [placeholder]="ntisBuildingDataReference + '.fam_bds' | translate"
               />
             </spr-form-field>
 
             <spr-form-field
-              *ngIf="form.controls.fam_float_material.value"
+              *ngIf="(form.controls.wtf_manufacturer.value === OTHER && form.controls.wtf_type.value === ntisWtfType.BIO) || form.controls.fam_float_material.value"
               [labelText]="ntisBuildingDataReference + '.fam_float_material' | translate"
               labelFor="fam_float_material"
+              [inputErrors]="form.controls.fam_float_material.touched && form.controls.fam_float_material.errors"
+              [mandatory]="form.controls.wtf_manufacturer.value === OTHER && form.controls.wtf_type.value === ntisWtfType.BIO"
             >
               <input
-                type="text"
+                type="number"
+                step=".01"
                 formControlName="fam_float_material"
                 id="fam_float_material"
                 [placeholder]="ntisBuildingDataReference + '.fam_float_material' | translate"
@@ -308,12 +353,15 @@
             </spr-form-field>
 
             <spr-form-field
-              *ngIf="form.controls.fam_phosphor.value"
+              *ngIf="(form.controls.wtf_manufacturer.value === OTHER && form.controls.wtf_type.value === ntisWtfType.BIO) || form.controls.fam_phosphor.value"
               [labelText]="ntisBuildingDataReference + '.fam_phosphor' | translate"
               labelFor="fam_phosphor"
+              [inputErrors]="form.controls.fam_phosphor.touched && form.controls.fam_phosphor.errors"
+              [mandatory]="form.controls.wtf_manufacturer.value === OTHER && form.controls.wtf_type.value === ntisWtfType.BIO"
             >
               <input
-                type="text"
+                type="number"
+                step=".01"
                 formControlName="fam_phosphor"
                 id="fam_phosphor"
                 [placeholder]="ntisBuildingDataReference + '.fam_phosphor' | translate"
@@ -321,12 +369,15 @@
             </spr-form-field>
 
             <spr-form-field
-              *ngIf="form.controls.fam_nitrogen.value"
+              *ngIf="(form.controls.wtf_manufacturer.value === OTHER && form.controls.wtf_type.value === ntisWtfType.BIO) || form.controls.fam_nitrogen.value"
               [labelText]="ntisBuildingDataReference + '.fam_nitrogen' | translate"
               labelFor="fam_nitrogen"
+              [inputErrors]="form.controls.fam_nitrogen.touched && form.controls.fam_nitrogen.errors"
+              [mandatory]="form.controls.wtf_manufacturer.value === OTHER && form.controls.wtf_type.value === ntisWtfType.BIO"
             >
               <input
-                type="text"
+                type="number"
+                step=".01"
                 formControlName="fam_nitrogen"
                 id="fam_nitrogen"
                 [placeholder]="ntisBuildingDataReference + '.fam_nitrogen' | translate"
@@ -338,6 +389,7 @@
             [inputErrors]="form.controls.wtf_distance.touched && form.controls.wtf_distance.errors"
             [labelText]="ntisBuildingDataReference + '.wtf_distance' | translate"
             labelFor="facility-distance"
+            [mandatory]="true"
           >
             <div class="w-32 inline-wrapper">
               <input
@@ -354,6 +406,8 @@
           <spr-form-field
             [labelText]="ntisBuildingDataReference + '.wtf_installation_date' | translate"
             labelFor="facility-installation-date"
+            [inputErrors]="form.controls.wtf_installation_date.touched && form.controls.wtf_installation_date.errors"
+            [mandatory]="true"
           >
             <p-calendar
               inputId="facility-installation-date"

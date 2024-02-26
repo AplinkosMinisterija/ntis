@@ -1,7 +1,11 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DATA_TYPE_NUMBER, DATA_TYPE_STRING } from '@itree-commons/src/constants/classificators.constants';
-import { SRV_PRVD_DEREGISTERED, SRV_PRVD_REGISTERED } from '@itree-web/src/app/ntis-shared/constants/classifiers.const';
+import {
+  SRV_PRVD_DEREGISTERED,
+  SRV_PRVD_REGISTERED,
+  VALYMAS,
+} from '@itree-web/src/app/ntis-shared/constants/classifiers.const';
 import { NTIS_SERVICE_PROVIDERS_LIST } from '@itree-web/src/app/ntis-shared/constants/forms.const';
 import { ActionsEnum } from '@itree-commons/src/lib/enums/table-row-actions.enums';
 import { NtisServiceProviderRejectionModel, SprListIdKeyValue } from '@itree-commons/src/lib/model/api/api';
@@ -22,7 +26,7 @@ import { DialogModule } from 'primeng/dialog';
 import { NtisSharedModule } from '@itree-web/src/app/ntis-shared/ntis-shared.module';
 import { CommonService } from '@itree-commons/src/lib/services/common.service';
 import { NtisRoutingConst } from '@itree-web/src/app/ntis-shared/constants/ntis-routing.const';
-import { DB_BOOLEAN_FALSE, DB_BOOLEAN_TRUE, MAX_ROWS_FOR_EXPORT } from '@itree-commons/src/constants/db.const';
+import { MAX_ROWS_FOR_EXPORT } from '@itree-commons/src/constants/db.const';
 
 interface BrowseSearchData {
   url: string;
@@ -59,18 +63,14 @@ export class ServiceProvidersListComponent extends BaseBrowseForm<ServiceProvide
   org_code: string;
   orgTypeSelection: SprListIdKeyValue[] = [];
   orgStatusSelection: SprListIdKeyValue[] = [];
-  facilityInstallerSelection: SprListIdKeyValue[] = [];
+  servicesSelection: SprListIdKeyValue[] = [];
 
   cols: TableColumn[] = [
     { field: 'org_id', export: false, visible: false, type: DATA_TYPE_NUMBER },
     { field: 'org_type', export: true, visible: true, type: DATA_TYPE_STRING },
     { field: 'org_name', export: true, visible: true, type: DATA_TYPE_STRING },
     { field: 'org_code', export: true, visible: true, type: DATA_TYPE_STRING },
-    { field: 'org_address', export: true, visible: true, type: DATA_TYPE_STRING },
-    { field: 'org_email', export: true, visible: true, type: DATA_TYPE_STRING },
-    { field: 'org_phone', export: true, visible: true, type: DATA_TYPE_STRING },
-    { field: 'org_delegation_person', export: true, visible: true, type: DATA_TYPE_STRING },
-    { field: 'is_facility_installer', export: true, visible: true, type: DATA_TYPE_STRING },
+    { field: 'services_provided', export: true, visible: true, type: DATA_TYPE_STRING },
     { field: 'org_state', export: true, visible: true, type: DATA_TYPE_STRING },
     { field: 'org_state_clsf', export: false, visible: false, type: DATA_TYPE_STRING },
     { field: 'org_date_from', export: false, visible: false, type: DATA_TYPE_STRING },
@@ -97,6 +97,10 @@ export class ServiceProvidersListComponent extends BaseBrowseForm<ServiceProvide
       null,
       Validators.compose([Validators.required, Validators.maxLength(1000)])
     ),
+    org_address: new FormControl<string>(null),
+    org_email: new FormControl<string>(null),
+    org_phone: new FormControl<string>(null),
+    org_delegation_person: new FormControl<string>(null),
   });
 
   ngOnInit(): void {
@@ -119,20 +123,15 @@ export class ServiceProvidersListComponent extends BaseBrowseForm<ServiceProvide
         return type.key === this.deregistered || type.key === this.registered;
       });
     });
-    this.commonFormServices.translate.get('common.generalUse.yes').subscribe((translation: string) => {
-      this.facilityInstallerSelection.push({ key: DB_BOOLEAN_TRUE, id: null, display: translation });
-    });
-    this.commonFormServices.translate.get('common.generalUse.no').subscribe((translation: string) => {
-      this.facilityInstallerSelection.push({ key: DB_BOOLEAN_FALSE, id: null, display: translation });
+    this.clsfService.getClsf('NTIS_SRV_ITEM_TYPE').subscribe((options) => {
+      this.servicesSelection = options.filter((type) => {
+        return type.key !== VALYMAS;
+      });
     });
     this.searchForm.addControl('org_name', new FormControl(''));
     this.searchForm.addControl('org_type', new FormControl(''));
     this.searchForm.addControl('org_code', new FormControl(''));
-    this.searchForm.addControl('org_address', new FormControl(''));
-    this.searchForm.addControl('org_email', new FormControl(''));
-    this.searchForm.addControl('org_phone', new FormControl(''));
-    this.searchForm.addControl('org_delegation_person', new FormControl(''));
-    this.searchForm.addControl('is_facility_installer', new FormControl(''));
+    this.searchForm.addControl('services_provided', new FormControl(''));
     this.searchForm.addControl('org_state', new FormControl(''));
   }
 
@@ -152,13 +151,6 @@ export class ServiceProvidersListComponent extends BaseBrowseForm<ServiceProvide
         map((result) => {
           result.data.forEach((row) => {
             row.actions = this.getNtisActions(row);
-            if (row.is_facility_installer) {
-              this.commonFormServices.translate
-                .get('common.generalUse.' + (row.is_facility_installer === DB_BOOLEAN_TRUE ? 'yes' : 'no'))
-                .subscribe((translation: string) => {
-                  row.is_facility_installer = translation;
-                });
-            }
           });
           return result;
         })
@@ -239,6 +231,10 @@ export class ServiceProvidersListComponent extends BaseBrowseForm<ServiceProvide
     this.form.controls.org_deregistered_date.setValue(row.org_deregistered_date);
     this.form.controls.org_state.setValue(row.org_state);
     this.form.controls.org_rejection_reason.setValue(row.org_rejection_reason);
+    this.form.controls.org_phone.setValue(row.org_phone);
+    this.form.controls.org_email.setValue(row.org_email);
+    this.form.controls.org_address.setValue(row.org_address);
+    this.form.controls.org_delegation_person.setValue(row.org_delegation_person);
   }
 
   closeDialog(): void {
