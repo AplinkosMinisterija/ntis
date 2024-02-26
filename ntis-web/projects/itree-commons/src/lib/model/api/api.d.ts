@@ -1,6 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
-// Generated using typescript-generator version 2.30.840 on 2024-02-02 15:05:12.
+// Generated using typescript-generator version 2.30.840 on 2024-02-23 08:20:25.
 
 export interface AddressSearch {
     city: number;
@@ -1086,9 +1086,12 @@ export interface NtisFacilityModelDAO extends NtisFacilityModelDAOGen {
 export interface NtisFacilityModelDAOGen extends SprBaseDAO {
     fam_bds: number;
     fam_chds: number;
+    fam_description: string;
     fam_fil_id: number;
     fam_float_material: number;
     fam_id: number;
+    fam_manufacturer: string;
+    fam_model: string;
     fam_nitrogen: number;
     fam_phosphor: number;
     fam_pop_equivalent: number;
@@ -1277,6 +1280,12 @@ export interface NtisInstitutionEditModel {
 export interface NtisIsenseAuthModel {
     host: string;
     token: string;
+}
+
+export interface NtisJobEditModel {
+    jobDefinitionsDAO: SprJobDefinitionsDAO;
+    numberOfAttempts: number;
+    periodAfterAttempt: number;
 }
 
 export interface NtisMapBuildPointDetails {
@@ -2451,7 +2460,10 @@ export interface NtisWastewaterTreatmentFaci {
     facilityLocationAddr: AddressSearchResponse;
     fam_bds: number;
     fam_chds: number;
+    fam_description: string;
     fam_float_material: number;
+    fam_manufacturer: string;
+    fam_model: string;
     fam_nitrogen: number;
     fam_phosphor: number;
     fam_pop_equivalent: number;
@@ -2461,12 +2473,14 @@ export interface NtisWastewaterTreatmentFaci {
     wtf_ad_id: number;
     wtf_capacity: string;
     wtf_checkout_date: Date;
+    wtf_data_source: string;
     wtf_discharge_latitude: number;
     wtf_discharge_longitude: number;
     wtf_discharge_type: string;
     wtf_distance: number;
     wtf_facility_latitude: number;
     wtf_facility_longitude: number;
+    wtf_fam_id: number;
     wtf_id: number;
     wtf_identification_number: string;
     wtf_installation_date: Date;
@@ -2499,6 +2513,7 @@ export interface NtisWastewaterTreatmentFaciDAOGen extends SprBaseDAO {
     wtf_facility_latitude: number;
     wtf_facility_longitude: number;
     wtf_facility_municipality_code: string;
+    wtf_fam_id: number;
     wtf_id: number;
     wtf_installation_date: Date;
     wtf_manufacturer: string;
@@ -2517,6 +2532,16 @@ export interface NtisWastewaterTreatmentFaciDAOGen extends SprBaseDAO {
     wtf_nc_facility_latitude: number;
     wtf_nc_facility_longitude: number;
     wtf_nc_facility_municipality_code: string;
+    wtf_nc_fam_bds: number;
+    wtf_nc_fam_chds: number;
+    wtf_nc_fam_description: string;
+    wtf_nc_fam_float_material: number;
+    wtf_nc_fam_manufacturer: string;
+    wtf_nc_fam_model: string;
+    wtf_nc_fam_nitrogen: number;
+    wtf_nc_fam_phosphor: number;
+    wtf_nc_fam_pop_equivalent: number;
+    wtf_nc_fam_tech_pass: string;
     wtf_nc_installation_date: Date;
     wtf_nc_manufacturer: string;
     wtf_nc_manufacturer_description: string;

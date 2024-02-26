@@ -53,6 +53,7 @@ export class AuthService extends CommonAuthService {
     private commonFormServices: CommonFormServices
   ) {
     super(http);
+    window.addEventListener('storage', this.storageEventListener.bind(this));
 
     this.router.events.pipe(filter((event) => event instanceof ResolveEnd)).subscribe((event) => {
       let route = (event as ResolveEnd).state.root;
@@ -193,6 +194,14 @@ export class AuthService extends CommonAuthService {
         this.processLogout();
       })
     );
+  }
+
+  private storageEventListener(event: StorageEvent): void {
+    if (event.storageArea == localStorage) {
+      if (event?.key && event.key == 'logout-event') {
+        window.location.replace('/' + RoutingConst.LOGIN);
+      }
+    }
   }
 
   loadAndGetUserOrganizations(): Observable<SprAvailableOrganization[]> {
@@ -393,12 +402,17 @@ export class AuthService extends CommonAuthService {
     );
   }
 
-  getPasswordRequirementsText(minLength: number, minDigits?: number, minCapital?: number): Observable<string> {
+  getPasswordRequirementsText(
+    minLength: number,
+    minDigits?: number,
+    minCapital?: number,
+    minSpecial?: number
+  ): Observable<string> {
     return minLength
       ? this.translateService.get('common.error.passwordPattern.minLength', { value: minLength }).pipe(
           map((translation: string) => {
             let text = translation;
-            if (minCapital || minDigits) {
+            if (minCapital || minDigits || minSpecial) {
               text = text + (this.translateService.instant('common.error.passwordPattern.ofWhich') as string);
               if (minCapital) {
                 text =
@@ -420,6 +434,19 @@ export class AuthService extends CommonAuthService {
                     'common.error.passwordPattern.minDigits' + (minDigits > 1 ? 'Plural' : 'Singular'),
                     {
                       value: minDigits,
+                    }
+                  ) as string);
+              }
+              if (minSpecial) {
+                if (minCapital || minDigits) {
+                  text = text + ', ';
+                }
+                text =
+                  text +
+                  (this.translateService.instant(
+                    'common.error.passwordPattern.minSpecial' + (minSpecial > 1 ? 'Plural' : 'Singular'),
+                    {
+                      value: minSpecial,
                     }
                   ) as string);
               }

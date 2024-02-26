@@ -1,0 +1,9 @@
+.dialog-footer {
+  @apply flex flex-row justify-center items-center pt-10;
+}
+.address-info {
+  @apply ml-5 mr-5 mt-5 flex flex-col;
+}
+.address-info-name {
+  @apply font-bold self-center mb-5;
+}

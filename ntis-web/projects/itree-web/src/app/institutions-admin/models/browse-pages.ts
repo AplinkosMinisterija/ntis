@@ -1,4 +1,5 @@
 import { BaseBrowseRow } from '@itree-commons/src/lib/model/browse-pages';
+import { BaseBrowseForm } from '@itree/ngx-s2-commons';
 
 export interface NtisCarsBrowseRow extends BaseBrowseRow {
   cr_id: string;
@@ -73,6 +74,8 @@ export interface ServiceProvidersBrowseRow extends BaseBrowseRow {
   org_registered_date: Date;
   org_deregistered_date: Date;
   org_rejection_reason: string;
+  provides_installation: string;
+  services_provided: string;
 }
 
 export interface TableColumn {
@@ -119,4 +122,20 @@ export interface SrvReviewsBrowseRow extends BaseBrowseRow {
   rev_score: number;
   rev_comment: string;
   rev_receiver_read: string;
+}
+
+export interface AdrAddressesBrowseRow extends BaseBrowseRow {
+  ad_id: number;
+  ad_address: string;
+  ad_coordinate_latitude: number;
+  ad_coordinate_longitude: number;
+  update_timestamp: number;
+  apl_pat_code: number;
+  ads_aob_code: number;
+  str_street_code: string;
+  str_name: string;
+  re_recidence_code: string;
+  re_name: string;
+  sen_code: string;
+  sen_name: string;
 }

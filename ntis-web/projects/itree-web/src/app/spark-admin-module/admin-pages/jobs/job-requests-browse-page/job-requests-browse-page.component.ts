@@ -64,13 +64,21 @@ export class JobRequestsBrowsePageComponent extends BaseBrowseForm<SprJobRequest
   }
 
   ngOnInit(): void {
+    if (this.activatedRoute.snapshot.queryParams.token) {
+      this.adminService.getJobByToken(this.activatedRoute.snapshot.queryParams.token as string).subscribe((result) => {
+        this.jobId = result.toString();
+        this.reload();
+      });
+    } else {
+      this.jobId = this.activatedRoute.snapshot.params.id as string;
+    }
+
     this.searchForm.addControl('jrq_id', new FormControl(null));
     this.searchForm.addControl('jde_name', new FormControl(null));
     this.searchForm.addControl('jrq_code', new FormControl(null));
     this.searchForm.addControl('jrq_start_date', new FormControl(null));
     this.searchForm.addControl('jrq_end_date', new FormControl(null));
     this.searchForm.addControl('jrq_executer_name', new FormControl(null));
-    this.jobId = this.activatedRoute.snapshot.params.id as string;
     this.adminService.getJobRequestsNames().subscribe((result) => {
       this.jobNameOptions = result.data;
     });
@@ -85,6 +93,7 @@ export class JobRequestsBrowsePageComponent extends BaseBrowseForm<SprJobRequest
     extendedParams?: ExtendedSearchParam[]
   ): void {
     const pagingParams = this.getPagingParams(first, pageSize, sortField, order, null);
+
     if (this.jobId) {
       extendedParams.push({
         paramName: 'jrq_jde_id',

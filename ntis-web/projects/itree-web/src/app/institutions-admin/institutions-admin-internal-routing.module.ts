@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { RoutingConst } from '@itree-commons/src/constants/routing.const';
 import {
+  NTIS_ADR_ADDRESS_LIST,
   NTIS_CARS_LIST,
   NTIS_CAR_EDIT,
   NTIS_FACILITY_MODELS_LIST,
@@ -375,6 +376,22 @@ const routes: Routes = [
             loadComponent: () =>
               import('./pages/facility-model-edit-page/facility-model-edit-page.component').then(
                 (m) => m.FacilityModelEditPageComponent
+              ),
+          },
+        ],
+      },
+      {
+        path: NtisRoutingConst.NTIS_ADR_ADDRESS_LIST,
+        data: {
+          breadcrumb: 'institutionsAdmin.pages.adrAddressList.headerText',
+        },
+        children: [
+          {
+            path: '',
+            data: { formCode: NTIS_ADR_ADDRESS_LIST },
+            loadComponent: () =>
+              import('./pages/adr-addresses-list-page/adr-addresses-list-page.component').then(
+                (m) => m.AdrAddressesListPageComponent
               ),
           },
         ],

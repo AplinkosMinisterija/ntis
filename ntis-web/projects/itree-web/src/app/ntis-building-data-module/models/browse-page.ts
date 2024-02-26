@@ -72,6 +72,9 @@ export interface NtisWastewaterFacilityView extends BaseBrowseRow {
   fam_phosphor: number;
   fam_nitrogen: number;
   wtf_identification_number: string;
+  fam_manufacturer: string;
+  fam_model: string;
+  fam_description: string;
 }
 
 export interface WfManagersListRow extends BaseBrowseRow {
@@ -125,4 +128,14 @@ export interface NtisWtfAgreements extends NtisWastewaterFacilityView {
   fua_wtf_new_info_json: string;
   fua_wtf_object_info_json: string;
   fua_cancellation_reason: string;
+  fam_pop_equivalent: number;
+  fam_tech_pass: string;
+  fam_chds: number;
+  fam_bds: number;
+  fam_float_material: number;
+  fam_phosphor: number;
+  fam_nitrogen: number;
+  fam_manufacturer: string;
+  fam_model: string;
+  fam_description: string;
 }

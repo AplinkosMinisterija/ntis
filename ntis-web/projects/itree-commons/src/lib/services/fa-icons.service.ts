@@ -15,6 +15,7 @@ import {
 } from '@fortawesome/free-regular-svg-icons';
 import {
   IconDefinition,
+  faAddressBook,
   faAdjust,
   faAngleDown,
   faAngleLeft,
@@ -196,6 +197,7 @@ export class FaIconsService {
 
   fas: Record<string, IconDefinition> = {
     faAdjust,
+    faAddressBook,
     faAngleDown,
     faAngleLeft,
     faAngleRight,

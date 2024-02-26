@@ -81,8 +81,18 @@
         ></spr-info-line>
         <spr-info-line
           *ngIf="!data.wtf_model  && data.wtf_type !== typeSewageFacilityEnum.reservoir && data.wtf_type !== typeSewageFacilityEnum.portableReservoir"
-          [name]="treatmentFacilityReview + '.modelDescription' | translate"
-          [value]="data.wtf_manufacturer_description"
+          [name]="treatmentFacilityReview + '.fam_manufacturer' | translate"
+          [value]="data.fam_manufacturer"
+        ></spr-info-line>
+        <spr-info-line
+          *ngIf="!data.wtf_model  && data.wtf_type !== typeSewageFacilityEnum.reservoir && data.wtf_type !== typeSewageFacilityEnum.portableReservoir"
+          [name]="treatmentFacilityReview + '.fam_model' | translate"
+          [value]="data.fam_model"
+        ></spr-info-line>
+        <spr-info-line
+          *ngIf="!data.wtf_model  && data.wtf_type !== typeSewageFacilityEnum.reservoir && data.wtf_type !== typeSewageFacilityEnum.portableReservoir"
+          [name]="treatmentFacilityReview + '.fam_description' | translate"
+          [value]="data.fam_description"
         ></spr-info-line>
         <spr-info-line
           *ngIf="data?.fam_pop_equivalent"

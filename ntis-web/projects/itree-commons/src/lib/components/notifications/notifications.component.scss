@@ -103,7 +103,7 @@
 }
 
 .toaster {
-  @apply p-3 bg-neutral-50 shadow-xl border fixed z-50 right-6 top-20 w-64 rounded;
+  @apply p-3 bg-neutral-50 shadow-xl border fixed z-50 right-6 top-20 w-fit max-w-sm rounded;
 
   &__close-button {
     @apply absolute right-2 top-2;

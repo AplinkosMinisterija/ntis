@@ -2,6 +2,7 @@ export class NtisRoutingConst {
   public static readonly ADMIN_DASHBOARD = 'adm-dashboard';
   public static readonly ADMIN_LOGIN = 'admin-login';
   public static readonly AGGLOMERATIONS = 'agglo';
+  public static readonly NTIS_ADR_ADDRESS_LIST = 'addresses';
   public static readonly BUILDING_DATA = 'building-data';
   public static readonly BUILDING_DATA_WASTEWATER_FACILITY = 'wastewater-facility';
   public static readonly CENTRALIZED_WASTEWATER = 'centralized';

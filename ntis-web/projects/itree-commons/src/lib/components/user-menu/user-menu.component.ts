@@ -1,5 +1,5 @@
 import { Component, HostListener, OnDestroy, OnInit, ViewContainerRef } from '@angular/core';
-import { NavigationExtras, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { RoutingConst } from '@itree-commons/src/constants/routing.const';
 import { AuthUtil } from '@itree/ngx-s2-commons';
 import { Subject, takeUntil } from 'rxjs';
@@ -131,6 +131,7 @@ export class UserMenuComponent implements OnInit, OnDestroy {
   }
 
   onLogout(): void {
+    window.localStorage.setItem('logout-event', Math.random().toString());
     this.authService.logout().subscribe(() => {
       window.location.replace('/' + RoutingConst.LOGIN);
     });

@@ -47,6 +47,7 @@ export class TermsAndConditionsPageComponent implements OnInit {
   }
 
   logout(): void {
+    window.localStorage.setItem('logout-event', Math.random().toString());
     this.authService.logout().subscribe(() => {
       window.location.replace('/' + RoutingConst.LOGIN);
     });

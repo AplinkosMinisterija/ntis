@@ -9,11 +9,7 @@ import { BuildingDataService } from '../services/building-data.service';
   providedIn: 'root',
 })
 export class WastewaterFacilityEditResolver implements Resolve<NtisWastewaterTreatmentFaci> {
-  constructor(
-    private buildingDataService: BuildingDataService,
-    private router: Router,
-    protected commonFormServices: CommonFormServices
-  ) {}
+  constructor(private buildingDataService: BuildingDataService, protected commonFormServices: CommonFormServices) {}
 
   resolve(route: ActivatedRouteSnapshot): Observable<NtisWastewaterTreatmentFaci> {
     if (route.paramMap.get('id') && route.paramMap.get('id') !== 'new') {

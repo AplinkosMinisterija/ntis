@@ -19,6 +19,7 @@ import {
 } from '@itree-commons/src/lib/model/api/api';
 import { BrowseFormSearchResult } from '@itree-commons/src/lib/model/api/api';
 import {
+  AdrAddressesBrowseRow,
   FacilityModelsBrowseRow,
   NtisCarsBrowseRow,
   NtisInstitutionsBrowseRow,
@@ -351,5 +352,17 @@ export class InstitutionsAdminService {
   markReviewAsRead(id: string): Observable<null> {
     const url = `${this.spRestUrl}/mark-review-as-read-srv`;
     return this.http.post<null>(url, id);
+  }
+
+  // Adr addresses list (start)
+  getAdrAddressesList(
+    pagingParams: Spr_paging_ot,
+    searchParams: Map<string, unknown>,
+    extendedParams: ExtendedSearchParam[]
+  ): Observable<BrowseFormSearchResult<AdrAddressesBrowseRow>> {
+    const url = `${this.saRestUrl}/get-adr-address-list`;
+    const paramArray = Array.from(searchParams.entries());
+    const postBody = { pagingParams, params: paramArray, extendedParams };
+    return this.http.post<BrowseFormSearchResult<AdrAddressesBrowseRow>>(url, postBody);
   }
 }

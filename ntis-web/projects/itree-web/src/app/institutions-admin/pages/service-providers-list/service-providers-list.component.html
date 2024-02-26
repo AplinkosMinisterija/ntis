@@ -27,46 +27,16 @@
         [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
         [placeholder]="translationsReference + '.org_code' | translate"
       ></spr-filter-input>
-      <spr-filter-input
-        filters
-        inputType="text"
-        [maxLength]="50"
-        formControlName="org_address"
-        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
-        [placeholder]="translationsReference + '.org_address' | translate"
-      ></spr-filter-input>
-      <spr-filter-input
-        filters
-        inputType="text"
-        [maxLength]="30"
-        formControlName="org_email"
-        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
-        [placeholder]="translationsReference + '.org_email' | translate"
-      ></spr-filter-input>
-      <spr-filter-input
-        filters
-        inputType="text"
-        [maxLength]="30"
-        formControlName="org_phone"
-        [placeholder]="translationsReference + '.org_phone' | translate"
-      ></spr-filter-input>
-      <spr-filter-input
-        filters
-        inputType="text"
-        [maxLength]="30"
-        formControlName="org_delegation_person"
-        [textTransform]="ExtendedSearchUpperLower.CaseInsensitiveLatin"
-        [placeholder]="translationsReference + '.org_delegation_person' | translate"
-      ></spr-filter-input>
+
       <spr-select
         filters
-        [optionData]="facilityInstallerSelection"
+        [optionData]="servicesSelection"
         optionValue="key"
         optionLabel="display"
-        formControlName="is_facility_installer"
-        [placeholder]="translationsReference + '.is_facility_installer' | translate"
+        formControlName="services_provided"
+        [placeholder]="translationsReference + '.services_provided' | translate"
         [advancedFilterParams]="true"
-        optionType="single"
+        optionType="multiple"
       ></spr-select>
       <spr-select
         filters
@@ -105,11 +75,14 @@
     <ng-template pTemplate="header" let-row let-index="rowIndex">
       <tr>
         <ng-container *ngFor="let col of visibleColumns">
-          <th pSortableColumn="{{col.field}}">
+          <th pSortableColumn="{{col.field}}" *ngIf="col.field !== 'services_provided'">
             {{translationsReference + '.' + col.field | translate}}
             <p-sortIcon field="{{col.field}}"></p-sortIcon>
           </th>
+
+          <th *ngIf="col.field === 'services_provided'">{{translationsReference + '.' + col.field | translate}}</th>
         </ng-container>
+
         <th>{{'common.generalUse.actions' | translate}}</th>
       </tr>
     </ng-template>
@@ -155,6 +128,22 @@
           <spr-info-line
             [name]="translationsReference + '.org_rejection_reason' | translate"
             [value]="form.controls.org_rejection_reason.value"
+          ></spr-info-line>
+          <spr-info-line
+            [name]="translationsReference + '.org_address' | translate"
+            [value]="form.controls.org_address.value"
+          ></spr-info-line>
+          <spr-info-line
+            [name]="translationsReference + '.org_email' | translate"
+            [value]="form.controls.org_email.value"
+          ></spr-info-line>
+          <spr-info-line
+            [name]="translationsReference + '.org_phone' | translate"
+            [value]="form.controls.org_phone.value"
+          ></spr-info-line>
+          <spr-info-line
+            [name]="translationsReference + '.org_delegation_person' | translate"
+            [value]="form.controls.org_delegation_person.value"
           ></spr-info-line>
         </spr-form-field-group>
       </div>
