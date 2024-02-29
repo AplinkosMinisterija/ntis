@@ -36,13 +36,13 @@
       [deregisteredReason]="data.deregisteredReason"
       [registeredServices]="activeServices"
     ></app-service-provider-information>
-    <app-facilities-installer-information
+    <!-- <app-facilities-installer-information
       *ngIf="data && isServiceProvider && data.facilityInstallerFrom"
       [registeredFrom]="data.registeredFrom"
       [deregisteredFrom]="data.deregisteredFrom"
       [deregisteredReason]="data.deregisteredReason"
       (statusChanged)="data.facilityInstallerFrom = null"
-    ></app-facilities-installer-information>
+    ></app-facilities-installer-information> -->
     <app-employees-information [employeesCount]="data?.employeesCount"></app-employees-information>
     <ng-container *ngIf="showSewageRemovalBlocks">
       <app-vehicles-information [vehiclesCount]="data?.vehiclesCount"></app-vehicles-information>

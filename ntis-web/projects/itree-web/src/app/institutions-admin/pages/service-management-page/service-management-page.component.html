@@ -16,14 +16,22 @@
     <ng-template pTemplate="body" let-row let-index="rowIndex">
       <tr [ngClass]="{'ntis-disabled-table-row': row['status'] === notRegistered}" class="ntis-disabled-table-row">
         <td *ngFor="let col of cols">
-          <ng-container *ngIf="col !== 'serviceArea'; else serviceArea">
-            <span [ngClass]="{'text-risk-500': col === 'isConfirmed' && !data[index][col] }">{{ row[col] }}</span>
-          </ng-container>
-          <ng-template #serviceArea>
-            <ng-container *ngIf="row[col] !== null">
-              <span>{{ (translationsReference + '.' + row[col]) | translate}}</span></ng-container
-            >
-          </ng-template>
+          <ng-container
+            *ngIf="(col === 'availableInNtisPortal' || col === 'contractAvailable') && row.serviceType === 'MONTAVIMAS'; else otherDetails"
+          >
+            <span></span
+          ></ng-container>
+
+          <ng-template #otherDetails
+            ><ng-container *ngIf="col !== 'serviceArea'; else serviceArea">
+              <span [ngClass]="{'text-risk-500': col === 'isConfirmed' && !data[index][col] }">{{ row[col] }}</span>
+            </ng-container>
+            <ng-template #serviceArea>
+              <ng-container *ngIf="row[col] !== null">
+                <span>{{ (translationsReference + '.' + row[col]) | translate}}</span></ng-container
+              >
+            </ng-template></ng-template
+          >
         </td>
         <td>
           <ntis-table-row-actions [actions]="row.actions"></ntis-table-row-actions>

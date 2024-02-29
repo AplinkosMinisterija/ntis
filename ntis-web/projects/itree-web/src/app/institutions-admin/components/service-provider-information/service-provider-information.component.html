@@ -50,14 +50,13 @@
           <ng-container *ngIf="!isWaterManager">
             <li class="spr-input-with-label" *ngFor="let service of services">
               <input
-                *ngIf="service.code !== MONTAVIMAS"
                 type="checkbox"
                 [id]="service.code"
                 class="spr-checkbox"
                 [disabled]="true"
                 [checked]="service.registered"
               />
-              <label *ngIf="service.code !== MONTAVIMAS" [for]="service.code">{{ service.name }}</label>
+              <label [for]="service.code">{{ service.name }}</label>
             </li>
           </ng-container>
         </ul>

@@ -169,11 +169,14 @@
 
       <spr-form-field-group [text]="translationsReference + '.serviceSettings' "
         ><div [ngClass]="{'grid ' : addMunicipalities}">
-          <div class="form-field-wrapper">
+          <div
+            class="form-field-wrapper"
+            *ngIf="form.controls.srv_type.value !== MONTAVIMAS && form.controls.srv_type.value"
+          >
             <spr-form-field
               [errorDiv]="!form.controls.srv_contract_available.valid && form.controls.srv_contract_available.touched"
               [labelText]="translationsReference + '.srv_contract_available'| translate"
-              [mandatory]="true"
+              [mandatory]="form.controls.srv_type.value !== MONTAVIMAS"
               [inputErrors]="form.controls.srv_contract_available.touched && form.controls.srv_contract_available.errors"
             >
               <div class="radio-buttons-block">
@@ -221,11 +224,14 @@
               acceptedFormat=".doc, .docx, .odt, .pdf"
             ></spr-file-upload-with-progress>
           </spr-form-field>
-          <div class="form-field-wrapper">
+          <div
+            class="form-field-wrapper"
+            *ngIf="form.controls.srv_type.value !== MONTAVIMAS && form.controls.srv_type.value"
+          >
             <spr-form-field
               [errorDiv]="!form.controls.srv_available_in_ntis_portal.valid && form.controls.srv_available_in_ntis_portal.touched"
               [labelText]="translationsReference + '.srv_available_in_ntis_portal'| translate"
-              [mandatory]="true"
+              [mandatory]="form.controls.srv_type.value !== MONTAVIMAS"
               [inputErrors]="form.controls.srv_available_in_ntis_portal.touched && form.controls.srv_available_in_ntis_portal.errors"
             >
               <div class="radio-buttons-block">

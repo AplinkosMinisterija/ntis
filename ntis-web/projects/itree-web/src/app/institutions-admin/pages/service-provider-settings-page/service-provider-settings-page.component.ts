@@ -20,7 +20,6 @@ import {
 } from '@itree-web/src/app/ntis-shared/constants/forms.const';
 import { RoutingConst } from '@itree-commons/src/constants/routing.const';
 import { NtisRoutingConst } from '@itree-web/src/app/ntis-shared/constants/ntis-routing.const';
-import { FacilitiesInstallerInformationComponent } from '../../components/facilities-installer-information/facilities-installer-information.component';
 
 @Component({
   selector: 'app-service-provider-settings-page',
@@ -37,7 +36,6 @@ import { FacilitiesInstallerInformationComponent } from '../../components/facili
     NtisSharedModule,
     ServiceProviderInformationComponent,
     VehiclesInformationComponent,
-    FacilitiesInstallerInformationComponent,
   ],
 })
 export class ServiceProviderSettingsPageComponent implements OnInit {

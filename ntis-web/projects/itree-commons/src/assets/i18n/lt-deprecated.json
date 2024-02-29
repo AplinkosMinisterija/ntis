@@ -1,7 +1,7 @@
 {
   "common": {
     "action": {
-      "accept": "TESTAS",
+      "accept": "TESTINIS",
       "add": "Pridėti",
       "assign_role": "Pridėti rolę",
       "assign_users": "Pridėti naudotojus",

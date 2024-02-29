@@ -9,7 +9,7 @@
     <div *ngIf="texts.length > 0">
       <h1 class="popover__heading">{{formTranslationsReference + '.header' | translate}}</h1>
       <div *ngFor="let text of texts trackBy:identify" class="popover__message">
-        <a class="text-lg" [href]="text.link">{{text.text}}</a>
+        <a class="text-lg text-center py-1" [href]="text.link">{{text.text}}</a>
       </div>
       <button class="popover__close" type="button" (click)="showDialog = false"><spr-icon name="close" /></button>
     </div>
