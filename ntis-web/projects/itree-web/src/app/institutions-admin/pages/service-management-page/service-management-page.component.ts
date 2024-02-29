@@ -150,6 +150,7 @@ export class ServiceManagementPageComponent implements OnInit {
               ? 'serviceAreaMunicipalities'
               : null,
           service: item.serviceName,
+          serviceType: item.serviceType,
           status: item.statusName,
           actions: itemActions,
         };

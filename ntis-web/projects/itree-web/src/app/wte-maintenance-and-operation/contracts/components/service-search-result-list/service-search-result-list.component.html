@@ -70,7 +70,12 @@
                 >
               </strong>
               <div class="service__order-wrapper">
-                <button type="button" class="spr-button-primary" (click)="clickOrderService.emit(service.id)">
+                <button
+                  type="button"
+                  class="spr-button-primary"
+                  [ngClass]="{'hidden' : service.type === 'MONTAVIMAS'}"
+                  (click)="clickOrderService.emit(service.id)"
+                >
                   {{ 'common.action.order' | translate }}
                 </button>
               </div>

@@ -130,7 +130,7 @@ export class ServiceSearchPageComponent implements OnInit {
 
     this.commonService.getClsf(NTIS_SRV_ITEM_TYPE).subscribe((result) => {
       const selectedSrvType = this.activatedRoute.snapshot.queryParams?.['srvType'] as string;
-      this.availableServices = result.filter((clsf) => clsf.key !== VALYMAS && clsf.key !== MONTAVIMAS);
+      this.availableServices = result.filter((clsf) => clsf.key !== VALYMAS);
       this.form.controls.services.clear();
       this.availableServices.forEach((resultItem) => {
         this.form.controls.services.push(

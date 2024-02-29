@@ -55,12 +55,16 @@ end
 subgraph Adreso dalys
 ADRESO_DALYS
 subgraph KODAI
-  SAVIVALDYBE ---> KODAS
-  SENIUNIJA ---> KODAS
-  GYV_VIETA ---> KODAS
-  GATVE ---> KODAS
+  SAVIVALDYBE --> KODAS
+  SENIUNIJA --> KODAS
+  GYV_VIETA --> KODAS
+  GATVE --> KODAS
+  SAVIVALDYBE --->|jei nenurodytas savivaldybės kodas| PAVADINIMAS
+  SENIUNIJA ---> |jei nenurodytas seniūnijos kodas|PAVADINIMAS
+  GYV_VIETA ---> |jei nenurodytas gyvenvietės kodas|PAVADINIMAS
+  GATVE ---> |jei nenurodytas gatvės kodas|PAVADINIMAS
   KODAS --> |patikrinama| DUOMENYS_RC --> |randama| TEISINGA
-  DUOMENYS_RC --> |nerandama| PAVADINIMAS
+  DUOMENYS_RC --> |nerandama| KLAIDA_FRAG
   PAVADINIMAS --> |patikrinama| DUOMENYS_RC2 --> |randama| PRIDEDAMAS_KODAS
 DUOMENYS_RC2 --> |nerandama| ADRESU_SASAJOS--> |randama| PRIDEDAMAS_KODAS
 ADRESU_SASAJOS --> |nerandama| KLAIDA_FRAG

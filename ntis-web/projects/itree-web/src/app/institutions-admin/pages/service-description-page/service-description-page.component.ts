@@ -16,7 +16,7 @@ import { EMAIL_PATTERN, PHONE_PATTERN } from '@itree-commons/src/constants/valid
 import { CommonModule } from '@angular/common';
 import { ItreeCommonsModule } from '@itree-commons/src/public-api';
 import { EditorModule, EditorTextChangeEvent } from 'primeng/editor';
-import { TYRIMAI } from '@itree-web/src/app/ntis-shared/constants/classifiers.const';
+import { MONTAVIMAS, TYRIMAI } from '@itree-web/src/app/ntis-shared/constants/classifiers.const';
 import { FILE_STATUS_UPLOADED } from '@itree-commons/src/constants/files.const';
 import { FileUploadService } from '@itree-commons/src/lib/services/file-upload.service';
 import { SprValueMatchValidators } from '@itree-commons/src/lib/validators/value-match-validators';
@@ -36,6 +36,7 @@ export class ServiceDescriptionPageComponent
   readonly DB_BOOLEAN_TRUE = DB_BOOLEAN_TRUE;
   readonly DB_BOOLEAN_FALSE = DB_BOOLEAN_FALSE;
   readonly TYRIMAI = TYRIMAI;
+  readonly MONTAVIMAS = MONTAVIMAS;
 
   checked = false;
   disabledContractUpload = false;
@@ -66,7 +67,7 @@ export class ServiceDescriptionPageComponent
       srv_name: new FormControl({ value: null, disabled: true }),
       srv_date_from: new FormControl({ value: null, disabled: true }),
       srv_date_to: new FormControl({ value: null, disabled: true }),
-      srv_type: new FormControl('', [Validators.required]),
+      srv_type: new FormControl(null, [Validators.required]),
       srv_contract_available: new FormControl('', [Validators.required]),
       srv_available_in_ntis_portal: new FormControl('', [Validators.required]),
       srv_lithuanian_level: new FormControl('', Validators.required),
@@ -108,6 +109,9 @@ export class ServiceDescriptionPageComponent
     this.form.controls.srv_type.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((srvType: string) => {
       if (srvType === TYRIMAI) {
         this.form.controls.labInstructions.addValidators(Validators.required);
+      } else if (srvType === MONTAVIMAS) {
+        this.form.controls.srv_contract_available.setValue(DB_BOOLEAN_FALSE);
+        this.form.controls.srv_available_in_ntis_portal.setValue(DB_BOOLEAN_TRUE);
       } else {
         this.form.controls.labInstructions.clearValidators();
       }
