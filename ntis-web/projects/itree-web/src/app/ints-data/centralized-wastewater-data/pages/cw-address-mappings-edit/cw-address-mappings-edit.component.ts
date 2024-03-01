@@ -69,6 +69,7 @@ export class CwAddressMappingsEditComponent extends DeprecatedBaseEditForm<NtisA
           classifierCode: 'NTIS_ADDRESS_MAP_TYPE',
           optionType: 'single',
           isRequired: true,
+          showClear: true,
         },
         {
           type: EditFormItemType.Text,
@@ -88,6 +89,7 @@ export class CwAddressMappingsEditComponent extends DeprecatedBaseEditForm<NtisA
           isRequired: true,
           filter: true,
           startFilteringLength: 3,
+          showClear: true,
         },
         {
           type: EditFormItemType.Select,
@@ -102,6 +104,7 @@ export class CwAddressMappingsEditComponent extends DeprecatedBaseEditForm<NtisA
           hidden: false,
           filter: true,
           startFilteringLength: 3,
+          showClear: true,
         },
         {
           type: EditFormItemType.Select,
@@ -116,6 +119,7 @@ export class CwAddressMappingsEditComponent extends DeprecatedBaseEditForm<NtisA
           hidden: false,
           filter: true,
           startFilteringLength: 3,
+          showClear: true,
         },
         {
           type: EditFormItemType.Select,
@@ -130,6 +134,7 @@ export class CwAddressMappingsEditComponent extends DeprecatedBaseEditForm<NtisA
           hidden: false,
           filter: true,
           startFilteringLength: 3,
+          showClear: true,
         },
         {
           type: EditFormItemType.Select,
@@ -142,6 +147,7 @@ export class CwAddressMappingsEditComponent extends DeprecatedBaseEditForm<NtisA
           optionType: 'single',
           isRequired: false,
           hidden: true,
+          showClear: true,
         },
       ],
     },

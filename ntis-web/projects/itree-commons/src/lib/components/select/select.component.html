@@ -17,7 +17,9 @@
       [ngClass]="theme"
     />
     <div class="combobox__input-action-wrapper" [ngClass]="theme">
-      <ng-container *ngIf="showClearIcon && !disabled && selectedOption.length > 0">
+      <ng-container
+        *ngIf="showClearIcon && !disabled && !readonly && (selectedOption.length > 0 || chosenOption !== null)"
+      >
         <spr-button
           *ngIf="showClear && !showSpinner"
           iconName="faTimes"
