@@ -1,5 +1,7 @@
 import {
+  AfterContentChecked,
   AfterContentInit,
+  ChangeDetectorRef,
   Component,
   ContentChildren,
   EventEmitter,
@@ -24,7 +26,7 @@ import { s2FileToSprFile } from '../../utils/s2-file-to-spr-file';
   templateUrl: './edit-form.component.html',
   styleUrls: ['./edit-form.component.scss'],
 })
-export class EditFormComponent implements AfterContentInit {
+export class EditFormComponent implements AfterContentInit, AfterContentChecked {
   readonly EditFormItemType = EditFormItemType;
 
   @Input() formGroup: FormGroup | undefined;
@@ -42,11 +44,18 @@ export class EditFormComponent implements AfterContentInit {
   boundS2AutoUploadMethod: (files: S2File[]) => Observable<HttpEvent<S2File[]>>;
   defaultMaxFileSize: number;
 
-  constructor(private appDataService: AppDataService, private fileUploadService: FileUploadService) {
+  constructor(
+    private appDataService: AppDataService,
+    private fileUploadService: FileUploadService,
+    private cdr: ChangeDetectorRef
+  ) {
     this.boundS2AutoUploadMethod = this.fileUploadService.s2AutoUploadMethod.bind(this.fileUploadService);
     this.defaultMaxFileSize = parseInt(
       this.appDataService.getPropertyValue(AppDataService.UPLOAD_FILE_SIZE) || '10485760'
     );
+  }
+  ngAfterContentChecked(): void {
+    this.cdr.detectChanges();
   }
 
   ngAfterContentInit(): void {

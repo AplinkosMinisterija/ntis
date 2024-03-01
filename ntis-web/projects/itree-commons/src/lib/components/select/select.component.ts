@@ -2,6 +2,7 @@ import {
   AfterContentChecked,
   AfterViewChecked,
   AfterViewInit,
+  ChangeDetectorRef,
   Component,
   ElementRef,
   EventEmitter,
@@ -184,6 +185,7 @@ export class SelectComponent
   filterThisArray: boolean = false;
   inputTempValue: string = null;
   foundRecords: boolean = true;
+  chosenOption: optionList = null;
 
   private resizeObserver: ResizeObserver;
   private scrollableParents: HTMLElement[] = [];
@@ -196,7 +198,8 @@ export class SelectComponent
     protected commonFormServices: CommonFormServices,
     protected clsfService: CommonService,
     private elementRef: ElementRef,
-    private injector: Injector
+    private injector: Injector,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngAfterViewInit(): void {
@@ -222,6 +225,8 @@ export class SelectComponent
 
   /** @ngAfterContentChecked is used to detect when the dropdown is visible and focus the filter input */
   ngAfterContentChecked(): void {
+    this.cdr.detectChanges();
+
     if (this.showFilter) {
       if (!this.isVisible && this.searchInput?.nativeElement.offsetParent) {
         this.inputElement.nativeElement.blur();
@@ -495,6 +500,7 @@ export class SelectComponent
     let row = this.optionList.find((item: optionList) => item.value === this.formData);
     if (row) {
       this.inputSearchValue = row.label;
+      this.chosenOption = row;
     } else if (typeof this.formData === 'object' && this.formData && 'paramValue' in this.formData) {
       const advanceParam = this.formData as AdvancedSearchParameterStatement;
       if (advanceParam.paramValue?.values?.length > 0) {
@@ -702,6 +708,7 @@ export class SelectComponent
 
   /** After selecting an entry from the list, the data is added to the form */
   optionSelected(row: optionList): void {
+    this.chosenOption = row;
     this.inputElement.nativeElement.value = row.label;
     if (!this.readonly) {
       this.inputSearchValue = row.label;
