@@ -229,6 +229,7 @@ export class UsersBrowsePageComponent extends BaseBrowseForm<SprUsersBrowseRow> 
       this.adminService.delUsersRecord(recId).subscribe(() => {
         this.commonFormServices.translate.get('common.message.deleteSuccess').subscribe((translation: string) => {
           this.commonFormServices.appMessages.showSuccess('', translation);
+          this.adminService.orgUserRolesAssignedSubject.next();
           this.reload();
         });
       });
@@ -236,6 +237,7 @@ export class UsersBrowsePageComponent extends BaseBrowseForm<SprUsersBrowseRow> 
       this.adminService.delNtisOrgUserRecord(recId).subscribe(() => {
         this.commonFormServices.translate.get('common.message.deleteSuccess').subscribe((translation: string) => {
           this.commonFormServices.appMessages.showSuccess('', translation);
+          this.adminService.orgUserRolesAssignedSubject.next();
           this.reload();
         });
       });

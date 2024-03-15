@@ -336,6 +336,7 @@ export class UserEditPageComponent extends DeprecatedBaseEditForm<SprUsersNtisDA
 
   public override onSaveSuccess(data: SprUsersNtisDAO): void {
     super.onSaveSuccess(data);
+    this.adminService.orgUserRolesAssignedSubject.next();
     this.onCancel();
   }
 
