@@ -944,6 +944,7 @@ export class NtisMapComponent implements OnInit, AfterViewInit, OnDestroy {
     switch (point.layer) {
       case LAYER_KEY_BUILDINGS:
         this.ntisMapService.getBuildingDetails(point.id).subscribe((result) => {
+          if(result.poId){
           this.drawDetailLines(
             result.coordinates,
             result.facilities.map((facility) => facility.facilityCoordinates)
@@ -970,7 +971,7 @@ export class NtisMapComponent implements OnInit, AfterViewInit, OnDestroy {
           } as DetailsPointProperties);
           this.buildingsLayer.extras.infoData = { ...result, facilitiesCount: result.facilities.length };
           this.showObjInfoMenu(this.buildingsLayer);
-        });
+        }});
         break;
       case LAYER_KEY_FACILITIES:
         this.ntisMapService.getFacilityDetails(point.id).subscribe((result) => {
