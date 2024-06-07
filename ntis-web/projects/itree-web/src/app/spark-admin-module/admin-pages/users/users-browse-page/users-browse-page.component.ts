@@ -88,6 +88,8 @@ export class UsersBrowsePageComponent extends BaseBrowseForm<SprUsersBrowseRow> 
   yesterday: Date = new Date();
   userTypeSelection: SprListIdKeyValue[] = [];
   usersWithoutRoles: SprUsersWithoutRoles[] = [];
+  sortClause: string;
+  sortOrder: number;
 
   noLimitOnOrLevelAction: boolean;
   userCanCreate: boolean;
@@ -114,6 +116,8 @@ export class UsersBrowsePageComponent extends BaseBrowseForm<SprUsersBrowseRow> 
         if (typeof searchData.pageSize === 'number') {
           this.showRows = searchData.pageSize;
         }
+        this.sortClause = searchData.sortField ?? null;
+        this.sortOrder = searchData.order ?? null;
         this.loadSearchDataIntoSearchForm();
       }
     }
@@ -166,7 +170,13 @@ export class UsersBrowsePageComponent extends BaseBrowseForm<SprUsersBrowseRow> 
     extendedParams?: ExtendedSearchParam[]
   ): void {
     const lang = getLang();
-    const pagingParams = this.getPagingParams(first, pageSize, sortField, order, null);
+    const pagingParams = this.getPagingParams(
+      first,
+      pageSize,
+      this.sortClause ? this.sortClause : sortField,
+      this.sortOrder ? this.sortOrder : order,
+      null
+    );
     this.adminService
       .getUsersList(pagingParams, this.fixDate(params), lang, extendedParams)
       .pipe(

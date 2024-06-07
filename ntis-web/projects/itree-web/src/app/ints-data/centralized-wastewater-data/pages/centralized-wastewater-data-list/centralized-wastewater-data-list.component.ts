@@ -93,6 +93,8 @@ export class CentralizedWastewaterDataListComponent extends BaseBrowseForm<CwDat
   usr_email: string;
   usr_phone_number: string;
   usrInfoDialog: boolean = false;
+  sortClause: string;
+  sortOrder: number;
 
   cols: TableColumn[] = [
     { field: 'cwf_id', export: false, visible: false, type: DATA_TYPE_NUMBER },
@@ -128,6 +130,8 @@ export class CentralizedWastewaterDataListComponent extends BaseBrowseForm<CwDat
         if (typeof searchData.pageSize === 'number') {
           this.showRows = searchData.pageSize;
         }
+        this.sortClause = searchData.sortField ?? null;
+        this.sortOrder = searchData.order ?? null;
         this.loadSearchDataIntoSearchForm();
       }
     }
@@ -144,7 +148,13 @@ export class CentralizedWastewaterDataListComponent extends BaseBrowseForm<CwDat
     params: Map<string, unknown>,
     extendedParams?: ExtendedSearchParam[]
   ): void {
-    const pagingParams = this.getPagingParams(first, pageSize, sortField, order, null);
+    const pagingParams = this.getPagingParams(
+      first,
+      pageSize,
+      this.sortClause ? this.sortClause : sortField,
+      this.sortOrder ? this.sortOrder : order,
+      null
+    );
     this.activatedRoute.params.pipe(takeUntil(this.destroy$)).subscribe((arParam: Params) => {
       this.orgId = arParam.orgId ? (arParam.orgId as string) : null;
       if (this.orgId) {

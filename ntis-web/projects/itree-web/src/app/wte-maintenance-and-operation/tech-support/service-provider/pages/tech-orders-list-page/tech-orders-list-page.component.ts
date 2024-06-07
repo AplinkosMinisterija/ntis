@@ -65,6 +65,8 @@ export class TechOrdersListPageComponent extends BaseBrowseForm<OrdersListBrowse
   minDate: Date;
   ord_id: number;
   ordStatus: string;
+  sortClause: string;
+  sortOrder: number;
 
   cols: TableColumn[] = [
     { field: 'ord_id', export: true, visible: true, type: DATA_TYPE_NUMBER },
@@ -105,6 +107,8 @@ export class TechOrdersListPageComponent extends BaseBrowseForm<OrdersListBrowse
         if (typeof searchData.pageSize === 'number') {
           this.showRows = searchData.pageSize;
         }
+        this.sortClause = searchData.sortField ?? null;
+        this.sortOrder = searchData.order ?? null;
         this.loadSearchDataIntoSearchForm();
       }
     }
@@ -125,7 +129,13 @@ export class TechOrdersListPageComponent extends BaseBrowseForm<OrdersListBrowse
     params: Map<string, unknown>,
     extendedParams?: ExtendedSearchParam[]
   ): void {
-    const pagingParams = this.getPagingParams(first, pageSize, sortField, order, null);
+    const pagingParams = this.getPagingParams(
+      first,
+      pageSize,
+      this.sortClause ? this.sortClause : sortField,
+      this.sortOrder ? this.sortOrder : order,
+      null
+    );
     this.techSuppService
       .getTechOrdersList(pagingParams, params, extendedParams)
       .pipe(

@@ -96,6 +96,8 @@ export class OrdImportListComponent extends BaseBrowseForm<NtisOrdersImportBrows
   usr_person_name: string;
   usr_email: string;
   usrInfoDialog: boolean = false;
+  sortClause: string;
+  sortOrder: number;
 
   cols: TableColumn[] = [
     { field: 'orf_id', export: false, visible: false, type: DATA_TYPE_NUMBER },
@@ -134,6 +136,8 @@ export class OrdImportListComponent extends BaseBrowseForm<NtisOrdersImportBrows
         if (typeof searchData.pageSize === 'number') {
           this.showRows = searchData.pageSize;
         }
+        this.sortClause = searchData.sortField ?? null;
+        this.sortOrder = searchData.order ?? null;
         this.loadSearchDataIntoSearchForm();
       }
     }
@@ -157,7 +161,13 @@ export class OrdImportListComponent extends BaseBrowseForm<NtisOrdersImportBrows
     params: Map<string, unknown>,
     extendedParams?: ExtendedSearchParam[]
   ): void {
-    const pagingParams = this.getPagingParams(first, pageSize, sortField, order, null);
+    const pagingParams = this.getPagingParams(
+      first,
+      pageSize,
+      this.sortClause ? this.sortClause : sortField,
+      this.sortOrder ? this.sortOrder : order,
+      null
+    );
 
     this.activatedRoute.params.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((param: Params) => {
       this.orgId = param.orgId ? (param.orgId as string) : null;
