@@ -69,6 +69,8 @@ export class CentralizedWastewaterDataReportComponent
   org_website: string;
   waterManagers: IdKeyValuePair[] = [];
   cwfStateSelection: IdKeyValuePair[] = [];
+  sortClause: string;
+  sortOrder: number;
   all: string;
   cols: TableColumn[] = [
     { field: 'org_name', export: false, visible: true, type: DATA_TYPE_STRING },
@@ -120,6 +122,8 @@ export class CentralizedWastewaterDataReportComponent
         if (typeof searchData.pageSize === 'number') {
           this.showRows = searchData.pageSize;
         }
+        this.sortClause = searchData.sortField ?? null;
+        this.sortOrder = searchData.order ?? null;
         this.loadSearchDataIntoSearchForm();
       }
     }
@@ -127,6 +131,7 @@ export class CentralizedWastewaterDataReportComponent
     this.searchForm.addControl('cwf_status', new FormControl(''));
     this.searchForm.addControl('cwf_period_from', new FormControl(''));
     this.searchForm.addControl('cwf_period_to', new FormControl(''));
+    this.searchForm.addControl('latest_date', new FormControl(''));
   }
 
   protected load(
@@ -137,7 +142,13 @@ export class CentralizedWastewaterDataReportComponent
     params: Map<string, unknown>,
     extendedParams?: ExtendedSearchParam[]
   ): void {
-    const pagingParams = this.getPagingParams(first, pageSize, sortField, order, null);
+    const pagingParams = this.getPagingParams(
+      first,
+      pageSize,
+      this.sortClause ? this.sortClause : sortField,
+      this.sortOrder ? this.sortOrder : order,
+      null
+    );
     this.centralizedService
       .getWastewaterDataReport(pagingParams, params, extendedParams)
       .pipe(

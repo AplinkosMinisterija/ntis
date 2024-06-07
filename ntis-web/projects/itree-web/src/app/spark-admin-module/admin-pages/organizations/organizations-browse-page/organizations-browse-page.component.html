@@ -75,8 +75,8 @@
     [paginator]="data?.length > 0"
     [rowsPerPageOptions]="rowsPerPageOptions"
     [showFirstLastIcon]="false"
-    [sortField]="'org_name'"
-    [sortOrder]="1"
+    [sortField]="sortClause"
+    [sortOrder]="sortOrder"
     class="table-responsive"
     [rowHover]="true"
   >

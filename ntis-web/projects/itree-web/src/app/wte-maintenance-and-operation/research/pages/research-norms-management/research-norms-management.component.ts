@@ -73,6 +73,8 @@ export class ResearchNormsManagementComponent extends BaseBrowseForm<ResearchNor
   minDateTo: Date;
   minDateFrom: Date;
   destroy$: Subject<boolean> = new Subject();
+  sortClause: string;
+  sortOrder: number;
 
   cols: TableColumn[] = [
     { field: 'rn_research_type', export: true, visible: true, type: DATA_TYPE_STRING },
@@ -115,6 +117,8 @@ export class ResearchNormsManagementComponent extends BaseBrowseForm<ResearchNor
         if (typeof searchData.pageSize === 'number') {
           this.showRows = searchData.pageSize;
         }
+        this.sortClause = searchData.sortField ?? null;
+        this.sortOrder = searchData.order ?? null;
         this.loadSearchDataIntoSearchForm();
       }
     }
@@ -132,7 +136,13 @@ export class ResearchNormsManagementComponent extends BaseBrowseForm<ResearchNor
     params: Map<string, unknown>,
     extendedParams?: ExtendedSearchParam[]
   ): void {
-    const pagingParams = this.getPagingParams(first, pageSize, sortField, order, null);
+    const pagingParams = this.getPagingParams(
+      first,
+      pageSize,
+      this.sortClause ? this.sortClause : sortField,
+      this.sortOrder ? this.sortOrder : order,
+      null
+    );
     this.researchService
       .getResearchNormsList(pagingParams, params, extendedParams)
       .pipe(

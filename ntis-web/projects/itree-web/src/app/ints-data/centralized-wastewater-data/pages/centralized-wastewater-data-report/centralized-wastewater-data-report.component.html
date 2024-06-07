@@ -36,6 +36,12 @@
         formControlName="cwf_period_to"
         [placeholder]="translationsReference + '.cwf_period_to' | translate"
       ></spr-filter-input>
+      <spr-filter-input
+        filters
+        inputType="date"
+        formControlName="latest_date"
+        [placeholder]="translationsReference + '.latest_date' | translate"
+      ></spr-filter-input>
       <spr-button buttons class="spr-button-primary" type="button" (click)="navigateToAddressMappings()">
         {{ translationsReference + '.toMappings' | translate }}
       </spr-button>
@@ -54,6 +60,8 @@
     [rowsPerPageOptions]="rowsPerPageOptions"
     [showFirstLastIcon]="false"
     [rowHover]="true"
+    [sortField]="sortClause"
+    [sortOrder]="sortOrder"
   >
     <ng-template pTemplate="header" let-row let-index="rowIndex">
       <tr>

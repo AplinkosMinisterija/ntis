@@ -51,6 +51,8 @@ export class OrganizationsBrowsePageComponent extends BaseBrowseForm<SprOrganiza
   rowMenuItems: Record<string, MenuItem[]> = {};
   exportData: SprOrganizationsBrowseRow[] = [];
   paramsIsEmpty: boolean = false;
+  sortClause: string;
+  sortOrder: number;
 
   cols: TableColumn[] = [
     { field: 'org_id', export: true, visible: true, type: DATA_TYPE_STRING },
@@ -63,11 +65,7 @@ export class OrganizationsBrowsePageComponent extends BaseBrowseForm<SprOrganiza
   ];
   visibleColumns = this.cols.filter((res) => res.visible);
 
-  constructor(
-    protected override commonFormServices: CommonFormServices,
-    private adminService: AdminService,
-    private confirmationService: ConfirmationService
-  ) {
+  constructor(protected override commonFormServices: CommonFormServices, private adminService: AdminService) {
     super(commonFormServices);
     this.useExtendedSearchParams = true;
   }
@@ -79,6 +77,8 @@ export class OrganizationsBrowsePageComponent extends BaseBrowseForm<SprOrganiza
         if (typeof searchData.pageSize === 'number') {
           this.showRows = searchData.pageSize;
         }
+        this.sortClause = searchData.sortField ?? null;
+        this.sortOrder = searchData.order ?? null;
         this.loadSearchDataIntoSearchForm();
       }
     }
@@ -100,7 +100,13 @@ export class OrganizationsBrowsePageComponent extends BaseBrowseForm<SprOrganiza
     extendedParams?: ExtendedSearchParam[]
   ): void {
     this.paramsIsEmpty = params && extendedParams.length === 0;
-    const pagingParams = this.getPagingParams(first, pageSize, sortField, order, null);
+    const pagingParams = this.getPagingParams(
+      first,
+      pageSize,
+      this.sortClause ? this.sortClause : sortField,
+      this.sortOrder ? this.sortOrder : order,
+      null
+    );
     this.adminService
       .getOrganizationsList(pagingParams, params, extendedParams)
       .pipe(

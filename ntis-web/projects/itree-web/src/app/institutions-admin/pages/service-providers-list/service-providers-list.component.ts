@@ -64,6 +64,8 @@ export class ServiceProvidersListComponent extends BaseBrowseForm<ServiceProvide
   orgTypeSelection: SprListIdKeyValue[] = [];
   orgStatusSelection: SprListIdKeyValue[] = [];
   servicesSelection: SprListIdKeyValue[] = [];
+  sortClause: string;
+  sortOrder: number;
 
   cols: TableColumn[] = [
     { field: 'org_id', export: false, visible: false, type: DATA_TYPE_NUMBER },
@@ -110,6 +112,8 @@ export class ServiceProvidersListComponent extends BaseBrowseForm<ServiceProvide
         if (typeof searchData.pageSize === 'number') {
           this.showRows = searchData.pageSize;
         }
+        this.sortClause = searchData.sortField ?? null;
+        this.sortOrder = searchData.order ?? null;
         this.loadSearchDataIntoSearchForm();
       }
     }
@@ -143,7 +147,13 @@ export class ServiceProvidersListComponent extends BaseBrowseForm<ServiceProvide
     params: Map<string, unknown>,
     extendedParams?: ExtendedSearchParam[]
   ): void {
-    const pagingParams = this.getPagingParams(first, pageSize, sortField, order, null);
+    const pagingParams = this.getPagingParams(
+      first,
+      pageSize,
+      this.sortClause ? this.sortClause : sortField,
+      this.sortOrder ? this.sortOrder : order,
+      null
+    );
     const searchData = this.getSearchDataFromSession();
     this.adminService
       .getServiceProvidersList(pagingParams, params, extendedParams)

@@ -78,6 +78,8 @@ export class DisposalOrdersListPageComponent extends BaseBrowseForm<OrdersListBr
   minDate: Date;
   ord_id: number;
   ordStatus: string;
+  sortClause: string;
+  sortOrder: number;
 
   dialogForm = new FormGroup({
     ord_id: new FormControl({ disabled: true, hidden: true }),
@@ -125,6 +127,8 @@ export class DisposalOrdersListPageComponent extends BaseBrowseForm<OrdersListBr
         if (typeof searchData.pageSize === 'number') {
           this.showRows = searchData.pageSize;
         }
+        this.sortClause = searchData.sortField ?? null;
+        this.sortOrder = searchData.order ?? null;
         this.loadSearchDataIntoSearchForm();
       }
     }
@@ -147,7 +151,13 @@ export class DisposalOrdersListPageComponent extends BaseBrowseForm<OrdersListBr
     params: Map<string, unknown>,
     extendedParams?: ExtendedSearchParam[]
   ): void {
-    const pagingParams = this.getPagingParams(first, pageSize, sortField, order, null);
+    const pagingParams = this.getPagingParams(
+      first,
+      pageSize,
+      this.sortClause ? this.sortClause : sortField,
+      this.sortOrder ? this.sortOrder : order,
+      null
+    );
     this.techSuppService
       .getDisposalOrdersList(pagingParams, params, extendedParams)
       .pipe(
