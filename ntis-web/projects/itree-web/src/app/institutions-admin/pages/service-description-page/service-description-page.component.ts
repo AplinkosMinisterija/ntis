@@ -263,7 +263,9 @@ export class ServiceDescriptionPageComponent
         });
     } else {
       if (this.confirmDescription) {
-        value.ntisServiceDescription.srv_date_from = new Date();
+        value.ntisServiceDescription.srv_date_from = !value.ntisServiceDescription.srv_date_from
+          ? new Date()
+          : value.ntisServiceDescription.srv_date_from;
       } else {
         value.ntisServiceDescription.srv_date_from = null;
       }
