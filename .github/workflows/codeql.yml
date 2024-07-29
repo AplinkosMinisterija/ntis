@@ -57,6 +57,8 @@ jobs:
       with:
           distribution: 'temurin'
           java-version: '17'
+          cache: 'maven'
+          cache-dependency-path: 'ntis-api/pom.xml'
 
     - name: Install dependencies
       if: matrix.build-mode == 'manual' && matrix.language == 'java-kotlin'
