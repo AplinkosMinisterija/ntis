@@ -32,6 +32,8 @@ jobs:
           build-mode: manual
         - language: javascript-typescript
           build-mode: none
+    env:
+      MAVEN_ARGS: -Dhttps.protocols=TLSv1.2 -Daether.dependencyCollector.impl=bf
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
