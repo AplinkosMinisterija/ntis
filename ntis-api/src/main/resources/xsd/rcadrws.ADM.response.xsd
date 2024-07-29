@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:element name="ADMINISTRACINIAI">
+  <xs:complexType>
+    <xs:sequence>
+      <xs:element type="ADMINISTRACINIS" name="ADMINISTRACINIS" maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  </xs:element>
+  
+  <xs:complexType name="ADMINISTRACINIS">
+    <xs:sequence>
+      <xs:element type="xs:string" name="ADM_KODAS"/>
+      <xs:element type="xs:string" name="ADM_ID"/>
+      <xs:element type="xs:string" name="TIPAS"/>
+      <xs:element type="xs:string" name="TIPO_SANTRUMPA"/>
+      <xs:element type="xs:string" name="VARDAS_K"/>
+      <xs:element type="xs:string" name="VARDAS_K_LOT"/>
+      <xs:element type="xs:string" name="PRIKLAUSO_KODAS"/>
+      <xs:element type="xs:string" name="GYV_KODAS"/>
+      <xs:element type="xs:string" name="NUO"/>
+      <xs:element type="xs:string" name="IKI"/>
+      <xs:element type="xs:string" name="ADM_NUO"/>
+      <xs:element type="xs:string" name="ADM_IKI"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+
+<!--
+  VIRC paslaugos asm_reg (ActionType=40) XSD failas
+  @version V.1910-28
+-->
+
+<xs:element name="ASMENS_REGISTRAI">
+  <xs:complexType mixed="true">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <!--xs:element ref="PARAMETRAI"      minOccurs="1" maxOccurs="1" /-->
+      <xs:element ref="ASMUO"                minOccurs="1" maxOccurs="1" />
+      <xs:element ref="DEBUG"                minOccurs="0" maxOccurs="1" />
+      <xs:element ref="REGISTRAI"             minOccurs="1" maxOccurs="1" />
+      <xs:element ref="SISTEMOS_INFORMACIJA" minOccurs="1" maxOccurs="1" />
+    </xs:choice>
+  </xs:complexType>
+</xs:element>
+
+
+<xs:element name="KLAIDA" type="xs:string">
+  <xs:annotation><xs:documentation>Klaidos atveju - klaidos pranešimas</xs:documentation></xs:annotation>
+</xs:element>
+
+
+<xs:element name="DEBUG" type="xs:string">
+    <xs:annotation><xs:documentation>pagalbinė techninė informacija</xs:documentation></xs:annotation>
+</xs:element>
+
+
+<!-- **************************************************************************** -->
+<!-- ********************************* ASMUO ************************************ -->
+<!-- **************************************************************************** -->
+<xs:element name="ASMUO">
+  <xs:complexType mixed="true">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="PAVARDE"      minOccurs="0" maxOccurs="1" type="xs:string" />
+      <xs:element name="VARDAS"       minOccurs="1" maxOccurs="1" type="xs:string" />
+      <xs:element name="PAVADINIMAS"  minOccurs="1" maxOccurs="1" type="xs:string" />
+      <xs:element name="KODAS"        minOccurs="0" maxOccurs="1" type="xs:string" />
+      <xs:element name="ADRESAS"      minOccurs="0" maxOccurs="1" type="xs:string" />
+    </xs:choice>
+
+    <xs:attribute name="asm_id"         type="xs:integer" use="required">
+        <xs:annotation><xs:documentation>asmens identifikatorius [ntr311.asmenys.asm_id]</xs:documentation></xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="tipas"         type="xs:integer" use="required">
+        <xs:annotation><xs:documentation>asmens tipo identifikatorius [ntr311.asmenys.asmt_tipas]</xs:documentation></xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="buvo_pakeitimu" type="xs:integer" use="optional">
+      <xs:annotation><xs:documentation>požymis ar asmens duomenyse buvo paketimų</xs:documentation></xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="kodas"         type="xs:string" use="optional">
+        <xs:annotation><xs:documentation>asmens kodas</xs:documentation></xs:annotation>
+    </xs:attribute>
+
+
+    <xs:attribute name="datos_pav"         type="xs:string" use="optional">
+        <xs:annotation><xs:documentation>asmens gimimo datos lauko pavadinimas</xs:documentation></xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="datos_pav_en"         type="xs:string" use="optional">
+        <xs:annotation><xs:documentation>asmens gimimo datos lauko pavadinimas anglų kalba</xs:documentation></xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="data"         type="xs:string" use="optional">
+        <xs:annotation><xs:documentation>asmens gimimo data (tiksli / netiksli)</xs:documentation></xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="ivede"         type="xs:string" use="optional">
+        <xs:annotation><xs:documentation>asmens informaciją įvedęs subjektas</xs:documentation></xs:annotation>
+    </xs:attribute>
+
+  </xs:complexType>
+</xs:element>
+
+
+<!-- **************************************************************************** -->
+<!-- ********************************* REGISTRAI ********************************* -->
+<!-- **************************************************************************** -->
+<xs:element name="REGISTRAI">
+  <xs:complexType mixed="true">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element ref="DEBUG" />
+      <xs:element ref="REGISTRAS" />
+    </xs:choice>
+  </xs:complexType>
+</xs:element>
+
+
+<xs:element name="REGISTRAS">
+  <xs:complexType mixed="true">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element ref="TIPAS"          minOccurs="0" maxOccurs="1" />
+      <xs:element ref="ADRESAS"        minOccurs="0" maxOccurs="1" />
+      <xs:element ref="TEISE"          minOccurs="1" maxOccurs="unbounded" />
+  </xs:choice>
+
+  <xs:attribute name="reg_nr"      type="xs:integer" use="required">
+    <xs:annotation><xs:documentation>registro numeris tarnyboje [ntr311.registrai.reg_nr]</xs:documentation></xs:annotation>
+  </xs:attribute>
+
+  <xs:attribute name="reg_tarn_nr" type="xs:integer" use="required">
+    <xs:annotation><xs:documentation>registravimo tarnybos numeris [ntr311.registrai.reg_tarn_nr]</xs:documentation></xs:annotation>
+  </xs:attribute>
+
+  </xs:complexType>
+</xs:element>
+
+
+<xs:element name="TIPAS">
+  <xs:annotation><xs:documentation>registro tipo pavadinimas [ntr311.registru_tipai.regt_pav_i]</xs:documentation></xs:annotation>
+
+  <xs:complexType mixed="true">
+
+    <xs:attribute name="regt_tipas" type="xs:integer" use="required">
+      <xs:annotation><xs:documentation>registro tipo identifikatorius [ntr311.registru_tipai.regt_tipas]</xs:documentation></xs:annotation>
+    </xs:attribute>
+
+  </xs:complexType>
+</xs:element>
+
+
+<xs:element name="ADRESAS" type="xs:string">
+  <xs:annotation><xs:documentation>Objekto adresas tekstine išraiška</xs:documentation></xs:annotation>
+</xs:element>
+
+
+<xs:element name="TEISE">
+  <xs:annotation><xs:documentation>teises tipo pavadinimas [ntr311.teisiu_tipai.teit_pav]</xs:documentation></xs:annotation>
+  <xs:complexType mixed="true">
+
+    <xs:attribute name="teit_tipas" type="xs:integer" use="required">
+        <xs:annotation><xs:documentation>teises tipo identifikatorius [ntr311.teisiu_tipai.teit_tipas]</xs:documentation></xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="akt"        type="xs:integer" use="optional">
+        <xs:annotation><xs:documentation>pozymis, ar rasta galiojanciu sio tipo teisiu: 1=taip</xs:documentation></xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="ist"        type="xs:integer" use="optional">
+        <xs:annotation><xs:documentation>pozymis, ar rasta istoriniu sio tipo teisiu: 1=taip</xs:documentation></xs:annotation>
+    </xs:attribute>
+
+  </xs:complexType>
+</xs:element>
+
+
+<!-- **************************************************************************** -->
+<!-- ********************************* SISTEMOS_INFORMACIJA ********************* -->
+<!-- **************************************************************************** -->
+<xs:element name="SISTEMOS_INFORMACIJA">
+  <xs:complexType mixed="true">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+
+      <xs:element name="VEI_ID" type="xs:integer">
+        <xs:annotation><xs:documentation>veiksmo identifikatorius audito sistemoje [vart.veiksmai.vei_id]</xs:documentation></xs:annotation>
+      </xs:element>
+
+      <xs:element name="DATA" type="xs:string">
+        <xs:annotation><xs:documentation>Duomenų paketo suformavimo data</xs:documentation></xs:annotation>
+      </xs:element>
+
+      <xs:element name="TRUKME" type="xs:string">
+        <xs:annotation><xs:documentation>Duomenų paketo suformavimo trukmė, sek</xs:documentation></xs:annotation>
+      </xs:element>
+
+      <xs:element name="DB" type="xs:string">
+        <xs:annotation><xs:documentation>DB (aplinkos) vardas</xs:documentation></xs:annotation>
+      </xs:element>
+
+      <xs:element ref="VARTOTOJAS"      minOccurs="1" maxOccurs="1" />
+
+      <xs:element ref="SALYGOS"         minOccurs="1" maxOccurs="1" />
+
+      <xs:element ref="IRASAI"          minOccurs="1" maxOccurs="1" />
+
+    </xs:choice>
+  </xs:complexType>
+</xs:element>
+
+
+<xs:element name="VARTOTOJAS">
+  <xs:complexType mixed="true">
+    <xs:sequence>
+
+      <xs:element name="DB" type="xs:string" minOccurs="1" maxOccurs="1">
+        <xs:annotation><xs:documentation>DB (aplinkos) vardas</xs:documentation></xs:annotation>
+      </xs:element>
+
+      <xs:element name="VAR_PAV"      type="xs:string" minOccurs="1" maxOccurs="1">
+        <xs:annotation><xs:documentation>vartotojo vardo pirma raidė + pavardė</xs:documentation></xs:annotation>
+      </xs:element>
+
+      <xs:element name="VAR_PAVARDE"  type="xs:string" minOccurs="1" maxOccurs="1" >
+        <xs:annotation><xs:documentation>vartotojo pavardė</xs:documentation></xs:annotation>
+      </xs:element>
+
+      <xs:element name="VAR_VARDAS"   type="xs:string" minOccurs="1" maxOccurs="1">
+        <xs:annotation><xs:documentation>vartotojo vardas</xs:documentation></xs:annotation>
+      </xs:element>
+
+    </xs:sequence>
+  </xs:complexType>
+</xs:element>
+
+
+<xs:element name="SALYGOS">
+  <xs:complexType mixed="true">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element ref="SALYGA" />
+    </xs:choice>
+  </xs:complexType>
+</xs:element>
+
+
+<xs:element name="SALYGA">
+  <xs:complexType mixed="true">
+    <xs:sequence>
+
+      <xs:element name="REIKSME"      type="xs:string" minOccurs="1" maxOccurs="1">
+        <xs:annotation><xs:documentation>sąlygos reikšmė, gauta kliento užklausoje</xs:documentation></xs:annotation>
+      </xs:element>
+
+      <xs:element name="PAVADINIMAS"  type="xs:string" minOccurs="0" maxOccurs="1">
+        <xs:annotation><xs:documentation>sąlygos pavadinimas "žmonių kalba"</xs:documentation></xs:annotation>
+      </xs:element>
+
+      <xs:element name="APRASYMAS"    type="xs:string" minOccurs="0" maxOccurs="1">
+        <xs:annotation><xs:documentation>sąlygos reikšmė "žmonų kalba"</xs:documentation></xs:annotation>
+      </xs:element>
+
+    </xs:sequence>
+
+    <xs:attribute name="kodas" type="xs:string">
+      <xs:annotation><xs:documentation>elemento kodas</xs:documentation></xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="nr"    type="xs:integer">
+      <xs:annotation><xs:documentation>elemento eilės numeris</xs:documentation></xs:annotation>
+    </xs:attribute>
+
+  </xs:complexType>
+</xs:element>
+
+
+<xs:element name="IRASAI">
+  <xs:annotation><xs:documentation>teikiamų įrašų skaičius</xs:documentation></xs:annotation>
+  <xs:complexType mixed="true">
+
+    <xs:attribute name="sk"         type="xs:integer" use="required">
+      <xs:annotation><xs:documentation>teikiamų įrašų sk.</xs:documentation></xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="nuo"        type="xs:integer" use="optional">
+      <xs:annotation><xs:documentation>teikiamų įrašų sk. nuo</xs:documentation></xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="iki"        type="xs:integer" use="optional">
+      <xs:annotation><xs:documentation>teikiamų įrašų sk. iki</xs:documentation></xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="viso"       type="xs:integer" use="required">
+      <xs:annotation><xs:documentation>bendras rastų įrašų skaičius</xs:documentation></xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="limitas"    type="xs:integer" use="required">
+      <xs:annotation><xs:documentation>maksimalus leidžiamas teiktinų įrašų skaičius</xs:documentation></xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="pusl_nr"    type="xs:integer" use="required">
+      <xs:annotation><xs:documentation>rezultatų puslapio numeris</xs:documentation></xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="pusl_ilgis" type="xs:integer" use="required">
+      <xs:annotation><xs:documentation>rezultatų puslapio ilgis</xs:documentation></xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="yra_daugiau"  type="xs:integer" use="optional">
+      <xs:annotation><xs:documentation>požymis, ar yra daugiau rezultatų</xs:documentation></xs:annotation>
+    </xs:attribute>
+
+  </xs:complexType>
+</xs:element>
+
+
+</xs:schema>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+						http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+						http://www.springframework.org/schema/mvc
+						http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+						http://www.springframework.org/schema/context
+						http://www.springframework.org/schema/context/spring-context-4.3.xsd
+						http://www.springframework.org/schema/aop
+						http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+						http://www.springframework.org/schema/tx
+						http://www.springframework.org/schema/tx/spring-tx-4.3.xsd
+						http://www.springframework.org/schema/security
+						http://www.springframework.org/schema/security/spring-security-4.2.xsd">
+
+
+	<bean id="isenseRestConfig"
+		class="eu.itreegroup.s2.auth.isense.AuthServiceRestConfig">
+		<property name="activeProfile"
+			value="${spring.profiles.active:prod}" />
+		<property name="isenseUrl" value="${isense.url}" />
+		<property name="isenseUsername" value="${isense.username}" />
+		<property name="isensePassword" value="${isense.password}" />
+		<property name="isenseClientId" value="${isense.clientId}" />
+	</bean>
+
+	<bean id="isenseRestTemplate"
+		class="eu.itreegroup.s2.auth.isense.IsenseHttpRestTemplate">
+		<property name="config" ref="isenseRestConfig" />
+	</bean>
+
+
+	<bean id="isenseConfig"
+		class="eu.itreegroup.s2.auth.isense.AuthServiceConfig">
+		<property name="localeName"
+			value="${isense.identificationLocaleName}" />
+		<property name="callbackAsyncEnabled"
+			value="${isense.identificationCallbackAsyncEnabled}" />
+		<property name="defaultCountryName"
+			value="${isense.identificationDefaultCountryName}" />
+		<property name="message"
+			value="${isense.identificationMessage}" />
+	</bean>
+
+	<bean id="isenseAuthClient"
+		class="eu.itreegroup.s2.auth.isense.IsenseAuthClientImpl">
+		<property name="config" ref="isenseConfig" />
+		<property name="restTemplate" ref="isenseRestTemplate" />
+	</bean>
+
+</beans>

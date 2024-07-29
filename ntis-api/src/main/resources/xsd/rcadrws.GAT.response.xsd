@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:element name="GATVES">
+  <xs:complexType>
+    <xs:sequence>
+      <xs:element type="GATVE" name="GATVE" maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  </xs:element>
+  
+  <xs:complexType name="GATVE">
+    <xs:sequence>
+      <xs:element type="xs:string" name="GAT_KODAS"/>
+      <xs:element type="xs:string" name="GAT_ID"/>
+      <xs:element type="xs:string" name="TIPAS"/>
+      <xs:element type="xs:string" name="TIPO_SANTRUMPA"/>
+      <xs:element type="xs:string" name="VARDAS_K"/>
+      <xs:element type="xs:string" name="VARDAS_K_LOT"/>
+      <xs:element type="xs:string" name="GYV_KODAS"/>
+      <xs:element type="xs:string" name="NUO"/>
+      <xs:element type="xs:string" name="IKI"/>
+      <xs:element type="xs:string" name="GAT_NUO"/>
+      <xs:element type="xs:string" name="GAT_IKI"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

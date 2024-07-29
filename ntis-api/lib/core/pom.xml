@@ -1,0 +1,184 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>eu.itreegroup.spark</groupId>
+	<artifactId>core</artifactId>
+	<version>1.9.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<name>Spark core parent POM</name>
+
+	<repositories>
+		<repository>
+			<id>itree-reposilite</id>
+			<name>iTree Reposilite</name>
+			<url>https://angular-build.itreegroup.eu/reposilite/releases</url>
+		</repository>
+		<repository>
+			<id>itree-reposilite-snapshots</id>
+			<name>iTree Reposilite snapshots</name>
+			<url>https://angular-build.itreegroup.eu/reposilite/snapshots</url>
+		</repository>
+	</repositories>
+
+	<distributionManagement>
+		<repository>
+			<id>itree-reposilite</id>
+			<url>https://angular-build.itreegroup.eu/reposilite/releases</url>
+		</repository>
+		<snapshotRepository>
+			<id>itree-reposilite</id>
+			<url>https://angular-build.itreegroup.eu/reposilite/snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
+
+	<properties>
+		<revision>1.9.0-SNAPSHOT</revision>
+		<jdk.version>17</jdk.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<springframework.version>6.1.0</springframework.version>
+		<springsecurity.version>6.1.5</springsecurity.version>
+		<jackson.version>2.13.3</jackson.version>
+		<log4j.version>2.19.0</log4j.version>
+	</properties>
+	
+	<modules>
+	    <module>s2-rest-api</module>
+	    <module>spark-middlelayer-api</module>
+	    <module>spark-dao-gen</module>
+	    <module>spark-commons</module>
+	</modules>
+
+
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>3.8.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>jakarta.servlet</groupId>
+		    <artifactId>jakarta.servlet-api</artifactId>
+		    <version>6.0.0</version>
+		    <scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.annotation</groupId>
+			<artifactId>javax.annotation-api</artifactId>
+			<version>1.3.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>${springframework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>${springframework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>${springframework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-core</artifactId>
+			<version>${springsecurity.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-web</artifactId>
+			<version>${springsecurity.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-config</artifactId>
+			<version>${springsecurity.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+			<version>${springframework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+			<version>${springframework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>${springframework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context-support</artifactId>
+			<version>${springframework.version}</version>
+		</dependency>
+
+       <dependency>
+           <groupId>org.springframework</groupId>
+           <artifactId>spring-websocket</artifactId>
+           <version>${springframework.version}</version>
+       </dependency>
+       <dependency>
+           <groupId>org.springframework</groupId>
+           <artifactId>spring-messaging</artifactId>
+           <version>${springframework.version}</version>
+        </dependency>
+
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-api</artifactId>
+			<version>${log4j.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>${log4j.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-slf4j-impl</artifactId>
+			<version>${log4j.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.7.36</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-1.2-api</artifactId>
+			<version>${log4j.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>s2.binder</groupId>
+			<artifactId>s2-bind-kernel</artifactId>
+			<version>1.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>s2.binder</groupId>
+			<artifactId>s2-bind-plsql</artifactId>
+			<version>1.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>s2.binder</groupId>
+			<artifactId>javassist</artifactId>
+			<version>1.0</version>
+		</dependency>
+
+
+	</dependencies>
+
+
+</project>

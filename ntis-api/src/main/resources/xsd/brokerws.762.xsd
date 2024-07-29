@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+	xmlns:bdbrresp="https://www.registrucentras.lt/bdbrokerresponse"
+	elementFormDefault="qualified"
+	targetNamespace="https://www.registrucentras.lt/bdbrokerresponse"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<xs:element name="getResultResponse">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="status"
+					type="bdbrresp:RequestStatus_Type" />
+				<xs:element name="transaction_id" type="xs:string" />
+				<xs:element name="message" type="xs:string" minOccurs="0" />
+				<xs:element name="records" type="xs:long" minOccurs="0" />
+				<xs:element name="data" type="xs:base64Binary"
+					minOccurs="0" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:simpleType name="RequestStatus_Type">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="CREATED">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">A request receiced and
+						registered for processing</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="PROCESSING">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">A request is processing
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="COMPLETED">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">Request succsessfully
+						completed</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="ERROR">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">Error occured
+						processing request</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+
+</xs:schema>	

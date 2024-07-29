@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:security="http://www.springframework.org/schema/security" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+						http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+						http://www.springframework.org/schema/mvc
+						http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+						http://www.springframework.org/schema/context
+						http://www.springframework.org/schema/context/spring-context-4.3.xsd
+						http://www.springframework.org/schema/aop
+						http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+						http://www.springframework.org/schema/tx
+						http://www.springframework.org/schema/tx/spring-tx-4.3.xsd
+						http://www.springframework.org/schema/security
+						http://www.springframework.org/schema/security/spring-security-4.2.xsd
+						http://www.springframework.org/schema/util
+						http://www.springframework.org/schema/util/spring-util-4.3.xsd">
+
+	<util:list id="viispAuthAttributes" value-type="lt.atea.vaiisis.authentication.model.xml.AuthenticationAttribute">
+		<value>LT_PERSONAL_CODE</value>
+		<value>LT_COMPANY_CODE</value>
+		<value>EIDAS_EID</value>
+	</util:list>
+
+	<util:list id="viispAuthProviders" value-type="lt.atea.vaiisis.authentication.model.xml.AuthenticationProviderXml">
+		<value>AUTH_PROVIDER_LT_IDENTITY_CARD</value>
+		<value>AUTH_PROVIDER_LT_BANK</value>
+		<value>AUTH_PROVIDER_SIGNATURE</value>
+		<value>AUTH_PROVIDER_EIDAS</value>
+	</util:list>
+	
+	
+	
+	<bean id="viispAuthRequestGenerator" lazy-init="true" class="eu.itreegroup.s2.auth.viisp.ViispAuthRequestGenerator">
+		<property name="config" ref="viispConfig" />
+		<property name="authenticationAttributes" ref="viispAuthAttributes" />
+		<property name="authenticationProviders" ref="viispAuthProviders" />
+	</bean>
+
+	<bean id="viispAuthDataRequestGenerator" lazy-init="true" class="eu.itreegroup.s2.auth.viisp.ViispAuthDataRequestGenerator">
+		<property name="config" ref="viispConfig" />
+	</bean>
+
+	<bean id="viispAuthClient" lazy-init="true" class="eu.itreegroup.s2.auth.viisp.ViispAuthClientImplV2">
+		<property name="authRequestGenerator" ref="viispAuthRequestGenerator" />
+		<property name="authDataRequestGenerator" ref="viispAuthDataRequestGenerator" />
+	</bean>
+	
+	
+
+</beans>

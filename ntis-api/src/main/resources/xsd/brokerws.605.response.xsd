@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:element name="personDetailInformation">
+  <xs:complexType>
+    <xs:sequence>
+      <xs:element name="ats_adr_butas" type="xs:string" minOccurs="0"/>
+      <xs:element name="ats_adr_data_iki" type="xs:string" minOccurs="0"/>
+      <xs:element name="ats_adr_data_nuo" type="xs:string" minOccurs="0"/>
+      <xs:element name="ats_adr_dekl" type="xs:string" minOccurs="0"/>
+      <xs:element name="ats_adr_eil" type="xs:string" minOccurs="0"/>
+      <xs:element name="ats_adr_gatve" type="xs:int"/>
+      <xs:element name="ats_adr_korp" type="xs:string" minOccurs="0"/>
+      <xs:element name="ats_adr_namas" type="xs:string" minOccurs="0"/>
+      <xs:element name="ats_adr_salis" type="xs:string" minOccurs="0"/>
+      <xs:element name="ats_adr_sodas" type="xs:string" minOccurs="0"/>
+      <xs:element name="ats_adr_ter" type="xs:int"/>
+      <xs:element name="ats_adr_tipas" type="xs:string" minOccurs="0"/>
+      <xs:element name="ats_asm_gim" type="xs:string" minOccurs="0"/>
+      <xs:element name="ats_asm_gim_vls" type="xs:string" minOccurs="0"/>
+      <xs:element name="ats_asm_kodas" type="xs:long"/>
+      <xs:element name="ats_asm_lytis" type="xs:string" minOccurs="0"/>
+      <xs:element name="ats_asm_pav" type="xs:string" minOccurs="0"/>
+      <xs:element name="ats_asm_vardas" type="xs:string" minOccurs="0"/>
+      <xs:element name="ats_dok_busena" type="xs:string" minOccurs="0"/>
+      <xs:element name="ats_dok_isd_data" type="xs:string" minOccurs="0"/>
+      <xs:element name="ats_dok_negal_nuo" type="xs:string" minOccurs="0"/>
+      <xs:element name="ats_dok_numeris" type="xs:string" minOccurs="0"/>
+      <xs:element name="ats_dok_tar_kodas" type="xs:string" minOccurs="0"/>
+      <xs:element name="ats_dok_tipas" type="xs:string" minOccurs="0"/>
+      <xs:element name="ats_gimviet" type="xs:string" minOccurs="0"/>
+      <xs:element name="ats_ist_data" type="xs:string" minOccurs="0"/>
+      <xs:element name="ats_klaidingas" type="xs:string" minOccurs="0"/>
+      <xs:element name="ats_koment" type="xs:string" minOccurs="0"/>
+      <xs:element name="ats_mires" type="xs:string" minOccurs="0"/>
+      <xs:element name="ats_mirt_akt_nr" type="xs:long"/>
+      <xs:element name="ats_mirt_fakt" type="xs:string" minOccurs="0"/>
+      <xs:element name="ats_mirt_mirtviet" type="xs:string" minOccurs="0"/>
+      <xs:element name="ats_mot_kod" type="xs:long"/>
+      <xs:element name="ats_nepiln_vaik_kod" type="xs:string" minOccurs="0"/>
+      <xs:element name="ats_nuotrauka" type="xs:string" minOccurs="0"/>
+      <xs:element name="ats_parasas" type="xs:string" minOccurs="0"/>
+      <xs:element name="ats_pil" type="xs:string" minOccurs="0"/>
+      <xs:element name="ats_pilietybe_galioja_nuo" type="xs:string" minOccurs="0"/>
+      <xs:element name="ats_piln_vaik_kod" type="xs:string" minOccurs="0"/>
+      <xs:element name="ats_piln_vaik_sk" type="xs:int"/>
+      <xs:element name="ats_sut_asm_kodas" type="xs:long"/>
+      <xs:element name="ats_sut_busena" type="xs:string" minOccurs="0"/>
+      <xs:element name="ats_sut_data" type="xs:string" minOccurs="0"/>
+      <xs:element name="ats_sut_gimdate" type="xs:string" minOccurs="0"/>
+      <xs:element name="ats_sut_pavarde" type="xs:string" minOccurs="0"/>
+      <xs:element name="ats_sut_vardas" type="xs:string" minOccurs="0"/>
+      <xs:element name="ats_tev_kod" type="xs:long"/>
+      <xs:element name="ats_vaik_sk" type="xs:int"/>
+      <xs:element name="errorCode" type="xs:string" minOccurs="0"/>
+      <xs:element name="errorMessage" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  </xs:element>
+  
+</xs:schema>
+

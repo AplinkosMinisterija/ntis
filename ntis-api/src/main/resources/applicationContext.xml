@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:security="http://www.springframework.org/schema/security" xmlns:cache="http://www.springframework.org/schema/cache"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:websocket="http://www.springframework.org/schema/websocket"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+						http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+						http://www.springframework.org/schema/mvc
+						http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+						http://www.springframework.org/schema/context
+						http://www.springframework.org/schema/context/spring-context-4.3.xsd
+						http://www.springframework.org/schema/aop
+						http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+						http://www.springframework.org/schema/tx
+						http://www.springframework.org/schema/tx/spring-tx-4.3.xsd
+						http://www.springframework.org/schema/security
+						http://www.springframework.org/schema/security/spring-security-6.1.xsd
+						http://www.springframework.org/schema/task
+						http://www.springframework.org/schema/task/spring-task.xsd
+						http://www.springframework.org/schema/cache
+                        http://www.springframework.org/schema/cache/spring-cache.xsd
+                        http://www.springframework.org/schema/websocket
+        				https://www.springframework.org/schema/websocket/spring-websocket.xsd">
+	<context:component-scan
+		base-package="eu.itreegroup.spark.modules.admin;
+		              eu.itreegroup.spark.modules.common;
+		              eu.itreegroup.spark.dao;
+		              eu.itreegroup.spark.app;
+		              eu.itreegroup.s2.server.service;
+		              lt.project.ntis.service;
+		              lt.project.ntis.logic.forms;
+		              lt.project.ntis.rest;
+		              lt.project.ntis.app.job;
+		              lt.project.tx;
+		              lt.project.common;
+		              lt.project.service;
+		              lt.project.ntis.job;
+		              lt.project.rest;
+		              lt.project.rest.controller;">
+	</context:component-scan>
+
+	<task:annotation-driven />
+
+	<task:scheduler id="iTreeScheduler" pool-size="1" />
+
+	<task:scheduled-tasks scheduler="iTreeScheduler">
+   	    <task:scheduled ref="iTreeSchedulerJob" method="execute" fixed-rate="${itreeScheduler.schedulerJob.rate}" />
+        <task:scheduled ref="iTreeExecutorJob"  method="execute" fixed-rate="${itreeScheduler.executorJob.rate}" />
+    </task:scheduled-tasks>
+
+	 <bean id="iTreeSchedulerJob" class="eu.itreegroup.spark.app.scheduler.SchedulerJob">
+		<property name="schedulerJobEnabled" value="${itreeScheduler.schedulerJob.enabled:true}"></property>
+		<property name="scheduleDataSource" ref="ntisBackendSchedulerDataSource"></property>
+		<property name="executorName" value="${itreeScheduler.schedulerJob.executorName:null}"></property>
+	</bean>
+
+	 <bean id="iTreeExecutorJob" class="eu.itreegroup.spark.app.scheduler.ExecutorJob" primary="true">
+		<property name="executorJobEnabled" value="${itreeScheduler.executorJob.enabled:true}"></property>
+		<property name="scheduleDataSource" ref="ntisBackendSchedulerDataSource"></property>
+	    <property name="executorName" value="${itreeScheduler.executorJob.executorName:null}"></property>
+	</bean>
+
+	<task:scheduler id="iTreeRcScheduler" pool-size="1" />
+
+	<task:scheduled-tasks scheduler="iTreeRcScheduler">
+        <task:scheduled ref="iTreeRcExecutorJob"  method="execute" fixed-rate="${itreeRcScheduler.executorJob.rate}" />
+    </task:scheduled-tasks>
+
+	<bean id="iTreeRcExecutorJob" class="eu.itreegroup.spark.app.scheduler.ExecutorJob">
+		<property name="executorJobEnabled" value="${itreeRcScheduler.executorJob.enabled:true}"></property>
+		<property name="scheduleDataSource" ref="ntisBackendSchedulerDataSource"></property>
+	    <property name="jobName" value="${itreeRcScheduler.executorJob.jobName:null}"></property>
+	</bean>
+
+
+	<bean id="requestContext"
+		class="eu.itreegroup.s2.server.rest.S2RestRequestContext"
+		scope="request" destroy-method="onDestroy">
+		<aop:scoped-proxy />
+	</bean>
+
+	
+    
+    
+ 
+	
+
+	<bean id="sprExternalAuthorization" class="lt.project.ntis.app.SprExternalNtisAuthorization" />
+
+	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		<property name="host" value="${mail.host}" />
+		<property name="port" value="${mail.port}" />
+		<property name="username" value="${mail.username}" />
+		<property name="password" value="${mail.password}" />
+		<property name="javaMailProperties">
+			<props>
+				<prop key="mail.transport.protocol">smtp</prop>
+				<prop key="mail.smtp.auth">true</prop>
+				<prop key="mail.smtp.starttls.enable">true</prop>
+				<prop key="mail.debug">true</prop>
+			</props>
+		</property>
+	</bean>
+
+
+	<bean id="multipartResolver" class="org.springframework.web.multipart.support.StandardServletMultipartResolver">
+		<!-- one of the properties available; the maximum file size in bytes -->
+		<!-- property name="maxUploadSize" value="${fileUplaod.maxFileSize}" /-->
+	</bean>
+
+	<bean id="filesStorage" class="eu.itreegroup.spark.app.storage.impl.FileStorageServiceImpl" />
+	<bean id="passwordManager" class="eu.itreegroup.spark.app.password.PasswordManagerServiceImpl" />
+	<bean id="sprJasperReport" class="eu.itreegroup.spark.app.jasper.impl.SprJasperReportServiceImpl" >
+        <property name="jasperPath" value="${jasper.path}" />
+    </bean>
+
+	
+	<websocket:message-broker application-destination-prefix="/spr">
+		<websocket:stomp-endpoint path="spr-stomp-endpoint" allowed-origins="${app.host}">
+			<websocket:sockjs />
+		</websocket:stomp-endpoint>
+		<websocket:simple-broker prefix="/message" />
+	</websocket:message-broker>
+
+	<bean id="jaxbContext40" scope="singleton" class="jakarta.xml.bind.JAXBContext" factory-method="newInstance">
+		<constructor-arg><value type="java.lang.Class">lt.project.ntis.brokerws.ntr40.ASMENSREGISTRAI</value></constructor-arg>
+	</bean>
+	<bean id="jaxbContext4020" scope="singleton" class="jakarta.xml.bind.JAXBContext" factory-method="newInstance">
+		<constructor-arg><value type="java.lang.Class">lt.project.ntis.brokerws.jar4020.OBJEKTAI</value></constructor-arg>
+	</bean>
+	<bean id="jaxbContext46" scope="singleton" class="jakarta.xml.bind.JAXBContext" factory-method="newInstance">
+		<constructor-arg><value type="java.lang.Class">lt.project.ntis.brokerws.jar46.PAIESKA</value></constructor-arg>
+	</bean>
+	<bean id="jaxbContext47" scope="singleton" class="jakarta.xml.bind.JAXBContext" factory-method="newInstance">
+		<constructor-arg><value type="java.lang.Class">lt.project.ntis.brokerws.jar47.PAIESKA</value></constructor-arg>
+	</bean>
+	<bean id="jaxbContext48" scope="singleton" class="jakarta.xml.bind.JAXBContext" factory-method="newInstance">
+		<constructor-arg><value type="java.lang.Class">lt.project.ntis.brokerws.jar48.PAIESKA</value></constructor-arg>
+	</bean>
+	<bean id="jaxbContext605" scope="singleton" class="jakarta.xml.bind.JAXBContext" factory-method="newInstance">
+		<constructor-arg><value type="java.lang.Class">lt.project.ntis.brokerws.gr605.PersonDetailInformation</value></constructor-arg>
+	</bean>
+	<bean id="jaxbContext95" scope="singleton" class="jakarta.xml.bind.JAXBContext" factory-method="newInstance">
+		<constructor-arg><value type="java.lang.Class">lt.project.ntis.brokerws.ntr95.REGISTRAS</value></constructor-arg>
+	</bean>
+	<bean id="jaxbContext761ws" scope="singleton" class="jakarta.xml.bind.JAXBContext" factory-method="newInstance">
+		<constructor-arg><value type="java.lang.Class">lt.project.ntis.brokerws.ntr761ws.ObjectFactory</value></constructor-arg>
+	</bean>	
+	<bean id="jaxbContext762" scope="singleton" class="jakarta.xml.bind.JAXBContext" factory-method="newInstance">
+		<constructor-arg><value type="java.lang.Class">lt.project.ntis.brokerws.ntr762.ObjectFactory</value></constructor-arg>
+	</bean>	
+	<bean id="jaxbContext762ws" scope="singleton" class="jakarta.xml.bind.JAXBContext" factory-method="newInstance">
+		<constructor-arg><value type="java.lang.Class">lt.project.ntis.brokerws.ntr762ws.ObjectFactory</value></constructor-arg>
+	</bean>	
+	
+	<bean id="jaxbContextAdm" scope="singleton" class="jakarta.xml.bind.JAXBContext" factory-method="newInstance">
+		<constructor-arg><value type="java.lang.Class">lt.project.ntis.rcadrws.adm.ObjectFactory</value></constructor-arg>
+	</bean>	
+	<bean id="jaxbContextGyv" scope="singleton" class="jakarta.xml.bind.JAXBContext" factory-method="newInstance">
+		<constructor-arg><value type="java.lang.Class">lt.project.ntis.rcadrws.gyv.ObjectFactory</value></constructor-arg>
+	</bean>	
+	<bean id="jaxbContextGat" scope="singleton" class="jakarta.xml.bind.JAXBContext" factory-method="newInstance">
+		<constructor-arg><value type="java.lang.Class">lt.project.ntis.rcadrws.gat.ObjectFactory</value></constructor-arg>
+	</bean>	
+	<bean id="jaxbContextAdrxy" scope="singleton" class="jakarta.xml.bind.JAXBContext" factory-method="newInstance">
+		<constructor-arg><value type="java.lang.Class">lt.project.ntis.rcadrws.adrxy.ObjectFactory</value></constructor-arg>
+	</bean>	
+	<bean id="jaxbContextPat" scope="singleton" class="jakarta.xml.bind.JAXBContext" factory-method="newInstance">
+		<constructor-arg><value type="java.lang.Class">lt.project.ntis.rcadrws.pat.ObjectFactory</value></constructor-arg>
+	</bean>	
+		
+</beans>

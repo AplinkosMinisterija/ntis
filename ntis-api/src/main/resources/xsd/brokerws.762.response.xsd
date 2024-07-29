@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified"
+	elementFormDefault="qualified"
+	targetNamespace="http://developer.cognos.com/schemas/xmldata/1/"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<xs:element name="dataset"
+		xmlns:ns="http://developer.cognos.com/schemas/xmldata/1/">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element type="ns:metadataType" name="metadata"
+					xmlns:ns="http://developer.cognos.com/schemas/xmldata/1/">
+				</xs:element>
+				<xs:element type="ns:dataType" name="data"
+					xmlns:ns="http://developer.cognos.com/schemas/xmldata/1/" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+
+	<xs:complexType name="metadataType">
+		<xs:sequence>
+			<xs:element type="ns:itemType" name="item"
+				maxOccurs="unbounded" minOccurs="1"
+				xmlns:ns="http://developer.cognos.com/schemas/xmldata/1/" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="itemType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute type="xs:string" name="name"
+					use="optional" />
+				<xs:attribute type="xs:QName" name="type"
+					use="optional" />
+				<xs:attribute type="xs:int" name="length"
+					use="optional" />
+				<xs:attribute type="xs:byte" name="precision"
+					use="optional" />
+				<xs:attribute type="xs:byte" name="scale"
+					use="optional" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+
+	<xs:complexType name="dataType">
+		<xs:sequence>
+			<xs:element type="ns:rowType" name="row"
+				maxOccurs="unbounded" minOccurs="1"
+				xmlns:ns="http://developer.cognos.com/schemas/xmldata/1/" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="rowType">
+		<xs:sequence>
+			<xs:element type="xs:string" name="value"
+				maxOccurs="unbounded" minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+
+</xs:schema>
