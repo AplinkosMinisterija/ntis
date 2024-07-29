@@ -28,9 +28,33 @@ jobs:
             ${{ runner.os }}-node-
 
       - name: Install dependencies
-        run:  npm ci
+        run: npm ci
         working-directory: ntis-web
 
       - name: Build
         run: npm run build itree-web
         working-directory: ntis-web
+
+  build-api:
+    name: Build API
+    runs-on: ubuntu-latest
+    container: maven:3-eclipse-temurin-17
+    permissions:
+      contents: read
+    timeout-minutes: 20
+    env:
+      MAVEN_ARGS: -Dhttps.protocols=TLSv1.2 -Daether.dependencyCollector.impl=bf
+    defaults:
+      run:
+        working-directory: ntis-api
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: sh local-s2-maven.cmd
+
+      - name: Package
+        run: mvn -B package -DskipTests
+
+      - run: ls -lah target
