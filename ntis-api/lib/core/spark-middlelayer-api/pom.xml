@@ -1,0 +1,108 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<parent>
+		<groupId>eu.itreegroup.spark</groupId>
+		<artifactId>core</artifactId>
+		<version>1.9.0-SNAPSHOT</version>
+	</parent>
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<artifactId>spark-middlelayer-api</artifactId>
+	<packaging>jar</packaging>
+
+	<name>spark-middlelayer-api</name>
+	<url>http://maven.apache.org</url>
+
+	<properties>
+		<spark.core.version>${revision}</spark.core.version>
+		<jasperreports.version>6.20.0</jasperreports.version>
+	</properties>
+
+	<dependencies>
+	
+
+		<dependency>
+			<groupId>eu.itreegroup.spark</groupId>
+			<artifactId>s2-rest-api</artifactId>
+			<version>${spark.core.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>eu.itreegroup.spark</groupId>
+			<artifactId>spark-dao-gen</artifactId>
+			<version>${spark.core.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>eu.itreegroup.s2.viisp</groupId>
+			<artifactId>viisp-services</artifactId>
+			<version>1.2.1</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.ehcache</groupId>
+			<artifactId>ehcache</artifactId>
+			<version>3.9.11</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>2.9.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+		    <version>20231013</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.api-client</groupId>
+			<artifactId>google-api-client</artifactId>
+			<version>1.35.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.velocity</groupId>
+			<artifactId>velocity-engine-core</artifactId>
+			<version>2.3</version>
+		</dependency>
+
+		<dependency>
+			<groupId>net.sf.jasperreports</groupId>
+			<artifactId>jasperreports-functions</artifactId>
+			<version>${jasperreports.version}</version>
+		</dependency>
+
+		<dependency>
+            <groupId>com.sun.mail</groupId>
+            <artifactId>jakarta.mail</artifactId>
+            <version>2.0.1</version>
+        </dependency>
+<!--		
+		<dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.5.4</version>
+        </dependency>
+-->	
+	</dependencies>
+
+	<build>
+		<finalName>spark-middlelayer-api</finalName>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.1</version>
+					<configuration>
+						<source>${jdk.version}</source>
+						<target>${jdk.version}</target>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+</project>

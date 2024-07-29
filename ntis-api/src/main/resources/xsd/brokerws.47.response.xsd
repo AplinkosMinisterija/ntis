@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:deltaxml="http://www.deltaxml.com/ns/well-formed-delta-v1" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="TEKSTINIAI_DUOMENYS">
+		<xs:complexType>
+			<xs:attribute name="TATR_KODAS" type="xs:int" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="OBJEKTAI">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="JA_FORMOS" minOccurs="0"/>
+				<xs:element ref="JA_STATUSAI" minOccurs="0"/>
+				<xs:element ref="JA_PAVADINIMAI" minOccurs="0"/>
+				<xs:element ref="JA_ADRESAI" minOccurs="0"/>
+				<xs:element ref="ISRASAI" minOccurs="0"/>
+				<xs:element ref="FAKTAI" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="JA_VEIKLOS" minOccurs="0"/>
+				<xs:element ref="TEKSTINIAI_DUOMENYS" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="FINANSINE_ATSKAITOMYBE" minOccurs="0"/>
+				<xs:element ref="OBJEKTU_ATRIBUTAI" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="VADOVAS" minOccurs="0"/>
+				<xs:element ref="DOKUMENTAI" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="OBJ_KODAS" type="xs:int" use="required"/>
+			<xs:attribute name="OBJ_REJESTRO_KODAS" type="xs:int"/>
+			<xs:attribute name="OBJ_PAV" type="xs:string" use="required"/>
+			<xs:attribute name="FORM_KODAS" type="xs:short" use="required"/>
+			<xs:attribute name="STAT_STATUSAS" type="xs:short" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="JA_VEIKLOS">
+		<xs:complexType/>
+	</xs:element>
+	<xs:element name="JA_STATUSAI">
+		<xs:complexType/>
+	</xs:element>
+	<xs:element name="JA_PAVADINIMAI">
+		<xs:complexType/>
+	</xs:element>
+	<xs:element name="JA_FORMOS">
+		<xs:complexType/>
+	</xs:element>
+	<xs:element name="JA_ADRESAI">
+		<xs:complexType/>
+	</xs:element>
+	<xs:element name="PAIESKA">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="PAIESKOS_KRITERIJAI"/>
+				<xs:element ref="OBJEKTAI" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ISRASAI">
+		<xs:complexType/>
+	</xs:element>
+	<xs:element name="FINANSINE_ATSKAITOMYBE">
+		<xs:complexType/>
+	</xs:element>
+	<xs:element name="FAKTAI">
+		<xs:complexType>
+			<xs:attribute name="FAKT_TIPAS" type="xs:int" use="required"/>
+			<xs:attribute name="FAKP_POTIPIS" type="xs:int" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="DOKUMENTAI">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="DOKUMENTAS" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="OBJEKTU_ATRIBUTAI">
+		<xs:complexType>
+			<xs:attribute name="ATRI_KODAS" type="xs:int" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="PAIESKOS_KRITERIJAI">
+		<xs:complexType>
+			<xs:attribute name="data" type="xs:string" use="required"/>
+			<xs:attribute name="pozymis" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:short">
+						<xs:enumeration value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="formavimo_laikas" type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="VADOVAS"/>
+	<xs:element name="DOKUMENTAS" type="xs:string"/>
+	<xs:element name="Nerasta" type="xs:string">
+          <xs:annotation><xs:documentation>Pranešimas kad įrašų nerasta</xs:documentation></xs:annotation>
+	</xs:element>
+	<xs:element name="KLAIDA" type="xs:string">
+          <xs:annotation><xs:documentation>Pranešimas apie klaidą</xs:documentation></xs:annotation>
+	</xs:element>
+</xs:schema>

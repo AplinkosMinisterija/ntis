@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+						http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+						http://www.springframework.org/schema/mvc
+						http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+						http://www.springframework.org/schema/context
+						http://www.springframework.org/schema/context/spring-context-4.3.xsd
+						http://www.springframework.org/schema/aop
+						http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+						http://www.springframework.org/schema/tx
+						http://www.springframework.org/schema/tx/spring-tx-4.3.xsd
+						http://www.springframework.org/schema/security
+						http://www.springframework.org/schema/security/spring-security-4.2.xsd">
+
+
+	<bean id="viispConfig" class="eu.itreegroup.s2.auth.viisp.AuthServiceConfigBaseImpl">
+		<property name="contractId" value="${viisp.auth.contract-id}" />
+		<property name="keyStoreFile" value="${viisp.auth.request-signing-keystore-path}" />
+		<property name="keyStorePassword" value="${viisp.auth.request-signing-keystore-password}" />
+		<property name="viispSignCertificateFile" value="${viisp.auth.certificate-path}" />
+		<property name="serviceEndpointUrl" value="${viisp.auth.service-endpoint-url}" />
+		<property name="loginUrl" value="${viisp.auth.login-url}" />
+		<property name="appSuccessUrl" value="${viisp.auth.app-success-url}" />
+		<property name="postbackUrl" value="${viisp.auth.postback-url}" />
+	</bean>
+
+</beans>

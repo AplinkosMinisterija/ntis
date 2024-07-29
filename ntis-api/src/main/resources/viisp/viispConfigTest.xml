@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans profile="test" xmlns="http://www.springframework.org/schema/beans"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+						http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+						http://www.springframework.org/schema/mvc
+						http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+						http://www.springframework.org/schema/context
+						http://www.springframework.org/schema/context/spring-context-4.3.xsd
+						http://www.springframework.org/schema/aop
+						http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+						http://www.springframework.org/schema/tx
+						http://www.springframework.org/schema/tx/spring-tx-4.3.xsd
+						http://www.springframework.org/schema/security
+						http://www.springframework.org/schema/security/spring-security-4.2.xsd">
+						
+						
+	<bean id="viispConfigTest" class="eu.itreegroup.s2.auth.viisp.AuthServiceConfigBaseImpl">
+		<property name="contractId" value="${viisp.test.auth.contract-id}" />
+		<property name="keyStoreFile" value="${viisp.test.auth.request-signing-keystore-path}" />
+		<property name="keyStorePassword" value="${viisp.test.auth.request-signing-keystore-password}" />
+		<property name="viispSignCertificateFile" value="${viisp.test.auth.certificate-path}" />
+		<property name="serviceEndpointUrl" value="${viisp.test.auth.service-endpoint-url}" />
+		<property name="loginUrl" value="${viisp.test.auth.login-url}" />
+		<property name="appSuccessUrl" value="${viisp.test.auth.app-success-url}" />
+		<property name="postbackUrl" value="${viisp.test.auth.postback-url}" />
+	</bean>
+	
+	<bean id="viispAuthRequestGeneratorTest" lazy-init="true" class="eu.itreegroup.s2.auth.viisp.ViispAuthRequestGenerator">
+		<property name="config" ref="viispConfigTest" />
+		<property name="authenticationAttributes" ref="viispAuthAttributes" />
+		<property name="authenticationProviders" ref="viispAuthProviders" />
+		<property name="ignoreResponseSignatureValidation" value="true" />
+	</bean>
+
+	<bean id="viispAuthDataRequestGeneratorTest" lazy-init="true" class="eu.itreegroup.s2.auth.viisp.ViispAuthDataRequestGenerator">
+		<property name="config" ref="viispConfigTest" />
+		<property name="ignoreResponseSignatureValidation" value="true" />
+	</bean>
+
+	<bean id="viispAuthClientTest" lazy-init="true" class="eu.itreegroup.s2.auth.viisp.ViispAuthClientImplV2">
+		<property name="authRequestGenerator" ref="viispAuthRequestGeneratorTest" />
+		<property name="authDataRequestGenerator" ref="viispAuthDataRequestGeneratorTest" />
+	</bean>
+
+</beans>

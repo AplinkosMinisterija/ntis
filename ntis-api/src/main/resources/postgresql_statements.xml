@@ -1,0 +1,596 @@
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <comment>This is a spark framework statements that can depends on db syntax</comment>
+    <entry key="roleList4User">
+		select r.rol_id as rol_id,
+		       r.rol_code as rol_code,
+		       r.rol_name as rol_name
+		  from spr_user_roles ur
+		  join spr_roles r on (r.rol_id = ur.uro_rol_id)
+		 where CURRENT_DATE between ur.uro_date_from and COALESCE(ur.uro_date_to, CURRENT_DATE)
+		   and ur.uro_usr_id = ?::int
+	    union
+      select r.rol_id as rol_id,
+             r.rol_code as rol_code,
+             r.rol_name as rol_name
+         from spr_org_users ou
+         join spr_org_user_roles ur on (ou.ou_id = ur.our_ou_id)
+         join spr_roles r on (r.rol_id = ur.our_rol_id)
+     where CURRENT_DATE between ur.our_date_from and COALESCE(ur.our_date_to, CURRENT_DATE)
+       and ou.ou_org_id = ?::int
+       and ou.ou_usr_id = ?::int
+    </entry>
+    <entry key="roleList4Public">
+ 		select r.rol_id as rol_id,
+		       r.rol_code as rol_code,
+		       r.rol_name as rol_name
+		  from spr_roles r
+		 where CURRENT_DATE between r.rol_date_from and COALESCE(r.rol_date_to, CURRENT_DATE)
+		       and r.rol_code = 'PUBLIC'
+	</entry>
+    <entry key="roleMenu">
+WITH recursive roleData as
+ (select rol.*
+    from spr_roles rol
+    where rol.rol_id = ?::int),
+roleSet as
+ (select rd.rol_code code, roa_assigned_rol_id rol_id, null rol_code
+    from roleData rd
+    join spr_role_actions sra
+      on (sra.roa_rol_id = rd.rol_id)
+   where sra.roa_type = 'ROLE1'
+     and CURRENT_DATE between sra.roa_date_from and
+         COALESCE(sra.roa_date_to, CURRENT_DATE)
+  union all
+  select rs.code code, sra.roa_assigned_rol_id rol_id, null rol_code
+    from spr_role_actions sra, roleSet rs
+   where sra.roa_type = 'ROLE1'
+     and sra.roa_rol_id = rs.rol_id),
+roleSet_full as
+ (select *
+    from roleSet
+  union all
+  select t.rol_code code, t.rol_id, t.rol_code rol_code
+    from roleData t),
+
+menu_tree AS
+ (SELECT mst_id,
+         mst_mst_id,
+         1 AS level,
+         CAST(lpad(mst_order ::varchar, 3, '0') As varchar(1000)) As path
+    FROM spr_menu_structures
+   WHERE mst_mst_id is null
+  UNION ALL
+  SELECT p.mst_id,
+         p.mst_mst_id,
+         d.level + 1,
+         CAST(d.path || '/' || lpad(p.mst_order ::varchar, 3, '0') As
+              varchar(1000)) As path
+    FROM spr_menu_structures p
+   INNER JOIN menu_tree d
+      ON p.mst_mst_id = d.mst_id),
+all_valid_user_forms as
+ (select ra.roa_frm_id
+    from roleSet_full ro
+    join spr_role_actions ra
+      on (ro.rol_id = ra.roa_rol_id)
+   where CURRENT_DATE between ra.roa_date_from and
+         COALESCE(ra.roa_date_to, CURRENT_DATE)
+     and ra.roa_frm_id is not null
+   group by ra.roa_frm_id)
+SELECT d.level as level,
+       case
+         when ms.mst_uri is null then
+          'CATEGORY'
+         else
+          'LINK'
+       end menu_type,
+       ms.mst_uri as uri,
+       ms.mst_icon as icon,
+       frm.frm_code as form,
+	   JSON_AGG(JSON_BUILD_OBJECT('title', ms.mst_title, 'toolTip', ms.c01, 'code', ms.mst_code)) as title
+  FROM menu_tree d
+ INNER JOIN spr_menu_structures ms
+    ON d.mst_id = ms.mst_id
+  left join all_valid_user_forms ra
+    on (ms.mst_frm_id = ra.roa_frm_id)
+  left join spr_forms frm
+    on (ms.mst_frm_id = frm.frm_id)
+ where ms.mst_is_public = 'N'
+   and ms.mst_order is not null
+   and ms.mst_lang = ?
+   and (ms.mst_uri is null or ra.roa_frm_id is not null)
+   group by d.level, mst_uri, mst_icon, frm_code, d.path, mst_order
+ order by d.path,
+          ms.mst_order,
+          case
+            when ms.mst_uri is null then
+             1
+            else
+             0
+          end
+		
+    </entry>
+    <entry key="userMenu">
+WITH recursive userRoles as
+ (select distinct rol_id rol_id
+    from (select ur.uro_rol_id rol_id
+            from spr_user_roles ur
+           where ur.uro_usr_id = ?
+             and CURRENT_DATE between ur.uro_date_from and
+                 COALESCE(ur.uro_date_to, CURRENT_DATE)
+          union all
+          select our.our_rol_id rol_id
+            from spr_org_users ou
+            join spr_org_user_roles our
+              on (our.our_ou_id = ou.ou_id and
+                 CURRENT_DATE between our.our_date_from and
+                 COALESCE(our.our_date_to, CURRENT_DATE))
+           where CURRENT_DATE between ou.ou_date_from and
+                 COALESCE(ou.ou_date_to, CURRENT_DATE)
+             and ou.ou_usr_id = ?::int
+             and ou.ou_org_id = ?::int) as t),
+roleData as
+ (select rol.*
+    from spr_roles rol
+    join userRoles urs
+      on urs.rol_id = rol.rol_id),
+roleSet as
+ (select rd.rol_code code, roa_assigned_rol_id rol_id, null rol_code
+    from roleData rd
+    join spr_role_actions sra
+      on (sra.roa_rol_id = rd.rol_id)
+   where sra.roa_type = 'ROLE1'
+     and CURRENT_DATE between sra.roa_date_from and
+         COALESCE(sra.roa_date_to, CURRENT_DATE)
+  union all
+  select rs.code code, sra.roa_assigned_rol_id rol_id, null rol_code
+    from spr_role_actions sra, roleSet rs
+   where sra.roa_type = 'ROLE1'
+     and sra.roa_rol_id = rs.rol_id),
+roleSet_full as
+ (select *
+    from roleSet
+  union all
+  select t.rol_code code, t.rol_id, t.rol_code rol_code
+    from roleData t),
+
+menu_tree AS
+ (SELECT mst_id,
+         mst_mst_id,
+         1 AS level,
+         CAST(lpad(mst_order ::varchar, 3, '0') As varchar(1000)) As path
+    FROM spr_menu_structures
+   WHERE mst_mst_id is null
+  UNION ALL
+  SELECT p.mst_id,
+         p.mst_mst_id,
+         d.level + 1,
+         CAST(d.path || '/' || lpad(p.mst_order ::varchar, 3, '0') As
+              varchar(1000)) As path
+    FROM spr_menu_structures p
+   INNER JOIN menu_tree d
+      ON p.mst_mst_id = d.mst_id),
+all_valid_user_forms as
+ (select ra.roa_frm_id
+    from roleSet_full ro
+    join spr_role_actions ra
+      on (ro.rol_id = ra.roa_rol_id)
+   where CURRENT_DATE between ra.roa_date_from and
+         COALESCE(ra.roa_date_to, CURRENT_DATE)
+     and ra.roa_frm_id is not null
+   group by ra.roa_frm_id)
+SELECT d.level as level,
+       case
+         when ms.mst_uri is null then
+          'CATEGORY'
+         else
+          'LINK'
+       end menu_type,
+       ms.mst_uri as uri,
+       ms.mst_icon as icon,
+       frm.frm_code as form,
+       JSON_AGG(JSON_BUILD_OBJECT('title', ms.mst_title, 'toolTip', ms.c01, 'code', ms.mst_code)) as title
+  FROM menu_tree d
+ INNER JOIN spr_menu_structures ms
+    ON d.mst_id = ms.mst_id
+  left join all_valid_user_forms ra
+    on (ms.mst_frm_id = ra.roa_frm_id)
+  left join spr_forms frm
+    on (ms.mst_frm_id = frm.frm_id)
+ where ms.mst_is_public = 'N'
+   and ms.mst_order is not null
+   and ms.mst_lang = ?
+   and (ms.mst_uri is null or ra.roa_frm_id is not null)
+   and CURRENT_DATE between ms.mst_date_from and
+       COALESCE(ms.mst_date_to, CURRENT_DATE)
+       group by d.level, mst_uri, mst_icon, frm_code, d.path, mst_order
+ order by d.path,
+          ms.mst_order,
+          case
+            when ms.mst_uri is null then
+             1
+            else
+             0
+          end
+    </entry>
+    <entry key="publicMenu">
+    WITH RECURSIVE descendants AS (SELECT mst_id,
+	                                      mst_mst_id,
+	                                      1 AS level,
+	                                      CAST(lpad(mst_order::varchar,3,'0')  As varchar(1000)) As path
+                                     FROM spr_menu_structures
+                                    WHERE mst_mst_id is null
+                                    UNION ALL
+                                   SELECT p.mst_id,
+	                                      p.mst_mst_id,
+	                                      d.level+ 1,
+	                                      CAST(d.path || '/'|| lpad(p.mst_order::varchar,3,'0')  As varchar(1000)) As path
+                                     FROM spr_menu_structures p
+                               INNER JOIN descendants d ON p.mst_mst_id = d.mst_id)
+
+    select level,
+       ms.mst_uri   as uri,
+       ms.mst_icon  as icon,
+       frm.frm_code as form,
+      JSON_AGG(JSON_BUILD_OBJECT('title', ms.mst_title, 'toolTip', ms.c01, 'code', ms.mst_code)) as title
+    FROM descendants d
+     INNER JOIN spr_menu_structures ms ON d.mst_id = ms.mst_id
+     left join spr_forms frm on (ms.mst_frm_id = frm.frm_id)
+   where ms.mst_is_public = 'Y'
+     and ms.mst_order is not null
+     and ms.mst_lang = ?
+     group by d.level, mst_uri, mst_icon, frm_code, d.path, mst_order
+  order  by d.path, ms.mst_order
+    </entry>
+    <entry key="menuStructure">
+       WITH RECURSIVE descendants AS (SELECT mst_id,
+	                                      mst_mst_id,
+	                                      1 AS level,
+	                                      CAST(lpad(mst_order::varchar,3,'0')  As varchar(1000)) As path
+                                     FROM spark.spr_menu_structures
+                                    WHERE mst_mst_id is null
+                                    UNION ALL
+                                   SELECT p.mst_id,
+	                                      p.mst_mst_id,
+	                                      d.level+ 1,
+	                                      CAST(d.path || '/'|| lpad(p.mst_order::varchar,3,'0')  As varchar(1000)) As path
+                                     FROM spark.spr_menu_structures p
+                               INNER JOIN descendants d ON p.mst_mst_id = d.mst_id)
+
+    select level,
+       ms.mst_id,
+       ms.mst_mst_id,
+       CASE
+         WHEN ms.mst_uri IS NULL THEN
+          'CATEGORY'
+         ELSE
+          'LINK'
+       END menu_type,
+       ms.mst_uri as uri,
+       ms.mst_icon as icon,
+       frm.frm_code as form,
+       ms.mst_title as title
+    FROM descendants d
+     INNER JOIN spark.spr_menu_structures ms ON d.mst_id = ms.mst_id
+     left join spark.spr_forms frm on (ms.mst_frm_id = frm.frm_id)
+   where ms.mst_lang = ?
+     AND ms.mst_site = ?
+     AND ms.mst_is_public = ?
+     AND ms.mst_order IS NOT NULL
+     AND (ms.mst_uri IS NULL OR frm.frm_id IS NOT NULL)
+  order  by d.path, ms.mst_order
+    </entry>
+    <entry key="forms4Role">
+WITH recursive roleData as (select rol.*
+                   from spr_roles rol
+			  where rol.rol_id = ?::int),
+ roleSet as
+ (select rd.rol_code code, roa_assigned_rol_id rol_id, null rol_code
+    from roleData rd
+         join spr_role_actions sra on (sra.roa_rol_id = rd.rol_id)
+   where sra.roa_type = 'ROLE1'
+     and CURRENT_DATE between sra.roa_date_from and COALESCE(sra.roa_date_to, CURRENT_DATE)
+  union all
+   select rs.code code, sra.roa_assigned_rol_id rol_id, null rol_code
+   from spr_role_actions sra,
+        roleSet rs
+   where sra.roa_type = 'ROLE1'
+     and sra.roa_rol_id = rs.rol_id
+  ),
+ roleSet_full as (
+	 select *
+	   from roleSet
+	union all
+	   select t.rol_code code, t.rol_id, t.rol_code rol_code
+    from roleData t
+ )
+      select max(rs.rol_code) rol_name,
+        frm.frm_id as frm_id,
+        frm.frm_name as frm_name,
+        frm.frm_code as frm_code,
+        fra.fra_code as frm_action,
+        max(ra.roa_default_menu_item) default_form,
+       	case when count(rda.rda_id) > 0 and count(1) = count(rda.rda_id) then 'Y' else 'N' end disabled_action
+   from roleSet_full rs
+        join spr_roles rol on rs.rol_id = rol.rol_id
+        join spr_role_actions ra on (ra.roa_rol_id = rol.rol_id)
+        join spr_forms frm on (ra.roa_frm_id = frm.frm_id)
+        join spr_form_actions fra on (frm.frm_id = fra.fra_frm_id)
+        left join spr_role_disabled_actions rda on (ra.roa_id = rda.rda_roa_id
+                                        and fra.fra_id = rda.rda_fra_id
+                                        and CURRENT_DATE  between rda.rda_date_from and  COALESCE(rda.rda_date_to, CURRENT_DATE))
+   where CURRENT_DATE  between ra.roa_date_from and  COALESCE(ra.roa_date_to, CURRENT_DATE)
+  group by frm.frm_id, frm.frm_name, frm.frm_code, fra.fra_code
+  order by frm_id
+    </entry>
+
+    <entry key="forms4User">
+WITH recursive userRoles as (select distinct rol_id rol_id
+    from (select ur.uro_rol_id rol_id
+            from spr_user_roles ur
+           where ur.uro_usr_id = ?::int
+             and CURRENT_DATE between ur.uro_date_from
+             and COALESCE(ur.uro_date_to, CURRENT_DATE)
+          union all
+          select our.our_rol_id rol_id
+            from spr_org_users ou
+            join spr_org_user_roles our
+              on (our.our_ou_id = ou.ou_id and
+                 CURRENT_DATE between our.our_date_from and
+                 COALESCE(our.our_date_to, CURRENT_DATE))
+           where CURRENT_DATE between ou.ou_date_from and
+                 COALESCE(ou.ou_date_to, CURRENT_DATE)
+             and ou.ou_usr_id = ?::int
+             and ou.ou_org_id = ?::int
+             ) as t),
+ roleData as (select rol.*
+                   from spr_roles rol
+                   join userRoles urs on urs.rol_id = rol.rol_id),
+ roleSet as
+ (select rd.rol_code code, roa_assigned_rol_id rol_id, null rol_code
+    from roleData rd
+         join spr_role_actions sra on (sra.roa_rol_id = rd.rol_id)
+   where sra.roa_type = 'ROLE1'
+     and CURRENT_DATE between sra.roa_date_from and COALESCE(sra.roa_date_to, CURRENT_DATE)
+  union all
+   select rs.code code, sra.roa_assigned_rol_id rol_id, null rol_code
+   from spr_role_actions sra,
+        roleSet rs
+   where sra.roa_type = 'ROLE1'
+     and sra.roa_rol_id = rs.rol_id
+  ),
+ roleSet_full as (
+	 select *
+	   from roleSet
+	union all
+	   select t.rol_code code, t.rol_id, t.rol_code rol_code
+    from roleData t
+ )
+      select 'MERGED' rol_name,
+        frm.frm_id as frm_id,
+        frm.frm_name as frm_name,
+        frm.frm_code as frm_code,
+        fra.fra_code as frm_action,
+        max(ra.roa_default_menu_item) default_form,
+       	case when count(rda.rda_id) > 0 and count(1) = count(rda.rda_id) then 'Y' else 'N' end disabled_action
+   from roleSet_full rs
+        join spr_roles rol on rs.rol_id = rol.rol_id
+        join spr_role_actions ra on (ra.roa_rol_id = rol.rol_id)
+        join spr_forms frm on (ra.roa_frm_id = frm.frm_id)
+        join spr_form_actions fra on (frm.frm_id = fra.fra_frm_id)
+        left join spr_role_disabled_actions rda on (ra.roa_id = rda.rda_roa_id
+                                        and fra.fra_id = rda.rda_fra_id
+                                        and CURRENT_DATE  between rda.rda_date_from and  COALESCE(rda.rda_date_to, CURRENT_DATE))
+   where CURRENT_DATE  between ra.roa_date_from and  COALESCE(ra.roa_date_to, CURRENT_DATE)
+  group by frm.frm_id, frm.frm_name, frm.frm_code, fra.fra_code
+  order by frm_id
+    </entry>
+    <entry key="menuStructureTree">
+    select level,
+        ms.mst_id,
+        ms.mst_mst_id,
+        case when ms.mst_uri is null then 'CATEGORY' else 'LINK' end menu_type,
+        ms.mst_uri as uri,
+        ms.mst_icon as icon,
+        frm.frm_code as form,
+        ms.mst_title as title
+   from spr_menu_structures ms
+        left join spr_forms frm on (ms.mst_frm_id = frm.frm_id)
+  where ms.mst_is_public = 'N'
+ -- and ms.mst_lang = 'en'
+  and ( ms.mst_uri is null or frm.frm_id is not null)
+  start with ms.mst_mst_id is null connect by ms.mst_mst_id = prior ms.mst_id
+  order  by SYS_CONNECT_BY_PATH(lpad(mst_order,3,'0'), '/')
+    </entry>
+    <entry key="getJobRequestsInfo">
+	SELECT 	rq.jrq_jde_id,
+		rq.jrq_id,
+		rq.jrq_start_date,
+		rq.jrq_end_date,
+		rq.jrq_executer_name,
+		rq.jde_name,
+		rq.jrq_status,
+		rq.jrq_code,
+		rq.executions
+	FROM
+    (SELECT rq.jrq_id,
+			rq.jrq_jde_id,
+			job.jde_name,
+			rq.jrq_status,
+       CASE
+         WHEN status_rft.rft_display_code IS NOT NULL
+         	AND status_rft.rft_display_code != '' THEN status_rft.rft_display_code
+         ELSE status_rfc.rfc_meaning
+       END AS jrq_code,
+       to_char(rq.jrq_start_date, ?) AS jrq_start_date,
+       to_char(rq.jrq_end_date, ?) AS jrq_end_date,
+       rq.jrq_executer_name,
+       '[' || STRING_AGG(CASE
+                           WHEN ex.jre_id IS NOT NULL THEN
+                            '{' || '"jre_name":"' || COALESCE(ex.jre_name, '') || '",' ||
+                            '"jre_time":"' || COALESCE(to_char(ex.jre_time, ?), '') || '",' ||
+                            '"jre_event_info":"' || COALESCE(ex.jre_event_info, '') || '",' ||
+                            '"jre_err":' || to_json(COALESCE(ex.jre_err, '')) || '}'
+                           ELSE
+                            ''
+                         END,
+                         ',' ORDER BY ex.jre_time) || ']' AS executions
+  FROM spr_job_requests rq
+  LEFT JOIN spr_ref_codes status_rfc
+    ON status_rfc.rfc_code = rq.jrq_status
+   AND status_rfc.rfc_domain = 'SPR_JOB_REQ_STATUS'
+  LEFT JOIN spr_ref_translations status_rft
+    ON status_rfc.rfc_id = status_rft.rft_rfc_id
+   AND status_rft.rft_lang = ?
+  LEFT JOIN spr_job_request_executions ex
+    ON rq.jrq_id = ex.jre_jrq_id
+  JOIN spr_job_definitions job
+  	ON rq.jrq_jde_id = job.jde_id
+	GROUP BY rq.jrq_id,
+			rq.jrq_jde_id,
+			rq.jrq_status,
+      		CASE
+      			WHEN status_rft.rft_display_code IS NOT NULL
+      				AND status_rft.rft_display_code != '' THEN status_rft.rft_display_code
+      			ELSE status_rfc.rfc_meaning
+      		END,
+            jrq_start_date,
+            jrq_end_date,
+            rq.jrq_executer_name,
+            job.jde_name
+  UNION ALL
+  		SELECT rq.jrq_id,
+			rq.jrq_jde_id,
+			job.jde_name,
+			rq.jrq_status,
+       CASE
+         WHEN status_rft.rft_display_code IS NOT NULL
+         	AND status_rft.rft_display_code != '' THEN status_rft.rft_display_code
+         ELSE status_rfc.rfc_meaning
+       END AS jrq_code,
+       to_char(rq.jrq_start_date, ?) AS jrq_start_date,
+       to_char(rq.jrq_end_date, ?) AS jrq_end_date,
+       rq.jrq_executer_name,
+       '[' || STRING_AGG(CASE
+                           WHEN ex.jre_id IS NOT NULL THEN
+                            '{' || '"jre_name":"' || COALESCE(ex.jre_name, '') || '",' ||
+                            '"jre_time":"' || COALESCE(to_char(ex.jre_time, ?), '') || '",' ||
+                            '"jre_event_info":"' || COALESCE(ex.jre_event_info, '') || '",' ||
+                            '"jre_err":' || to_json(COALESCE(ex.jre_err, '')) || '}'
+                           ELSE
+                            ''
+                         END,
+                         ',' ORDER BY ex.jre_time) || ']' AS executions
+	  FROM spr_job_requests_hist rq
+	  LEFT JOIN spr_ref_codes status_rfc
+	    ON status_rfc.rfc_code = rq.jrq_status
+	   AND status_rfc.rfc_domain = 'SPR_JOB_REQ_STATUS'
+	  LEFT JOIN spr_ref_translations status_rft
+	    ON status_rfc.rfc_id = status_rft.rft_rfc_id
+	   AND status_rft.rft_lang = ?
+	  LEFT JOIN spr_job_request_executions ex
+	    ON rq.jrq_id = ex.jre_jrq_id
+	  JOIN spr_job_definitions job
+	  	ON rq.jrq_jde_id = job.jde_id
+	  	AND 'Y' = ?
+		GROUP BY rq.jrq_id,
+				rq.jrq_jde_id,
+				rq.jrq_status,
+	      		CASE
+	      			WHEN status_rft.rft_display_code IS NOT NULL
+	      				AND status_rft.rft_display_code != '' THEN status_rft.rft_display_code
+	      			ELSE status_rfc.rfc_meaning
+	      		END,
+	            jrq_start_date,
+	            jrq_end_date,
+	            rq.jrq_executer_name,
+	            job.jde_name) rq
+    </entry>
+    <entry key="userProfileTokenRebuild">
+	update spr_users
+   set usr_profile_token =
+       (select string_agg(cast(uro_rol_id as varchar), '-' order by uro_rol_id) profile
+          from spr_user_roles ur
+         where uro_usr_id = usr_id
+         and CURRENT_DATE between ur.uro_date_from and COALESCE(ur.uro_date_to, CURRENT_DATE)
+         group by uro_usr_id)
+	</entry>
+	<entry key="userOrganizationProfileTokenRebuild">
+   update spr_org_users
+   set ou_profile_token =
+       (select string_agg(cast(our.our_rol_id as varchar), '-' order by our.our_rol_id) profile
+          from spr_org_user_roles our
+         where our.our_ou_id = ou_id
+           and CURRENT_DATE between our.our_date_from and COALESCE(our.our_date_to, CURRENT_DATE)
+         group by our.our_ou_id)
+	</entry>
+	<entry key="profileBuilder">
+	   select string_agg(cast(t.rol_id as varchar), '-' order by t.rol_id) profile
+     from (select distinct ur.uro_rol_id rol_id
+             from spr_user_roles ur
+            where CURRENT_DATE between ur.uro_date_from and
+                  COALESCE(ur.uro_date_to, CURRENT_DATE)
+              and ur.uro_usr_id = ?::int
+           union all
+           select distinct our.our_rol_id rol_id
+             from spr_org_user_roles our
+             join spr_org_users ou
+               on (ou.ou_id = our.our_ou_id and
+                  CURRENT_DATE between ou.ou_date_from and
+                  COALESCE(ou.ou_date_to, CURRENT_DATE))
+            where CURRENT_DATE between our.our_date_from and
+                  COALESCE(our.our_date_to, CURRENT_DATE)
+              and ou.ou_org_id = ?::int
+              and ou.ou_usr_id = ?::int) t
+	</entry>
+	<entry key="getFaqListWithFiles">
+	SELECT fac_id,
+       fac_group,
+       fac_code,
+       fac_question,
+       fac_answer,
+       (SELECT json_agg(
+                   json_build_object(
+                       'fil_content_type', spr_fil.fil_content_type,
+                       'fil_key', spr_fil.fil_key,
+                       'fil_name', spr_fil.fil_name,
+                       'fil_size', spr_fil.fil_size,
+                       'fil_status', spr_fil.fil_status,
+                       'fil_status_date', spr_fil.fil_status_date
+                   )
+               )
+        FROM spr_question_files fcf
+        JOIN spr_files spr_fil ON spr_fil.fil_id = fcf.fcf_fil_id
+        WHERE fcf.fcf_fac_id = fac.fac_id
+       ) AS files
+FROM spr_question_answers fac
+WHERE fac_group = ?
+	</entry>
+	<entry key="apiKeysList">
+	    WITH formatted_data AS (
+                          SELECT
+                              api_id,
+                              JSON_BUILD_OBJECT(
+                                  'api_id',  api.api_id::text,
+                                  'api_key', case when ou2.ou_org_id = ? or api.api_usr_id = ? then api.api_key else '-' end::text,
+                                  'api_date_from', api.api_date_from::date,
+                                  'api_date_to', api.api_date_to::date
+                              ) AS api_list
+                          FROM spr_api_keys api
+                           left join spr_org_users ou2 on api_ou_id = ou2.ou_id )
+                      SELECT max(api.api_id) api_id,
+                             coalesce(usr.usr_username, ousr.usr_username) usr_username,
+                             coalesce(per.per_surname,oper.per_surname) || ' ' || coalesce(per.per_name,oper.per_name ) per_name,
+                             org_name,
+                             JSON_AGG(fd.api_list) AS api_list
+                      FROM formatted_data fd
+                      left join spr_api_keys api on fd.api_id = api.api_id
+                      left join spr_users usr on api_usr_id = usr.usr_id
+                      left join spr_persons per on usr.usr_per_id = per.per_id
+                      left join spr_org_users on api_ou_id = ou_id
+                      left join spr_users ousr on ou_usr_id = ousr.usr_id
+                      left join spr_persons oper on ousr.usr_per_id = oper.per_id
+                      left join spr_organizations on ou_org_id = org_id                 
+	</entry>
+</properties>

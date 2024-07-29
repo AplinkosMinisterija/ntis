@@ -1,0 +1,45 @@
+package lt.project.ntis.enums;
+
+import eu.itreegroup.spark.enums.ProcessRequestType;
+
+public enum NtisProcessRequestTypes implements ProcessRequestType {
+
+    AGGLOMERATION_REQUEST("AGGLOMEARTION_REQUEST"),
+
+    ORDER_REQUEST("ORDER_REQUEST"),
+
+    DELIVERY_REQUEST("DELIVERY_REQUEST"),
+
+    SRV_REQ_REQUEST("SRV_REQ_REQUEST"),
+
+    CONTRACT_REQUEST("CONTRACT_REQUEST"),
+
+    RESEARCH_REQUEST("RESEARCH_REQUEST"),
+
+    SYSTEM_REQUEST("SYSTEM_REQUEST"),
+
+    ISENSE_SIGNING_1_REQUEST("ISENSE_SIGNING_1_REQUEST"),
+
+    ISENSE_SIGNING_2_REQUEST("ISENSE_SIGNING_2_REQUEST"),
+
+    ISENSE_PREVIEW_REQUEST("ISENSE_PREVIEW_REQUEST"),
+
+    BROKERWS_NTR_REQUEST("BROKERWS_NTR_REQUEST"),
+
+    BROKERWS_BATCH_NTR_REQUEST("BROKERWS_BATCH_NTR_REQUEST"),
+    
+    SCHEDULER_FAILED_REQUEST("SCHEDULER_FAILED_REQUEST"),
+
+    FACI_UPDATE_AGREEMENT_REQUEST("FACI_UPDATE_AGREEMENT_REQUEST");
+
+    String code;
+
+    NtisProcessRequestTypes(String code) {
+        this.code = code;
+    }
+
+    @Override
+    public String getCode() {
+        return code;
+    }
+}

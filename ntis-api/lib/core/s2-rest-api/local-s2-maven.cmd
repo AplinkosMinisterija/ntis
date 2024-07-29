@@ -1,0 +1,2 @@
+set JAVA_BINDER_HOME=lib
+mvn install:install-file -Dfile=%JAVA_BINDER_HOME%\bind-kernel.jar -DgroupId=s2.binder -DartifactId=s2-bind-kernel -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true && mvn install:install-file -Dfile=%JAVA_BINDER_HOME%\javassist.jar -DgroupId=s2.binder -DartifactId=s2-bind-plsql -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true && mvn install:install-file -Dfile=%JAVA_BINDER_HOME%\s2-bind-plsql.jar -DgroupId=s2.binder -DartifactId=javassist -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true

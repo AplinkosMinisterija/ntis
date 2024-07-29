@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="PAIESKOS_KRITERIJAI">
+		<xs:complexType>
+			<xs:attribute name="data" type="xs:date" use="required"/>
+			<xs:attribute name="pozymis" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:byte">
+						<xs:enumeration value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="formavimo_laikas" type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="PAIESKA">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="PAIESKOS_KRITERIJAI"/>
+				<xs:element ref="JA_SARASAS"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="JUR_ASMUO">
+		<xs:complexType>
+			<xs:attribute name="OBJ_KODAS" type="xs:int" use="required"/>
+			<xs:attribute name="OBJ_PAV" type="xs:string" use="required"/>
+			<xs:attribute name="FORM_KODAS" type="xs:short" use="required"/>
+			<xs:attribute name="STAT_STATUSAS" type="xs:short" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="JA_SARASAS">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="JUR_ASMUO" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Nerasta" type="xs:string">
+          <xs:annotation><xs:documentation>Pranešimas kad įrašų nerasta</xs:documentation></xs:annotation>
+	</xs:element>
+	<xs:element name="KLAIDA" type="xs:string">
+          <xs:annotation><xs:documentation>Pranešimas apie klaidą</xs:documentation></xs:annotation>
+	</xs:element>
+</xs:schema>

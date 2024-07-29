@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns="http://www.registrucentras.lt/namespaces/jar" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.registrucentras.lt/namespaces/jar" elementFormDefault="qualified">
+	<!--Trumpasis išrašas(identifikaciniai duomenys) v 2.2 2018-12-11-->
+	<xs:element name="OBJEKTAI">
+		<xs:annotation>
+			<xs:documentation>
+				Pagrindiniai juridinio asmens duomenys. Atributų reikšmės:
+				OBJ_ID - Juridinio asmens - objekto identifikatorius (dirbtinis)
+				OBJ_KODAS - 9 skaitmenų juridinio asmens kodas
+				OBJ_REJESTRO_KODAS - 7 skaitmenų kodas
+				OBJ_PAV -Juridinio asmens pavadinimas
+				FORM_KODAS - Teisinės formos kodas iš klasifikatoriaus FORMOS
+				STAT_STATUSAS - Juridinio asmens statusas iš klasifikatoriaus STATUSAI
+				JAD_TEKSTAS - Juridinio asmens adresas
+				JA_E_PRIST_DEZUTES_ADR - 9 skaitmenų elektroninio pristatymo dėžutės adresas.
+				OBJ_REG_DATA - Įregistravimo registre data
+				OBJ_STEIGIMO_DATA - Įsteigimo data
+				OBJ_ISREG_DATA - Juridinio asmens išregistravimo data
+				OBJ_PAGRINDINIS - Juridinio asmens požymis: 0 - pagrindinis, 1 - filialas, 2 - atstovybė
+				OBJ_ID_PRIKLAUSO - Nuoroda į kitą juridinį asmenį: filialo ar atstovybės aukštesnę instituciją
+				PAGR_OBJ_KODAS - Pagrindinio juridinio asmens 9 skaitmenų kodas ( tik filialui, atstovybei)
+				PAGR_OBJ_REJESTRO_KODAS - Pagrindinio juridinio asmens 7 skaitmenų kodas ( tik filialui, atstovybei)
+				PAGR_OBJ_PAV - Pagrindinio juridinio pavadinimas (tik filialui, atstovybei)
+				DBUK_KODAS - Juridinio asmens duomenų būklė iš klasifikatoriaus DUOMENU_BUKLES
+				VER_DATA_NUO - Duomenų Versijos data
+				VER_VERSIJA - Versijos nr
+				ISR_DATA_PATVIRTINO - Išrašo (registravimo pažymėjimo) patvirtinimo data
+				ITIP_TIPAS - Išrašo tipas iš klasifikatoriaus ISRASU_TIPAI
+				ITIP_PAV_I - Išrašo tipo pavadinimas  iš klasifikatoriaus ISRASU_TIPAI
+				TARN_NR - Juridinių asmenų registro tvarkytojo Registravimo tarnybos numeris
+				TARN_PAV_I - Registravimo tarnybos pavadinimas
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="TEKSTINIAI_DUOMENYS" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="JA_ADRESAI" maxOccurs="2"/>
+				<xs:element ref="FAKTAI" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="OBJ_ID" type="xs:int" use="required"/>
+			<xs:attribute name="OBJ_KODAS" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:int">
+						<xs:totalDigits value="9"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="OBJ_REJESTRO_KODAS">
+				<xs:simpleType>
+					<xs:restriction base="xs:int">
+						<xs:totalDigits value="7"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="OBJ_PAV" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="250"/>
+						<xs:minLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="FORM_KODAS" type="xs:int"/>
+			<xs:attribute name="STAT_STATUSAS" type="xs:int"/>
+			<xs:attribute name="JAD_TEKSTAS">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="250"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+
+			<!-- JIRA JAR-1422 -->
+			<xs:attribute name="JA_E_PRIST_DEZUTES_ADR" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:int">
+						<xs:totalDigits value="9"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<!-- /JIRA JAR-1422 -->
+
+			<xs:attribute name="OBJ_REG_DATA" type="xs:string" use="required"/>
+			<xs:attribute name="OBJ_STEIGIMO_DATA" type="xs:string"/>
+			<xs:attribute name="OBJ_ISREG_DATA" type="xs:string"/>
+			<xs:attribute name="OBJ_PAGRINDINIS" type="xs:int"/>
+			<xs:attribute name="OBJ_ID_PRIKLAUSO" type="xs:int"/>
+			<xs:attribute name="PAGR_OBJ_KODAS" type="xs:int"/>
+			<xs:attribute name="PAGR_OBJ_REJESTRO_KODAS" type="xs:int"/>
+			<xs:attribute name="PAGR_OBJ_PAV" type="xs:string"/>
+			<xs:attribute name="DBUK_KODAS" type="xs:int"/>
+			<xs:attribute name="VER_DATA_NUO" type="xs:string"/>
+			<xs:attribute name="VER_VERSIJA" type="xs:int"/>
+			<xs:attribute name="ISR_DATA_PATVIRTINO" type="xs:string"/>
+			<xs:attribute name="ITIP_TIPAS" type="xs:int"/>
+			<xs:attribute name="ITIP_PAV_I" type="xs:string"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="TEKSTINIAI_DUOMENYS">
+		<xs:annotation>
+			<xs:documentation>
+				Tekstiniai juridinio asmens duomenys (telefonai, email ir pan). Atributų reikšmės:
+				TATR_KODAS - Tekstinio atributo kodas iš klasifikatoriaus TEKSTINIAI_ATRIBUTAI
+				TXD_TEKSTAS - Tekstinis duomuo
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:attribute name="TATR_KODAS" type="xs:int"/>
+			<xs:attribute name="TXD_TEKSTAS" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="250"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="JA_ADRESAI">
+		<xs:annotation>
+			<xs:documentation>
+				Įmonės adresai. Atributų reikšmės:
+				ADR_ID - Adreso identifikatorius (dirbtinis)
+				ADM_ID - Savivaldybės identifikatorius (iš adresų sistemos)
+				GYV_ID - Vietovės identifikatorius (iš adresų sistemos)
+				GAT_ID - Gatvės identifikatorius (iš adresų sistemos)
+				ADR_NAMO_NR - Namo (sklypo) numeris
+				ADR_KORPUSO_NR - Korpuso numeris
+				ADR_BUTO_NR - Buto numeris
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:attribute name="ADR_ID" type="xs:int" use="required"/>
+			<xs:attribute name="JAD_TEKSTAS" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="250"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="ADM_ID">
+				<xs:simpleType>
+					<xs:restriction base="xs:long">
+						<xs:totalDigits value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="GYV_ID">
+				<xs:simpleType>
+					<xs:restriction base="xs:long">
+						<xs:totalDigits value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="GAT_ID">
+				<xs:simpleType>
+					<xs:restriction base="xs:long">
+						<xs:totalDigits value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="ADR_NAMO_NR">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="5"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="ADR_KORPUSO_NR">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="5"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="ADR_BUTO_NR">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="5"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="FAKTAI">
+		<xs:annotation>
+			<xs:documentation>
+				Juridiniai faktai. 	Atributų reikšmės:
+				FAKT_TIPAS - fakto tipas iš klasifikatoriaus FAKTU_TIPAI
+				FAKP_POTIPIS - fakto potipiai iš klasifikatoriaus FAKTU_POTIPIAI
+				FAK_APRASYMAS - fakto aprašymas.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="FAKTU_NAUDOTOJAI" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="FAKT_TIPAS" type="xs:int" use="required"/>
+			<xs:attribute name="FAKP_POTIPIS" type="xs:int" use="required"/>
+			<xs:attribute name="FAK_APRASYMAS" type="xs:string"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="FAKTU_NAUDOTOJAI">
+		<xs:annotation>
+			<xs:documentation>
+				Asmenys veikiantys fakte. 	Atributų reikšmės:
+				OBA_ID - Nuoroda į elementą OBJEKTU_ASMENYS
+				PAR_KODAS - Pareigų kodas iš klasifikatoriaus PAREIGOS
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:attribute name="OBA_ID" type="xs:int" use="required"/>
+			<xs:attribute name="PAR_KODAS" type="xs:int"/>
+		</xs:complexType>
+	</xs:element>
+
+</xs:schema>
