@@ -64,7 +64,8 @@ jobs:
     - name: Install dependencies
       if: matrix.build-mode == 'manual' && matrix.language == 'java-kotlin'
       shell: bash
-      run: sh ntis-api/local-s2-maven.cmd
+      run: sh local-s2-maven.cmd
+      working-directory: ntis-api
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
