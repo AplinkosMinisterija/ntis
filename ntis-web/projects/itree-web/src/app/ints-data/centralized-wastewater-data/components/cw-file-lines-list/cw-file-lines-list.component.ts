@@ -35,6 +35,8 @@ export class CwFileLinesListComponent extends BaseBrowseForm<WastewaterFileDataL
     { field: 'cwfd_nuot_salinimo_budas', export: false, visible: true, type: DATA_TYPE_STRING },
     { field: 'cwfd_prijungimo_data', export: false, visible: true, type: DATA_TYPE_DATE },
     { field: 'cwfd_atjungimo_data', export: false, visible: true, type: DATA_TYPE_DATE },
+    { field: 'cwfd_patalpos_kodas_mapped', export: false, visible: false, type: DATA_TYPE_STRING },
+    { field: 'cwfd_pastato_adr_kodas_mapped', export: false, visible: false, type: DATA_TYPE_STRING },
   ];
   constructor(
     protected override commonFormServices: CommonFormServices,

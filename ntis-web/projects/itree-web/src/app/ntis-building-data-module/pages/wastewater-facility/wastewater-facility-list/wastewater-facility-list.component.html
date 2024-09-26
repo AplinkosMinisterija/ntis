@@ -43,6 +43,20 @@
         [placeholder]="formTranslationsReference + '.table.longitude' | translate"
       ></spr-filter-input>
 
+      <spr-filter-input
+        filters
+        inputType="text"
+        formControlName="bn_aob_code"
+        [placeholder]="formTranslationsReference + '.table.bn_aob_code' | translate"
+      ></spr-filter-input>
+
+      <spr-filter-input
+        filters
+        inputType="text"
+        formControlName="bn_obj_inv_code"
+        [placeholder]="formTranslationsReference + '.table.bn_obj_inv_code' | translate"
+      ></spr-filter-input>
+
       <spr-table-data-export
         buttons
         [tableColumn]="exportCols"

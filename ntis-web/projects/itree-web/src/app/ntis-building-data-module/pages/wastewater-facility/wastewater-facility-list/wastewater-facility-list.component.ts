@@ -116,6 +116,8 @@ export class WastewaterFacilityListComponent
     this.searchForm.addControl('wtf_type', new FormControl(''));
     this.searchForm.addControl('wtf_latitude', new FormControl(''));
     this.searchForm.addControl('wtf_longitude', new FormControl(''));
+    this.searchForm.addControl('bn_aob_code', new FormControl(''));
+    this.searchForm.addControl('bn_obj_inv_code', new FormControl(''));
   }
   ngOnDestroy(): void {
     this.destroy$.next();
