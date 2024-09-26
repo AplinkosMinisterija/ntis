@@ -527,8 +527,6 @@ public class NtisCwDataList extends FormBase {
 							    concat_ws(' ', cwd.cwfd_savivaldybe, cwd.cwfd_seniunija, cwd.cwfd_gyv_vieta, cwd.cwfd_gatve, cwd.cwfd_pastato_nr, cwd.cwfd_korpuso_nr, ('- ' || cwd.cwfd_buto_nr)) as cwfd_adresas,
 							    coalesce(rfc_meaning, cwd.cwfd_nuot_salinimo_budas) as cwfd_nuot_salinimo_budas,
 							    cwd.cwfd_prijungimo_data,
-								cwd.cwfd_patalpos_kodas as cwfd_patalpos_kodas_mapped,
-								cwd.cwfd_pastato_adr_kodas as cwfd_pastato_adr_kodas_mapped,
 							    cwd.cwfd_atjungimo_data
 							    from ntis_cw_file_data cwd
 							    inner join ntis_cw_files cw on cw.cwf_id = cwd.cwfd_cwf_id and cw.cwf_id = ?::int
