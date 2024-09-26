@@ -32,7 +32,7 @@ public class ProjectCommonLists {
         stmt.addSelectParam(usrId);
        
 
-        return new ArrayList<SprListIdKeyValue>(queryController.selectQueryAsObjectArray(conn, stmt, SprListIdKeyValue.class));
+        return new ArrayList<SprListIdKeyValue>(queryController.selectQueryAsObjectArrayList(conn, stmt, SprListIdKeyValue.class));
     }
 
     public ArrayList<SprListIdKeyValue> getListValuesByListCode(Connection conn, String listCode, Double usrId, String language) throws Exception {
