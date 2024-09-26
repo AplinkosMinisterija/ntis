@@ -1789,7 +1789,6 @@ intsData.centralizedData.pages.centralizedWastewaterDataViewPage.cwfd_eil_nr=Row
 intsData.centralizedData.pages.centralizedWastewaterDataViewPage.cwfde_msg_text=Error description
 intsData.centralizedData.pages.centralizedWastewaterDataViewPage.cwfd_pastato_kodas=Unique building number according to the Real Estate Register
 intsData.centralizedData.pages.centralizedWastewaterDataViewPage.cwfd_pastato_adr_kodas=Building address code according to the Address Register
-intsData.centralizedData.pages.centralizedWastewaterDataViewPage.cwfd_pastato_adr_kodas_mapped=Building address code according to the Address Register (mapped)
 intsData.centralizedData.pages.centralizedWastewaterDataViewPage.cwfd_adresas=Address
 intsData.centralizedData.pages.centralizedWastewaterDataViewPage.cwfd_nuot_salinimo_budas=Wastewater disposal
 intsData.centralizedData.pages.centralizedWastewaterDataViewPage.cwfd_prijungimo_data=Connection date
@@ -1797,7 +1796,6 @@ intsData.centralizedData.pages.centralizedWastewaterDataViewPage.cwfd_atjungimo_
 intsData.centralizedData.pages.centralizedWastewaterDataViewPage.cwf_status_date=Approval date
 intsData.centralizedData.pages.centralizedWastewaterDataViewPage.cwf_import_date=Submission date
 intsData.centralizedData.pages.centralizedWastewaterDataViewPage.cwfd_patalpos_kodas=Room code
-intsData.centralizedData.pages.centralizedWastewaterDataViewPage.cwfd_patalpos_kodas_mapped=Room code (mapped)
 intsData.centralizedData.pages.centralizedWastewaterDataViewPage.addAddrMapping=Link Address
 intsData.centralizedData.pages.centralizedWastewaterDataViewPage.addAddrMappingTooltip=Link the address to the Address Register address
 intsData.centralizedData.pages.centralizedWastewaterDataViewPage.submit=Submit a new file
