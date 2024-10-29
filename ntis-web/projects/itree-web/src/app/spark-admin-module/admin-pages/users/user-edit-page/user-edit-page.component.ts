@@ -209,7 +209,7 @@ export class UserEditPageComponent extends DeprecatedBaseEditForm<SprUsersNtisDA
       usr_person_surname: new FormControl('', Validators.compose([Validators.maxLength(50), Validators.required])),
       usr_username: new FormControl('', [Validators.maxLength(50), Validators.required]),
       usr_email: new FormControl('', Validators.compose([Validators.email, Validators.required])),
-      usr_date_from: new FormControl(new Date(), Validators.required),
+      usr_date_from: new FormControl(null, Validators.required),
       usr_date_to: new FormControl(''),
       usr_type: new FormControl({ value: UserType.ORGANIZATION_USER, disabled: true }),
       usr_org_id: new FormControl(''),
