@@ -9,6 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,10 +49,12 @@ import lt.project.ntis.logic.forms.NtisSprApiKeysBrowse;
 import lt.project.ntis.logic.forms.NtisSprJobEdit;
 import lt.project.ntis.logic.forms.NtisSprOrgUserRolesBrowse;
 import lt.project.ntis.logic.forms.NtisSprUsersList;
+import lt.project.ntis.logic.forms.NtisSystemWorksEdit;
 import lt.project.ntis.logic.forms.model.NtisJobEditModel;
 import lt.project.ntis.logic.forms.model.NtisMstAdditionalText;
 import lt.project.ntis.logic.forms.model.NtisNewServiceRequest;
 import lt.project.ntis.logic.forms.model.NtisServiceReqDetails;
+import lt.project.ntis.logic.forms.model.NtisSystemWorksEditModel;
 import lt.project.ntis.models.NtisFacilityModelEditModel;
 import lt.project.ntis.models.NtisInstitutionEditModel;
 import lt.project.ntis.models.NtisServiceProviderRejectionModel;
@@ -115,9 +118,12 @@ public class NtisSystemAdminService extends S2RestAuthService<SprBackendWebSessi
 
     @Autowired
     NtisSprJobEdit ntisSprJobEdit;
-    
+
     @Autowired
     SprProcessRequest processRequest;
+
+    @Autowired
+    NtisSystemWorksEdit ntisSystemWorksEdit;
 
     @Override
     protected SprBackendUserSession createNewSession() {
@@ -128,14 +134,14 @@ public class NtisSystemAdminService extends S2RestAuthService<SprBackendWebSessi
     public ResponseEntity<NtisJobEditModel> getJob(@RequestBody RecordIdentifier recordIdentifier) throws Exception {
         return okResponse(ntisSprJobEdit.getJobWithDetails(this.getDBConnection(), recordIdentifier));
     }
-    
+
     @RequestMapping(value = "/get-job-by-token", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<Double> checkToken(@RequestBody String token) throws SparkBusinessException, Exception {
-        SprProcessRequestsDAO sprProcessRequestsDAO = processRequest.getIdetifierByToken(this.getDBConnection(), NtisProcessRequestTypes.SCHEDULER_FAILED_REQUEST, token,
-                false);
+        SprProcessRequestsDAO sprProcessRequestsDAO = processRequest.getIdetifierByToken(this.getDBConnection(),
+                NtisProcessRequestTypes.SCHEDULER_FAILED_REQUEST, token, false);
         return okResponse(sprProcessRequestsDAO.getPrq_reference_id());
     }
-    
+
     @RequestMapping(value = "/set-job", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<NtisJobEditModel> setJob(@RequestBody NtisJobEditModel job) throws Exception {
         return okResponse(ntisSprJobEdit.save(this.getDBConnection(), job));
@@ -408,4 +414,21 @@ public class NtisSystemAdminService extends S2RestAuthService<SprBackendWebSessi
     public ResponseEntity<String> getAddressList(@RequestBody SelectRequestParams params) throws Exception {
         return okResponse(ntisAddressesList.getAddressList(this.getDBConnection(), params, this.requestContext.getUserSession().getSes_org_id()));
     }
+
+    // Ntis system works (start)
+    @GetMapping(value = "/system-works")
+    public ResponseEntity<NtisSystemWorksEditModel> getSystemWorksRecord() throws Exception {
+        return okResponse(ntisSystemWorksEdit.get(getDBConnection()));
+    }
+
+    @PostMapping(value = "/save-system-works-record")
+    public ResponseEntity<NtisSystemWorksEditModel> saveSystemWorksRecord(@RequestBody NtisSystemWorksEditModel record) throws Exception {
+        return okResponse(ntisSystemWorksEdit.save(getDBConnection(), record));
+    }
+
+    @PostMapping(value = "/update-works-state")
+    public void updateSysWorksStatus(@RequestBody Integer id) throws Exception {
+        ntisSystemWorksEdit.updateSysWorksStatus(getDBConnection(), Utils.getDouble(id));
+    }
+    // Ntis system works (end)
 }

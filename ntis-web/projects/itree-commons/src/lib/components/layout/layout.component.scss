@@ -2,6 +2,18 @@
   @apply flex flex-col w-screen min-w-72 h-[100svh] overflow-hidden bg-neutral-200;
 }
 
+.message-box {
+  @apply flex justify-between gap-2 items-center p-3 border;
+
+  &__text {
+    @apply text-lg;
+  }
+
+  &--info {
+    @apply bg-info-100 border-info-300 text-info-600;
+  }
+}
+
 .header {
   @apply flex justify-between bg-primary-600;
   z-index: 1;

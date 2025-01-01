@@ -11,6 +11,7 @@ import {
   MenuStructureRequest,
   NtisJobEditModel,
   NtisMstAdditionalText,
+  NtisSystemWorksEditModel,
   OrgUserRequest,
   OrgUserRoleRequest,
   OrganizationRoleRequest,
@@ -94,6 +95,7 @@ import { SprUsersWithoutRoles } from '../admin-pages/users/users-browse-page/use
 })
 export class AdminService {
   readonly SPARK_REST_URL = REST_API_BASE_URL + '/spark';
+  readonly NTIS_SYSTEM_ADMIN_URL = `${REST_API_BASE_URL}/ntis-system-admin`;
 
   constructor(private http: HttpClient) {}
 
@@ -1081,4 +1083,20 @@ export class AdminService {
     const url = REST_API_BASE_URL + '/ntis-system-admin/get-job-by-token';
     return this.http.post<number>(url, token);
   }
+
+  // SYSTEM WORKS START
+  getSystemWorksRecord(): Observable<NtisSystemWorksEditModel> {
+    return this.http.get<NtisSystemWorksEditModel>(`${this.NTIS_SYSTEM_ADMIN_URL}/system-works`);
+  }
+
+  saveSystemWorksRecord(record: NtisSystemWorksEditModel): Observable<NtisSystemWorksEditModel> {
+    const url = `${this.NTIS_SYSTEM_ADMIN_URL}/save-system-works-record`;
+    return this.http.post<NtisSystemWorksEditModel>(url, record);
+  }
+
+  updateSysWorksStatus(id: number): Observable<null> {
+    const url = `${this.NTIS_SYSTEM_ADMIN_URL}/update-works-state`;
+    return this.http.post<null>(url, id);
+  }
+  // SYSTEM WORKS END
 }

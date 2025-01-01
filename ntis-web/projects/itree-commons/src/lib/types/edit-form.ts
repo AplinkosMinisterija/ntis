@@ -118,6 +118,7 @@ export interface EditFormItemsGroup {
   translateLegend?: boolean;
   key?: string | number;
   hidden?: boolean;
+  inOneRow?: boolean;
   items: EditFormItem[];
 }
 

@@ -1,3 +1,18 @@
+<section *ngIf="worksMessage && showWorksMessage">
+  <div class="message-box message-box--info">
+    <div>
+      <span>{{'common.message.pendingWorks' | translate}}</span>
+      <strong>{{' ' + worksMessage.worksDateFrom + ' '}}</strong>
+      <span>{{ 'common.generalUse.to' | translate }}</span>
+      <strong>{{' ' + worksMessage.worksDateTo + '. '}}</strong>
+
+      <span>{{worksMessage.additionalInformation}}</span>
+    </div>
+
+    <button class="popover__close" type="button" (click)="showWorksMessage = false"><spr-icon name="close" /></button>
+  </div>
+</section>
+
 <header class="header" [ngClass]="{'header-test': showTestHeader}">
   <div class="flex items-center">
     <button
