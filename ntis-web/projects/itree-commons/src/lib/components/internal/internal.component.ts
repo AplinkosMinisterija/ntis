@@ -50,7 +50,9 @@ export class InternalComponent implements OnInit, OnDestroy {
       this.logoUrl = this.authService.getDefaultRoleUrl();
     });
 
+    this.getServiceStatuses();
     this.institutionsAdminService.serviceStatusSubject.subscribe(() => this.getServiceStatuses());
+    this.getOrgUserRolesChecked();
     this.adminService.orgUserRolesAssignedSubject.subscribe(() => this.getOrgUserRolesChecked());
     this.institutionsAdminService.waterManagersWtfsSubject.subscribe(() => this.getWaterManagersWtfs());
 
