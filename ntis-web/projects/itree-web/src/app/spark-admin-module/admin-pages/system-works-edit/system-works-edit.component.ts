@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Event } from '@angular/router';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { EditFormItemType } from '@itree-commons/src/lib/enums/edit-form.enums';
 import { ItreeCommonsModule } from '@itree-commons/src/lib/itree-commons.module';
 import { EditFormValues } from '@itree-commons/src/lib/types/edit-form';
