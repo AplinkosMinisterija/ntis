@@ -6,6 +6,11 @@ import { FaIconsService } from '../../services/fa-icons.service';
 import { Subject, filter } from 'rxjs';
 import { MenuStructure } from '../../model/browse-pages';
 import { AppDataService } from '../../services/app-data.service';
+import { CommonService } from '../../services/common.service';
+import { NtisSystemWorksDAO, NtisSystemWorksInfo } from '../../model/api/api';
+import { AuthUtil } from '@itree/ngx-s2-commons';
+import { WebsocketService } from '../../services/websocket.service';
+import { S2DatePipe } from '../../pipes/common.date.pipe';
 
 @Component({
   selector: 'spr-layout',
@@ -22,11 +27,40 @@ export class LayoutComponent implements OnChanges {
   isMenuVisible: boolean = true;
   selectedMenuItem: number = -1;
   showTestHeader: boolean = false;
+  showWorksMessage: boolean = false;
+  worksMessage: NtisSystemWorksInfo = undefined;
+  worksMessageDAO: NtisSystemWorksDAO = undefined;
 
   @Input() menuItems: MenuStructure[] = [];
   @Input() logoRouterLink: string | string[] = [''];
 
-  constructor(public faIconsService: FaIconsService, private router: Router, private appDataService: AppDataService) {
+  constructor(
+    public faIconsService: FaIconsService,
+    private router: Router,
+    private appDataService: AppDataService,
+    private commonService: CommonService,
+    private websocketService: WebsocketService,
+    private datePipe: S2DatePipe
+  ) {
+    this.commonService.getWorksMessage().subscribe((result) => {
+      this.worksMessage = result;
+      this.showWorksMessage = true;
+    });
+    if (AuthUtil.isLoggedIn()) {
+      this.websocketService.getSysWorksMessage().subscribe((response: unknown) => {
+        this.worksMessageDAO = JSON.parse(response as string) as NtisSystemWorksDAO;
+        this.worksMessage = {
+          additionalInformation: this.worksMessageDAO.nsw_additional_information,
+          endDate: this.worksMessageDAO.nsw_show_date_to,
+          startDate: this.worksMessageDAO.nsw_show_date_from,
+          worksDateFrom: this.datePipe.transform(this.worksMessageDAO.nsw_works_date_from, true),
+          worksDateTo: this.datePipe.transform(this.worksMessageDAO.nsw_works_date_to, true),
+        };
+        this.showWorksMessage = true;
+      });
+    } else {
+      this.websocketService.stompDisconnect();
+    }
     this.showTestHeader = this.appDataService.getAppData()?.springProfilesActive === 'test';
     if (this.showTestHeader) {
       document.title = '(TEST) Nuotekų Tvarkymo Informacinė Sistema';

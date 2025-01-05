@@ -5,3 +5,7 @@
 .actions {
   @apply flex flex-col xs:flex-row justify-center gap-6;
 }
+
+.wrap-to-line {
+  @apply flex flex-row gap-5;
+}

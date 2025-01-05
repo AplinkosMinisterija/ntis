@@ -88,7 +88,6 @@ export class NotificationsComponent implements OnInit, OnDestroy {
     } else {
       this.websocketService.stompDisconnect();
     }
-    this.getMessages();
 
     AuthEvent.userLoggedIn.pipe(takeUntil(this.destroy$)).subscribe((item) => {
       if (item.session) {

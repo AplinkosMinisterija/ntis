@@ -94,7 +94,7 @@ import { UserApiKeyEditPageComponent } from './admin-pages/users-api-keys/user-a
 import { UserApiKeyResolver } from './admin-resolvers/user-api-key-edit.resolver';
 import { cacheManagerPageResolver } from './admin-pages/cache-manager-page/cache-manager-page.resolver';
 import { NtisRoutingConst } from '../ntis-shared/constants/ntis-routing.const';
-import { NTIS_REVIEWS_FOR_ADMIN_LIST, NTIS_REVIEWS_FOR_SRV_LIST } from '../ntis-shared/constants/forms.const';
+import { NTIS_REVIEWS_FOR_ADMIN_LIST, NTIS_REVIEWS_FOR_SRV_LIST, SYSTEM_WORKS_EDIT } from '../ntis-shared/constants/forms.const';
 
 export const adminRoutes: SprRoutes = [
   {
@@ -124,6 +124,14 @@ export const adminRoutes: SprRoutes = [
         loadComponent: () =>
           import('../institutions-admin/pages/reviews-for-srv-list/reviews-for-srv-list.component').then(
             (m) => m.ReviewsForSrvListComponent
+          ),
+      },
+      {
+        path: NtisRoutingConst.SYSTEM_WORKS,
+        data: { formCode: SYSTEM_WORKS_EDIT, breadcrumb: '' },
+        loadComponent: () =>
+          import('./admin-pages/system-works-edit/system-works-edit.component').then(
+            (m) => m.SystemWorksEditComponent
           ),
       },
       {

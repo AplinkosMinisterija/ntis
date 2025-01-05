@@ -1,0 +1,15 @@
+<spr-content-box [headerText]="translationsReference + '.headerText'">
+  <div class="spr-edit-form-wrapper">
+    <spr-edit-form [formGroup]="form" [values]="editFormValues" [showCancelButton]="false" (submit)="onSubmit($event)">
+      <ng-template sprTemplate="isActive">
+        <p-inputSwitch
+          [(ngModel)]="isMessageActive"
+          [ngModelOptions]="{standalone: true}"
+          (onChange)="onInputSwitch($event)"
+          id="isActive"
+          [disabled]="!canCreate"
+        />
+      </ng-template>
+    </spr-edit-form>
+  </div>
+</spr-content-box>

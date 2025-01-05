@@ -68,6 +68,7 @@ export class NtisRoutingConst {
   public static readonly SP_RESEARCH_LIST = 'sp-research-list';
   public static readonly SP_WM_SERVICE_REQUESTS_LIST = 'sp-wm-service-requests';
   public static readonly SUBMITTED_AGGLO_DATA_LIST = 'submitted-agglo-data-list';
+  public static readonly SYSTEM_WORKS = 'system-works';
   public static readonly TECH_ORDERS_LIST = 'tech-orders';
   public static readonly TECH_SUPPORT = 'tech-support';
   public static readonly UPLOAD = 'upload';

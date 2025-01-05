@@ -113,4 +113,11 @@ public class SprSessionOpenDBServiceImpl extends SprSessionOpenDBServiceGen impl
         stmt.addParam4WherePart(" ses_rol_id = ?::int  ", rolId);
         return (ArrayList<RecordIdentifier>) queryController.selectQueryAsObjectArrayList(conn, stmt, RecordIdentifier.class);
     }
+    
+    
+    public ArrayList<RecordIdentifier> getActiveSessions(Connection conn) throws Exception {
+        StatementAndParams stmt = new StatementAndParams();
+        stmt.setStatement("select ses_key as id from spr_user_sessions_open ");        
+        return (ArrayList<RecordIdentifier>) queryController.selectQueryAsObjectArrayList(conn, stmt, RecordIdentifier.class);
+    }
 }

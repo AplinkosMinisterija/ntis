@@ -22,6 +22,7 @@ import eu.itreegroup.spark.dao.query.SelectParamValue;
 import eu.itreegroup.spark.dao.query.SelectRequestParams;
 import eu.itreegroup.spark.dao.query.StatementAndParams;
 import eu.itreegroup.spark.dao.query.security.QueryResultSecurityManager;
+import eu.itreegroup.spark.enums.YesNo;
 import eu.itreegroup.spark.modules.admin.dao.SprMenuStructuresDAO;
 import eu.itreegroup.spark.modules.admin.dao.SprOrganizationsNtisDAO;
 import eu.itreegroup.spark.modules.admin.dao.SprPersonsDAO;
@@ -41,6 +42,8 @@ import lt.project.ntis.logic.forms.NtisReviewCreatePage;
 import lt.project.ntis.logic.forms.model.NtisAddrSearchRequest;
 import lt.project.ntis.logic.forms.model.NtisAddrSearchResult;
 import lt.project.ntis.logic.forms.model.NtisMstAdditionalText;
+import lt.project.ntis.logic.forms.model.NtisSystemWorksEditModel;
+import lt.project.ntis.logic.forms.model.NtisSystemWorksInfo;
 import lt.project.ntis.logic.forms.model.NtisWtfInfo;
 import lt.project.ntis.service.NtisAdrMappingsDBService;
 import lt.project.ntis.service.NtisReviewsDBService;
@@ -715,6 +718,25 @@ public class NtisCommonMethods {
                 """);
         stmtOrg.addSelectParam(orgId);
         baseControllerJDBC.adjustRecordsInDB(conn, stmtOrg);
-
     }
+
+    public NtisSystemWorksInfo getSystemWorksInfo(Connection conn) throws Exception {
+        StatementAndParams stmt = new StatementAndParams("""
+                  SELECT nsw_show_date_from as startDate,
+                         nsw_show_date_to as endDate,
+                         to_char(nsw_works_date_from, '%s') as worksDateFrom,
+                         to_char(nsw_works_date_to, '%s') as worksDateTo,
+                         nsw_additional_information as additionalInformation
+                    FROM ntis_system_works
+                  WHERE now() between nsw_show_date_from and COALESCE(nsw_show_date_to, now()) and nsw_is_active = ?
+                ORDER BY nsw_id desc
+                   LIMIT 1
+                  """.formatted(dbStatementManager.getDateFormat(DBStatementManager.DATE_FORMAT_DAY_TIME_DB),
+                dbStatementManager.getDateFormat(DBStatementManager.DATE_FORMAT_DAY_TIME_DB)));
+        stmt.addSelectParam(YesNo.Y.getCode());
+        List<NtisSystemWorksInfo> selectResult = this.baseControllerJDBC.selectQueryAsObjectArrayList(conn, stmt, NtisSystemWorksInfo.class);
+        NtisSystemWorksInfo resultToReturn = selectResult != null && selectResult.size() > 0 ? selectResult.get(0) : null;
+        return resultToReturn;
+    }
+
 }

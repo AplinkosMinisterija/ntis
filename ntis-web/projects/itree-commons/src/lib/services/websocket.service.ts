@@ -1,5 +1,9 @@
 import { Injectable } from '@angular/core';
-import { SprBackendWebSessionInfo, SprNotificationsDAO } from '@itree-commons/src/lib/model/api/api';
+import {
+  NtisSystemWorksDAO,
+  SprBackendWebSessionInfo,
+  SprNotificationsDAO,
+} from '@itree-commons/src/lib/model/api/api';
 import { CompatClient, IMessage, Stomp } from '@stomp/stompjs';
 import { REST_API_BASE_URL } from '@itree-commons/src/constants/rest.constants';
 import { Subject } from 'rxjs';
@@ -13,6 +17,9 @@ export class WebsocketService {
   private stompClient: CompatClient = null;
   messageItem: Subject<SprNotificationsDAO> = new Subject();
   messageItem$ = this.messageItem.asObservable();
+
+  sysWorksItem: Subject<NtisSystemWorksDAO> = new Subject();
+  sysWorksItem$ = this.sysWorksItem.asObservable();
 
   constructor() {
     this.stompClient = Stomp.over(() => {
@@ -29,6 +36,13 @@ export class WebsocketService {
   stompConnect(): void {
     this.stompClient.connect({}, (): void => {
       this.getMessages();
+      this.getSysWorksMessage();
+    });
+  }
+
+  stompConnectSysWorksMessages(): void {
+    this.stompClient.connect({}, (): void => {
+      this.getSysWorksMessage();
     });
   }
 
@@ -42,6 +56,18 @@ export class WebsocketService {
       );
     }
     return this.messageItem;
+  }
+
+  getSysWorksMessage(): Subject<NtisSystemWorksDAO> {
+    if (this.stompClient.connected) {
+      this.stompClient.subscribe(
+        `/message/listen-sys-works/${(AuthUtil.getLoginResult().session as SprBackendWebSessionInfo).sessionKey}`,
+        (response: IMessage) => {
+          this.sysWorksItem.next(response.body as unknown as NtisSystemWorksDAO);
+        }
+      );
+    }
+    return this.sysWorksItem;
   }
 
   stompDisconnect(): void {
