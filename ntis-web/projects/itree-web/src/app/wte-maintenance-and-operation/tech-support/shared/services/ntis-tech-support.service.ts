@@ -46,7 +46,7 @@ import {
   providedIn: 'root',
 })
 export class NtisTechSupportService {
-  readonly techSupRestUrl = `${REST_API_BASE_URL}/ntis-tech-supp`;
+  readonly techSupRestUrl = '/ntis-api/rest/ntis-tech-supp';
 
   constructor(private http: HttpClient) {}
 

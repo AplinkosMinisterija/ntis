@@ -1,11 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AuthEvent, ExtendedSearchParam, Spr_paging_ot, getLang } from '@itree/ngx-s2-commons';
-import {
-  REST_API_BASE_URL,
-  REST_API_COMMON_URL,
-  REST_COMMON_CONTROLER,
-} from '@itree-commons/src/constants/rest.constants';
+import { REST_API_BASE_URL, REST_COMMON_CONTROLER } from '@itree-commons/src/constants/rest.constants';
 import { Observable, of, tap } from 'rxjs';
 import { map } from 'rxjs/internal/operators/map';
 import {
@@ -40,7 +36,7 @@ export class CommonService {
   }
 
   getWorksMessage(): Observable<NtisSystemWorksInfo> {
-    return this.http.get<NtisSystemWorksInfo>(`${REST_API_COMMON_URL}/works-info`);
+    return this.http.get<NtisSystemWorksInfo>('/ntis-api/rest/ntis-common/works-info');
   }
 
   getClsf(

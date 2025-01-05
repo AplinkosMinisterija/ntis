@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { InternalComponent } from '@itree-commons/src/lib/components/internal/internal.component';
 import { PublicComponent } from '@itree-commons/src/lib/components/public/public.component';
-import { RoutingConst } from '@itree-commons/src/constants/routing.const';
 import { SprCanActivateGuard } from './guard/can-activate.guard';
 import { SprRoleSelectGuard } from './guard/role-select.guard';
 import { LoadFormActionsGuard } from './guard/load-form-actions.guard';
@@ -13,6 +12,7 @@ import { NtisRoutingConst } from './ntis-shared/constants/ntis-routing.const';
 import { PageNotFoundGuard } from './guard/page-not-found.guard';
 import { AuthService } from '@itree-commons/src/lib/services/auth.service';
 import { AuthUtil } from '@itree/ngx-s2-commons';
+import { RoutingConst } from '@itree-commons/src/constants/routing.const';
 
 const NTIS_PUBLIC_ROUTES: SprRoutes = [
   {
@@ -78,7 +78,7 @@ const PUBLIC_ROUTES: SprRoutes = [
 const INTERNAL_ROUTES: SprRoutes = [
   ...NTIS_INTERNAL_ROUTES,
   {
-    path: RoutingConst.ADMIN,
+    path: 'admin',
     loadChildren: () => import('./spark-admin-module/admin.module').then((m) => m.AdminModule),
   },
   {
