@@ -608,16 +608,20 @@ public class NtisSewageDeliveryEdit extends FormBase {
      * @return List<NtisOrderCarSelection>
      * @throws Exception
      */
-    public List<NtisOrderCarSelection> getOrgCars(Connection conn, Double orgId, Double usrId) throws Exception {
+    public List<NtisOrderCarSelection> getOrgCars(Connection conn, Double orgId, Double usrId, String lang) throws Exception {
         this.checkIsFormActionAssigned(conn, NtisSewageDeliveryEdit.ACTION_READ);
+        
         StatementAndParams stmt = new StatementAndParams();
         stmt.setStatement("SELECT CR.CR_ID, " + //
-                "CR.CR_REG_NO AS CR_NAME " + //
+                "CASE WHEN CR.CR_TYPE IS NOT NULL THEN " + //
+                " CR.CR_REG_NO || ' (' || RFC_MEANING || ')' ELSE CR.CR_REG_NO END AS CR_NAME " + //
                 "FROM NTIS_CARS CR " + //
                 "INNER JOIN SPR_ORGANIZATIONS ORG ON ORG.ORG_ID = CR.CR_ORG_ID AND ORG.ORG_ID = ?::int " + //
-                "INNER JOIN SPR_ORG_USERS OU ON OU.OU_ORG_ID = ORG.ORG_ID AND OU.OU_USR_ID = ?::int AND CURRENT_DATE BETWEEN OU.OU_DATE_FROM AND COALESCE(OU.OU_DATE_TO, now())");
+                "INNER JOIN SPR_ORG_USERS OU ON OU.OU_ORG_ID = ORG.ORG_ID AND OU.OU_USR_ID = ?::int AND CURRENT_DATE BETWEEN OU.OU_DATE_FROM AND COALESCE(OU.OU_DATE_TO, now())" +//
+                "LEFT JOIN SPR_REF_CODES_VW ON RFC_DOMAIN = 'NTIS_CAR_TYPE' AND RFC_CODE = CR.CR_TYPE AND RFT_LANG = ?");
         stmt.addSelectParam(orgId);
         stmt.addSelectParam(usrId);
+        stmt.addSelectParam(lang);
         List<NtisOrderCarSelection> data = baseControllerJDBC.selectQueryAsObjectArrayList(conn, stmt, NtisOrderCarSelection.class);
         return data;
     }

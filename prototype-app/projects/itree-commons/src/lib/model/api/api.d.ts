@@ -1,6 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
-// Generated using typescript-generator version 2.30.840 on 2024-12-29 19:02:51.
+// Generated using typescript-generator version 2.30.840 on 2025-02-27 22:01:21.
 
 export interface AddressSearch {
     city: number;
@@ -760,6 +760,7 @@ export interface NtisBuildingsMapTableItem {
 
 export interface NtisCar {
     capacity: number;
+    carType: string;
     id: number;
     isInUse: boolean;
     model: string;

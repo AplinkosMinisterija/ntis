@@ -21,13 +21,13 @@ import java.sql.Timestamp;
 
 public class NtisCarsDBServiceGen extends SprBaseDBServiceImpl<NtisCarsDAO> {
   private static final Logger log = LoggerFactory.getLogger(NtisCarsDBServiceGen.class);
-    protected static String TABLE_RECORD_STMT = "SELECT CR_ID, CR_REG_NO, CR_MODEL, CR_CAPACITY, CR_TUBE_LENGTH, CR_DATE_FROM, CR_DATE_TO, CR_ORG_ID, REC_VERSION, REC_CREATE_TIMESTAMP, REC_USERID, REC_TIMESTAMP, N01, N02, N03, N04, N05, C01, C02, C03, C04, C05, D01, D02, D03, D04, D05 FROM NTIS_CARS ";
+    protected static String TABLE_RECORD_STMT = "SELECT CR_ID, CR_REG_NO, CR_MODEL, CR_CAPACITY, CR_TUBE_LENGTH, CR_DATE_FROM, CR_DATE_TO, CR_ORG_ID, REC_VERSION, REC_CREATE_TIMESTAMP, REC_USERID, REC_TIMESTAMP, N01, N02, N03, N04, N05, C01, C02, C03, C04, C05, D01, D02, D03, D04, D05, CR_TYPE FROM NTIS_CARS ";
 
    @Override
    public NtisCarsDAO newRecord() {
-	  	  NtisCarsDAO daoObject = new NtisCarsDAO();
-	  	  return daoObject;
-	  }
+         NtisCarsDAO daoObject = new NtisCarsDAO();
+         return daoObject;
+     }
    @Override
    public NtisCarsDAO object4ForceUpdate() {
        NtisCarsDAO daoObject = new NtisCarsDAO();
@@ -68,7 +68,8 @@ public class NtisCarsDBServiceGen extends SprBaseDBServiceImpl<NtisCarsDAO> {
                                rs.getTimestamp("D02"), //
                                rs.getTimestamp("D03"), //
                                rs.getTimestamp("D04"), //
-                               rs.getTimestamp("D05")));
+                               rs.getTimestamp("D05"), //
+                               rs.getString("CR_TYPE")));
          }
       return data;
    }
@@ -94,7 +95,7 @@ public class NtisCarsDBServiceGen extends SprBaseDBServiceImpl<NtisCarsDAO> {
       NtisCarsDAO daoObject = data.get(0);
       daoObject.setRecordLoaded(true);
       return daoObject;
-	
+   
    }
    @Override
    public void deleteRecord(Connection conn, Double identifier) throws Exception{
@@ -134,7 +135,7 @@ public class NtisCarsDBServiceGen extends SprBaseDBServiceImpl<NtisCarsDAO> {
    public NtisCarsDAO insertRecord(Connection conn, NtisCarsDAO daoObject) throws Exception{
       daoObject.validateObject(Utils.OPERATION_INSERT, this);
       this.validateConstraints(conn, daoObject, null);
-      String stmt = "INSERT INTO NTIS_CARS (CR_REG_NO, CR_MODEL, CR_CAPACITY, CR_TUBE_LENGTH, CR_DATE_FROM, CR_DATE_TO, CR_ORG_ID, N01, N02, N03, N04, N05, C01, C02, C03, C04, C05, D01, D02, D03, D04, D05, rec_version, rec_create_timestamp, rec_timestamp, rec_userid) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING CR_ID;";
+      String stmt = "INSERT INTO NTIS_CARS (CR_REG_NO, CR_MODEL, CR_CAPACITY, CR_TUBE_LENGTH, CR_DATE_FROM, CR_DATE_TO, CR_ORG_ID, N01, N02, N03, N04, N05, C01, C02, C03, C04, C05, D01, D02, D03, D04, D05, CR_TYPE, rec_version, rec_create_timestamp, rec_timestamp, rec_userid) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING CR_ID;";
       log.debug("insert stmt: "+stmt);
       try(PreparedStatement  pstmt = conn.prepareStatement(stmt)){
          pstmt.setString(1, daoObject.getCr_reg_no());
@@ -159,12 +160,13 @@ public class NtisCarsDBServiceGen extends SprBaseDBServiceImpl<NtisCarsDAO> {
          pstmt.setObject(20,  Utils.getSqlTimestamp(daoObject.getD03()));
          pstmt.setObject(21,  Utils.getSqlTimestamp(daoObject.getD04()));
          pstmt.setObject(22,  Utils.getSqlTimestamp(daoObject.getD05()));
+         pstmt.setString(23, daoObject.getCr_type());
          //Record audit information (start)
-         pstmt.setInt(23, 1);
-         pstmt.setObject(24,  new Timestamp(System.currentTimeMillis()));
+         pstmt.setInt(24, 1);
          pstmt.setObject(25,  new Timestamp(System.currentTimeMillis()));
+         pstmt.setObject(26,  new Timestamp(System.currentTimeMillis()));
          String userName = getUserName();
-         pstmt.setObject(26, userName);
+         pstmt.setObject(27, userName);
          //Record audit information (end)
          pstmt.execute();
          try(ResultSet rs = pstmt.getResultSet()){
@@ -195,7 +197,7 @@ public class NtisCarsDBServiceGen extends SprBaseDBServiceImpl<NtisCarsDAO> {
          try(PreparedStatement pstmt = conn.prepareStatement(stmt)){
             List<StatementParam> statementParams = updatePart.getStatementParams();
             for (int i=0;i<statementParams.size();i++) {
-        	    statementParams.get(i).setParameter(pstmt, i+1);
+               statementParams.get(i).setParameter(pstmt, i+1);
             }
             pstmt.execute();
          }catch(Exception ex){

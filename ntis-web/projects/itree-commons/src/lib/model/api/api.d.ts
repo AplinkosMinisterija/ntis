@@ -760,6 +760,7 @@ export interface NtisBuildingsMapTableItem {
 
 export interface NtisCar {
     capacity: number;
+    carType: string;
     id: number;
     isInUse: boolean;
     model: string;

@@ -337,7 +337,7 @@ public class NtisTechSupportService extends S2RestAuthService<SprBackendWebSessi
     @RequestMapping(value = "/get-available-org-cars", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<NtisOrderCarSelection>> getOrgCars() throws Exception {
         return okResponse(this.sewageDeliveryEdit.getOrgCars(this.getDBConnection(), this.requestContext.getUserSession().getSes_org_id(),
-                this.requestContext.getUserSession().getSes_usr_id()));
+                this.requestContext.getUserSession().getSes_usr_id(), this.requestContext.getUserSession().getSes_language()));
     }
     // sewage delivery edit end
 

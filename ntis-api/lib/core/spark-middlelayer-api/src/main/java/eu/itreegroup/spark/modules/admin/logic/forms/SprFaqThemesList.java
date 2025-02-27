@@ -11,6 +11,7 @@ import eu.itreegroup.spark.dao.query.AdvancedSearchParameterStatement;
 import eu.itreegroup.spark.dao.query.BaseControllerJDBC;
 import eu.itreegroup.spark.dao.query.SelectRequestParams;
 import eu.itreegroup.spark.dao.query.StatementAndParams;
+import eu.itreegroup.spark.enums.YesNo;
 
 @Component
 public class SprFaqThemesList extends FormBase {
@@ -40,10 +41,14 @@ public class SprFaqThemesList extends FormBase {
         this.checkIsFormActionAssigned(conn, SprFaqThemesList.ACTION_READ);
         StatementAndParams stmt = new StatementAndParams();
         stmt.setStatement("""
-                SELECT rfc_meaning, rfc_code
+                SELECT rfc_code,
+                       CASE WHEN LOWER(c01)=LOWER('%s')
+                            THEN UPPER(rfc_meaning)
+                            ELSE rfc_meaning 
+                       END as rfc_meaning
                 FROM spr_ref_codes
                 WHERE rfc_domain = 'FAQ_GROUP'
-                """);
+                """.formatted(YesNo.Y.getCode()));
         stmt.setWhereExists(true);
         HashMap<String, AdvancedSearchParameterStatement> advancedParamList = params.getAdvancedParameters();
         stmt.addParam4WherePart(dbStatementManager.colNamesToConcatString("rfc_meaning"), StatementAndParams.PARAM_STRING,

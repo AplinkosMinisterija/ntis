@@ -118,7 +118,8 @@ public class NtisSewageDeliveriesList extends FormBase {
         stmt.setStatement("SELECT WD.WD_ID, " + //
                 "TO_CHAR(WD.WD_DELIVERY_DATE, '" + dbstatementManager.getDateFormat(DBStatementManager.DATE_FORMAT_DAY_DB) + "') AS WD_DELIVERY_DATE, " + //
                 "WD.WD_DELIVERED_QUANTITY, " + //
-                "CR.CR_REG_NO, " + //
+                "CASE WHEN CR.CR_TYPE IS NOT NULL THEN CR.CR_REG_NO || ' (' || CRC.RFC_MEANING || ')' "+//
+                "ELSE CR.CR_REG_NO END AS CR_REG_NO, " + //
                 "WD.WD_STATE as WD_STATE_CLSF, " + //
                 "WTO.WTO_NAME, " + //
                 "coalesce(RFC.RFC_MEANING, WD.WD_STATE) as WD_STATE, " + //
@@ -131,11 +132,13 @@ public class NtisSewageDeliveriesList extends FormBase {
                 + //
                 "LEFT JOIN NTIS_CARS CR ON CR.CR_ID = WD.WD_CR_ID AND CR.CR_ORG_ID = ORG.ORG_ID " + //
                 "LEFT JOIN SPR_REF_CODES_VW RFC ON RFC.RFC_CODE = WD.WD_STATE AND RFC.RFC_DOMAIN = 'SEWAGE_DELIV_STATUS' AND RFC.RFT_LANG = ? " + //
-                "LEFT JOIN NTIS_WASTEWATER_DELIVERIES WD2 ON WD.WD_ID = WD2.WD_WD_ID");
+                "LEFT JOIN NTIS_WASTEWATER_DELIVERIES WD2 ON WD.WD_ID = WD2.WD_WD_ID " +//
+                "LEFT JOIN SPR_REF_CODES_VW CRC ON CRC.RFC_DOMAIN = 'NTIS_CAR_TYPE' AND CRC.RFC_CODE = CR.CR_TYPE AND CRC.RFT_LANG = ?" );
         HashMap<String, AdvancedSearchParameterStatement> advancedParamList = params.getAdvancedParameters();
         this.managePredefinedFilterStructure(conn, advancedParamList.get(PREDEFINED_FILTER_PARAM), usrId, stmt, advancedParamList);
         stmt.addSelectParam(orgId);
         stmt.addSelectParam(usrId);
+        stmt.addSelectParam(lang);
         stmt.addSelectParam(lang);
         stmt.addParam4WherePart("WD.WD_ID", StatementAndParams.PARAM_DOUBLE, advancedParamList.get("wd_id"));
         stmt.addParam4WherePart("WD.WD_DELIVERY_DATE", StatementAndParams.PARAM_DATE, advancedParamList.get("wd_delivery_date"),
@@ -146,7 +149,7 @@ public class NtisSewageDeliveriesList extends FormBase {
         stmt.addParam4WherePart("WD.WD_STATE", StatementAndParams.PARAM_STRING, advancedParamList.get("wd_state"));
         stmt.addParam4WherePart("WTO_ADDRESS", StatementAndParams.PARAM_STRING, advancedParamList.get("address"));
         stmt.addParam4WherePart(
-                dbstatementManager.colNamesToConcatString("WD.WD_ID", "WD.WD_DELIVERED_QUANTITY", "CR_REG_NO", "WTO_NAME", "RFC.RFC_MEANING",
+                dbstatementManager.colNamesToConcatString("WD.WD_ID", "WD.WD_DELIVERED_QUANTITY", "CR_REG_NO", "CRC.RFC_MEANING", "WTO_NAME", "RFC.RFC_MEANING",
                         "TO_CHAR(WD.WD_DELIVERY_DATE,'" + dbstatementManager.getDateFormat(DBStatementManager.DATE_FORMAT_DAY_DB) + "')", "WTO_ADDRESS"),
                 StatementAndParams.PARAM_STRING, advancedParamList.get("quickSearch"));
 

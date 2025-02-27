@@ -64,7 +64,8 @@ public class NtisSewageDeliveryViewPage extends FormBase {
                 "WD.WD_ACCEPTED_SEWAGE_QUANTITY, " + //
                 "WD.WD_REJECTION_REASON, " + //
                 "WD.WD_DELIVERED_WASTEWATER_DESCRIPTION, " + //
-                "CR.CR_REG_NO, " + //
+                "CASE WHEN CR.CR_TYPE IS NOT NULL THEN CR.CR_REG_NO || ' (' || CRC.RFC_MEANING || ')' " + //
+                "ELSE CR.CR_REG_NO END AS CR_REG_NO, " + //
                 "WTO.WTO_NAME || ', ' || WTO.WTO_ADDRESS AS WTO_NAME, " + //
                 "ORG.ORG_NAME, " + //
                 "ORG.ORG_CODE, " + //
@@ -79,10 +80,12 @@ public class NtisSewageDeliveryViewPage extends FormBase {
                 + //
                 "INNER JOIN SPARK.SPR_REF_CODES_VW RFCT ON RFCT.RFC_CODE = WD.WD_SEWAGE_TYPE AND RFCT.RFC_DOMAIN = 'SEWAGE_TYPE' AND rfct.rft_lang = ? " + //
                 "LEFT JOIN NTIS.NTIS_WASTEWATER_TREATMENT_ORG WTO ON WTO.WTO_ID = WD.WD_WTO_ID " + //
-                "LEFT JOIN SPARK.SPR_ORGANIZATIONS ORG ON WTO.WTO_ORG_ID = ORG.ORG_ID");
+                "LEFT JOIN SPARK.SPR_ORGANIZATIONS ORG ON WTO.WTO_ORG_ID = ORG.ORG_ID " +//
+                "LEFT JOIN SPR_REF_CODES_VW CRC ON CRC.RFC_DOMAIN = 'NTIS_CAR_TYPE' AND CRC.RFC_CODE = CR.CR_TYPE AND CRC.RFT_LANG = ? ");
         stmt.addSelectParam(orgId);
         stmt.addSelectParam(usrId);
         stmt.addSelectParam(wdId);
+        stmt.addSelectParam(lang);
         stmt.addSelectParam(lang);
         stmt.addSelectParam(lang);
         List<NtisSludgeDeliveryDetails> data = queryController.selectQueryAsObjectArrayList(conn, stmt, NtisSludgeDeliveryDetails.class);
