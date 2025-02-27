@@ -14,6 +14,8 @@ public class NtisCar {
 
     private Boolean isInUse;
 
+    private String carType;
+
     public Integer getId() {
         return id;
     }
@@ -60,6 +62,20 @@ public class NtisCar {
 
     public void setIsInUse(Boolean isInUse) {
         this.isInUse = isInUse;
+    }
+
+    public String getCarType() {
+        return carType;
+    }
+
+    public void setCarType(String carType) {
+        this.carType = carType;
+    }
+
+    @Override
+    public String toString() {
+        return "NtisCar [id=" + id + ", regNo=" + regNo + ", model=" + model + ", capacity=" + capacity + ", tubeLength=" + tubeLength + ", isInUse=" + isInUse
+                + ", carType=" + carType + "]";
     }
 
 }

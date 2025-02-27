@@ -1,6 +1,15 @@
 <spr-content-box headerText="institutionsAdmin.pages.ntisCarsBrowse.headerText" transformingText="uppercase">
   <div class="spr-browse-actions-wrapper">
     <spr-browse-search-form [formGroup]="searchForm" [formCode]="formCode" (search)="search(dataTableComponent)">
+      <spr-select
+        filters
+        formControlName="cr_type"
+        classifierCode="NTIS_CAR_TYPE"
+        [placeholder]="formTranslationsReference + '.cr_type' | translate"
+        [advancedFilterParams]="true"
+        optionType="multiple"
+        [showFilter]="true"
+      ></spr-select>
       <spr-filter-input
         filters
         inputType="text"

@@ -117,6 +117,7 @@ public class NtisCarEdit extends FormBase {
                     ntisCarsDao.getCr_org_id(), orgId));
             throw new SparkBusinessException(new S2Message("common.error.action_not_granted", SparkMessageType.ERROR));
         }
+        ntisCarsDao.setCr_type(record.getCarType());
         return ntisCarsDBService.saveRecord(conn, ntisCarsDao).getNtisCarModel();
     }
 

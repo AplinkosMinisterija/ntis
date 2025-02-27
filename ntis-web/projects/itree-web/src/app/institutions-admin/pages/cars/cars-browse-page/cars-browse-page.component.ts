@@ -60,6 +60,7 @@ export class CarsBrowsePageComponent extends BaseBrowseForm<NtisCarsBrowseRow> i
 
   cols: TableColumn[] = [
     { field: 'cr_id', export: true, visible: true, type: DATA_TYPE_STRING },
+    { field: 'cr_type', export: true, visible: true, type: DATA_TYPE_STRING },
     { field: 'cr_reg_no', export: true, visible: true, type: DATA_TYPE_STRING },
     { field: 'cr_model', export: true, visible: true, type: DATA_TYPE_STRING },
     { field: 'cr_capacity', export: true, visible: true, type: DATA_TYPE_STRING },
@@ -88,6 +89,7 @@ export class CarsBrowsePageComponent extends BaseBrowseForm<NtisCarsBrowseRow> i
 
   ngOnInit(): void {
     this.searchForm.addControl('cr_id', new FormControl(''));
+    this.searchForm.addControl('cr_type', new FormControl(''));
     this.searchForm.addControl('cr_reg_no', new FormControl(''));
     this.searchForm.addControl('cr_model', new FormControl(''));
     this.searchForm.addControl('cr_capacity', new FormControl(''));

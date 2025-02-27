@@ -24,6 +24,7 @@ import { NtisRoutingConst } from '@itree-web/src/app/ntis-shared/constants/ntis-
 export class CarEditPageComponent extends BaseEditForm<NtisCar> implements OnInit {
   readonly formTranslationsReference = 'institutionsAdmin.pages.ntisCarEdit';
   override form = new FormGroup({
+    carType: new FormControl<string>(undefined),
     regNo: new FormControl('', Validators.compose([Validators.maxLength(20), Validators.required])),
     model: new FormControl('', Validators.compose([Validators.maxLength(200), Validators.required])),
     capacity: new FormControl<number>(undefined, Validators.compose([Validators.maxLength(12), Validators.required])),
@@ -36,6 +37,15 @@ export class CarEditPageComponent extends BaseEditForm<NtisCar> implements OnIni
       legend: this.formTranslationsReference + '.headerText',
       translateLegend: true,
       items: [
+        {
+          type: EditFormItemType.Select,
+          label: this.formTranslationsReference + '.cr_type',
+          translateLabel: true,
+          optionType: 'single',
+          formControlName: 'carType',
+          classifierCode: 'NTIS_CAR_TYPE',
+          isRequired: false,
+        },
         {
           type: EditFormItemType.Text,
           label: this.formTranslationsReference + '.cr_reg_no',
@@ -93,11 +103,13 @@ export class CarEditPageComponent extends BaseEditForm<NtisCar> implements OnIni
     super(commonService, activatedRoute);
     this.form.controls.isInUse.valueChanges.pipe(takeUntilDestroyed()).subscribe((value) => {
       if (value) {
+        this.form.controls.carType.enable();
         this.form.controls.regNo.enable();
         this.form.controls.model.enable();
         this.form.controls.capacity.enable();
         this.form.controls.tubeLength.enable();
       } else {
+        this.form.controls.carType.disable();
         this.form.controls.regNo.disable();
         this.form.controls.model.disable();
         this.form.controls.capacity.disable();
@@ -118,6 +130,7 @@ export class CarEditPageComponent extends BaseEditForm<NtisCar> implements OnIni
     this.data = data;
     EditFormComponent.toggleItemVisibilityInValues(this.editFormValues, 'isInUse', !!data.id);
     this.form.setValue({
+      carType: data.carType,
       regNo: data.regNo,
       model: data.model,
       capacity: data.capacity,

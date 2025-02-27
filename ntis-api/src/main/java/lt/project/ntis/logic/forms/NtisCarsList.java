@@ -54,6 +54,7 @@ public class NtisCarsList extends FormBase {
         stmt.setStatement(
                 """
                         select cr_id,
+                             rfc_meaning as cr_type,
                              cr_reg_no,
                              cr_model,
                              cr_capacity,
@@ -64,12 +65,15 @@ public class NtisCarsList extends FormBase {
                              end as cr_used
                         from ntis_cars
                         join spr_org_users on ou_org_id = cr_org_id and cr_org_id = ?::int and ou_usr_id = ?::int and CURRENT_DATE between ou_date_from and COALESCE(ou_date_to, now())
+                        left join spr_ref_codes_vw on rfc_domain = 'NTIS_CAR_TYPE' and rfc_code = cr_type and rft_lang = ?
                         """);
         stmt.addSelectParam(orgId);
         stmt.addSelectParam(usrId);
+        stmt.addSelectParam(lang);
         HashMap<String, AdvancedSearchParameterStatement> advancedParamList = params.getAdvancedParameters();
         this.managePredefinedFilterStructure(conn, advancedParamList.get(PREDEFINED_FILTER_PARAM), usrId, stmt, advancedParamList);
         stmt.addParam4WherePart("cr_reg_no", StatementAndParams.PARAM_STRING, advancedParamList.get("cr_reg_no"));
+        stmt.addParam4WherePart("cr_type", StatementAndParams.PARAM_STRING, advancedParamList.get("cr_type"));
         stmt.addParam4WherePart("cr_model", StatementAndParams.PARAM_STRING, advancedParamList.get("cr_model"));
         stmt.addParam4WherePart("cr_capacity", StatementAndParams.PARAM_DOUBLE, advancedParamList.get("cr_capacity"));
         stmt.addParam4WherePart("cr_tube_length", StatementAndParams.PARAM_DOUBLE, advancedParamList.get("cr_tube_length"));
@@ -77,7 +81,7 @@ public class NtisCarsList extends FormBase {
         HashMap<String, String> paramList = params.getParamList();
         stmt.addParam4WherePart("case when COALESCE(cr_date_to, now())>=now() then 'Y' else 'N' end = ? ", paramList.get("p_cr_used"));
 
-        stmt.addParam4WherePart(dbstatementManager.colNamesToConcatString("cr_reg_no", "cr_model", "cr_capacity", "cr_tube_length"),
+        stmt.addParam4WherePart(dbstatementManager.colNamesToConcatString("cr_reg_no", "rfc_meaning", "cr_model", "cr_capacity", "cr_tube_length"),
                 StatementAndParams.PARAM_STRING, advancedParamList.get("quickSearch"));
 
         stmt.setStatementOrderPart(" order by cr_date_to nulls first, cr_date_from desc, cr_id desc ");
