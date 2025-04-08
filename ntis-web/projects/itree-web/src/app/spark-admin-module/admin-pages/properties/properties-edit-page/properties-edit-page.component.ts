@@ -135,7 +135,7 @@ export class PropertiesEditPageComponent extends DeprecatedBaseEditForm<SprPrope
       prp_id: new FormControl({ value: null, disabled: true }),
       prp_name: new FormControl('', Validators.compose([Validators.maxLength(200), Validators.required])),
       prp_description: new FormControl('', Validators.compose([Validators.maxLength(200), Validators.required])),
-      prp_value: new FormControl('', Validators.maxLength(128)),
+      prp_value: new FormControl('', Validators.maxLength(1000)),
       prp_type: new FormControl(DATA_TYPE_STRING, [Validators.required]),
       prp_guid: new FormControl({ value: '', disabled: true }, Validators.maxLength(50)),
       prp_install_instance: new FormControl('', Validators.maxLength(50)),
