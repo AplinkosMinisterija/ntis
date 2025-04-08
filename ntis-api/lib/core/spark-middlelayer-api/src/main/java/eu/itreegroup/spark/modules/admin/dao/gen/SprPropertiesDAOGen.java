@@ -556,7 +556,7 @@ public class SprPropertiesDAOGen extends SprBaseDAO{
          }
       }
       if (prp_description_changed || operation == Utils.OPERATION_INSERT) {
-         if (prp_description!= null && prp_description.length()>200) {
+         if (prp_description!= null && prp_description.length()>1000) {
             throw new SparkBusinessException(new S2Message("SPR_PROPERTIES", "PRP_DESCRIPTION", DB_ERROR_LENGTH_PATH, SparkMessageType.ERROR,"200"));
          }
       }
@@ -570,7 +570,7 @@ public class SprPropertiesDAOGen extends SprBaseDAO{
          }
       }
       if (prp_value_changed || operation == Utils.OPERATION_INSERT) {
-         if (prp_value!= null && prp_value.length()>200) {
+         if (prp_value!= null && prp_value.length()>1000) {
             throw new SparkBusinessException(new S2Message("SPR_PROPERTIES", "PRP_VALUE", DB_ERROR_LENGTH_PATH, SparkMessageType.ERROR,"200"));
          }
       }
