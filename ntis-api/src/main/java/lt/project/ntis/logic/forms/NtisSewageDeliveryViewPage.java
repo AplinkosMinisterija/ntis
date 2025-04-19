@@ -80,7 +80,7 @@ public class NtisSewageDeliveryViewPage extends FormBase {
                 + //
                 "INNER JOIN SPARK.SPR_REF_CODES_VW RFCT ON RFCT.RFC_CODE = WD.WD_SEWAGE_TYPE AND RFCT.RFC_DOMAIN = 'SEWAGE_TYPE' AND rfct.rft_lang = ? " + //
                 "LEFT JOIN NTIS.NTIS_WASTEWATER_TREATMENT_ORG WTO ON WTO.WTO_ID = WD.WD_WTO_ID " + //
-                "LEFT JOIN SPARK.SPR_ORGANIZATIONS ORG ON WTO.WTO_ORG_ID = ORG.ORG_ID " +//
+                "LEFT JOIN SPARK.SPR_ORGANIZATIONS ORG ON WTO.WTO_ORG_ID = ORG.ORG_ID " + //
                 "LEFT JOIN SPR_REF_CODES_VW CRC ON CRC.RFC_DOMAIN = 'NTIS_CAR_TYPE' AND CRC.RFC_CODE = CR.CR_TYPE AND CRC.RFT_LANG = ? ");
         stmt.addSelectParam(orgId);
         stmt.addSelectParam(usrId);
@@ -100,22 +100,25 @@ public class NtisSewageDeliveryViewPage extends FormBase {
     }
 
     private List<NtisSewageOriginFacility> getSewageOriginFacilities(Connection conn, Double wdId, Double orgId, Double usrId, String lang) throws Exception {
-        StatementAndParams stmt = new StatementAndParams("""
-                select ord.ord_id,
-                       df.df_id,
-                       df.df_wtf_id as wtf_id,
-                       wtf.c02 || ' - ' || coalesce(wav.full_address_text, '(' || wtf.wtf_facility_latitude || ', ' || wtf.wtf_facility_longitude || ')')  as name,
-                       coalesce(typ.rfc_meaning, wtf.wtf_type) as wtf_type,
-                       df.df_delivery_sludge_quentity as ocw_discharged_sludge_amount,
-                       case when ord.ord_id is not null then 'ORDER' when ord.ord_id is null and wtf.wtf_id is not null then 'FACILITY' end as type
-                       from ntis_wastewater_deliveries wd
-                       inner join ntis_delivery_facilities df on df.df_wd_id = wd.wd_id
-                       left join ntis_orders ord on ord.ord_id = df.df_ord_id and ord.ord_wtf_id = df.df_wtf_id
-                       inner join ntis_wastewater_treatment_faci wtf on df.df_wtf_id = wtf.wtf_id
-                       left join spr_ref_codes_vw typ on typ.rfc_code = wtf.wtf_type and typ.rfc_domain = 'NTIS_WTF_TYPE' and typ.rft_lang = ?
-                       left join ntis_address_vw wav on wav.address_id = wtf.wtf_ad_id
-                       where wd.wd_id = ?::int and wd.wd_org_id = ?::int
-                """);
+        StatementAndParams stmt = new StatementAndParams(
+                """
+                        select ord.ord_id,
+                               df.df_id,
+                               df.df_wtf_id as wtf_id,
+                               wtf.c02 || ' - ' || coalesce(wav.full_address_text, '(' || wtf.wtf_facility_latitude || ', ' || wtf.wtf_facility_longitude || ')')  as name,
+                               coalesce(typ.rfc_meaning, wtf.wtf_type) as wtf_type,
+                               wtf.wtf_type as wtf_type_code,
+                               coalesce(wav.full_address_text || ' (' || wtf.wtf_facility_latitude || ', ' || wtf.wtf_facility_longitude || ')', '(' || wtf.wtf_facility_latitude || ', ' || wtf.wtf_facility_longitude || ')')  as wtf_address,
+                               df.df_delivery_sludge_quentity as ocw_discharged_sludge_amount,
+                               case when ord.ord_id is not null then 'ORDER' when ord.ord_id is null and wtf.wtf_id is not null then 'FACILITY' end as type
+                               from ntis_wastewater_deliveries wd
+                               inner join ntis_delivery_facilities df on df.df_wd_id = wd.wd_id
+                               left join ntis_orders ord on ord.ord_id = df.df_ord_id and ord.ord_wtf_id = df.df_wtf_id
+                               inner join ntis_wastewater_treatment_faci wtf on df.df_wtf_id = wtf.wtf_id
+                               left join spr_ref_codes_vw typ on typ.rfc_code = wtf.wtf_type and typ.rfc_domain = 'NTIS_WTF_TYPE' and typ.rft_lang = ?
+                               left join ntis_address_vw wav on wav.address_id = wtf.wtf_ad_id
+                               where wd.wd_id = ?::int and wd.wd_org_id = ?::int
+                        """);
         stmt.addSelectParam(lang);
         stmt.addSelectParam(wdId);
         stmt.addSelectParam(orgId);

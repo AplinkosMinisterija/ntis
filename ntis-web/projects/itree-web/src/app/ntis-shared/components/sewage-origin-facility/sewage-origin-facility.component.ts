@@ -13,6 +13,7 @@ export class SewageOriginFacilityComponent {
   readonly translationsReference = 'ntisShared.components.sewageOriginFacility';
   readonly ORDER = 'ORDER';
   readonly FACILITY = 'FACILITY';
+  readonly PORTABLE_RESERVOIR = 'PORTABLE_RESERVOIR';
   sewageOriginDialog: boolean = false;
   chooseFacilities: boolean = false;
   removedFacilities: NtisSewageOriginFacility[] = [];

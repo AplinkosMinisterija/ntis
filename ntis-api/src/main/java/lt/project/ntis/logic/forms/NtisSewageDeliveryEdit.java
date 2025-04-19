@@ -394,12 +394,14 @@ public class NtisSewageDeliveryEdit extends FormBase {
                 "WTF.WTF_ID, " + //
                 "DF.DF_ID, " + //
                 "coalesce(TYP.RFT_DISPLAY_CODE, TYP.RFC_MEANING) AS WTF_TYPE, " + //
+                "wtf.wtf_type as wtf_type_code, " + //
                 "ORD.ORD_ID || ' - ' || CR.CR_REG_NO || ' - ' || " + //
-                "coalesce(WAV.FULL_ADDRESS_TEXT, '(' ||WTF.WTF_FACILITY_LATITUDE || ', ' || WTF.WTF_FACILITY_LONGITUDE || ')') " + //
-                "|| ' - ' || coalesce(TYP.RFC_MEANING, WTF.WTF_TYPE) AS NAME, " + //
+                "coalesce(WAV.FULL_ADDRESS_TEXT, '(' ||WTF.WTF_FACILITY_LATITUDE || ', ' || WTF.WTF_FACILITY_LONGITUDE || ')')  AS NAME, " + //
                 "OCW.OCW_CR_ID, " + //
                 "OCW.OCW_DISCHARGED_SLUDGE_AMOUNT, " + //
                 "ORD.ORD_REMOVED_SEWAGE_DATE, " + //
+                "coalesce(wav.full_address_text || ' (' || wtf.wtf_facility_latitude || ', ' || wtf.wtf_facility_longitude || ')', '(' || wtf.wtf_facility_latitude || ', ' || wtf.wtf_facility_longitude || ')')  as wtf_address, "
+                + //
                 "'ORDER' AS TYPE " + //
                 "FROM NTIS.NTIS_ORDERS ORD " + //
                 "INNER JOIN NTIS_SERVICES SRV ON SRV.SRV_ID = ORD.ORD_SRV_ID AND SRV.SRV_ORG_ID = ?::int " + //
@@ -610,14 +612,15 @@ public class NtisSewageDeliveryEdit extends FormBase {
      */
     public List<NtisOrderCarSelection> getOrgCars(Connection conn, Double orgId, Double usrId, String lang) throws Exception {
         this.checkIsFormActionAssigned(conn, NtisSewageDeliveryEdit.ACTION_READ);
-        
+
         StatementAndParams stmt = new StatementAndParams();
         stmt.setStatement("SELECT CR.CR_ID, " + //
                 "CASE WHEN CR.CR_TYPE IS NOT NULL THEN " + //
                 " CR.CR_REG_NO || ' (' || RFC_MEANING || ')' ELSE CR.CR_REG_NO END AS CR_NAME " + //
                 "FROM NTIS_CARS CR " + //
                 "INNER JOIN SPR_ORGANIZATIONS ORG ON ORG.ORG_ID = CR.CR_ORG_ID AND ORG.ORG_ID = ?::int " + //
-                "INNER JOIN SPR_ORG_USERS OU ON OU.OU_ORG_ID = ORG.ORG_ID AND OU.OU_USR_ID = ?::int AND CURRENT_DATE BETWEEN OU.OU_DATE_FROM AND COALESCE(OU.OU_DATE_TO, now())" +//
+                "INNER JOIN SPR_ORG_USERS OU ON OU.OU_ORG_ID = ORG.ORG_ID AND OU.OU_USR_ID = ?::int AND CURRENT_DATE BETWEEN OU.OU_DATE_FROM AND COALESCE(OU.OU_DATE_TO, now())"
+                + //
                 "LEFT JOIN SPR_REF_CODES_VW ON RFC_DOMAIN = 'NTIS_CAR_TYPE' AND RFC_CODE = CR.CR_TYPE AND RFT_LANG = ?");
         stmt.addSelectParam(orgId);
         stmt.addSelectParam(usrId);

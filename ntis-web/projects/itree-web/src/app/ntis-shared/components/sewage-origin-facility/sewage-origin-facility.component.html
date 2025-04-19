@@ -13,6 +13,11 @@
         [value]="facility.wtf_id + ''"
       ></spr-info-line>
       <spr-info-line
+        *ngIf="facility.wtf_type_code !== PORTABLE_RESERVOIR && facility.wtf_address !== null"
+        [name]="translationsReference + '.wtf_address' | translate"
+        [value]="facility.wtf_address"
+      ></spr-info-line>
+      <spr-info-line
         *ngIf="facility.type === ORDER || facility.ord_id !== null"
         [name]="translationsReference + '.type' | translate"
         [value]="facility.wtf_type"
@@ -24,7 +29,7 @@
         [sqMeters]="true"
       ></spr-info-line>
       <spr-info-line
-        *ngIf="facility.type === FACILITY || facility.ord_id === null"
+        *ngIf="facility.type === FACILITY || facility.ord_id === null || facility.wtf_type_code === PORTABLE_RESERVOIR"
         [name]="translationsReference + '.facility' | translate"
         [value]="facility.name"
       ></spr-info-line>

@@ -101,8 +101,10 @@ public class NtisSludgeTreatmentDelivery extends FormBase {
                        df.df_id,
                        df.df_wtf_id as wtf_id,
                        wtf.c02 || ' - ' || coalesce(wav.full_address_text, '(' || wtf.wtf_facility_latitude || ', ' || wtf.wtf_facility_longitude || ')')  as name,
-                       coalesce(typ.rfc_meaning, wtf.wtf_type) as wtf_type,
+                       coalesce(typ.rfc_meaning, wtf.wtf_type) as wtf_type,     
+                       wtf.wtf_type as wtf_type_code,
                        df.df_delivery_sludge_quentity as ocw_discharged_sludge_amount,
+                       coalesce(wav.full_address_text || ' (' || wtf.wtf_facility_latitude || ', ' || wtf.wtf_facility_longitude || ')', '(' || wtf.wtf_facility_latitude || ', ' || wtf.wtf_facility_longitude || ')')  as wtf_address,
                        case when ord.ord_id is not null then 'ORDER' when ord.ord_id is null and wtf.wtf_id is not null then 'FACILITY' end as type
                        from ntis_wastewater_deliveries wd
                        inner join ntis_wastewater_treatment_org wto on wto.wto_id = wd.wd_wto_id and wto.wto_org_id = ?::int

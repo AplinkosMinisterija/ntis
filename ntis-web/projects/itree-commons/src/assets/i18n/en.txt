@@ -2249,6 +2249,7 @@ ntisShared.components.sewageOriginFacility.addPortableFacility=Select portable f
 ntisShared.components.sewageOriginFacility.selectFacility=Select portable wastewater treatment facility
 ntisShared.components.sewageOriginFacility.facility=Portable wastewater treatment facility
 ntisShared.components.sewageOriginFacility.wtf_id=Wastewater treatment facility id
+ntisShared.components.sewageOriginFacility.wtf_address=Facility address
 ntisShared.components.wastewaterFacilityObjectList.headerText=Object overview
 ntisShared.components.wastewaterFacilityObjectList.facilityObjectAddress=Wastewater treatment facility address
 ntisShared.components.wastewaterFacilityObjectList.servedObjectListLabel=List of served objects
