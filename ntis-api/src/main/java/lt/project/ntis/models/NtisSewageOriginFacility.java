@@ -13,7 +13,11 @@ public class NtisSewageOriginFacility {
 
     private String wtf_type;
 
+    private String wtf_type_code;
+
     private Double wtf_id;
+
+    private String wtf_address;
 
     private String name;
 
@@ -24,7 +28,7 @@ public class NtisSewageOriginFacility {
     private String df_id;
 
     private Date ord_removed_sewage_date;
-    
+
     private String type;
 
     public NtisSewageOriginFacility() {
@@ -101,6 +105,22 @@ public class NtisSewageOriginFacility {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getWtf_address() {
+        return wtf_address;
+    }
+
+    public void setWtf_address(String wtf_address) {
+        this.wtf_address = wtf_address;
+    }
+
+    public String getWtf_type_code() {
+        return wtf_type_code;
+    }
+
+    public void setWtf_type_code(String wtf_type_code) {
+        this.wtf_type_code = wtf_type_code;
     }
 
 }

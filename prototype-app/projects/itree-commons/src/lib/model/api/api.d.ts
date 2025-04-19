@@ -1,6 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
-// Generated using typescript-generator version 2.30.840 on 2025-02-27 22:01:21.
+// Generated using typescript-generator version 2.30.840 on 2025-04-19 19:31:00.
 
 export interface AddressSearch {
     city: number;
@@ -781,6 +781,7 @@ export interface NtisCarsDAOGen extends SprBaseDAO {
     cr_org_id: number;
     cr_reg_no: string;
     cr_tube_length: number;
+    cr_type: string;
     rec_create_timestamp: Date;
     rec_timestamp: Date;
     rec_userid: string;
@@ -2286,8 +2287,10 @@ export interface NtisSewageOriginFacility {
     ord_id: string;
     ord_removed_sewage_date: Date;
     type: string;
+    wtf_address: string;
     wtf_id: number;
     wtf_type: string;
+    wtf_type_code: string;
 }
 
 export interface NtisSludgeDeliveryDetails {

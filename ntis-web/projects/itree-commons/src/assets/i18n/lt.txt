@@ -2250,6 +2250,7 @@ ntisShared.components.sewageOriginFacility.addPortableFacility=Pasirinkti kilnoj
 ntisShared.components.sewageOriginFacility.selectFacility=Pasirinkti kilnojamą nuotekų tvarkymo įrenginį
 ntisShared.components.sewageOriginFacility.facility=Kilnojamas nuotekų tvarkymo įrenginys
 ntisShared.components.sewageOriginFacility.wtf_id=Nuotekų tvarkymo įrenginio id
+ntisShared.components.sewageOriginFacility.wtf_address=Įrenginio adresas
 ntisShared.components.wastewaterFacilityObjectList.headerText=Objektų peržiūra
 ntisShared.components.wastewaterFacilityObjectList.facilityObjectAddress=Nuotekų tvarkymo įrenginio adresas
 ntisShared.components.wastewaterFacilityObjectList.servedObjectListLabel=Aptarnaujamų objektų sąrašas
