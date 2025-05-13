@@ -78,7 +78,8 @@ public class SecurityConfig {
                 "/ntis-faq-pub/**", //
 
                 "/auth/isense/start-isense-auth", //
-                "/auth/isense/complete-isense-auth" //
+                "/auth/isense/complete-isense-auth", //
+                "/ntis-common/works-info"//
         };
         return routes;
     }
