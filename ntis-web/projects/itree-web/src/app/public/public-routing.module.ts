@@ -22,11 +22,6 @@ import { FaqListComponent } from '../ntis-shared/pages/faq/faq-list/faq-list.com
 const routes: SprRoutes = [
   {
     path: '',
-    pathMatch: 'full',
-    redirectTo: AuthUtil.isLoggedIn() ? `/${RoutingConst.INTERNAL}/${RoutingConst.DASHBOARD}` : `/${RoutingConst.HOME}`,
-  },
-  {
-    path: '',
     children: [
       {
         path: RoutingConst.HOME,
