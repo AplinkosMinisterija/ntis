@@ -23,6 +23,7 @@ export class LayoutComponent implements OnChanges {
   readonly categoryItemMaxHeightInRem = 10;
   readonly MENU_DEFAULT_ICON_NAME = MENU_DEFAULT_ICON_NAME;
   readonly destroy$ = new Subject<void>();
+  readonly currentYear: number = new Date().getFullYear();
 
   isMenuVisible: boolean = true;
   selectedMenuItem: number = -1;

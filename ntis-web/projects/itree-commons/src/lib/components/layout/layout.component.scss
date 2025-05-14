@@ -195,7 +195,15 @@
 }
 
 .footer {
-  @apply bg-primary-600 text-neutral-0;
+  @apply bg-primary-600 text-neutral-0 grid grid-cols-[auto] sm:grid-cols-[repeat(2,auto)] md:grid-cols-[repeat(3,auto)] p-6 gap-6;
+
+  .copyright {
+    @apply flex flex-col items-center text-sm md:place-self-end gap-6 h-full col-span-1 sm:col-span-2 md:col-span-1;
+
+    img {
+      @apply w-48;
+    }
+  }
 }
 
 .footer-test {

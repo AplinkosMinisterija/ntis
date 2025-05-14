@@ -12,12 +12,10 @@ import { getLang } from '@itree/ngx-s2-commons';
 })
 export class PublicComponent implements OnInit {
   readonly RoutingConst = RoutingConst;
-  currentYear: number = new Date().getFullYear();
   menuItems: MenuStructure[] = [];
   multilanguageExists: boolean = true;
   footerLine1: string = '';
   footerLine2: string = '';
-  footerLine3: string = '';
 
   constructor(private authService: AuthService, private appDataService: AppDataService) {}
 
@@ -34,11 +32,9 @@ export class PublicComponent implements OnInit {
     if (getLang() === 'lt') {
       this.footerLine1 = this.appDataService.getPropertyValue('FOOTER_VAR_LT_1');
       this.footerLine2 = this.appDataService.getPropertyValue('FOOTER_VAR_LT_2');
-      this.footerLine3 = this.appDataService.getPropertyValue('FOOTER_VAR_LT_3');
     } else {
       this.footerLine1 = this.appDataService.getPropertyValue('FOOTER_VAR_EN_1');
       this.footerLine2 = this.appDataService.getPropertyValue('FOOTER_VAR_EN_2');
-      this.footerLine3 = this.appDataService.getPropertyValue('FOOTER_VAR_EN_3');
     }
   }
 }
