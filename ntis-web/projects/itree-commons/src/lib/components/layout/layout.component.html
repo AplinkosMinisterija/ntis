@@ -144,6 +144,16 @@
     <main class="main"><ng-content select="[main]"></ng-content></main>
     <footer class="footer" [ngClass]="{'footer-test': showTestHeader}">
       <ng-content select="[footer]"></ng-content>
+      <div class="copyright">
+        <img
+        loading="lazy"
+        src="../../../assets/img/es-fondai.png"
+        alt="Europos sajungos fondu investiciju veiksmu programa"
+      />
+        &copy;
+        {{currentYear}}
+        {{'components.public.rights' | translate}}
+      </div>
     </footer>
   </div>
 </div>

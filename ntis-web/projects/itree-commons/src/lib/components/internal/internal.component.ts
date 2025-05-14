@@ -22,14 +22,12 @@ export class InternalComponent implements OnInit, OnDestroy {
   menuItems: MenuStructure[] = [];
   multilanguageExists: boolean = true;
   logoUrl: string = AuthService.DEFAULT_RETURN_URL;
-  currentYear: number = new Date().getFullYear();
   unconfirmedServices: AlertTextInfo[] = [];
   showUsersRolesMessage: boolean = false;
   showWaterManagersWtfsMessage: boolean = false;
   showAlert = true;
   footerLine1: string = '';
   footerLine2: string = '';
-  footerLine3: string = '';
 
   constructor(
     public faIconsService: FaIconsService,
@@ -59,11 +57,9 @@ export class InternalComponent implements OnInit, OnDestroy {
     if (getLang() === 'lt') {
       this.footerLine1 = this.appDataService.getPropertyValue('FOOTER_VAR_LT_1');
       this.footerLine2 = this.appDataService.getPropertyValue('FOOTER_VAR_LT_2');
-      this.footerLine3 = this.appDataService.getPropertyValue('FOOTER_VAR_LT_3');
     } else {
       this.footerLine1 = this.appDataService.getPropertyValue('FOOTER_VAR_EN_1');
       this.footerLine2 = this.appDataService.getPropertyValue('FOOTER_VAR_EN_2');
-      this.footerLine3 = this.appDataService.getPropertyValue('FOOTER_VAR_EN_3');
     }
   }
 
