@@ -381,12 +381,17 @@ public class SprOrganizationsDBServiceImpl extends SprOrganizationsDBServiceGen 
     private void addRolesForNewPrivateOrg(Connection conn, SprOrganizationsNtisDAO newOrg) throws Exception {
         List<SprRolesDAO> rolesToAdd = new ArrayList<>();
         List<SprOrgAvailableRolesDAO> existingNewOrgRoles = this.sprOrgAvailableRolesDBService.loadRecordsByParams(conn, """
-                where oar_org_id = ?::int and oar_rol_id IN (select rol_id from spr_roles where rol_code in (?, ?))
-                """, new SelectParamValue(newOrg.getOrg_id()), new SelectParamValue(NtisRolesConstants.INTS_OWNER_ORG_ADMIN),
-                new SelectParamValue(NtisRolesConstants.INTS_OWNER));
+                where oar_org_id = ?::int and oar_rol_id IN (select rol_id from spr_roles where rol_code in (?))
+                """, new SelectParamValue(newOrg.getOrg_id()), new SelectParamValue(NtisRolesConstants.INTS_OWNER_ORG_ADMIN));
         if (existingNewOrgRoles == null || existingNewOrgRoles.isEmpty()) {
-            rolesToAdd.addAll(this.sprRolesDBService.loadRecordsByParams(conn, " rol_code in (?, ?) ",
-                    new SelectParamValue(NtisRolesConstants.INTS_OWNER_ORG_ADMIN), new SelectParamValue(NtisRolesConstants.INTS_OWNER)));
+            rolesToAdd.addAll(
+                    this.sprRolesDBService.loadRecordsByParams(conn, " rol_code in (?) ", new SelectParamValue(NtisRolesConstants.INTS_OWNER_ORG_ADMIN)));
+        }
+        existingNewOrgRoles = this.sprOrgAvailableRolesDBService.loadRecordsByParams(conn, """
+                where oar_org_id = ?::int and oar_rol_id IN (select rol_id from spr_roles where rol_code in (?))
+                """, new SelectParamValue(newOrg.getOrg_id()), new SelectParamValue(NtisRolesConstants.INTS_OWNER));
+        if (existingNewOrgRoles == null || existingNewOrgRoles.isEmpty()) {
+            rolesToAdd.addAll(this.sprRolesDBService.loadRecordsByParams(conn, " rol_code in (?) ", new SelectParamValue(NtisRolesConstants.INTS_OWNER)));
         }
         for (SprRolesDAO role : rolesToAdd) {
             SprOrgAvailableRolesDAO newRole = this.sprOrgAvailableRolesDBService.newRecord();
@@ -409,12 +414,17 @@ public class SprOrganizationsDBServiceImpl extends SprOrganizationsDBServiceGen 
                 rolesToAdd.addAll(this.sprRolesDBService.loadRecordsByParams(conn, " rol_code in (?) ", new SelectParamValue(NtisRolesConstants.ORG_NEW)));
             }
             existingNewOrgRoles = this.sprOrgAvailableRolesDBService.loadRecordsByParams(conn, """
-                    where oar_org_id = ?::int and oar_rol_id in (select rol_id from spr_roles where rol_code in (?, ?))
-                    """, new SelectParamValue(newOrg.getOrg_id()), new SelectParamValue(NtisRolesConstants.INTS_OWNER_ORG_ADMIN),
-                    new SelectParamValue(NtisRolesConstants.INTS_OWNER));
+                    where oar_org_id = ?::int and oar_rol_id = (select rol_id from spr_roles where rol_code = ?)::int
+                     """, new SelectParamValue(newOrg.getOrg_id()), new SelectParamValue(NtisRolesConstants.INTS_OWNER_ORG_ADMIN));
             if (existingNewOrgRoles == null || existingNewOrgRoles.isEmpty()) {
-                rolesToAdd.addAll(this.sprRolesDBService.loadRecordsByParams(conn, " rol_code in (?, ?) ",
-                        new SelectParamValue(NtisRolesConstants.INTS_OWNER_ORG_ADMIN), new SelectParamValue(NtisRolesConstants.INTS_OWNER)));
+                rolesToAdd.addAll(
+                        this.sprRolesDBService.loadRecordsByParams(conn, " rol_code in (?) ", new SelectParamValue(NtisRolesConstants.INTS_OWNER_ORG_ADMIN)));
+            }
+            existingNewOrgRoles = this.sprOrgAvailableRolesDBService.loadRecordsByParams(conn, """
+                    where oar_org_id = ?::int and oar_rol_id = (select rol_id from spr_roles where rol_code = ?)::int
+                     """, new SelectParamValue(newOrg.getOrg_id()), new SelectParamValue(NtisRolesConstants.INTS_OWNER));
+            if (existingNewOrgRoles == null || existingNewOrgRoles.isEmpty()) {
+                rolesToAdd.addAll(this.sprRolesDBService.loadRecordsByParams(conn, " rol_code in (?) ", new SelectParamValue(NtisRolesConstants.INTS_OWNER)));
             }
 
         }
