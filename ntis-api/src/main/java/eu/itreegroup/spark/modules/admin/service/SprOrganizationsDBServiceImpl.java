@@ -381,7 +381,7 @@ public class SprOrganizationsDBServiceImpl extends SprOrganizationsDBServiceGen 
     private void addRolesForNewPrivateOrg(Connection conn, SprOrganizationsNtisDAO newOrg) throws Exception {
         List<SprRolesDAO> rolesToAdd = new ArrayList<>();
         List<SprOrgAvailableRolesDAO> existingNewOrgRoles = this.sprOrgAvailableRolesDBService.loadRecordsByParams(conn, """
-                where oar_org_id = ?::int and oar_rol_id = (select rol_id from spr_roles where rol_code in (?, ?))::int
+                where oar_org_id = ?::int and oar_rol_id IN (select rol_id from spr_roles where rol_code in (?, ?))
                 """, new SelectParamValue(newOrg.getOrg_id()), new SelectParamValue(NtisRolesConstants.INTS_OWNER_ORG_ADMIN),
                 new SelectParamValue(NtisRolesConstants.INTS_OWNER));
         if (existingNewOrgRoles == null || existingNewOrgRoles.isEmpty()) {
