@@ -69,22 +69,29 @@ public class NtisWfManagersEdit extends FormBase {
      */
     public NtisWastewaterTreatmentFacility getSelectedWtf(Connection conn, Double wtfId, Double orgId, Double perId, Double usrId) throws Exception {
         this.checkIsFormActionAssigned(conn, NtisWfManagersEdit.ACTION_CREATE);
-        StatementAndParams stmt = new StatementAndParams();
-        stmt.setStatement("select wtf.wtf_id, " + //
-                "coalesce (wav.full_address_text, " + //
-                "        '('||wtf.wtf_facility_latitude || ', ' || wtf.wtf_facility_longitude || ')') as wtf_address " + //
-                "from ntis.ntis_wastewater_treatment_faci wtf " + //
-                "inner join ntis.ntis_facility_owners fo on fo.fo_wtf_id = wtf.wtf_id " + //
-                "left join ntis.ntis_address_vw wav on wav.address_id = wtf.wtf_ad_id " + //
-                "left join (select ful_id, ful_wtf_id " + //
-                "from ntis_facility_update_logs " + //
-                "where ful_operation = 'INSERT' " + //
-                "and ful_usr_id = ?::int and ful_wtf_id = ?::int) ful on ful_wtf_id = wtf.wtf_id " + //
-                "where wtf.wtf_id = ?::int and (fo.fo_owner_type = '" + NtisFacilityOwnerType.OWNER + "' or ful.ful_id is not null) ");
-        stmt.setWhereExists(true);
+        StatementAndParams stmt = new StatementAndParams("""
+                   select wtf.wtf_id,
+                          coalesce (wav.full_address_text, '('||wtf.wtf_facility_latitude || ', ' || wtf.wtf_facility_longitude || ')') as wtf_address
+                     from ntis.ntis_wastewater_treatment_faci wtf
+                inner join ntis.ntis_facility_owners fo on fo.fo_wtf_id = wtf.wtf_id
+                 left join ntis.ntis_address_vw wav on wav.address_id = wtf.wtf_ad_id
+                 left join (select ful_id, ful_wtf_id
+                              from ntis_facility_update_logs
+                             where ful_operation = 'INSERT'
+                               and CASE WHEN ? is not null
+                                    THEN ful_org_id = ?::int
+                                    ELSE ful_usr_id = ?::int END
+                               and ful_wtf_id = ?::int) ful on ful_wtf_id = wtf.wtf_id
+                     where wtf.wtf_id = ?::int and (fo.fo_owner_type = ? or ful.ful_id is not null)
+                   """);
+
         stmt.addSelectParam(usrId);
+        stmt.addSelectParam(orgId);
+        stmt.addSelectParam(orgId);
         stmt.addSelectParam(wtfId);
         stmt.addSelectParam(wtfId);
+        stmt.addSelectParam(NtisFacilityOwnerType.OWNER.toString());
+        stmt.setWhereExists(true);
         if (orgId != null) {
             stmt.addParam4WherePart(" fo.fo_org_id = ?::int ", orgId);
         } else {

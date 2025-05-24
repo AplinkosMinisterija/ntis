@@ -17,6 +17,10 @@ import { SPR_USERS_EDIT } from '@itree-commons/src/constants/forms.constants';
 import { PHONE_PATTERN } from '@itree-commons/src/constants/validation.constants';
 import { ActionsEnum } from '@itree-commons/src/lib/enums/table-row-actions.enums';
 import { DB_BOOLEAN_TRUE } from '@itree-commons/src/constants/db.const';
+import {
+  NTIS_INTS_OWNER_DASHBOARD,
+  NTIS_SERVICE_PROVIDER_SETTINGS,
+} from '@itree-web/src/app/ntis-shared/constants/forms.const';
 
 const NO_LIMIT_ON_ORG_LEVEL = 'NO_LIMIT_ON_ORG_LEVEL';
 
@@ -202,6 +206,9 @@ export class UserEditPageComponent extends DeprecatedBaseEditForm<SprUsersNtisDA
   }
 
   protected buildForm(): void {
+    const isPrivateOrg =
+      this.authService.isFormActionEnabled(NTIS_INTS_OWNER_DASHBOARD, ActionsEnum.INTS_OWNER_ACTIONS) &&
+      !this.authService.isFormActionEnabled(NTIS_SERVICE_PROVIDER_SETTINGS, ActionsEnum.ACTIONS_READ);
     this.form = this.formBuilder.group({
       usr_id: new FormControl({ value: null, disabled: true }),
       usr_person_name: new FormControl('', [Validators.maxLength(50), Validators.required]),
@@ -211,7 +218,10 @@ export class UserEditPageComponent extends DeprecatedBaseEditForm<SprUsersNtisDA
       usr_email: new FormControl('', Validators.compose([Validators.email, Validators.required])),
       usr_date_from: new FormControl(null, Validators.required),
       usr_date_to: new FormControl(''),
-      usr_type: new FormControl({ value: UserType.ORGANIZATION_USER, disabled: true }),
+      usr_type: new FormControl({
+        value: isPrivateOrg ? UserType.PRIVATE_ORG : UserType.ORGANIZATION_USER,
+        disabled: true,
+      }),
       usr_org_id: new FormControl(''),
       usr_disable: new FormControl(''),
       usr_language: new FormControl('lt'),

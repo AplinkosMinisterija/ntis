@@ -1,6 +1,7 @@
 export enum UserType {
   PRIVATE_USER = 'PRIVATE',
   ORGANIZATION_USER = 'ORGANIZATION',
+  PRIVATE_ORG = 'PRIVATE_ORG',
 }
 
 export enum AuthType {
