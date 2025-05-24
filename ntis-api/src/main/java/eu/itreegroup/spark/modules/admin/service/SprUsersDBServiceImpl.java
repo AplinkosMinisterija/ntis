@@ -35,6 +35,10 @@ public class SprUsersDBServiceImpl extends SprUsersDBServiceGen implements SprUs
     @SuppressWarnings("unused")
     private static final Logger log = LoggerFactory.getLogger(SprUsersDBServiceImpl.class);
 
+    private static final String PRIVATE_ORG = "PRIVATE_ORG";
+
+    private static final String PRIVATE = "PRIVATE";
+
     @Autowired
     BaseControllerJDBC baseControllerJDBC;
 
@@ -175,7 +179,7 @@ public class SprUsersDBServiceImpl extends SprUsersDBServiceGen implements SprUs
                 // will check if the code matches with the person code of the person record
                 // referenced by the user record, if the code doesn't match, will check if there's a person record with this person code
                 // if person with this person code exists, data will be renewed and reference to person will be created for user record
-                if (personDAO.getPer_code()!= null && !personDAO.getPer_code().equalsIgnoreCase(userRecord.getPersonCode())) {
+                if (personDAO.getPer_code() != null && !personDAO.getPer_code().equalsIgnoreCase(userRecord.getPersonCode())) {
                     SprPersonsDAO checkForCodePerson = sprPersonsDBService.loadRecordByParams(conn, " per_code = ? ",
                             new SelectParamValue(userRecord.getPersonCode()));
                     if (checkForCodePerson != null) {
@@ -252,8 +256,17 @@ public class SprUsersDBServiceImpl extends SprUsersDBServiceGen implements SprUs
             String authType = (String) authExtData.get("AUTH_TYPE");
             switch (authType) {
                 case "USER_PASSWORD_AUTH":
-                    usrRec = this.loadRecordByParams(conn, " WHERE USR_USERNAME = ? and USR_TYPE = ? ", new SelectParamValue((String) identifier),
-                            new SelectParamValue((String) authExtData.get("USER_TYPE")));
+                    if (PRIVATE.equals(authExtData.get("USER_TYPE"))) {
+                        usrRec = this.loadRecordByParams(conn, " WHERE USR_USERNAME = ? and USR_TYPE = ? ", new SelectParamValue((String) identifier),
+                                new SelectParamValue((String) PRIVATE_ORG));
+                        if (usrRec == null) {
+                            usrRec = this.loadRecordByParams(conn, " WHERE USR_USERNAME = ? and USR_TYPE = ? ", new SelectParamValue((String) identifier),
+                                    new SelectParamValue((String) PRIVATE));
+                        }
+                    } else {
+                        usrRec = this.loadRecordByParams(conn, " WHERE USR_USERNAME = ? and USR_TYPE = ? ", new SelectParamValue((String) identifier),
+                                new SelectParamValue((String) authExtData.get("USER_TYPE")));
+                    }
                     break;
                 case "VIISP_AUTH", "ISENSE_AUTH":
                     usrRec = this.loadRecordByParams(conn, " WHERE USR_PER_ID = ?::int and USR_TYPE = ? ", new SelectParamValue((Double) identifier),

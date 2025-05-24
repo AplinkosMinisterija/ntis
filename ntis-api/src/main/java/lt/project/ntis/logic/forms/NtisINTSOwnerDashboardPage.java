@@ -170,7 +170,7 @@ public class NtisINTSOwnerDashboardPage extends eu.itreegroup.spark.app.common.F
                 "REV.REV_COMMENT, " + //
                 "ORG.ORG_NAME AS SRV_PROVIDER " + //
                 "FROM NTIS.NTIS_ORDERS ORD " + //
-                "LEFT JOIN NTIS_REVIEWS REV ON REV.REV_ORD_ID = ORD.ORD_ID AND REV.REV_USR_ID = ?::int " +//
+                "LEFT JOIN NTIS_REVIEWS REV ON REV.REV_ORD_ID = ORD.ORD_ID AND REV.REV_USR_ID = ?::int " + //
                 "INNER JOIN NTIS.NTIS_SERVICES SRV ON SRV.SRV_ID = ORD.ORD_SRV_ID AND SRV_TYPE = ? AND ORD.ORD_WTF_ID = ?::int " + //
                 "INNER JOIN SPARK.SPR_ORGANIZATIONS ORG ON SRV.SRV_ORG_ID = ORG.ORG_ID " + //
                 "LEFT JOIN SPR_REF_CODES_VW RFC ON RFC.RFC_CODE = ORD.ORD_STATE AND RFC.RFC_DOMAIN = 'NTIS_ORDER_STATUS' AND RFC.RFT_LANG = ? ");
@@ -193,7 +193,7 @@ public class NtisINTSOwnerDashboardPage extends eu.itreegroup.spark.app.common.F
         String objView = "";
         String objViewID = " 1  as fo_so_id";
 
-        if (hasUserRole(conn, NtisRolesConstants.INTS_OWNER)) {
+        if (hasUserRole(conn, NtisRolesConstants.INTS_OWNER) || hasUserRole(conn, NtisRolesConstants.INTS_OWNER_ORG_ADMIN)) {
             objView = """
                     LEFT JOIN ( select fo_so_id
                     from  ntis_facility_owners
@@ -303,16 +303,24 @@ public class NtisINTSOwnerDashboardPage extends eu.itreegroup.spark.app.common.F
                           LEFT JOIN (select ful_id, ful_wtf_id
                                      from ntis_facility_update_logs
                                      where ful_operation = 'INSERT'
-                                     and  ful_usr_id = ?::int
+                                     and case when ? is not null then ful_org_id = ?::int
+                                         else ful_usr_id = ?::int
+                                         end
                                      ) ful
                             on   ful_wtf_id = wtf.WTF_ID
                         """);
 
         stmt.addSelectParam(selectedWts);
-        if (hasUserRole(conn, NtisRolesConstants.INTS_OWNER)) {
-            stmt.addSelectParam(orgId != null ? orgId : perId);
+        if (hasUserRole(conn, NtisRolesConstants.INTS_OWNER) || hasUserRole(conn, NtisRolesConstants.INTS_OWNER_ORG_ADMIN)) {
+            if (hasUserRole(conn, NtisRolesConstants.INTS_OWNER_ORG_ADMIN) && orgId != null) {
+                stmt.addSelectParam(orgId);
+            } else {
+                stmt.addSelectParam(orgId != null ? orgId : perId);
+            }
         }
         stmt.addSelectParam(lang);
+        stmt.addSelectParam(orgId);
+        stmt.addSelectParam(orgId);
         stmt.addSelectParam(usrId);
         return (ArrayList<NtisINTSDashboardWastewater>) queryController.selectQueryAsObjectArrayList(conn, stmt, NtisINTSDashboardWastewater.class);
     }

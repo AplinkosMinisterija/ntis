@@ -91,7 +91,7 @@ public class SprExternalNtisAuthorization extends SprExternalAuthorization {
 
     protected SprRolesDAO loadDefaultRoleDataByLoginType(Connection conn, String orgType) throws Exception {
         return sprRolesDBService.loadRecordByRoleCode(conn,
-                orgType.equals(ORG_PRIVATE_LOGIN_TYPE) ? NtisRolesConstants.INTS_OWNER : NtisRolesConstants.ORG_NEW);
+                orgType.equals(ORG_PRIVATE_LOGIN_TYPE) ? NtisRolesConstants.INTS_OWNER_ORG_ADMIN : NtisRolesConstants.ORG_NEW);
     }
 
     /**
@@ -115,7 +115,7 @@ public class SprExternalNtisAuthorization extends SprExternalAuthorization {
         String roleForOrg;
         if (authExtData.get("USER_TYPE").equals(PRIVATE_LOGIN_TYPE)) {
             authExtData.put("USER_TYPE", ORG_PRIVATE_LOGIN_TYPE);
-            roleForOrg = NtisRolesConstants.INTS_OWNER;
+            roleForOrg = NtisRolesConstants.INTS_OWNER_ORG_ADMIN;
         } else {
             roleForOrg = NtisRolesConstants.ORG_NEW;
         }
@@ -157,10 +157,10 @@ public class SprExternalNtisAuthorization extends SprExternalAuthorization {
                           JOIN spr_roles rol ON oar_rol_id = rol_id
                          WHERE oar_org_id = ?::int
                            AND CURRENT_DATE between oar_date_from and COALESCE(oar_date_to, now())
-                           AND rol_code <> ?
+                           AND rol_code not in (?, ?)
                            AND rol_id <> ?::int
                         """);
-            } else if (roleForOrg.equalsIgnoreCase(NtisRolesConstants.INTS_OWNER)) {
+            } else if (roleForOrg.equalsIgnoreCase(NtisRolesConstants.INTS_OWNER_ORG_ADMIN)) {
                 stmt.setStatement("""
                         SELECT oar_id,
                                oar_rol_id
@@ -168,11 +168,12 @@ public class SprExternalNtisAuthorization extends SprExternalAuthorization {
                           JOIN spr_roles rol ON oar_rol_id = rol_id
                          WHERE oar_org_id = ?::int
                            AND CURRENT_DATE between oar_date_from and COALESCE(oar_date_to, now())
-                           AND rol_code = ?
+                           AND rol_code in (?, ?)
                            AND rol_id <> ?::int
                         """);
             }
             stmt.addSelectParam(organizationDAO.getOrg_id());
+            stmt.addSelectParam(NtisRolesConstants.INTS_OWNER_ORG_ADMIN);
             stmt.addSelectParam(NtisRolesConstants.INTS_OWNER);
             stmt.addSelectParam(roleDAO.getRol_id());
             orgAvailableRoles = baseControllerJDBC.selectQueryAsObjectArrayList(conn, stmt, SprOrgAvailableRolesDAO.class);
@@ -212,6 +213,21 @@ public class SprExternalNtisAuthorization extends SprExternalAuthorization {
                 orgUserRole.setOur_rol_id(roleDAO.getRol_id());
                 orgUserRole.setOur_date_from(Utils.getDate());
                 sprOrgUserRolesDBService.saveRecord(conn, orgUserRole);
+                if (roleDAO.getRol_code().equals(NtisRolesConstants.INTS_OWNER_ORG_ADMIN)) {
+                    SprRolesDAO ownerRoleDAO = this.sprRolesDBService.loadRecordByParams(conn, "rol_code = ? ",
+                            new SelectParamValue(NtisRolesConstants.INTS_OWNER));
+                    if (ownerRoleDAO != null) {
+                        SprOrgUserRolesDAO orgOwnerUserRole = sprOrgUserRolesDBService.loadRecordByParams(conn, " our_rol_id = ? and our_ou_id = ? ",
+                                new SelectParamValue(ownerRoleDAO.getRol_id()), new SelectParamValue(orgUser.getOu_id()));
+                        if (orgOwnerUserRole == null) {
+                            orgOwnerUserRole = sprOrgUserRolesDBService.newRecord();
+                            orgOwnerUserRole.setOur_ou_id(orgUser.getOu_id());
+                            orgOwnerUserRole.setOur_rol_id(ownerRoleDAO.getRol_id());
+                            orgOwnerUserRole.setOur_date_from(Utils.getDate());
+                            sprOrgUserRolesDBService.saveRecord(conn, orgOwnerUserRole);
+                        }
+                    }
+                }
             } else if (orgUserRole != null && defaultRoleAvailable == null) {
                 StatementAndParams stmt = new StatementAndParams("""
                         delete from spr_org_user_roles
@@ -369,8 +385,8 @@ public class SprExternalNtisAuthorization extends SprExternalAuthorization {
 
                     authExtData.put("USER_TYPE", ORGANIZATION);
 
-                    userSession = this.createVIISPOrganizationUserSession(conn, userSession, person.getPer_name(), person.getPer_surname(), person.getPer_code(),
-                            newOrg.getOrg_name(), newOrg.getOrg_code(), authExtData);
+                    userSession = this.createVIISPOrganizationUserSession(conn, userSession, person.getPer_name(), person.getPer_surname(),
+                            person.getPer_code(), newOrg.getOrg_name(), newOrg.getOrg_code(), authExtData);
                     authExtData.put("USER_TYPE", ORG_FROM_PRIVATE);
                     if (orgUserNotFound) {
                         userSession.setRole_type(ORG_FROM_PRIVATE);

@@ -242,7 +242,7 @@ public class SprOrganizationsDBServiceImpl extends SprOrganizationsDBServiceGen 
                     and oar_rol_id not in (select rol_id from spr_roles where rol_code in (?, ?, ?))
                                 """);
             stmt.addSelectParam(updatedOrg.getOrg_id());
-            stmt.addSelectParam(NtisRolesConstants.INTS_OWNER);
+            stmt.addSelectParam(NtisRolesConstants.INTS_OWNER_ORG_ADMIN);
             stmt.addSelectParam(NtisRolesConstants.ADMIN);
             stmt.addSelectParam(NtisRolesConstants.NTIS_ADMIN);
             baseControllerJDBC.adjustRecordsInDB(conn, stmt);
@@ -346,7 +346,7 @@ public class SprOrganizationsDBServiceImpl extends SprOrganizationsDBServiceGen 
                           and our_rol_id not in (select rol_id from spr_roles where rol_code in (?, ?, ?))
                         """);
                 orgUserRolesStatement.addSelectParam(user.getOu_id());
-                orgUserRolesStatement.addSelectParam(NtisRolesConstants.INTS_OWNER);
+                orgUserRolesStatement.addSelectParam(NtisRolesConstants.INTS_OWNER_ORG_ADMIN);
                 orgUserRolesStatement.addSelectParam(NtisRolesConstants.ADMIN);
                 orgUserRolesStatement.addSelectParam(NtisRolesConstants.NTIS_ADMIN);
                 baseControllerJDBC.adjustRecordsInDB(conn, orgUserRolesStatement);
@@ -380,11 +380,13 @@ public class SprOrganizationsDBServiceImpl extends SprOrganizationsDBServiceGen 
 
     private void addRolesForNewPrivateOrg(Connection conn, SprOrganizationsNtisDAO newOrg) throws Exception {
         List<SprRolesDAO> rolesToAdd = new ArrayList<>();
-        SprOrgAvailableRolesDAO existingNewOrgRole = this.sprOrgAvailableRolesDBService.loadRecordByParams(conn, """
-                where oar_org_id = ?::int and oar_rol_id = (select rol_id from spr_roles where rol_code = ?)::int
-                """, new SelectParamValue(newOrg.getOrg_id()), new SelectParamValue(NtisRolesConstants.INTS_OWNER));
-        if (existingNewOrgRole == null) {
-            rolesToAdd.addAll(this.sprRolesDBService.loadRecordsByParams(conn, " rol_code in (?) ", new SelectParamValue(NtisRolesConstants.INTS_OWNER)));
+        List<SprOrgAvailableRolesDAO> existingNewOrgRoles = this.sprOrgAvailableRolesDBService.loadRecordsByParams(conn, """
+                where oar_org_id = ?::int and oar_rol_id = (select rol_id from spr_roles where rol_code in (?, ?))::int
+                """, new SelectParamValue(newOrg.getOrg_id()), new SelectParamValue(NtisRolesConstants.INTS_OWNER_ORG_ADMIN),
+                new SelectParamValue(NtisRolesConstants.INTS_OWNER));
+        if (existingNewOrgRoles == null || existingNewOrgRoles.isEmpty()) {
+            rolesToAdd.addAll(this.sprRolesDBService.loadRecordsByParams(conn, " rol_code in (?, ?) ",
+                    new SelectParamValue(NtisRolesConstants.INTS_OWNER_ORG_ADMIN), new SelectParamValue(NtisRolesConstants.INTS_OWNER)));
         }
         for (SprRolesDAO role : rolesToAdd) {
             SprOrgAvailableRolesDAO newRole = this.sprOrgAvailableRolesDBService.newRecord();
@@ -400,18 +402,19 @@ public class SprOrganizationsDBServiceImpl extends SprOrganizationsDBServiceGen 
         if (newOrg.getOrgType() != null && !newOrg.getOrgType().isBlank()) {
             rolesToAdd = this.getRoleIds(conn, newOrg);
         } else {
-            SprOrgAvailableRolesDAO existingNewOrgRole = this.sprOrgAvailableRolesDBService.loadRecordByParams(conn, """
+            List<SprOrgAvailableRolesDAO> existingNewOrgRoles = this.sprOrgAvailableRolesDBService.loadRecordsByParams(conn, """
                     where oar_org_id = ?::int and oar_rol_id = (select rol_id from spr_roles where rol_code = ?)::int
                     """, new SelectParamValue(newOrg.getOrg_id()), new SelectParamValue(NtisRolesConstants.ORG_NEW));
-            if (existingNewOrgRole == null) {
+            if (existingNewOrgRoles == null || existingNewOrgRoles.isEmpty()) {
                 rolesToAdd.addAll(this.sprRolesDBService.loadRecordsByParams(conn, " rol_code in (?) ", new SelectParamValue(NtisRolesConstants.ORG_NEW)));
             }
-
-            existingNewOrgRole = this.sprOrgAvailableRolesDBService.loadRecordByParams(conn, """
-                    where oar_org_id = ?::int and oar_rol_id = (select rol_id from spr_roles where rol_code = ?)::int
-                    """, new SelectParamValue(newOrg.getOrg_id()), new SelectParamValue(NtisRolesConstants.INTS_OWNER));
-            if (existingNewOrgRole == null) {
-                rolesToAdd.addAll(this.sprRolesDBService.loadRecordsByParams(conn, " rol_code in (?) ", new SelectParamValue(NtisRolesConstants.INTS_OWNER)));
+            existingNewOrgRoles = this.sprOrgAvailableRolesDBService.loadRecordsByParams(conn, """
+                    where oar_org_id = ?::int and oar_rol_id in (select rol_id from spr_roles where rol_code in (?, ?))
+                    """, new SelectParamValue(newOrg.getOrg_id()), new SelectParamValue(NtisRolesConstants.INTS_OWNER_ORG_ADMIN),
+                    new SelectParamValue(NtisRolesConstants.INTS_OWNER));
+            if (existingNewOrgRoles == null || existingNewOrgRoles.isEmpty()) {
+                rolesToAdd.addAll(this.sprRolesDBService.loadRecordsByParams(conn, " rol_code in (?, ?) ",
+                        new SelectParamValue(NtisRolesConstants.INTS_OWNER_ORG_ADMIN), new SelectParamValue(NtisRolesConstants.INTS_OWNER)));
             }
 
         }
@@ -517,7 +520,7 @@ public class SprOrganizationsDBServiceImpl extends SprOrganizationsDBServiceGen 
         if (daoObject.getN04() == null || (daoObject.getN04() != null && daoObject.getN04().compareTo(1.0) != 0)) {
             manageObjectData(conn, (SprOrganizationsNtisDAO) daoObject);
             List<SprOrgAvailableRolesDAO> orgAvailableRoles;
-            if (roleToAdd != null && NtisRolesConstants.INTS_OWNER.equals(roleToAdd)) {
+            if (roleToAdd != null && NtisRolesConstants.INTS_OWNER_ORG_ADMIN.equals(roleToAdd)) {
                 orgAvailableRoles = sprOrgAvailableRolesDBService.loadRecordsByParams(conn,
                         " oar_org_id = ?::int AND now() BETWEEN oar_date_from AND COALESCE(oar_date_to, now())"
                                 + " and exists (select 1 from spr_roles where rol_code = ? and oar_rol_id = rol_id ) ",
@@ -530,7 +533,7 @@ public class SprOrganizationsDBServiceImpl extends SprOrganizationsDBServiceGen 
                 orgAvailableRoles = sprOrgAvailableRolesDBService.loadRecordsByParams(conn,
                         " oar_org_id = ?::int AND now() BETWEEN oar_date_from AND COALESCE(oar_date_to, now())"
                                 + " and exists (select 1 from spr_roles where rol_code != ? and oar_rol_id = rol_id ) ",
-                        new SelectParamValue(daoObject.getOrg_id()), new SelectParamValue(NtisRolesConstants.INTS_OWNER));
+                        new SelectParamValue(daoObject.getOrg_id()), new SelectParamValue(NtisRolesConstants.INTS_OWNER_ORG_ADMIN));
                 if (orgAvailableRoles == null || orgAvailableRoles.isEmpty()) {
                     this.addRolesForNewOrg(conn, (SprOrganizationsNtisDAO) daoObject);
                 }

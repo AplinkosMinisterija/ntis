@@ -17,6 +17,8 @@ public class NtisRolesConstants {
     public static final String PASL_ADMIN_DISABLED = "PASL_ADMIN_DISABLED";
 
     public static final String INTS_OWNER = "INTS_OWNER";
+    
+    public static final String INTS_OWNER_ORG_ADMIN = "INTS_OWNER_ORG_ADMIN";
 
     public static final String NTIS_ADMIN = "NTIS_ADMIN";
 
