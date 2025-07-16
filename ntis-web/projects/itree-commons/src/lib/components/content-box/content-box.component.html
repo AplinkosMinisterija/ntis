@@ -5,12 +5,12 @@
   <div class="content-wrapper__header-button-content">
     <ng-content select="[buttonBack]"></ng-content>
   </div>
-  <span
+  <h1
     *ngIf="headerText"
     class="content-wrapper__header-title"
     [ngClass]="[textAlignment, textSize, transformingText]"
   >
     {{ translateHeader ? (headerText | translate) : headerText }}
-  </span>
+  </h1>
 </section>
 <ng-content></ng-content>

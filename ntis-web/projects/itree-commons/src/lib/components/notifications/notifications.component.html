@@ -1,10 +1,7 @@
-<div class="notification">
-  <spr-button
-    (click)="showMessages = !showMessages"
-    iconName="faBell"
-    iconStyle="far"
-    class="notification__button"
-  ></spr-button>
+<div class="notification">  
+  <button (click)="showMessages = !showMessages" class="notification__button">
+    <fa-icon [icon]="faIconsService.far.faBell" [fixedWidth]="true"></fa-icon>
+  </button>
   <section *ngIf="countUnreadMessages() > 0" class="notification__button-alert-circle">
     {{countUnreadMessages() > 9 ? '9+' : countUnreadMessages()}}
   </section>

@@ -2,7 +2,7 @@
   @apply relative flex items-center h-full;
 
   &__button {
-    @apply h-9 aspect-square bg-primary-50 text-primary-700 rounded-full flex items-center justify-center font-bold uppercase select-none text-lg;
+    @apply h-9 aspect-square bg-primary-50 text-primary-700 rounded-full flex items-center justify-center select-none;
   }
 
   &__button-alert-circle {
