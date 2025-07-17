@@ -241,7 +241,19 @@ export class ServiceSearchPageComponent implements OnInit {
           this.searchResult = result;
           this.searchResult = this.searchResult.filter((res) => res.services.length > 0);
         });
+    } else {
+      this.scrollToFirstError();
     }
+  }
+
+  private scrollToFirstError(): void {
+    const firstErrorIndex = Object.values(this.form.controls).findIndex((control) => control.errors);
+    const formFields = document.querySelectorAll('spr-form-field');
+
+    formFields[firstErrorIndex].scrollIntoView({
+      behavior: 'smooth',
+      block: 'center',
+    });
   }
 
   getPriceClause(): string {
