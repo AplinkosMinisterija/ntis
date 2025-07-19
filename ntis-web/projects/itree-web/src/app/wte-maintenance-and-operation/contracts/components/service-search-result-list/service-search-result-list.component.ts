@@ -58,5 +58,11 @@ export class ServiceSearchResultListComponent implements OnChanges {
 
   handleToggleDetails(orgId: number, serviceId: number): void {
     this.openDetails[orgId] = this.openDetails[orgId] === serviceId ? null : serviceId;
+    if (this.openDetails[orgId] === serviceId) {
+      requestAnimationFrame(() => {
+        const detailsElement = document.getElementById(`service-details-${orgId}-${serviceId}`);
+        detailsElement?.focus();
+      });
+    }
   }
 }

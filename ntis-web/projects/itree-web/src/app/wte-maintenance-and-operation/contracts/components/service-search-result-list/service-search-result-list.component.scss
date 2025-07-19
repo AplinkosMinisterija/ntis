@@ -34,8 +34,6 @@
 }
 
 .service {
-  $block: &;
-
   @apply flex flex-col gap-x-4 gap-y-1
          @lg:grid @lg:grid-cols-[1fr_auto_auto];
 
@@ -44,17 +42,11 @@
   }
 
   &__name {
-    @apply flex items-center gap-2 mb-auto;
+    @apply flex items-center gap-3 mb-auto;
   }
 
-  &__name-text {
+  &__expand-button {
     @apply text-md font-medium;
-  }
-
-  ::ng-deep {
-    #{$block}__expand-button {
-      @apply text-sm;
-    }
   }
 
   &__details {
