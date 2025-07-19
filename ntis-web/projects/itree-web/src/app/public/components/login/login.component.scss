@@ -45,7 +45,7 @@
   }
 
   &__alt-other {
-    @apply text-sm text-neutral-600 font-medium py-2 border border-neutral-200 
+    @apply text-base text-neutral-700 font-medium py-2 border border-neutral-200 
     rounded gap-2 flex justify-center items-center w-full hover:bg-neutral-50;
   }
 
@@ -67,7 +67,7 @@
   }
 
   &__tabs {
-    @apply bg-primary-300 w-80 h-full py-10 pl-10 hidden
+    @apply bg-primary-400 w-80 h-full py-10 pl-10 hidden
      flex-col gap-6 lg:flex;
   }
 
@@ -116,7 +116,7 @@
 }
 
 .button-tabs {
-  @apply bg-primary-300 flex justify-stretch items-center lg:hidden;
+  @apply bg-primary-400 flex justify-stretch items-center lg:hidden;
   &__button {
     @apply p-3 grow flex items-center justify-center;
     &--active {

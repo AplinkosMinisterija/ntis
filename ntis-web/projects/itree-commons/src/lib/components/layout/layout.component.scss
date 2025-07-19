@@ -78,7 +78,7 @@
 }
 
 .navigation {
-  @apply flex flex-col bg-primary-300 overflow-y-auto w-full;
+  @apply flex flex-col bg-primary-400 overflow-y-auto w-full;
 
   @screen sm {
     @apply w-auto flex flex-col shrink-0;

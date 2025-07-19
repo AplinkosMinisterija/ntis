@@ -14,12 +14,14 @@
   }
 
   &__input-control {
+    @apply disabled:placeholder:text-neutral-800;
+
     &:not(:disabled) {
       @apply cursor-pointer;
-    }
 
-    &::placeholder {
-      @apply text-neutral-700;
+      &::placeholder {
+        @apply text-neutral-700;
+      }
     }
   }
 
