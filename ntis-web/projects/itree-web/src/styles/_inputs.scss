@@ -27,11 +27,11 @@
   }
 
   .spr-checkbox {
-    @apply w-5 h-5 p-0 border-0  relative #{!important};
+    @apply w-5 h-5 p-0 border-0 relative #{!important};
     -moz-appearance: initial;
 
     &:hover:not(:disabled) {
-      @apply shadow;
+      @apply shadow cursor-pointer;
     }
 
     &::before {

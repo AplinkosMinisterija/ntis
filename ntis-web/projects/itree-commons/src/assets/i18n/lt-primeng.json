@@ -63,5 +63,11 @@
   "today": "Šiandien",
   "upload": "Upload",
   "weak": "Silpnas",
-  "weekHeader": "Sav"
+  "weekHeader": "Sav",
+  "aria": {
+    "firstPageLabel": "Pirmas puslapis",
+    "lastPageLabel": "Paskutinis puslapis",
+    "nextPageLabel": "Kitas puslapis",
+    "previousPageLabel": "Ankstesnis puslapis"
+  }
 }

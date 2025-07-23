@@ -1,45 +1,68 @@
-@import 'tailwindcss/base';
-@import 'styles/colors';
-@import 'styles/inputs';
+@use 'sass:meta';
 
-@import 'tailwindcss/components';
-@import 'styles/buttons';
+@layer app-base, tailwind-base, primeng, app-primeng, tailwind-components, tailwind-utilities, app-main;
 
-@import 'tailwindcss/utilities';
-@import 'styles/fonts';
+// tailwind
+@layer tailwind-base {
+  @import 'tailwindcss/base';
+  @import 'styles/colors';
+  @import 'styles/fonts';
+}
 
+@layer tailwind-components {
+  @import 'tailwindcss/components';
+  @import 'styles/inputs';
+  @import 'styles/buttons';
+}
+
+@layer tailwind-utilities {
+  @import 'tailwindcss/utilities';
+}
+
+@layer primeng {
+  @include meta.load-css('primeng/resources/themes/bootstrap4-light-blue/theme.css');
+  @include meta.load-css('primeng/resources/primeng');
+  @import 'primeicons/primeicons.css';
+}
+
+@layer app-primeng {
+  @include meta.load-css('styles/primeng');
+}
+
+// ckeditor
 @import 'styles/ckeditor';
 
-* {
-  @apply text-base m-0 p-0 box-border;
+// -------------------------------------
+
+@layer app-base {
+  * {
+    @apply text-base m-0 p-0 box-border;
+  }
+
+  fa-icon,
+  fa-icon svg {
+    @apply leading-none;
+    font-size: inherit;
+  }
+
+  body {
+    @apply font-sans text-neutral-900 text-base overflow-y-hidden;
+  }
+
+  router-outlet + * {
+    @apply w-full;
+  }
+
+  .ntis-link {
+    @apply text-primary-500 underline hover:text-primary-600 cursor-pointer;
+  }
+
+  a {
+    @extend .ntis-link;
+  }
 }
 
-fa-icon,
-fa-icon svg {
-  @apply leading-none;
-  font-size: inherit;
-}
-
-body {
-  @apply font-sans text-neutral-900 text-base overflow-y-hidden;
-}
-
-router-outlet + * {
-  @apply w-full;
-}
-
-.ntis-link {
-  @apply text-primary-500 underline hover:text-primary-600 cursor-pointer;
-}
-
-a {
-  @extend .ntis-link;
-}
-
-// layout:
-
-// input with label wrapper:
-@layer components {
+@layer app-main {
   .spr-input-with-label {
     @apply flex gap-2 items-center;
 
@@ -55,214 +78,213 @@ a {
       @apply items-center;
     }
   }
-}
-
-// label:
-label {
-  @apply text-neutral-800;
-}
-
-// other:
-.ql-editor--disabled {
-  @apply bg-neutral-900 border border-neutral-300 text-neutral-800 rounded-md py-2 px-4 bg-opacity-10;
-  min-height: 42px;
-}
-
-// layout:
-.spr-choice-input-with-label {
-  @apply flex items-center gap-2;
+  // label:
   label {
-    @apply text-sm text-neutral-500 cursor-pointer;
+    @apply text-neutral-800;
   }
-}
 
-.spr-boolean-choice-inputs {
-  @apply flex gap-4;
-}
-
-// wrappers:
-.spr-browse-actions-wrapper {
-  @apply gap-2 py-3;
-
-  > :last-child {
-    @apply ml-auto;
+  // other:
+  .ql-editor--disabled {
+    @apply bg-neutral-900 border border-neutral-300 text-neutral-800 rounded-md py-2 px-4 bg-opacity-10;
+    min-height: 42px;
   }
-}
 
-.increase-font-size-1 {
-  .site-logo-link {
-    &__image {
-      @apply min-h-10;
+  // layout:
+  .spr-choice-input-with-label {
+    @apply flex items-center gap-2;
+    label {
+      @apply text-sm text-neutral-500 cursor-pointer;
     }
   }
-  .nav-item {
-    @apply min-h-14 pl-2 gap-1;
-  }
-  .toggle-menu {
-    &__icon-wrapper {
-      @apply min-h-10;
-    }
-  }
-  .accessibility-toggle {
-    @apply min-h-10 min-w-10;
+
+  .spr-boolean-choice-inputs {
+    @apply flex gap-4;
   }
 
-  .notification {
-    &__button {
+  // wrappers:
+  .spr-browse-actions-wrapper {
+    @apply gap-2 py-3;
+
+    > :last-child {
+      @apply ml-auto;
+    }
+  }
+
+  .increase-font-size-1 {
+    .site-logo-link {
+      &__image {
+        @apply min-h-10;
+      }
+    }
+    .nav-item {
+      @apply min-h-14 pl-2 gap-1;
+    }
+    .toggle-menu {
+      &__icon-wrapper {
+        @apply min-h-10;
+      }
+    }
+    .accessibility-toggle {
       @apply min-h-10 min-w-10;
     }
-  }
-  .signin-card {
-    @apply h-[650px] w-[750px] #{!important};
 
-    &__tabs {
-      @apply min-w-[350px] h-full #{!important};
+    .notification {
+      &__button {
+        @apply min-h-10 min-w-10;
+      }
     }
-  }
-}
+    .signin-card {
+      @apply h-[650px] w-[750px] #{!important};
 
-.increase-font-size-2 {
-  .site-logo-link {
-    &__image {
-      @apply min-h-10 xs:min-h-16;
-    }
-    &__text {
-      @apply min-w-80;
+      &__tabs {
+        @apply min-w-[350px] h-full #{!important};
+      }
     }
   }
-  .nav-item {
-    @apply min-h-20 pl-2 gap-3;
-  }
-  .toggle-menu {
-    &__icon-wrapper {
+
+  .increase-font-size-2 {
+    .site-logo-link {
+      &__image {
+        @apply min-h-10 xs:min-h-16;
+      }
+      &__text {
+        @apply min-w-80;
+      }
+    }
+    .nav-item {
+      @apply min-h-20 pl-2 gap-3;
+    }
+    .toggle-menu {
+      &__icon-wrapper {
+        @apply min-h-12;
+      }
+    }
+    .accessibility-toggle {
+      @apply min-h-12 min-w-12;
+    }
+
+    .notification {
+      &__button {
+        @apply min-h-12 min-w-12;
+      }
+    }
+    .signin-card {
+      @apply h-[700px] w-[800px] #{!important};
+
+      &__tabs {
+        @apply min-w-[400px] h-full #{!important};
+      }
+      &__text {
+        @apply min-w-80;
+      }
+    }
+    .input-wrapper {
+      &__dropdown-panel {
+        @apply min-w-80;
+      }
+    }
+    .tasks-calendar {
+      &__month-button {
+        @apply min-h-8 min-w-8;
+      }
+    }
+    .p-paginator .p-dropdown {
       @apply min-h-12;
     }
   }
-  .accessibility-toggle {
-    @apply min-h-12 min-w-12;
-  }
 
-  .notification {
-    &__button {
-      @apply min-h-12 min-w-12;
-    }
-  }
-  .signin-card {
-    @apply h-[700px] w-[800px] #{!important};
-
-    &__tabs {
-      @apply min-w-[400px] h-full #{!important};
-    }
-    &__text {
-      @apply min-w-80;
-    }
-  }
-  .input-wrapper {
-    &__dropdown-panel {
-      @apply min-w-80;
-    }
-  }
-  .tasks-calendar {
-    &__month-button {
-      @apply min-h-8 min-w-8;
-    }
-  }
-  .p-paginator .p-dropdown {
-    @apply min-h-12;
-  }
-}
-
-.increase-font-size-3 {
-  .site-logo-link {
-    &__image {
-      @apply min-h-8 xs:min-h-16;
-    }
-    &__text {
-      @apply min-w-96;
-    }
-  }
-  .nav-item {
-    @apply min-h-20  pl-3 gap-5;
-    &__text {
-      @apply min-h-28 flex items-center;
-
-      span {
-        @apply text-left;
+  .increase-font-size-3 {
+    .site-logo-link {
+      &__image {
+        @apply min-h-8 xs:min-h-16;
       }
-
-      &--small {
-        @apply text-xs;
+      &__text {
+        @apply min-w-96;
       }
     }
-  }
-  .toggle-menu {
-    &__icon-wrapper {
-      @apply min-h-14;
+    .nav-item {
+      @apply min-h-20  pl-3 gap-5;
+      &__text {
+        @apply min-h-28 flex items-center;
+
+        span {
+          @apply text-left;
+        }
+
+        &--small {
+          @apply text-xs;
+        }
+      }
     }
-  }
+    .toggle-menu {
+      &__icon-wrapper {
+        @apply min-h-14;
+      }
+    }
 
-  .accessibility-toggle {
-    @apply min-h-14 min-w-14;
-  }
-
-  .notification {
-    &__button {
+    .accessibility-toggle {
       @apply min-h-14 min-w-14;
     }
+
+    .notification {
+      &__button {
+        @apply min-h-14 min-w-14;
+      }
+    }
+
+    .signin-card {
+      @apply h-[900px] w-[1000px] #{!important};
+
+      &__tabs {
+        @apply min-w-[450px] h-full #{!important};
+      }
+      &__text {
+        @apply min-w-80;
+      }
+      form {
+        @apply min-w-[450px];
+      }
+    }
+
+    .input-wrapper {
+      &__dropdown-panel {
+        @apply min-w-96;
+      }
+    }
+    .tasks-calendar {
+      &__month-button {
+        @apply min-h-12 min-w-12;
+      }
+
+      &__month-text {
+        @apply py-1;
+      }
+    }
+
+    .p-paginator .p-dropdown {
+      @apply min-h-16;
+    }
   }
 
-  .signin-card {
-    @apply h-[900px] w-[1000px] #{!important};
-
-    &__tabs {
-      @apply min-w-[450px] h-full #{!important};
-    }
-    &__text {
-      @apply min-w-80;
-    }
-    form {
-      @apply min-w-[450px];
-    }
+  .spr-edit-form-wrapper {
+    @apply max-w-3xl mx-auto;
   }
 
-  .input-wrapper {
-    &__dropdown-panel {
-      @apply min-w-96;
-    }
-  }
-  .tasks-calendar {
-    &__month-button {
-      @apply min-h-12 min-w-12;
-    }
-
-    &__month-text {
-      @apply py-1;
-    }
+  .spr-form-buttons {
+    @apply flex justify-center items-center gap-6;
   }
 
-  .p-paginator .p-dropdown {
-    @apply min-h-16;
+  // text:
+  .spr-text-right {
+    @apply text-right #{!important};
   }
-}
 
-.spr-edit-form-wrapper {
-  @apply max-w-3xl mx-auto;
-}
+  // table:
+  .table-header-col {
+    @apply flex justify-start items-center text-sm;
 
-.spr-form-buttons {
-  @apply flex justify-center items-center gap-6;
-}
-
-// text:
-.spr-text-right {
-  @apply text-right #{!important};
-}
-
-// table:
-.table-header-col {
-  @apply flex justify-start items-center text-sm;
-
-  &__icon {
-    @apply flex;
+    &__icon {
+      @apply flex;
+    }
   }
 }
