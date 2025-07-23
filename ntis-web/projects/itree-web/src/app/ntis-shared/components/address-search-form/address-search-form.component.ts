@@ -3,7 +3,6 @@ import {
   Component,
   ElementRef,
   EventEmitter,
-  HostListener,
   Input,
   OnChanges,
   OnInit,
@@ -11,6 +10,7 @@ import {
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
+import { HostListener } from '@angular/core';
 import { Observable, takeUntil } from 'rxjs';
 import { CommonFormServices, DeprecatedBaseEditForm } from '@itree/ngx-s2-commons';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
@@ -69,19 +69,34 @@ export class AddressSearchFormComponent
   @Output() addressSelect: EventEmitter<AddressSearchResponse> = new EventEmitter<AddressSearchResponse>();
   @Input() addressId: number = null;
 
+  @ViewChild('dialog') dialog?: ElementRef<HTMLElement>;
   @ViewChild('closeBtn') closeBtn?: ElementRef<HTMLButtonElement>;
 
   ngAfterViewChecked(): void {
-    if (this.showResultDialog && this.closeBtn) {
+    if (
+      this.showResultDialog &&
+      this.closeBtn &&
+      this.dialog &&
+      !this.dialog.nativeElement.contains(document.activeElement)
+    ) {
       this.closeBtn.nativeElement.focus();
     }
   }
 
-  @HostListener('document:keydown.escape', ['$event'])
-  handleEscape(event: KeyboardEvent): void {
+  @HostListener('document:keydown.escape')
+  handleEscapeKey(): void {
     if (this.showResultDialog) {
-      event.preventDefault();
       this.showResultDialog = false;
+    }
+  }
+
+  @HostListener('document:focusin', ['$event'])
+  trapFocus(event: FocusEvent): void {
+    if (!this.showResultDialog || !this.dialog) return;
+    const dialogEl = this.dialog.nativeElement;
+    const target = event.target as HTMLElement;
+    if (!dialogEl.contains(target)) {
+      dialogEl.focus();
     }
   }
 
