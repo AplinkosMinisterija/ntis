@@ -1,4 +1,16 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import {
+  AfterViewChecked,
+  Component,
+  ElementRef,
+  EventEmitter,
+  HostListener,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  SimpleChanges,
+  ViewChild,
+} from '@angular/core';
 import { Observable, takeUntil } from 'rxjs';
 import { CommonFormServices, DeprecatedBaseEditForm } from '@itree/ngx-s2-commons';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
@@ -33,7 +45,10 @@ export interface AddressSearch {
   templateUrl: './address-search-form.component.html',
   styleUrls: ['./address-search-form.component.scss'],
 })
-export class AddressSearchFormComponent extends DeprecatedBaseEditForm<AddressSearch> implements OnInit, OnChanges {
+export class AddressSearchFormComponent
+  extends DeprecatedBaseEditForm<AddressSearch>
+  implements OnInit, OnChanges, AfterViewChecked
+{
   readonly addressFormReference = 'ntisShared.components.addressForm';
   readonly commonActionReference = 'common.action';
   readonly commonErrorReference = 'common.error';
@@ -53,6 +68,22 @@ export class AddressSearchFormComponent extends DeprecatedBaseEditForm<AddressSe
   @Input() searchNtr: boolean = false;
   @Output() addressSelect: EventEmitter<AddressSearchResponse> = new EventEmitter<AddressSearchResponse>();
   @Input() addressId: number = null;
+
+  @ViewChild('closeBtn') closeBtn?: ElementRef<HTMLButtonElement>;
+
+  ngAfterViewChecked(): void {
+    if (this.showResultDialog && this.closeBtn) {
+      this.closeBtn.nativeElement.focus();
+    }
+  }
+
+  @HostListener('document:keydown.escape', ['$event'])
+  handleEscape(event: KeyboardEvent): void {
+    if (this.showResultDialog) {
+      event.preventDefault();
+      this.showResultDialog = false;
+    }
+  }
 
   constructor(
     protected override formBuilder: FormBuilder,

@@ -147,11 +147,30 @@
   </form>
 </section>
 
-<section class="address-dialog" *ngIf="showResultDialog" (click)="showResultDialog = false">
+<section
+  class="address-dialog"
+  *ngIf="showResultDialog"
+  (click)="showResultDialog = false"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="address-dialog-header"
+>
   <div class="address-dialog__content">
     <header class="address-dialog__content-header">
-      <span class="address-dialog__content-header-text">{{addressFormReference + '.searchResult' | translate}}</span>
-      <spr-button iconName="faTimes" type="button" (click)="showResultDialog = false"></spr-button>
+      <span
+        class="address-dialog__content-header-text"
+        id="address-dialog-header"
+        >{{addressFormReference + '.searchResult' | translate}}</span
+      >
+      <button
+        #closeBtn
+        type="button"
+        [attr.aria-label]="'common.actions.close' | translate"
+        class="address-dialog__content-header-close"
+        (click)="showResultDialog = false"
+      >
+        <spr-icon name="close" />
+      </button>
     </header>
     <div class="address-dialog__content-body">
       <ng-container *ngIf="addressList.length > 0">
