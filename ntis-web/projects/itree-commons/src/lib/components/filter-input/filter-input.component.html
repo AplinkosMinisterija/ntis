@@ -5,6 +5,9 @@
       [disabled]="!showFilterConditions"
       class="input-wrapper__icon-btn-v2"
       [attr.aria-label]="showContent ? ('components.filterInput.closeListConditions'| translate) : ('components.filterInput.openListConditions' | translate)"
+      [attr.aria-expanded]="showContent"
+      [attr.aria-controls]="inputId + '-dropdown'"
+      [attr.aria-haspopup]="'listbox'"
       [id]="inputId"
       (click)="showContent = !showContent"
       [ngClass]="inputFocused === true ? 'border-primary-500' :'border-neutral-200'"
@@ -110,6 +113,9 @@
       [disabled]="!showFilterConditions"
       class="input-wrapper__icon-btn"
       [attr.aria-label]="showContent ? ('components.filterInput.closeListConditions'| translate) : ('components.filterInput.openListConditions' | translate)"
+      [attr.aria-expanded]="showContent"
+      [attr.aria-controls]="inputId + '-dropdown'"
+      [attr.aria-haspopup]="'listbox'"
       [id]="inputId"
       (click)="showContent = !showContent"
     >
@@ -129,12 +135,14 @@
   <ng-container *ngIf="inputType === inputTypeEnum.date || inputType === inputTypeEnum.datetime">
     <div class="arrow-wrapper" *ngIf="showContent">
       <div class="arrow-wrapper__arrow-up"></div>
-      <div class="input-wrapper__dropdown-panel">
+      <div class="input-wrapper__dropdown-panel" [id]="inputId + '-dropdown'" role="listbox">
         <div class="input-wrapper__dropdown-panel-conditions" *ngIf="showFilterConditions === true">
           <button
+            role="option"
             type="button"
             class="input-wrapper__dropdown-item"
             [ngClass]="{'input-wrapper__dropdown-item--period': item === ExtendedSearchCondition.Period}"
+            [attr.aria-selected]="selectedConditionValue === item"
             *ngFor="let item of inputConditionList"
             (click)="onClickSetConditionValue(item)"
           >
@@ -358,11 +366,13 @@
   <ng-container *ngIf="inputType === inputTypeEnum.number || inputType === inputTypeEnum.text">
     <div class="arrow-wrapper" *ngIf="showContent === true">
       <div class="arrow-wrapper__arrow-up"></div>
-      <div class="input-wrapper__dropdown-panel">
+      <div class="input-wrapper__dropdown-panel" [id]="inputId + '-dropdown'" role="listbox">
         <div class="input-wrapper__dropdown-panel-conditions">
           <button
             type="button"
+            role="option"
             class="input-wrapper__dropdown-item"
+            [attr.aria-selected]="selectedConditionValue === item"
             *ngFor="let item of inputConditionList"
             (click)="onClickSetConditionValue(item)"
           >
