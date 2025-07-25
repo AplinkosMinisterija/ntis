@@ -114,26 +114,48 @@ public class NtisSewageDeliveriesList extends FormBase {
      */
     public String getRecList(Connection conn, SelectRequestParams params, Double usrId, Double orgId, String lang) throws Exception {
         this.checkIsFormActionAssigned(conn, NtisSewageDeliveriesList.ACTION_READ);
-        StatementAndParams stmt = new StatementAndParams();
-        stmt.setStatement("SELECT WD.WD_ID, " + //
-                "TO_CHAR(WD.WD_DELIVERY_DATE, '" + dbstatementManager.getDateFormat(DBStatementManager.DATE_FORMAT_DAY_DB) + "') AS WD_DELIVERY_DATE, " + //
-                "WD.WD_DELIVERED_QUANTITY, " + //
-                "CASE WHEN CR.CR_TYPE IS NOT NULL THEN CR.CR_REG_NO || ' (' || CRC.RFC_MEANING || ')' "+//
-                "ELSE CR.CR_REG_NO END AS CR_REG_NO, " + //
-                "WD.WD_STATE as WD_STATE_CLSF, " + //
-                "WTO.WTO_NAME, " + //
-                "coalesce(RFC.RFC_MEANING, WD.WD_STATE) as WD_STATE, " + //
-                "CASE WHEN WD2.WD_ID IS NULL THEN 'N' ELSE 'Y' END as HAS_CHILD, " + //
-                "WTO.WTO_ADDRESS as ADDRESS " + //
-                "FROM NTIS_WASTEWATER_DELIVERIES WD " + //
-                "LEFT JOIN NTIS_WASTEWATER_TREATMENT_ORG WTO ON WTO.WTO_ID = WD.WD_WTO_ID " + //
-                "INNER JOIN SPR_ORGANIZATIONS ORG ON ORG.ORG_ID = WD.WD_ORG_ID AND ORG.ORG_ID = ? " + //
-                "INNER JOIN SPR_ORG_USERS OU ON OU.OU_ORG_ID = ORG.ORG_ID AND OU.OU_USR_ID = ?::int and CURRENT_DATE BETWEEN OU.OU_DATE_FROM AND COALESCE(OU.OU_DATE_TO, now()) "
-                + //
-                "LEFT JOIN NTIS_CARS CR ON CR.CR_ID = WD.WD_CR_ID AND CR.CR_ORG_ID = ORG.ORG_ID " + //
-                "LEFT JOIN SPR_REF_CODES_VW RFC ON RFC.RFC_CODE = WD.WD_STATE AND RFC.RFC_DOMAIN = 'SEWAGE_DELIV_STATUS' AND RFC.RFT_LANG = ? " + //
-                "LEFT JOIN NTIS_WASTEWATER_DELIVERIES WD2 ON WD.WD_ID = WD2.WD_WD_ID " +//
-                "LEFT JOIN SPR_REF_CODES_VW CRC ON CRC.RFC_DOMAIN = 'NTIS_CAR_TYPE' AND CRC.RFC_CODE = CR.CR_TYPE AND CRC.RFT_LANG = ?" );
+        StatementAndParams stmt = new StatementAndParams("""
+                WITH ord as (
+                SELECT STRING_AGG(ord.ord_id::text, ', ') as orders,
+                                df.df_wd_id as wd
+                                FROM ntis_orders ord
+                          INNER JOIN ntis_delivery_facilities df ON ord.ord_id = df.df_ord_id
+                                                AND ord.ord_wtf_id = df.df_wtf_id
+                            GROUP BY df.df_wd_id
+                )
+                    SELECT wd.wd_id,
+                           TO_CHAR(wd.wd_delivery_date, '%s') as wd_delivery_date,
+                           wd.wd_delivered_quantity,
+                           CASE WHEN cr.cr_type is not null
+                                  THEN cr.cr_reg_no || ' (' || crc.rfc_meaning || ')'
+                                ELSE cr.cr_reg_no
+                           END as cr_reg_no,
+                           wd.wd_state as wd_state_clsf,
+                           wto.wto_name,
+                           COALESCE(rfc.rfc_meaning, wd.wd_state) as wd_state,
+                           CASE WHEN wd2.wd_id IS NULL
+                                  THEN 'N'
+                                ELSE 'Y'
+                           END as has_child,
+                           wto.wto_address as address,
+                           ord.orders as orders
+                      FROM ntis_wastewater_deliveries WD
+                 LEFT JOIN ntis_wastewater_treatment_org wto ON wto.wto_id = wd.wd_wto_id
+                 LEFT JOIN ord ord ON ord.wd = wd.wd_id
+                 INNER JOIN spr_organizations org ON org.org_id = wd.wd_org_id
+                                     AND org.org_id = ?::int
+                 INNER JOIN spr_org_users ou ON ou.ou_org_id = org.org_id
+                                     AND ou.ou_usr_id = ?::int
+                                     AND CURRENT_DATE BETWEEN ou.ou_date_from AND COALESCE(ou.ou_date_to, now())
+                 LEFT JOIN ntis_cars cr ON cr.cr_id = wd.wd_cr_id AND cr.cr_org_id = org.org_id
+                 LEFT JOIN spr_ref_codes_vw rfc ON rfc.rfc_code = wd.wd_state
+                                     AND rfc.rfc_domain = 'SEWAGE_DELIV_STATUS'
+                                     AND rfc.rft_lang = ?
+                 LEFT JOIN ntis_wastewater_deliveries wd2 ON wd.wd_id = wd2.wd_wd_id
+                 LEFT JOIN spr_ref_codes_vw crc ON crc.rfc_domain = 'NTIS_CAR_TYPE'
+                                     AND crc.rfc_code = cr.cr_type
+                                     AND crc.rft_lang = ?
+                """.formatted(dbstatementManager.getDateFormat(DBStatementManager.DATE_FORMAT_DAY_DB)));
         HashMap<String, AdvancedSearchParameterStatement> advancedParamList = params.getAdvancedParameters();
         this.managePredefinedFilterStructure(conn, advancedParamList.get(PREDEFINED_FILTER_PARAM), usrId, stmt, advancedParamList);
         stmt.addSelectParam(orgId);
@@ -147,9 +169,10 @@ public class NtisSewageDeliveriesList extends FormBase {
         stmt.addParam4WherePart("CR_REG_NO", StatementAndParams.PARAM_STRING, advancedParamList.get("cr_reg_no"));
         stmt.addParam4WherePart("WTO_NAME", StatementAndParams.PARAM_STRING, advancedParamList.get("wto_name"));
         stmt.addParam4WherePart("WD.WD_STATE", StatementAndParams.PARAM_STRING, advancedParamList.get("wd_state"));
+        stmt.addParam4WherePart("ord.orders", StatementAndParams.PARAM_STRING, advancedParamList.get("orders"));
         stmt.addParam4WherePart("WTO_ADDRESS", StatementAndParams.PARAM_STRING, advancedParamList.get("address"));
         stmt.addParam4WherePart(
-                dbstatementManager.colNamesToConcatString("WD.WD_ID", "WD.WD_DELIVERED_QUANTITY", "CR_REG_NO", "CRC.RFC_MEANING", "WTO_NAME", "RFC.RFC_MEANING",
+                dbstatementManager.colNamesToConcatString("WD.WD_ID", "ord.orders", "WD.WD_DELIVERED_QUANTITY", "CR_REG_NO", "CRC.RFC_MEANING", "WTO_NAME", "RFC.RFC_MEANING",
                         "TO_CHAR(WD.WD_DELIVERY_DATE,'" + dbstatementManager.getDateFormat(DBStatementManager.DATE_FORMAT_DAY_DB) + "')", "WTO_ADDRESS"),
                 StatementAndParams.PARAM_STRING, advancedParamList.get("quickSearch"));
 

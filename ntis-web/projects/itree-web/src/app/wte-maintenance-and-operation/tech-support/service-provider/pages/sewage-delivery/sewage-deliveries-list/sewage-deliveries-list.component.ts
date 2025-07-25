@@ -58,6 +58,7 @@ export class SewageDeliveriesListComponent extends BaseBrowseForm<SewageDeliveri
 
   cols: TableColumn[] = [
     { field: 'wd_id', export: true, visible: true, type: DATA_TYPE_NUMBER },
+    { field: 'orders', export: true, visible: true, type: DATA_TYPE_STRING },
     { field: 'wd_delivery_date', export: true, visible: true, type: DATA_TYPE_STRING },
     { field: 'wd_delivered_quantity', export: true, visible: true, type: DATA_TYPE_NUMBER },
     { field: 'cr_reg_no', export: true, visible: true, type: DATA_TYPE_STRING },
@@ -80,6 +81,7 @@ export class SewageDeliveriesListComponent extends BaseBrowseForm<SewageDeliveri
 
   ngOnInit(): void {
     this.searchForm.addControl('wd_id', new FormControl(''));
+    this.searchForm.addControl('orders', new FormControl(''));
     this.searchForm.addControl('wd_delivery_date', new FormControl(''));
     this.searchForm.addControl('wd_delivered_quantity', new FormControl(''));
     this.searchForm.addControl('cr_reg_no', new FormControl(''));

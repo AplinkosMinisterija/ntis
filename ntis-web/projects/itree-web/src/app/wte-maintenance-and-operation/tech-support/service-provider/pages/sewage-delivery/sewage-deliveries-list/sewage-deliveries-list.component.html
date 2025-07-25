@@ -12,6 +12,12 @@
       ></spr-filter-input>
       <spr-filter-input
         filters
+        inputType="text"
+        formControlName="orders"
+        [placeholder]="translationsReference + '.orders' | translate"
+      ></spr-filter-input>
+      <spr-filter-input
+        filters
         inputType="date"
         formControlName="wd_delivery_date"
         [placeholder]="translationsReference + '.wd_delivery_date' | translate"
