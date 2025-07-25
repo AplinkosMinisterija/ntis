@@ -2762,6 +2762,7 @@ wteMaintenanceAndOperation.techSupport.serviceProvider.pages.disposalOrdersList.
 wteMaintenanceAndOperation.techSupport.serviceProvider.pages.sewageDeliveriesList.breadcrumb=Nuotekų tvarkymo pristatymai
 wteMaintenanceAndOperation.techSupport.serviceProvider.pages.sewageDeliveriesList.headerText=Nuotekų (dumblo) pristatymų sąrašas
 wteMaintenanceAndOperation.techSupport.serviceProvider.pages.sewageDeliveriesList.wd_id=Pristatymo nr.
+wteMaintenanceAndOperation.techSupport.serviceProvider.pages.sewageDeliveriesList.orders=Nuotekų išvežimo užsakymo(-ų) nr.
 wteMaintenanceAndOperation.techSupport.serviceProvider.pages.sewageDeliveriesList.wd_state=Būsena
 wteMaintenanceAndOperation.techSupport.serviceProvider.pages.sewageDeliveriesList.wd_delivery_date=Nuotekų pristatymo data
 wteMaintenanceAndOperation.techSupport.serviceProvider.pages.sewageDeliveriesList.wd_delivered_quantity=Pristatytas nuotekų kiekis, m³

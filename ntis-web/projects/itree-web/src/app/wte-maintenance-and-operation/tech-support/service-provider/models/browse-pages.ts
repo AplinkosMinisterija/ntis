@@ -8,6 +8,7 @@ export interface SewageDeliveriesBrowseRow extends BaseBrowseRow {
   wto_name: string;
   wd_state_clsf: string;
   wd_state: string;
+  orders: string;
 }
 
 export interface ServiceProviderDashboardBrowse {
