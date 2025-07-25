@@ -1,9 +1,9 @@
 import { AccessibilityCssClass } from '@itree-commons/src/lib/types/accessibility';
 import { AccessibilityService } from '@itree-commons/src/lib/services/accessibility.service';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { AppMessages, BaseAppComponent, getLang } from '@itree/ngx-s2-commons';
+import { AppMessages, BaseAppComponent, CommonFormServices, getLang } from '@itree/ngx-s2-commons';
 import { BreadcrumbsService } from '@itree-commons/src/lib/services/breadcrumbs.service';
-import { Component, NgZone, OnInit, Renderer2 } from '@angular/core';
+import { AfterViewChecked, Component, NgZone, OnInit, Renderer2 } from '@angular/core';
 import { filter } from 'rxjs';
 import { MessageService, PrimeNGConfig, Translation } from 'primeng/api';
 import { RoutingConst } from '@itree-commons/src/constants/routing.const';
@@ -17,7 +17,7 @@ import { HttpClient } from '@angular/common/http';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
-export class AppComponent extends BaseAppComponent<SprBackendWebSessionInfo> implements OnInit {
+export class AppComponent extends BaseAppComponent<SprBackendWebSessionInfo> implements OnInit, AfterViewChecked {
   styles: AccessibilityCssClass[];
   currentUrl: string = null;
   previousUrl: string = null;
@@ -33,7 +33,8 @@ export class AppComponent extends BaseAppComponent<SprBackendWebSessionInfo> imp
     public breadcrumbsService: BreadcrumbsService,
     private messageService: MessageService,
     private renderer: Renderer2,
-    private http: HttpClient
+    private http: HttpClient,
+    private commonFormServices: CommonFormServices
   ) {
     super(router, appMessages, translate, route, ngZone);
 
@@ -44,6 +45,10 @@ export class AppComponent extends BaseAppComponent<SprBackendWebSessionInfo> imp
     this.appMessages.clear$.pipe(takeUntilDestroyed()).subscribe(() => {
       this.messageService.clear();
     });
+  }
+
+  ngAfterViewChecked(): void {
+    this.fixPaginatorLabels();
   }
 
   override ngOnInit(): void {
@@ -71,6 +76,33 @@ export class AppComponent extends BaseAppComponent<SprBackendWebSessionInfo> imp
     this.http.get(`assets/i18n/${getLang()}-primeng.json`, { responseType: 'text' as 'json' }).subscribe((data) => {
       const translation = JSON.parse(data as string) as Translation;
       this.primeConfig.setTranslation(translation);
+    });
+  }
+
+  private fixPaginatorLabels(): void {
+    document.querySelectorAll('.p-paginator-page').forEach((btn) => {
+      const pageNumber = btn.textContent?.trim();
+      if (pageNumber) {
+        if (btn.classList.contains('p-highlight')) {
+          btn.setAttribute('aria-current', 'page');
+        } else {
+          btn.removeAttribute('aria-current');
+        }
+
+        if (!btn.hasAttribute('aria-label')) {
+          this.commonFormServices.translate.get('common.generalUse.page').subscribe((translate: string) => {
+            btn.setAttribute('aria-label', `${translate} ${pageNumber}`);
+          });
+        }
+      }
+    });
+
+    document.querySelectorAll('.p-paginator-prev').forEach((btn) => {
+      if (!btn.hasAttribute('aria-label')) {
+        this.commonFormServices.translate.get('common.generalUse.previousPage').subscribe((translate: string) => {
+          btn.setAttribute('aria-label', translate);
+        });
+      }
     });
   }
 
