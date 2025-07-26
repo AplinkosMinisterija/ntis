@@ -18,18 +18,33 @@
         >
           <div class="address-input">
             <p-autoComplete
+              #addressInput
               [suggestions]="addressSuggestions"
               field="address"
               dataKey="id"
-              appendTo="body"
               [showClear]="true"
               [forceSelection]="true"
               [placeholder]="(translationsReference + '.addressPlaceholder') | translate"
-              [ariaLabel]="(translationsReference + '.addressPlaceholder') | translate"
               formControlName="address"
               (completeMethod)="autocompleteAddress($event)"
               class="address-input__input"
-            ></p-autoComplete>
+              inputId="address"
+              (keydown)="onAddressKeydown($event)"
+              [showEmptyMessage]="true"
+              [emptyMessage]="(translationsReference + '.noAddressSuggestions') | translate"
+            >
+              <ng-template let-suggestion pTemplate="item">
+                <li
+                  role="option"
+                  tabindex="0"
+                  [id]="'address-option-' + suggestion.id"
+                  (click)="selectAddress(suggestion)"
+                  (keyup.enter)="selectAddress(suggestion)"
+                >
+                  {{ suggestion.address }}
+                </li>
+              </ng-template>
+            </p-autoComplete>
             <spr-button
               iconStyle="solid"
               iconName="faLocationDot"

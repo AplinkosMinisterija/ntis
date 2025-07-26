@@ -2,8 +2,8 @@
   .spr-input-text {
     @apply border border-neutral-300 text-neutral-900 
            focus:border-primary-500 focus:ring-transparent focus:outline-transparent 
-           disabled:text-neutral-500 disabled:bg-neutral-100 disabled:cursor-default 
-           placeholder:text-neutral-300
+           disabled:text-neutral-800 disabled:placeholder:text-neutral-800 disabled:bg-neutral-100 disabled:cursor-default 
+           placeholder:text-neutral-700
            text-base w-full transition-colors rounded;
   }
 
@@ -27,11 +27,11 @@
   }
 
   .spr-checkbox {
-    @apply w-5 h-5 p-0 border-0  relative #{!important};
+    @apply w-5 h-5 p-0 border-0 relative #{!important};
     -moz-appearance: initial;
 
     &:hover:not(:disabled) {
-      @apply shadow;
+      @apply shadow cursor-pointer;
     }
 
     &::before {

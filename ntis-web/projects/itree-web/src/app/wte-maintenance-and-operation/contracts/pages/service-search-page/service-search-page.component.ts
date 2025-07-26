@@ -5,13 +5,14 @@ import { CheckWtfSelectionComponent } from '@itree-web/src/app/ntis-shared/compo
 import { CheckWtfSelectionService } from '@itree-web/src/app/ntis-shared/services/check-wtf-selection.service';
 import { CommonModule } from '@angular/common';
 import { CommonService } from '@itree-commons/src/lib/services/common.service';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Coordinate } from 'ol/coordinate';
 import { DialogModule } from 'primeng/dialog';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { getSearchMapMenu } from '@itree-web/src/app/standalone/map/utils/getDefaultMapMenus';
 import { InputDigitsOnlyDirective } from '@itree-web/src/app/ntis-shared/directives/input-digits-only.directive';
 import { ItreeCommonsModule } from '@itree-commons/src/public-api';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { MapBrowserEvent } from 'ol';
 import { MapComponent } from '@itree-web/src/app/standalone/map/components/map/map.component';
 import { MapLocationSearchResult } from '@itree-web/src/app/standalone/map/types/map-location-search-result';
@@ -66,6 +67,7 @@ export class ServiceSearchPageComponent implements OnInit {
   orderByRating: boolean = null;
 
   @ViewChild(MapComponent) private mapComponent: MapComponent;
+  @ViewChild('addressInput', { read: ElementRef }) private addressInputRef: ElementRef<HTMLInputElement>;
 
   showMap = false;
   mapMenuItems = [getSearchMapMenu()];
@@ -93,7 +95,8 @@ export class ServiceSearchPageComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private router: Router,
     public faIconsService: FaIconsService,
-    private commonFormServices: CommonFormServices
+    private commonFormServices: CommonFormServices,
+    private liveAnnouncer: LiveAnnouncer
   ) {}
 
   ngOnInit(): void {
@@ -167,9 +170,13 @@ export class ServiceSearchPageComponent implements OnInit {
     if (text.length >= 3) {
       this.ntisContractsService.getAddressSuggestions(text).subscribe((result) => {
         this.addressSuggestions = result;
+        this.announceSuggestionsCount(result.length);
+        this.clearActiveOption();
       });
     } else {
       this.addressSuggestions = [];
+      this.announceSuggestionsCount(0);
+      this.clearActiveOption();
     }
   }
 
@@ -241,7 +248,19 @@ export class ServiceSearchPageComponent implements OnInit {
           this.searchResult = result;
           this.searchResult = this.searchResult.filter((res) => res.services.length > 0);
         });
+    } else {
+      this.scrollToFirstError();
     }
+  }
+
+  private scrollToFirstError(): void {
+    const firstErrorIndex = Object.values(this.form.controls).findIndex((control) => control.errors);
+    const formFields = document.querySelectorAll('spr-form-field');
+
+    formFields[firstErrorIndex].scrollIntoView({
+      behavior: 'smooth',
+      block: 'center',
+    });
   }
 
   getPriceClause(): string {
@@ -365,5 +384,70 @@ export class ServiceSearchPageComponent implements OnInit {
   clearOrderingValues(): void {
     this.orderClause.controls.order.setValue([]);
     this.getOrderClause();
+  }
+
+  // Accessibility methods
+  private announceSuggestionsCount(count: number): void {
+    if (count === 0) {
+      this.liveAnnouncer.announce('No address suggestions found');
+    } else {
+      this.liveAnnouncer.announce(`${count} address suggestions available`);
+    }
+  }
+
+  selectAddress(suggestion: NtisAddressSuggestion): void {
+    this.form.patchValue({ address: suggestion });
+    this.liveAnnouncer.announce(`Selected: ${suggestion.address}`);
+  }
+
+  onAddressKeydown(event: KeyboardEvent): void {
+    const suggestions = this.addressSuggestions;
+    if (!suggestions?.length) return;
+
+    const input = this.addressInputRef?.nativeElement;
+    if (!input) return;
+
+    let currentIndex = this.getCurrentActiveIndex(input);
+
+    switch (event.key) {
+      case 'ArrowDown':
+        event.preventDefault();
+        currentIndex = Math.min(currentIndex + 1, suggestions.length - 1);
+        this.setActiveOption(input, suggestions[currentIndex]);
+        this.announceOption(currentIndex, suggestions);
+        break;
+
+      case 'ArrowUp':
+        event.preventDefault();
+        currentIndex = Math.max(currentIndex - 1, 0);
+        this.setActiveOption(input, suggestions[currentIndex]);
+        this.announceOption(currentIndex, suggestions);
+        break;
+
+      case 'Escape':
+        this.clearActiveOption();
+        this.liveAnnouncer.announce('Address suggestions closed');
+        break;
+    }
+  }
+
+  private announceOption(index: number, suggestions: NtisAddressSuggestion[]): void {
+    this.liveAnnouncer.announce(`Option ${index + 1} of ${suggestions.length}: ${suggestions[index].address}`);
+  }
+
+  private getCurrentActiveIndex(input: HTMLInputElement): number {
+    const activeDescendant = input.getAttribute('aria-activedescendant');
+    if (!activeDescendant) return -1;
+
+    const activeId = activeDescendant.replace('address-option-', '');
+    return this.addressSuggestions.findIndex((s) => s.id?.toString() === activeId);
+  }
+
+  private setActiveOption(input: HTMLInputElement, suggestion: NtisAddressSuggestion): void {
+    input.setAttribute('aria-activedescendant', `address-option-${suggestion.id}`);
+  }
+
+  private clearActiveOption(): void {
+    this.addressInputRef?.nativeElement?.removeAttribute('aria-activedescendant');
   }
 }

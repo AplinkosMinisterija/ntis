@@ -25,7 +25,7 @@
             </div>
           </div>
         </header>
-        <ul class="provider-services">
+        <ul class="provider-services" role="presentation">
           <li *ngFor="let service of result.services; trackBy: servicesTrackBy" class="provider-services__item">
             <section
               *ngIf="!(service.type === ServiceItemType.sewageRemoval && result.hasCar === DB_BOOLEAN_FALSE)"
@@ -33,15 +33,31 @@
             >
               <header class="service__main-info">
                 <h4 class="service__name">
-                  <span class="service__name-text">{{ service.name }}</span>
-                  <spr-button
-                    className="service__expand-button"
-                    iconStyle="solid"
-                    [iconName]="openDetails[result.orgId] === service.id ? 'faAngleUp' : 'faAngleDown'"
+                  <button
+                    type="button"
+                    class="app-button service__expand-button"
+                    [attr.id]="'service-name-' + result.orgId + '-' + service.id"
                     (click)="handleToggleDetails(result.orgId, service.id)"
-                  ></spr-button>
+                    [attr.aria-expanded]="openDetails[result.orgId] === service.id"
+                    [attr.aria-controls]="'service-details-' + result.orgId + '-' + service.id"
+                  >
+                    {{ service.name }}
+                    <fa-icon
+                      [icon]="openDetails[result.orgId] === service.id ? faIconsService.fas.faAngleUp : faIconsService.fas.faAngleDown"
+                      [fixedWidth]="true"
+                    />
+                  </button>
                 </h4>
-                <div *ngIf="openDetails[result.orgId] === service.id" class="service__details" @expandFromTop>
+                <div
+                  *ngIf="openDetails[result.orgId] === service.id"
+                  class="service__details"
+                  @expandFromTop
+                  [attr.id]="'service-details-' + result.orgId + '-' + service.id"
+                  role="region"
+                  [attr.aria-labelledby]="'service-name-' + result.orgId + '-' + service.id"
+                  tabindex="-1"
+                  aria-live="polite"
+                >
                   <spr-info-line
                     [name]="(translationsReference + '.phone') | translate"
                     [value]="service.phone"

@@ -70,6 +70,7 @@ export class MapService {
 
     const filterKeys = filters ? Object.keys(filters) : [];
     if (filterKeys.length) {
+      // @ts-ignore
       body.query.function_score.functions = filterKeys.map((filterKey) => ({
         filter: { term: { [filterKey]: filters[filterKey] } },
         weight: filterWeights?.[filterKey] || 1,

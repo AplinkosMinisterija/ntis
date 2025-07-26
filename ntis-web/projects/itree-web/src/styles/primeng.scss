@@ -398,36 +398,44 @@ p-inputnumber.ng-dirty.ng-invalid {
   }
 }
 
-// table paginator:
+// paginator
+.p-paginator.p-component {
+  .p-paginator-next,
+  .p-paginator-last,
+  .p-paginator-first,
+  .p-paginator-prev {
+    @apply border-2 border-solid border-neutral-200 -ml-px;
+  }
+
+  .p-paginator-page {
+    @apply text-primary-600 border-solid border-r-2 border-y-2 border-neutral-200 last-of-type:border-r-0;
+  }
+
+  .p-paginator-page.p-highlight {
+    @apply bg-primary-500 text-neutral-0;
+  }
+
+  .p-paginator-prev {
+    @apply rounded-l text-primary-500;
+    &.p-disabled {
+      @apply text-neutral-500;
+    }
+  }
+
+  .p-paginator-next {
+    @apply rounded-r text-primary-500;
+    &.p-disabled {
+      @apply text-neutral-500;
+    }
+  }
+
+  .p-paginator-rpp-options .p-dropdown-label {
+    @apply flex items-center w-auto;
+  }
+}
+
+// table
 .p-datatable {
-  .p-paginator-bottom {
-    @apply pt-6 border-0;
-  }
-
-  .p-paginator .p-paginator-pages .p-paginator-page.p-highlight {
-    @apply bg-primary-500 border-primary-500 text-neutral-0;
-  }
-
-  .p-paginator .p-paginator-pages .p-paginator-page,
-  .p-paginator .p-paginator-first,
-  .p-paginator .p-paginator-prev,
-  .p-paginator .p-paginator-next,
-  .p-paginator .p-paginator-last {
-    @apply text-primary-500;
-
-    &:not(.p-highlight):hover {
-      @apply text-primary-600;
-    }
-
-    &:focus {
-      @apply shadow-none;
-    }
-  }
-
-  .p-paginator-bottom.p-paginator.p-component.ng-star-inserted {
-    @apply bg-neutral-0;
-  }
-
   // table inside table:
   .p-datatable {
     .p-datatable-table {

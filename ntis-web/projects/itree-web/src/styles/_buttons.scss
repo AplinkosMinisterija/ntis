@@ -1,6 +1,6 @@
 @layer components {
   %spr-button {
-    @apply flex justify-center items-center gap-2 text-neutral-0 font-bold rounded py-2 px-3;
+    @apply flex justify-center items-center gap-2 text-neutral-0 font-medium rounded py-2 px-3;
   }
 
   %spr-button-disabled {

@@ -6,11 +6,16 @@
           class="quick-search__input-field"
           type="text"
           [placeholder]="placeholder || ('components.browseSearchForm.quickSearchPlaceholder' | translate)"
+          [attr.aria-label]="placeholder || ('components.browseSearchForm.quickSearchPlaceholder' | translate)"
           [(ngModel)]="quickSearchValue"
           [ngModelOptions]="{standalone: true}"
           (ngModelChange)="handleQuickSearchChange($event)"
         />
-        <button type="submit" class="quick-search__action-button">
+        <button
+          type="submit"
+          class="quick-search__action-button"
+          [attr.aria-label]="'common.action.search' | translate"
+        >
           <fa-icon [icon]="faIconsService.fas.faSearch" size="sm"></fa-icon>
         </button>
       </div>

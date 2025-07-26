@@ -6,13 +6,13 @@
   [type]="type"
   [value]="value"
   [attr.tabindex]="tabindex"
+  [attr.aria-label]="ariaLabel"
 >
   <fa-icon
     *ngIf="iconName"
     [icon]="faIconsService[iconStyle][iconName]"
     [fixedWidth]="true"
     [class]="'app-button__icon ' + iconClassName"
-    [attr.aria-label]="ariaLabel"
   ></fa-icon>
   <span
     class="app-button__text"

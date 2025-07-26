@@ -147,17 +147,34 @@
   </form>
 </section>
 
-<section class="address-dialog" *ngIf="showResultDialog" (click)="showResultDialog = false">
-  <div class="address-dialog__content">
+<section
+  class="address-dialog"
+  *ngIf="showResultDialog"
+  (click)="showResultDialog = false"
+  tabindex="-1"
+  #dialog
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="address-dialog-header"
+>
+  <div class="address-dialog__content" (click)="$event.stopPropagation()">
     <header class="address-dialog__content-header">
       <span class="address-dialog__content-header-text">{{addressFormReference + '.searchResult' | translate}}</span>
-      <spr-button iconName="faTimes" type="button" (click)="showResultDialog = false"></spr-button>
+      <button
+        type="button"
+        [attr.aria-label]="'common.actions.close' | translate"
+        class="address-dialog__content-header-close"
+        (click)="showResultDialog = false"
+        #closeBtn
+      >
+        <spr-icon name="close" />
+      </button>
     </header>
     <div class="address-dialog__content-body">
       <ng-container *ngIf="addressList.length > 0">
         <ul>
           <li *ngFor="let row of addressList">
-            <button class="address-button" type="button" (click)="setAddress(row)">
+            <button class="address-button" type="button" (click)="setAddress(row); showResultDialog = false">
               <span class="address-button__item" *ngIf="row.full_address_text">
                 <spr-icon name="house"></spr-icon
                 ><span class="address-button__address-text">{{row.full_address_text}}</span>

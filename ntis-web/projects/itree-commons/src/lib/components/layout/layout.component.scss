@@ -21,7 +21,7 @@
   box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.4);
 
   &__content-wrapper {
-    @apply flex items-center gap-2 md:gap-3 px-3 py-2.5;
+    @apply flex items-center gap-2 md:gap-3 px-3 py-2.5 empty:hidden;
 
     &--left {
       @apply mr-auto;
@@ -78,7 +78,7 @@
 }
 
 .navigation {
-  @apply flex flex-col bg-primary-300 overflow-y-auto w-full;
+  @apply flex flex-col bg-primary-400 overflow-y-auto w-full;
 
   @screen sm {
     @apply w-auto flex flex-col shrink-0;
