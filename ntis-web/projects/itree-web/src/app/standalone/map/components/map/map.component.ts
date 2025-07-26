@@ -262,6 +262,8 @@ export class MapComponent implements OnChanges, AfterViewInit, AfterContentInit,
       ProjectionLikeCode.LKS94,
       '+proj=tmerc +lat_0=0 +lon_0=24 +k=0.9998+x_0=500000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m+no_defs'
     );
+
+    // @ts-ignore
     register(proj4);
     const lksExtent = [307558.9491752772, 5970000.0, 685218.1236202281, 6264605.2051798785];
     proj.get(ProjectionLikeCode.LKS94).setExtent(lksExtent);
