@@ -5,7 +5,6 @@
     "ng": "ng",
     "start": "ng serve",
     "startdev": "ng serve --proxy-config proxy.conf.json --configuration development",
-    "startdev:test": "ng serve --proxy-config proxy-test.conf.json --configuration development",
     "startdevIp": "ng serve --proxy-config proxy.conf.json --configuration development --host=1.2.3.4",
     "build": "ng build",
     "test": "ng test",
