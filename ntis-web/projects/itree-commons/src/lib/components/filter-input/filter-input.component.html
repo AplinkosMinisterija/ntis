@@ -66,9 +66,9 @@
     [maxLength]="inputType === inputTypeEnum.date ? 10 : 19"
     [placeholder]="inputFocused ? 'YYYY-MM-DD' : placeholder"
     [id]="inputId"
-    (input)="createFormObject()"
+    (input)="validateDateInput($event); createFormObject()"
+    (keypress)="onKeypressFilterDate($event)"
     (click)="showContent = true"
-    readonly
     #inputElement
     [title]="inputElement?.value"
     (focus)="inputFocused = true"

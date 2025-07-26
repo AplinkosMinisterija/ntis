@@ -568,6 +568,7 @@ export class FilterInputComponent implements OnInit, OnDestroy, ControlValueAcce
     }
     this.inputValue = value;
     (event.target as HTMLInputElement).setAttribute('previousValue', value);
+    this.syncCalendarWithInputDate(value);
   }
 
   onKeypressFilterDate(event: KeyboardEvent): boolean {
@@ -986,7 +987,6 @@ export class FilterInputComponent implements OnInit, OnDestroy, ControlValueAcce
     this.inputElement.nativeElement.disabled = false;
   }
 
-  /* Resets all calendar variables to their default values */
   resetCalendarValues(): void {
     this.setSelectedCondition(this.defaultFilterCondition);
     this.restoringContentValues();
@@ -1028,5 +1028,33 @@ export class FilterInputComponent implements OnInit, OnDestroy, ControlValueAcce
 
   setLastClickedInput(inputName: 'dateFrom' | 'dateTo'): void {
     this.activeInput = inputName;
+  }
+
+  syncCalendarWithInputDate(dateValue: string): void {
+    if (!dateValue) return;
+
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+    let dateToSync = dateValue;
+
+    if (this.inputType === this.inputTypeEnum.datetime && dateValue.includes(' ')) {
+      dateToSync = dateValue.split(' ')[0];
+    }
+
+    if (dateRegex.test(dateToSync)) {
+      const enteredDate = new Date(dateToSync);
+
+      if (!isNaN(enteredDate.getTime())) {
+        this.loadCalendarData(enteredDate.getFullYear(), enteredDate.getMonth());
+
+        const targetDate = enteredDate.getTime();
+        this.selectedItem = this.calendarItems.findIndex(
+          (item) => item.isTargetMonth && item.date.getTime() === targetDate
+        );
+
+        if (this.selectedItem >= 0) {
+          this.selectedDate = enteredDate;
+        }
+      }
+    }
   }
 }
