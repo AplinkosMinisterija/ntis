@@ -187,6 +187,11 @@ export class SelectComponent
   foundRecords: boolean = true;
   chosenOption: optionList = null;
 
+  // Accessibility and keyboard navigation properties
+  focusedOptionIndex: number = -1;
+  focusedGroupIndex: number = -1;
+  activeDescendantId: string = null;
+
   private resizeObserver: ResizeObserver;
   private scrollableParents: HTMLElement[] = [];
 
@@ -305,17 +310,6 @@ export class SelectComponent
     }
   }
 
-  showDropdown(): void {
-    if (this.optionType !== this.selectTypesEnum.autoCompleteSingle) {
-      this.toggleShowListBox();
-    }
-    this.onTouched?.();
-  }
-
-  showClearButton(): void {
-    this.showClear = (!this.readonly && !this.disabled) || this.inputSearchValue.length > 0;
-  }
-
   /** Method from NG_VALUE_ACCESSOR to retrieve data from the form */
   writeValue(obj: unknown): void {
     const searchParam = obj as ExtendedSearchParam;
@@ -421,8 +415,8 @@ export class SelectComponent
     }
   }
 
-  /** After clicking on the clear button, all data will be cleared and the input will be made as untouched */
-  clearValues(): void {
+  /** Simple clear method */
+  clearValues = (): void => {
     if (!this.disabled) {
       this.selectedOption = [];
       this.showClear = false;
@@ -435,7 +429,7 @@ export class SelectComponent
       this.onChange?.(null);
       this.valuesCleared.emit();
     }
-  }
+  };
 
   /** It is used to check the received data from the form and put check marks */
   checkOption(value: string): boolean {
@@ -531,6 +525,7 @@ export class SelectComponent
       });
       this.filteredGroupedOptionList = this.groupedOptionList;
       this.loadGroupedFormData(this.groupedOptionList);
+      this.updateAccessibilityState();
     }
   }
   /** The method is called from setGroupedOptions to create the group data */
@@ -578,6 +573,7 @@ export class SelectComponent
 
     this.setPlaceholder();
     this.filteredOptions = this.optionList;
+    this.updateAccessibilityState();
   }
 
   /** According to the given object keys e.g. &org_name& will be found and replaced with the appropriate data */
@@ -619,6 +615,7 @@ export class SelectComponent
           } else {
             this.filteredOptions = this.optionList;
           }
+          this.updateAccessibilityState();
         } else if (
           this.optionType === this.selectTypesEnum.groupedMultiple ||
           this.optionType === this.selectTypesEnum.groupedSingle
@@ -641,6 +638,7 @@ export class SelectComponent
           } else {
             this.filteredGroupedOptionList = this.groupedOptionList;
           }
+          this.updateAccessibilityState();
         } else if (
           this.optionType === this.selectTypesEnum.autoCompleteMultiple ||
           this.optionType === this.selectTypesEnum.autoCompleteSingle
@@ -656,6 +654,7 @@ export class SelectComponent
               } else {
                 this.filteredOptions = this.filter(this.optionList, inputValue);
                 this.showListbox = true;
+                this.updateAccessibilityState();
               }
             }
           }
@@ -704,6 +703,7 @@ export class SelectComponent
     this.searchInput.nativeElement.value = '';
     this.filteredOptions = this.optionList;
     this.filteredGroupedOptionList = this.groupedOptionList;
+    this.updateAccessibilityState();
   }
 
   /** After selecting an entry from the list, the data is added to the form */
@@ -798,4 +798,266 @@ export class SelectComponent
       element.style.left = `${startLeft + parentRect.left}px`;
     }
   }
+
+  trackByFn = (_: number, item: optionList): string => item.value;
+  trackByGroupFn = (_: number, item: optionGroup): string => item.label;
+
+  getOptionId = (index: number): string => `${this.inputId}_option_${index}`;
+  getCheckboxId = (index: number): string => `${this.inputId}_checkbox_${index}`;
+  getGroupedOptionId = (groupIndex: number, optionIndex: number): string =>
+    `${this.inputId}_group_${groupIndex}_option_${optionIndex}`;
+  getGroupedCheckboxId = (groupIndex: number, optionIndex: number): string =>
+    `${this.inputId}_group_${groupIndex}_checkbox_${optionIndex}`;
+
+  getTotalFilteredOptions = (): number => {
+    return this.isGrouped()
+      ? this.filteredGroupedOptionList.reduce((total, group) => total + (group.optionList?.length || 0), 0)
+      : this.filteredOptions.length;
+  };
+
+  onKeyDown(event: KeyboardEvent): void {
+    switch (event.key) {
+      case 'ArrowDown':
+        event.preventDefault();
+        if (!this.showListbox) {
+          this.showDropdown(true);
+        } else {
+          this.isGrouped() ? this.moveGroupedFocus(1) : this.moveToNextOption();
+        }
+        break;
+      case 'ArrowUp':
+        event.preventDefault();
+        if (!this.showListbox) {
+          this.showDropdown(true);
+        } else {
+          this.isGrouped() ? this.moveGroupedFocus(-1) : this.moveToPreviousOption();
+        }
+        break;
+      case 'Enter':
+        event.preventDefault();
+        if (!this.showListbox) {
+          this.showDropdown(true);
+        } else {
+          this.selectFocusedOption();
+        }
+        break;
+      case 'Escape':
+        event.preventDefault();
+        this.closeDropdown();
+        break;
+      case 'Tab':
+        if (this.showListbox) {
+          this.closeDropdown();
+        }
+        break;
+    }
+  }
+
+  /**
+   * Keyboard handler for the filter input. Mirrors onKeyDown logic but keeps Tab natural so
+   * focus can move to the clear button or next focusable element.
+   */
+  onFilterKeyDown(event: KeyboardEvent): void {
+    switch (event.key) {
+      case 'ArrowDown':
+        event.preventDefault();
+        this.isGrouped() ? this.moveGroupedFocus(1) : this.moveToNextOption();
+        break;
+      case 'ArrowUp':
+        event.preventDefault();
+        this.isGrouped() ? this.moveGroupedFocus(-1) : this.moveToPreviousOption();
+        break;
+      case 'Enter':
+        event.preventDefault();
+        this.selectFocusedOption();
+        break;
+      case 'Escape':
+        event.preventDefault();
+        this.closeDropdown();
+        break;
+      // Do not preventDefault for Tab; allow natural tabbing
+    }
+  }
+
+  onOptionKeyDown = (event: KeyboardEvent, option: optionList): void => {
+    event.preventDefault();
+    switch (event.key) {
+      case 'ArrowDown':
+        this.isGrouped() ? this.moveGroupedFocus(1) : this.moveToNextOption();
+        break;
+      case 'ArrowUp':
+        this.isGrouped() ? this.moveGroupedFocus(-1) : this.moveToPreviousOption();
+        break;
+      case 'Enter':
+        this.isMultiSelect() ? this.pushSelectedValues(option) : this.optionSelected(option);
+        break;
+      case 'Escape':
+        this.closeDropdown();
+        break;
+    }
+  };
+
+  private moveToNextOption = (): void => {
+    if (this.filteredOptions.length === 0) return;
+    this.focusedOptionIndex = (this.focusedOptionIndex + 1) % this.filteredOptions.length;
+    this.updateActiveDescendant();
+  };
+
+  private moveToPreviousOption = (): void => {
+    if (this.filteredOptions.length === 0) return;
+    this.focusedOptionIndex =
+      this.focusedOptionIndex > 0 ? this.focusedOptionIndex - 1 : this.filteredOptions.length - 1;
+    this.updateActiveDescendant();
+  };
+
+  private moveGroupedFocus = (direction: 1 | -1): void => {
+    if (this.filteredGroupedOptionList.length === 0) return;
+
+    if (this.focusedGroupIndex < 0 || this.focusedOptionIndex < 0) {
+      this.focusedGroupIndex = 0;
+      this.focusedOptionIndex = 0;
+      this.updateActiveDescendant();
+      return;
+    }
+
+    const currentGroup = this.filteredGroupedOptionList[this.focusedGroupIndex];
+    if (!currentGroup || currentGroup.optionList.length === 0) {
+      this.focusedGroupIndex = 0;
+      this.focusedOptionIndex = 0;
+      this.updateActiveDescendant();
+      return;
+    }
+
+    if (direction === 1) {
+      if (this.focusedOptionIndex < currentGroup.optionList.length - 1) {
+        this.focusedOptionIndex++;
+      } else {
+        this.focusedGroupIndex = (this.focusedGroupIndex + 1) % this.filteredGroupedOptionList.length;
+        this.focusedOptionIndex = 0;
+      }
+    } else {
+      if (this.focusedOptionIndex > 0) {
+        this.focusedOptionIndex--;
+      } else {
+        this.focusedGroupIndex =
+          this.focusedGroupIndex > 0 ? this.focusedGroupIndex - 1 : this.filteredGroupedOptionList.length - 1;
+        const newGroup = this.filteredGroupedOptionList[this.focusedGroupIndex];
+        this.focusedOptionIndex = newGroup ? newGroup.optionList.length - 1 : 0;
+      }
+    }
+    this.updateActiveDescendant();
+  };
+
+  private selectFocusedOption = (): void => {
+    const option = this.isGrouped()
+      ? this.filteredGroupedOptionList[this.focusedGroupIndex]?.optionList[this.focusedOptionIndex]
+      : this.filteredOptions[this.focusedOptionIndex];
+
+    if (option) {
+      this.isMultiSelect() ? this.pushSelectedValues(option) : this.optionSelected(option);
+    }
+  };
+
+  private updateActiveDescendant = (): void => {
+    this.activeDescendantId = this.isGrouped()
+      ? this.getGroupedOptionId(this.focusedGroupIndex, this.focusedOptionIndex)
+      : this.getOptionId(this.focusedOptionIndex);
+
+    // Auto-scroll the highlighted option into view
+    if (this.activeDescendantId) {
+      requestAnimationFrame(() => this.scrollOptionIntoView(this.activeDescendantId));
+    }
+  };
+
+  private updateAccessibilityState = (): void => {
+    const hasOptions = this.isGrouped() ? this.filteredGroupedOptionList.length > 0 : this.filteredOptions.length > 0;
+
+    if (!hasOptions) {
+      this.resetFocus();
+    } else if (this.showListbox && (this.focusedOptionIndex < 0 || (this.isGrouped() && this.focusedGroupIndex < 0))) {
+      if (this.isGrouped()) {
+        // Find the first group that has options
+        let foundFirstOption = false;
+        for (let groupIdx = 0; groupIdx < this.filteredGroupedOptionList.length; groupIdx++) {
+          if (this.filteredGroupedOptionList[groupIdx].optionList?.length > 0) {
+            this.focusedGroupIndex = groupIdx;
+            this.focusedOptionIndex = 0;
+            foundFirstOption = true;
+            break;
+          }
+        }
+        if (!foundFirstOption) {
+          this.resetFocus();
+          return;
+        }
+      } else {
+        this.focusedOptionIndex = 0;
+      }
+      this.updateActiveDescendant();
+    }
+  };
+
+  private closeDropdown = (): void => {
+    this.toggleShowListBox(false);
+    this.resetFocus();
+    this.inputElement?.nativeElement.focus();
+  };
+
+  private resetFocus = (): void => {
+    this.focusedOptionIndex = this.focusedGroupIndex = -1;
+    this.activeDescendantId = null;
+  };
+
+  private scrollOptionIntoView(id: string): void {
+    const opt = id ? document.getElementById(id) : null;
+    if (opt) {
+      opt.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
+  }
+
+  private isMultiSelect = (): boolean =>
+    ['multiple', 'autocomplete-multiple', 'grouped-multiple'].includes(this.optionType);
+
+  private isGrouped = (): boolean => ['grouped-single', 'grouped-multiple'].includes(this.optionType);
+
+  isAutoComplete = (): boolean => ['autocomplete-single', 'autocomplete-multiple'].includes(this.optionType);
+
+  showDropdown = (keyboardActivated: boolean = false): void => {
+    if (!this.foundRecords || this.disabled) return;
+
+    if (this.showListbox) {
+      this.closeDropdown();
+      return;
+    }
+
+    if (this.optionType !== 'autocomplete-single') {
+      this.toggleShowListBox(true);
+    }
+
+    this.onTouched?.();
+    this.resetFocus();
+
+    const hasOptions = this.isGrouped() ? this.filteredGroupedOptionList.length > 0 : this.filteredOptions.length > 0;
+    if (hasOptions && keyboardActivated) {
+      this.focusedOptionIndex = 0;
+      if (this.isGrouped()) this.focusedGroupIndex = 0;
+      this.updateActiveDescendant();
+    } else {
+      this.activeDescendantId = null;
+    }
+  };
+
+  showClearButton = (): void => {
+    this.showClear = (!this.readonly && !this.disabled) || this.inputSearchValue?.length > 0;
+
+    // Handle autocomplete search
+    if (this.isAutoComplete() && this.inputSearchValue?.length >= this.startFilteringLength) {
+      this.showSpinner = true;
+      this.searchData.emit({
+        filterValue: this.inputSearchValue,
+        filterValueModified4Search: null,
+        recordCount: this.rowLimit,
+      });
+    }
+  };
 }

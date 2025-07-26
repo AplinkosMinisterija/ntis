@@ -5,53 +5,69 @@
       type="text"
       [id]="inputId"
       (input)="showClearButton()"
-      role="combobox"
+      [attr.role]="isAutoComplete() ? 'combobox' : null"
+      [attr.aria-expanded]="showListbox"
+      [attr.aria-haspopup]="'listbox'"
+      [attr.aria-controls]="inputId + '_listbox'"
+      [attr.aria-activedescendant]="activeDescendantId"
+      [attr.aria-autocomplete]="isAutoComplete() ? 'list' : null"
       [(ngModel)]="inputSearchValue"
       class="combobox__input-control"
       (click)="showDropdown()"
-      (keyup.enter)="showDropdown()"
+      (keydown)="onKeyDown($event)"
       [title]="inputSearchValue ? inputSearchValue : ''"
       [placeholder]="foundRecords ? placeholder : disabled ? placeholder : 'components.selectInput.noRecordsFound'| translate"
       [disabled]="foundRecords ? disabled : true"
-      [readonly]="optionType !== selectTypesEnum.autoCompleteSingle"
+      [readonly]="!isAutoComplete()"
       [ngClass]="theme"
     />
     <div class="combobox__input-action-wrapper" [ngClass]="theme">
       <ng-container
         *ngIf="showClearIcon && !disabled && !readonly && (selectedOption.length > 0 || chosenOption !== null)"
       >
-        <spr-button
+        <button
           *ngIf="showClear && !showSpinner"
-          iconName="faTimes"
           type="button"
           class="combobox__input-clear-button"
           (click)="clearValues()"
-          [attr.aria-label]="'components.selectInput.clearValues'| translate"
-          [ngClass]="theme"
+          [attr.aria-label]="'components.selectInput.clearValues' | translate"
         >
-        </spr-button>
+          <fa-icon [icon]="faIconsService.fas.faTimes" aria-hidden="true" />
+        </button>
       </ng-container>
       <ng-container *ngIf="showSearchIcon && !showSpinner">
-        <fa-icon [icon]="faIconsService.fas.faSearch" size="sm" class="text-neutral-600"></fa-icon>
+        <fa-icon [icon]="faIconsService.fas.faSearch" size="sm" class="text-neutral-600" aria-hidden="true"></fa-icon>
       </ng-container>
 
-      <spr-button
-        type="button"
-        iconName="faAngleDown"
+      <!-- Chevron as visual indicator only, not focusable -->
+      <fa-icon
         *ngIf="!disabled && !showSpinner && optionType !== selectTypesEnum.autoCompleteSingle"
-        (click)="showDropdown()"
-        [ngClass]="(showListbox ? 'text-primary-900' : 'text-neutral-700') + ' ' + theme"
-        [attr.aria-label]="'components.selectInput.openList'| translate"
+        [icon]="faIconsService.fas.faAngleDown"
+        [ngClass]="showListbox ? 'text-primary-900' : 'text-neutral-700'"
         class="combobox__input-triangle"
         [hidden]="foundRecords ? false : true"
-      ></spr-button>
-      <spr-spinner class="combobox__input-triangle" *ngIf="showSpinner" [ngClass]="theme"></spr-spinner>
+        aria-hidden="true"
+      ></fa-icon>
+      <spr-spinner
+        class="combobox__input-triangle"
+        *ngIf="showSpinner"
+        [ngClass]="theme"
+        aria-hidden="true"
+      ></spr-spinner>
     </div>
   </section>
 
-  <section class="combobox__listbox" *ngIf="showListbox" #listboxElement>
+  <section
+    class="combobox__listbox"
+    *ngIf="showListbox"
+    #listboxElement
+    role="listbox"
+    [attr.id]="inputId + '_listbox'"
+    [attr.aria-label]="placeholder || 'components.selectInput.optionsList' | translate"
+    [attr.aria-multiselectable]="optionType === selectTypesEnum.multiple || optionType === selectTypesEnum.autoCompleteMultiple || optionType === selectTypesEnum.groupedMultiple"
+  >
     <div class="combobox__listbox-filter group" *ngIf="showFilter && optionType !== selectTypesEnum.autoCompleteSingle">
-      <fa-icon [icon]="faIconsService.fas.faSearch" class="combobox__listbox-filter-icon" />
+      <fa-icon [icon]="faIconsService.fas.faSearch" class="combobox__listbox-filter-icon" aria-hidden="true" />
       <input
         type="text"
         class="combobox__listbox-filter-input"
@@ -59,18 +75,23 @@
         [placeholder]="'components.selectInput.listFilter'| translate"
         [(ngModel)]="inputFilterValue"
         #searchInput
+        [attr.aria-controls]="inputId + '_listbox'"
+        [attr.aria-activedescendant]="activeDescendantId"
+        [attr.aria-expanded]="showListbox"
+        [attr.aria-describedby]="inputId + '_srAnnounce'"
+        (keydown)="onFilterKeyDown($event)"
       />
       <button
         *ngIf="searchInput.value.length > 0"
         type="button"
         class="combobox__listbox-filter-clear-button"
         (click)="clearSearchInput()"
-        [attr.aria-label]="'components.selectInput.clearValues'| translate"
+        [attr.aria-label]="'components.selectInput.clearValues' | translate"
       >
-        <fa-icon [icon]="faIconsService.fas.faTimes" />
+        <fa-icon [icon]="faIconsService.fas.faTimes" aria-hidden="true" />
       </button>
     </div>
-    <div class="combobox__listbox-scrollbar" [ngSwitch]="optionType">
+    <ng-container [ngSwitch]="optionType">
       <ng-container *ngSwitchCase="selectTypesEnum.single" [ngTemplateOutlet]="singleSelect"> </ng-container>
       <ng-container *ngSwitchCase="selectTypesEnum.multiple" [ngTemplateOutlet]="multipleSelect"> </ng-container>
       <ng-container *ngSwitchCase="selectTypesEnum.groupedSingle" [ngTemplateOutlet]="groupedSingleSelect">
@@ -81,19 +102,37 @@
       </ng-container>
       <ng-container *ngSwitchCase="selectTypesEnum.autoCompleteSingle" [ngTemplateOutlet]="autoCompleteSingle">
       </ng-container>
-    </div>
+    </ng-container>
   </section>
+  <!-- Persistent live region for result announcements -->
+  <span class="sr-only" role="status" aria-live="polite" aria-atomic="true" [id]="inputId + '_srAnnounce'">
+    {{ getTotalFilteredOptions() === 0
+        ? ('components.selectInput.noRecordsFound' | translate)
+        : (getTotalFilteredOptions() + ' ' + ('components.selectInput.results' | translate)) }}
+  </span>
   <ng-template #autoCompleteMultiple>
-    <ul class="combobox__listbox-multiple-select" *ngIf="filteredOptions.length > 0; else noRecordFound">
-      <li role="option" class="group align-inline" *ngFor="let row of filteredOptions; index as i">
+    <ul class="combobox__listbox-multiple-select" *ngIf="filteredOptions.length > 0; else noRecordFound" role="none">
+      <li
+        role="option"
+        class="group align-inline"
+        *ngFor="let row of filteredOptions; index as i; trackBy: trackByFn"
+        [attr.id]="getOptionId(i)"
+        [attr.aria-selected]="checkOption(row.value)"
+        [attr.tabindex]="-1"
+        (click)="pushSelectedValues(row)"
+        (keydown)="onOptionKeyDown($event, row)"
+        [class.focused]="focusedOptionIndex === i"
+      >
         <input
           type="checkbox"
           class="spr-checkbox"
           [value]="row"
           [checked]="checkOption(row.value)"
           (change)="pushSelectedValues(row)"
-          [attr.aria-label]="row.label"
-          [id]="i"
+          (click)="$event.stopPropagation()"
+          [attr.id]="getCheckboxId(i)"
+          tabindex="-1"
+          aria-hidden="true"
           *ngIf="!readonly"
         />
         <ng-container *ngIf="readonly">
@@ -101,23 +140,32 @@
             [icon]="faIconsService.fas.faCheck"
             [ngClass]="checkOption(row.value) ? 'text-primary-500' : 'text-neutral-200'"
             class="combobox__listbox-multiple-select-readonly-icon"
+            aria-hidden="true"
           />
         </ng-container>
 
-        <label class="combobox__listbox-multiple-select-label" [for]="i">{{row.label}}</label>
+        <label
+          class="combobox__listbox-multiple-select-label"
+          [for]="getCheckboxId(i)"
+          (click)="$event.stopPropagation()"
+          >{{row.label}}</label
+        >
       </li>
     </ul>
   </ng-template>
 
   <ng-template #autoCompleteSingle>
-    <ul *ngIf="filteredOptions.length > 0; else noRecordFound">
+    <ul *ngIf="filteredOptions.length > 0; else noRecordFound" role="none">
       <li
         class="combobox__listbox-single-select"
         role="option"
-        tabindex="0"
-        *ngFor="let row of filteredOptions"
+        [attr.tabindex]="-1"
+        *ngFor="let row of filteredOptions; index as i; trackBy: trackByFn"
+        [attr.id]="getOptionId(i)"
+        [attr.aria-selected]="chosenOption?.value === row.value"
         (click)="optionSelected(row)"
-        (keyup.enter)="optionSelected(row)"
+        (keydown)="onOptionKeyDown($event, row)"
+        [class.focused]="focusedOptionIndex === i"
       >
         {{row.label}}
       </li>
@@ -125,30 +173,45 @@
   </ng-template>
 
   <ng-template #singleSelect>
-    <ul *ngIf="filteredOptions.length > 0; else noRecordFound">
+    <ul *ngIf="filteredOptions.length > 0; else noRecordFound" role="none">
       <li
         class="combobox__listbox-single-select"
         role="option"
-        tabindex="0"
-        *ngFor="let row of filteredOptions"
+        [attr.tabindex]="-1"
+        *ngFor="let row of filteredOptions; index as i; trackBy: trackByFn"
+        [attr.id]="getOptionId(i)"
+        [attr.aria-selected]="chosenOption?.value === row.value"
         (click)="optionSelected(row)"
-        (keyup.enter)="optionSelected(row)"
+        (keydown)="onOptionKeyDown($event, row)"
+        [class.focused]="focusedOptionIndex === i"
       >
         {{row.label}}
       </li>
     </ul>
   </ng-template>
   <ng-template #multipleSelect>
-    <ul class="combobox__listbox-multiple-select" *ngIf="filteredOptions.length > 0; else noRecordFound">
-      <li role="option" class="group align-inline" *ngFor="let row of filteredOptions; index as i">
+    <ul class="combobox__listbox-multiple-select" *ngIf="filteredOptions.length > 0; else noRecordFound" role="none">
+      <li
+        role="option"
+        class="group align-inline"
+        *ngFor="let row of filteredOptions; index as i; trackBy: trackByFn"
+        [attr.id]="getOptionId(i)"
+        [attr.aria-selected]="checkOption(row.value)"
+        [attr.tabindex]="-1"
+        (click)="pushSelectedValues(row)"
+        (keydown)="onOptionKeyDown($event, row)"
+        [class.focused]="focusedOptionIndex === i"
+      >
         <input
           type="checkbox"
           class="spr-checkbox"
           [value]="row"
           [checked]="checkOption(row.value)"
           (change)="pushSelectedValues(row)"
-          [attr.aria-label]="row.label"
-          [id]="i"
+          (click)="$event.stopPropagation()"
+          [attr.id]="getCheckboxId(i)"
+          tabindex="-1"
+          aria-hidden="true"
           *ngIf="!readonly"
         />
         <ng-container *ngIf="readonly">
@@ -156,28 +219,49 @@
             [icon]="faIconsService.fas.faCheck"
             [ngClass]="checkOption(row.value) ? 'text-primary-500' : 'text-neutral-200'"
             class="combobox__listbox-multiple-select-readonly-icon"
+            aria-hidden="true"
           />
         </ng-container>
 
-        <label class="combobox__listbox-multiple-select-label" [for]="i">{{row.label}}</label>
+        <label
+          class="combobox__listbox-multiple-select-label"
+          [for]="getCheckboxId(i)"
+          (click)="$event.stopPropagation()"
+          >{{row.label}}</label
+        >
       </li>
     </ul>
   </ng-template>
   <ng-template #groupedMultipleSelect>
     <ng-container *ngIf="filteredGroupedOptionList.length > 0; else noRecordFound">
-      <dl class="combobox__listbox-grouped-multiple" *ngFor="let rowDl of filteredGroupedOptionList; index as i">
-        <dt>
+      <dl
+        class="combobox__listbox-grouped-multiple"
+        *ngFor="let rowDl of filteredGroupedOptionList; index as groupIndex; trackBy: trackByGroupFn"
+      >
+        <dt role="group" [attr.aria-label]="rowDl.label">
           <strong>{{rowDl.label}}</strong>
         </dt>
-        <dd *ngFor="let rowDd of rowDl.optionList; index as x">
+        <dd
+          *ngFor="let rowDd of rowDl.optionList; index as x; trackBy: trackByFn"
+          role="option"
+          [attr.id]="getGroupedOptionId(groupIndex, x)"
+          [attr.aria-selected]="checkOption(rowDd.value)"
+          [attr.tabindex]="-1"
+          (click)="pushSelectedValues(rowDd)"
+          (keydown)="onOptionKeyDown($event, rowDd)"
+          [class.focused]="focusedGroupIndex === groupIndex && focusedOptionIndex === x"
+        >
           <input
             type="checkbox"
             class="combobox__listbox-multiple-select-control"
+            [value]="rowDd"
             [checked]="checkOption(rowDd.value)"
             (change)="pushSelectedValues(rowDd)"
-            [attr.aria-label]="rowDd.label"
+            (click)="$event.stopPropagation()"
             *ngIf="!readonly"
-            [id]="i+''+x"
+            [attr.id]="getGroupedCheckboxId(groupIndex, x)"
+            tabindex="-1"
+            aria-hidden="true"
           />
 
           <ng-container *ngIf="readonly">
@@ -185,37 +269,57 @@
               [icon]="faIconsService.fas.faCheck"
               [ngClass]="checkOption(rowDd.value) ? 'text-primary-500' : 'text-neutral-200'"
               class="combobox__listbox-multiple-select-readonly-icon"
+              aria-hidden="true"
             />
           </ng-container>
-          <label class="combobox__listbox-multiple-select-label" [for]="i+''+x">{{rowDd.label}}</label>
+          <label
+            class="combobox__listbox-multiple-select-label"
+            [for]="getGroupedCheckboxId(groupIndex, x)"
+            (click)="$event.stopPropagation()"
+            >{{rowDd.label}}</label
+          >
         </dd>
       </dl>
     </ng-container>
   </ng-template>
+
   <ng-template #groupedSingleSelect>
     <ng-container *ngIf="filteredGroupedOptionList.length > 0; else noRecordFound">
-      <dl class="combobox__listbox-grouped-single" *ngFor="let rowDl of filteredGroupedOptionList">
-        <dt>
+      <dl
+        class="combobox__listbox-grouped-single"
+        *ngFor="let rowDl of filteredGroupedOptionList; index as groupIndex; trackBy: trackByGroupFn"
+      >
+        <dt role="group" [attr.aria-label]="rowDl.label">
           <strong>{{rowDl.label}}</strong>
         </dt>
         <dd
-          *ngFor="let rowDd of rowDl.optionList"
+          *ngFor="let rowDd of rowDl.optionList; index as x; trackBy: trackByFn"
+          role="option"
+          [attr.id]="getGroupedOptionId(groupIndex, x)"
+          [attr.aria-selected]="chosenOption?.value === rowDd.value"
+          [attr.tabindex]="-1"
           (click)="optionSelected(rowDd)"
-          (keyup.enter)="optionSelected(rowDd)"
+          (keydown)="onOptionKeyDown($event, rowDd)"
+          [class.focused]="focusedGroupIndex === groupIndex && focusedOptionIndex === x"
         >
           {{rowDd.label}}
         </dd>
       </dl>
     </ng-container>
   </ng-template>
+
   <ng-template #noRecordFound>
-    <ng-container *ngIf="autoComplete"
-      ><div class="enter-search-text">
-        <p>Įveskite paieškos tekstą</p>
-      </div>
-    </ng-container>
-    <ng-container *ngIf="!autoComplete">
-      <p class="no-record-found">{{'components.selectInput.noRecordsFound'| translate}}</p>
-    </ng-container>
+    <div class="combobox__no-options">
+      <ng-container *ngIf="autoComplete">
+        <div class="enter-search-text">
+          <p>{{'components.selectInput.enterSearchText' | translate}}</p>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="!autoComplete">
+        <p class="no-record-found">
+          {{'components.selectInput.noRecordsFound' | translate}}
+        </p>
+      </ng-container>
+    </div>
   </ng-template>
 </section>

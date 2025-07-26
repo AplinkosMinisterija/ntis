@@ -33,6 +33,12 @@
     @apply bg-neutral-0 p-0 rounded-md shadow-md border-primary-500 
     fixed z-50 overflow-hidden border w-[var(--select-width)];
 
+    > ul,
+    > dl {
+      @apply overflow-y-auto scroll-smooth w-full;
+      max-height: Min(12rem, 100vh);
+    }
+
     &-filter {
       @apply w-full flex justify-between border-0 bg-primary-500 bg-opacity-5 #{!important};
 
@@ -49,18 +55,13 @@
       }
     }
 
-    &-scrollbar {
-      @apply overflow-y-auto scroll-smooth w-full;
-      max-height: Min(12rem, 100vh);
-    }
-
     &-single-select {
-      @apply p-2 hover:bg-primary-600 hover:text-neutral-0 active:bg-primary-700 cursor-pointer ease-in-out duration-100 select-none;
+      @apply p-2 hover:bg-primary-50 cursor-pointer select-none;
     }
 
     &-multiple-select {
       li {
-        @apply p-2 hover:bg-neutral-100 ease-in-out duration-100 select-none;
+        @apply p-2 hover:bg-primary-50 cursor-pointer select-none;
       }
 
       &-control {
@@ -81,8 +82,7 @@
     }
 
     &-grouped-multiple dd {
-      @apply pl-3 py-1 hover:bg-neutral-100 text-sm ease-in-out duration-100 
-      select-none cursor-pointer;
+      @apply pl-3 py-1 hover:bg-neutral-100 text-sm ease-in-out duration-100 select-none cursor-pointer;
     }
 
     &-grouped-multiple dt {
@@ -90,8 +90,7 @@
     }
 
     &-grouped-single dd {
-      @apply pl-5 py-1 hover:bg-primary-600 hover:text-neutral-0 active:bg-primary-700 
-      text-sm ease-in-out duration-100 select-none cursor-pointer;
+      @apply pl-5 py-1 hover:bg-primary-600 hover:text-neutral-0 active:bg-primary-700 text-sm ease-in-out duration-100 select-none cursor-pointer;
     }
 
     &-grouped-single dt {
@@ -100,8 +99,7 @@
   }
 
   &__listbox-filter-icon {
-    @apply text-sm text-neutral-500 group-focus-within:text-primary-500
-    group-focus-within:rotate-90 duration-200;
+    @apply text-sm text-neutral-500 group-focus-within:text-primary-500 group-focus-within:rotate-90 duration-200;
   }
 }
 
@@ -128,4 +126,12 @@
 }
 .info {
   @apply bg-info-50 text-info-700 border-info-100 placeholder-info-700;
+}
+
+// Simple focus styles for keyboard navigation
+.combobox__listbox-single-select.focused,
+.combobox__listbox-multiple-select li.focused,
+.combobox__listbox-grouped-single dd.focused,
+.combobox__listbox-grouped-multiple dd.focused {
+  @apply bg-primary-50 text-neutral-900;
 }
