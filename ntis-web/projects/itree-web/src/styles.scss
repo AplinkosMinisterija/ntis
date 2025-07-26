@@ -22,8 +22,9 @@
 @layer primeng {
   @include meta.load-css('primeng/resources/themes/bootstrap4-light-blue/theme.css');
   @include meta.load-css('primeng/resources/primeng');
-  @import 'primeicons/primeicons.css';
 }
+
+@import 'primeicons/primeicons.css';
 
 @layer app-primeng {
   @include meta.load-css('styles/primeng');

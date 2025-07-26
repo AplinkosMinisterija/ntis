@@ -108,7 +108,6 @@ export class FaqListComponent extends BaseBrowseForm<FaqBrowseRow> {
     return actions.map((action) => {
       const menuItem: MenuItem = {
         label: this.commonFormServices.translate.instant('common.action.' + action.toLowerCase()) as string,
-        id: row.fac_id.toString(),
         icon: getActionIcons(action),
       };
       switch (action) {

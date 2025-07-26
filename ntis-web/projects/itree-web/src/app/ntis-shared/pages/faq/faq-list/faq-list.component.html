@@ -33,12 +33,15 @@
             pButton
             pRipple
             [pRowToggler]="row"
-            class="p-button-text p-button-rounded p-button-plain "
+            class="p-button-text p-button-rounded p-button-plain"
+            [attr.aria-label]="row.fac_question"
+            [attr.aria-expanded]="expanded"
+            [attr.aria-controls]="'q-body-' + row.fac_id"
             [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
           ></button>
         </td>
         <td>
-          <span class="question__text">{{row.fac_question}}</span>
+          <span class="question__text" [attr.id]="'q-label-' + row.fac_id">{{row.fac_question}}</span>
         </td>
         <td class="w-[1%]">
           <spr-table-rec-actions *ngIf="menuActions[row.fac_id]?.length" [actionsList]="menuActions[row.fac_id] || []">
@@ -49,18 +52,20 @@
     <ng-template pTemplate="rowexpansion" let-row dataKey="fac_id">
       <tr>
         <td colspan="3">
-          <spr-editor-viewer [content]="row.fac_answer" />
+          <div role="region" tabindex="0" [attr.id]="'q-body-' + row.fac_id">
+            <spr-editor-viewer [content]="row.fac_answer" />
 
-          <ng-container *ngIf="row.files">
-            <div class="file-card">
-              <div *ngFor="let item of row.files | parseFileObject" class="file-card__item group">
-                <spr-icon name="file_download" class="file-card__item-icon " />
-                <button (click)="downloadFile(item)" type="button" class="file-card__item-text">
-                  {{item.fil_name}}
-                </button>
+            <ng-container *ngIf="row.files">
+              <div class="file-card">
+                <div *ngFor="let item of row.files | parseFileObject" class="file-card__item group">
+                  <spr-icon name="file_download" class="file-card__item-icon " />
+                  <button (click)="downloadFile(item)" type="button" class="file-card__item-text">
+                    {{item.fil_name}}
+                  </button>
+                </div>
               </div>
-            </div>
-          </ng-container>
+            </ng-container>
+          </div>
         </td>
       </tr>
     </ng-template>
