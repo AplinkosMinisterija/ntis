@@ -71,6 +71,8 @@ public class DataSourcesConfig {
 
     protected List<String> getUrlsNotUsedForPasswordExpiredLogic() {
         return Arrays.asList("/auth/login", //
+                "/auth/verify-2fa", //
+                "/auth/resend-2fa", //
                 "/auth/admin-login", //
                 "/auth/google-login", //
                 "/auth/logout", //

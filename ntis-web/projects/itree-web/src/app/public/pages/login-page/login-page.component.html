@@ -5,3 +5,43 @@
   </span>
   <app-login (login)="onLogin($event)"></app-login>
 </div>
+
+<p-dialog
+  [(visible)]="show2fa"
+  [modal]="true"
+  [closable]="true"
+  [draggable]="false"
+  [resizable]="false"
+  (onHide)="cancel2fa()"
+  [style]="{ width: '420px' }"
+  [header]="'pages.login.twoFactor.title' | translate"
+>
+  <div class="two-factor">
+    <p>
+      {{ 'pages.login.twoFactor.subtitle' | translate }}
+      <b>{{ twoFactorEmailMasked }}</b>
+    </p>
+    <spr-form-field [mandatory]="true" inputIconLeft="lock">
+      <input
+        type="text"
+        inputmode="numeric"
+        autocomplete="one-time-code"
+        maxlength="10"
+        [(ngModel)]="twoFactorCode"
+        (keyup.enter)="submit2fa()"
+        placeholder="{{ 'pages.login.twoFactor.codeLabel' | translate }}"
+      />
+    </spr-form-field>
+    <div class="two-factor__actions" style="display: flex; gap: 0.75rem; align-items: center; margin-top: 1.25rem">
+      <button type="button" class="spr-button-primary" (click)="submit2fa()" [disabled]="!twoFactorCode">
+        {{ 'pages.login.twoFactor.submit' | translate }}
+      </button>
+      <button type="button" class="spr-button-secondary" (click)="resend2fa()" [disabled]="resendCooldown > 0">
+        <ng-container *ngIf="resendCooldown > 0; else resendNow">
+          {{ 'pages.login.twoFactor.resendIn' | translate }} {{ resendCooldown }}s
+        </ng-container>
+        <ng-template #resendNow>{{ 'pages.login.twoFactor.resend' | translate }}</ng-template>
+      </button>
+    </div>
+  </div>
+</p-dialog>

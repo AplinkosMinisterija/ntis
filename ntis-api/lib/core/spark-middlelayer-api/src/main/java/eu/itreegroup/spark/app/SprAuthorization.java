@@ -392,8 +392,20 @@ public class SprAuthorization<BUS extends SprBackendUserSession> {
      * @return - user session that will contain information about authentication user
      * @throws Exception will be raised in case if authentication process was not success.
      */
+    /** El. pašto 2FA taškas (nebūtinas): kai NTIS bean'as yra ir 2FA reikalaujama, kodas išduodamas ir siunčiamas,
+     *  o sesija NEsukuriama (sesKey lieka null) -> /auth/login grąžina token=null + twoFactorRequired iššūkį. */
+    @Autowired(required = false)
+    private TwoFactorHandler twoFactorHandler;
+
     public BUS createUserSession(Connection conn, BUS userSession, String userName, String userPassword, Map<String, Object> authExtData) throws Exception {
         SprUsersDAO sprUserDAO = this.attemptToLogin(conn, userName, userPassword, authExtData);
+        if (twoFactorHandler != null && twoFactorHandler.isRequired(conn, sprUserDAO, authExtData)) {
+            String twoFactorToken = twoFactorHandler.issueAndSend(conn, sprUserDAO);
+            userSession.setTwoFactorRequired(true);
+            userSession.setTwoFactorEmailMasked(twoFactorHandler.maskEmail(sprUserDAO.getUsr_email()));
+            userSession.setTwoFactorToken(twoFactorToken);
+            return userSession; // sesKey lieka null -> createLoginResult neišduoda token'o (laukiama 2FA kodo)
+        }
         return loginUser(conn, sprUserDAO, userSession, USER_NAME_PASSWORD_AUTHENTICATION);
     }
 

@@ -7,7 +7,7 @@ import { LoginComponent } from './components/login/login.component';
 import { LoginPageComponent } from './pages/login-page/login-page.component';
 import { NgModule } from '@angular/core';
 import { PublicRoutingModule } from './public-routing.module';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ResetPasswordPageComponent } from './pages/reset-password-page/reset-password-page.component';
 import { TermsAndConditionsPageComponent } from './pages/terms-and-conditions-page/terms-and-conditions-page.component';
 import { ConfirmEmailPageComponent } from './pages/confirm-email-page/confirm-email-page.component';
@@ -32,6 +32,7 @@ import { DialogModule } from 'primeng/dialog';
     CommonModule,
     FontAwesomeModule,
     ReactiveFormsModule,
+    FormsModule,
     ItreeCommonsModule,
     PublicRoutingModule,
     NtisSharedModule,

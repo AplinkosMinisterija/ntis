@@ -17,6 +17,9 @@ public class SprBackendWebSessionInfo extends WebSessionInfo {
         this.setRoleType(src.getSes_usr_type());
         this.setUserType(src.getSes_usr_type());
         this.setSessionKey(src.getSes_key());
+        this.setTwoFactorRequired(src.isTwoFactorRequired());
+        this.setTwoFactorEmailMasked(src.getTwoFactorEmailMasked());
+        this.setTwoFactorToken(src.getTwoFactorToken());
     }
 
     public String getRoleType() {
@@ -41,6 +44,37 @@ public class SprBackendWebSessionInfo extends WebSessionInfo {
 
     public void setSessionKey(String sessionKey) {
         this.sessionKey = sessionKey;
+    }
+
+    // El. pašto 2FA žymos atsakymui: SPA rodo kodo įvedimo langą, kai twoFactorRequired=true (token=null)
+    protected boolean twoFactorRequired;
+
+    protected String twoFactorEmailMasked;
+
+    public boolean isTwoFactorRequired() {
+        return twoFactorRequired;
+    }
+
+    public void setTwoFactorRequired(boolean twoFactorRequired) {
+        this.twoFactorRequired = twoFactorRequired;
+    }
+
+    public String getTwoFactorEmailMasked() {
+        return twoFactorEmailMasked;
+    }
+
+    public void setTwoFactorEmailMasked(String twoFactorEmailMasked) {
+        this.twoFactorEmailMasked = twoFactorEmailMasked;
+    }
+
+    protected String twoFactorToken;
+
+    public String getTwoFactorToken() {
+        return twoFactorToken;
+    }
+
+    public void setTwoFactorToken(String twoFactorToken) {
+        this.twoFactorToken = twoFactorToken;
     }
 
 }
