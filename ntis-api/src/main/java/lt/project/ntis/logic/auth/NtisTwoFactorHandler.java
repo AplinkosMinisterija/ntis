@@ -110,16 +110,17 @@ public class NtisTwoFactorHandler implements TwoFactorHandler {
         int codeLength = parseIntProp("TWO_FA_CODE_LENGTH", 6);
         long expiryMin = parseIntProp("TWO_FA_CODE_EXPIRATION_MINUTES", 5);
         String code = generateNumericCode(codeLength);
+        Languages lang = resolveLanguage(userDAO);
 
         // c01 = handle (slaptas iššūkio raktas); n01 (bandymai) startuoja null=0.
-        sprProcessRequest.createRequest(conn, NtisProcessRequestType.LOGIN_2FA, YesNo.N, userId, Languages.LT,
+        sprProcessRequest.createRequest(conn, NtisProcessRequestType.LOGIN_2FA, YesNo.N, userId, lang,
                 new Date(), expiryMin, code, handle);
 
         Map<String, String> params = new HashMap<String, String>();
         params.put(Login2faJobRequest.CODE, code);
         params.put(Login2faJobRequest.HOME_URL, appHost);
         params.put(ExecuteEmailSendTask.RECEIVER, email);
-        Double requestId = login2faJobRequest.createJobRequest(conn, userId, Languages.LT, params);
+        Double requestId = login2faJobRequest.createJobRequest(conn, userId, lang, params);
         conn.commit();
         executerJob.execute(requestId);
 
@@ -244,6 +245,19 @@ public class NtisTwoFactorHandler implements TwoFactorHandler {
                 "UPDATE spark.spr_process_requests SET n01 = coalesce(n01,0)+1 WHERE prq_id = ?")) {
             ps.setLong(1, prqId);
             ps.executeUpdate();
+        }
+    }
+
+    // Laiško kalba imama iš naudotojo profilio (spr_template_texts turi lt ir en tekstus); nežinoma/tuščia -> LT.
+    private Languages resolveLanguage(SprUsersDAO userDAO) {
+        String code = userDAO.getUsr_language();
+        if (code == null || code.trim().isEmpty()) {
+            return Languages.LT;
+        }
+        try {
+            return Languages.getLanguageByCode(code.trim().toLowerCase());
+        } catch (Exception e) {
+            return Languages.LT;
         }
     }
 
