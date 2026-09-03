@@ -2983,4 +2983,3 @@ pages.login.twoFactor.tooManyAttempts=Too many wrong attempts. Please log in aga
 pages.login.twoFactor.noEmail=The user has no email address, so the code cannot be sent.
 pages.login.twoFactor.noChallenge=No active login. Please log in again.
 pages.login.twoFactor.sendFailed=Failed to send the verification code. Please try again.
-pages.sprUserEdit.usr_2fa_used=Two-factor login (email)

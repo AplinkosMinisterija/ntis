@@ -200,12 +200,6 @@ export class UserEditPageComponent extends DeprecatedBaseEditForm<SprUsersNtisDA
             formControlName: 'usr_disable',
             hidden: !this.noLimitOnOrLevelAction,
           },
-          {
-            type: EditFormItemType.Custom,
-            label: this.formTranslationsReference + '.usr_2fa_used',
-            translateLabel: true,
-            formControlName: 'usr_2fa_used',
-          },
         ],
       },
     ];
@@ -230,7 +224,6 @@ export class UserEditPageComponent extends DeprecatedBaseEditForm<SprUsersNtisDA
       }),
       usr_org_id: new FormControl(''),
       usr_disable: new FormControl(''),
-      usr_2fa_used: new FormControl(false),
       usr_language: new FormControl('lt'),
       confirmEmail: new FormControl(''),
       usr_per_list: new FormControl(''),
@@ -296,7 +289,6 @@ export class UserEditPageComponent extends DeprecatedBaseEditForm<SprUsersNtisDA
     this.form.controls.usr_type.setValue(data.usr_type);
     this.form.controls.usr_org_id.setValue(data.usr_org_id);
     this.form.controls.usr_disable.setValue(this.data.usr_lock_date != null);
-    this.form.controls.usr_2fa_used.setValue(this.data.usr_2fa_used === 'Y');
     this.form.controls.usr_language.setValue(data.usr_language || getLang());
     this.form.controls.per_code.setValue(data.personCode);
     if (data.personCodeConfirmed === 'Y') {
@@ -328,7 +320,6 @@ export class UserEditPageComponent extends DeprecatedBaseEditForm<SprUsersNtisDA
     result.usr_org_id =
       this.form.controls.value !== null ? (this.form.controls.usr_org_id.value as SprUsersDAO['usr_org_id']) : null;
     result.usr_lock_date = this.form.controls.usr_disable.value ? new Date() : null;
-    result.usr_2fa_used = (this.form.controls.usr_2fa_used.value ? 'Y' : 'N') as SprUsersDAO['usr_2fa_used'];
     result.personCode = this.form.controls.per_code.value as SprUsersNtisDAO['personCode'];
     result.usr_phone_number = this.form.controls.phone.value as SprUsersNtisDAO['usr_phone_number'];
     this.data = result;

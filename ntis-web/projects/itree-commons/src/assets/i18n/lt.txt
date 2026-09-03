@@ -2985,4 +2985,3 @@ pages.login.twoFactor.tooManyAttempts=Per daug klaidingų bandymų. Prisijunkite
 pages.login.twoFactor.noEmail=Naudotojui neįvestas el. pašto adresas, todėl kodo išsiųsti negalima.
 pages.login.twoFactor.noChallenge=Nėra aktyvaus prisijungimo. Prisijunkite iš naujo.
 pages.login.twoFactor.sendFailed=Nepavyko išsiųsti patvirtinimo kodo. Bandykite dar kartą.
-pages.sprUserEdit.usr_2fa_used=Dviejų veiksnių prisijungimas (el. paštu)

@@ -65,14 +65,12 @@ public class NtisTwoFactorHandler implements TwoFactorHandler {
         if (!AUTH_TYPE_PASSWORD.equals(authType)) {
             return false; // tik slaptažodžio kelias; VIISP/iSense/Google/API-key — neliečiam
         }
-        if (!"Y".equalsIgnoreCase(userDAO.getUsr_2fa_used())) {
-            return false;
-        }
+        // Politika: 2FA privaloma VISIEMS slaptažodžio prisijungimams, atskiro naudotojo žymos nėra.
         String email = userDAO.getUsr_email();
         if (email == null || email.trim().isEmpty()) {
-            // 2FA įjungtas naudotojui, bet nėra el. pašto — niekada neapeinam į normalų login
+            // Be el. pašto kodo išsiųsti nėra kur — niekada neapeinam į normalų login
             throw new SparkBusinessException(new S2Message("pages.login.twoFactor.noEmail", SparkMessageType.ERROR,
-                    "2FA is enabled for the user but no email is set"));
+                    "2FA is required but the user has no email set"));
         }
         return true;
     }
