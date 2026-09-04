@@ -1,4 +1,4 @@
-// Generated using typescript-generator version 2.0.400 on 2024-12-16 17:36:20.
+// Generated using typescript-generator version 2.0.400 on 2026-07-18 10:21:21.
 
 export interface ChangePasswordRequest {
     newPassword: string;

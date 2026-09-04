@@ -6,6 +6,19 @@ public interface BackendUserSession extends UserDetails {
 
     boolean isAuthenticated();
 
+    // El. pašto 2FA žymos. Numatytai no-op (upstream-safe); realų elgesį suteikia SprBackendUserSession.
+    default void setTwoFactorRequired(boolean twoFactorRequired) {}
+
+    default boolean isTwoFactorRequired() { return false; }
+
+    default void setTwoFactorEmailMasked(String twoFactorEmailMasked) {}
+
+    default String getTwoFactorEmailMasked() { return null; }
+
+    default void setTwoFactorToken(String twoFactorToken) {}
+
+    default String getTwoFactorToken() { return null; }
+
     Double getUsrId();
 
     String getRole();

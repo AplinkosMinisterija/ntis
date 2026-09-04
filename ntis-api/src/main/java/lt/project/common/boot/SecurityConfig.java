@@ -38,6 +38,8 @@ public class SecurityConfig {
     protected String[] getPublicRoutes() {
         String[] routes = { //
                 "/auth/login", //
+                "/auth/verify-2fa", //
+                "/auth/resend-2fa", //
                 "/auth/admin-login", //
                 "/auth/google-login", //
                 "/auth/request-new-password", //

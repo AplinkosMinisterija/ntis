@@ -181,9 +181,32 @@ export class AuthService extends CommonAuthService {
       })
       .pipe(
         tap((response) => {
+          // 2FA: kai reikia kodo, login NEbaigiamas (token=null) — dialogą atidaro login-page
+          if (!(response.session as { twoFactorRequired?: boolean })?.twoFactorRequired) {
+            this.processLogin(response, returnUrl, true);
+          }
+        })
+      );
+  }
+
+  verify2fa(
+    username: string,
+    token: string,
+    code: string,
+    authExtData: Record<string, string>,
+    returnUrl: string
+  ): Observable<LoginResult<WebSessionInfo>> {
+    return this.http
+      .post<LoginResult<WebSessionInfo>>(`${this.authRestUrl}/verify-2fa`, { username, token, code, authExtData })
+      .pipe(
+        tap((response) => {
           this.processLogin(response, returnUrl, true);
         })
       );
+  }
+
+  resend2fa(username: string, token: string, authExtData: Record<string, string>): Observable<void> {
+    return this.http.post<void>(`${this.authRestUrl}/resend-2fa`, { username, token, authExtData });
   }
 
   logout(): Observable<null> {

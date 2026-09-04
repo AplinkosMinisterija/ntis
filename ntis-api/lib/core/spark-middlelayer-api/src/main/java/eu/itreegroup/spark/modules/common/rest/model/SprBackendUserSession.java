@@ -11,6 +11,29 @@ import eu.itreegroup.spark.modules.admin.dao.SprSessionOpenDAO;
 
 public class SprBackendUserSession extends SprSessionOpenDAO implements BackendUserSession {
 
+    // El. pašto 2FA žymos (tik atsakymui; nepersistinama į DB)
+    private transient boolean twoFactorRequired;
+    private transient String twoFactorEmailMasked;
+    private transient String twoFactorToken;
+
+    @Override
+    public void setTwoFactorRequired(boolean twoFactorRequired) { this.twoFactorRequired = twoFactorRequired; }
+
+    @Override
+    public boolean isTwoFactorRequired() { return twoFactorRequired; }
+
+    @Override
+    public void setTwoFactorEmailMasked(String twoFactorEmailMasked) { this.twoFactorEmailMasked = twoFactorEmailMasked; }
+
+    @Override
+    public String getTwoFactorEmailMasked() { return twoFactorEmailMasked; }
+
+    @Override
+    public void setTwoFactorToken(String twoFactorToken) { this.twoFactorToken = twoFactorToken; }
+
+    @Override
+    public String getTwoFactorToken() { return twoFactorToken; }
+
     private static final long serialVersionUID = 1L;
 
     private String userPasswordChangeToken;
